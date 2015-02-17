@@ -1,0 +1,182 @@
+<!--
+ * OpenXES
+ * 
+ * The reference implementation of the XES meta-model for event 
+ * log data management.
+ * 
+ * Copyright (c) 2008 Christian W. Guenther (christian@deckfour.org)
+ * 
+ * 
+ * LICENSE:
+ * 
+ * This code is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * 
+ * EXEMPTION:
+ * 
+ * The use of this software can also be conditionally licensed for
+ * other programs, which do not satisfy the specified conditions. This
+ * requires an exemption from the general license, which may be
+ * granted on a per-case basis.
+ * 
+ * If you want to license the use of this software with a program
+ * incompatible with the LGPL, please contact the author for an
+ * exemption at the following email address: 
+ * christian@deckfour.org
+ * 
+ -->
+<project name="OpenXES" default="dist" basedir=".">
+    <description>
+        Build file for the OpenXES library
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="bindist"/>
+  <property name="doc" location="doc"/>
+  <property name="lib" location="lib"/>
+  <property name="dist"  location="dist"/>
+  <property name="test"  location="test"/>
+  <property name="version" value="1.9"/>
+  
+  <!-- Defines the project's class path in a global manner -->
+  <path id="project.class.path">
+    <pathelement path="${classpath}"/>
+    <fileset dir="${lib}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- initialization (create dirs and timestamp) -->
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+	
+  <!-- clean all binaries and distributions -->
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <!-- build all -->
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}" verbose="no" 
+    	debug="true" debuglevel="lines,vars,source" deprecation="yes">
+    	<classpath refid="project.class.path"/>
+    </javac>
+  </target>
+  
+  <!-- package the main distribution -->
+  <target name="dist" depends="compile"
+        description="generate the distribution jar" >
+    <!-- Create the main OpenXES archive -->
+    <jar jarfile="${dist}/OpenXES-${DSTAMP}.jar">
+    	<fileset dir="${build}">
+    		<include name="**"/>
+    		<exclude name="test**"/>
+    		<exclude name="org/deckfour/xes/xstream**"/>
+    	</fileset>
+    	<manifest>
+	      <attribute name="Built-By" value="${user.name}"/>
+	      <attribute name="Specification-Title" value="OpenXES"/>
+	      <attribute name="Specification-Version" value="${version}"/>
+	      <attribute name="Specification-Vendor" value="code.deckfour.org"/>
+	      <attribute name="Implementation-Title" value="OpenXES"/>
+	      <attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+	      <attribute name="Implementation-Vendor" value="code.deckfour.org"/>
+	      <attribute name="Sealed" value="false"/>
+    	</manifest>
+    </jar>
+  	<!-- Create the OpenXES XStream adapter archive -->
+  	<jar jarfile="${dist}/OpenXES-XStream-${DSTAMP}.jar">
+    	<fileset dir="${build}">
+    		<include name="org/deckfour/xes/xstream/**.class"/>
+    	</fileset>
+    	<manifest>
+	      <attribute name="Built-By" value="${user.name}"/>
+	      <attribute name="Specification-Title" value="OpenXES-XStream"/>
+	      <attribute name="Specification-Version" value="${version}"/>
+	      <attribute name="Specification-Vendor" value="code.deckfour.org"/>
+	      <attribute name="Implementation-Title" value="OpenXES-XStream"/>
+	      <attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+	      <attribute name="Implementation-Vendor" value="code.deckfour.org"/>
+	      <attribute name="Sealed" value="false"/>
+    	</manifest>
+    </jar>
+  	<!-- Copy with release names to distribution directory -->
+  	<copy file="${dist}/OpenXES-${DSTAMP}.jar" tofile="${dist}/OpenXES.jar" overwrite="true"/>
+  	<copy file="${dist}/OpenXES-XStream-${DSTAMP}.jar" tofile="${dist}/OpenXES-XStream.jar" overwrite="true"/>
+  </target>
+	
+<!-- create the project's javadoc -->
+<target name="javadoc">
+  	<javadoc packagenames="org.deckfour.xes.*"
+           defaultexcludes="yes"
+           destdir="${doc}"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="OpenXES">
+  		<fileset dir="${src}">
+    		<include name="**"/>
+    		<exclude name="test/**"/>
+    	</fileset>
+  		<classpath refid="project.class.path"/>
+  		<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+  		<link href="http://code.deckfour.org/Spex/doc/"/>
+  		<link href="http://xstream.codehaus.org/javadoc/"/>
+  	</javadoc>
+</target> 
+	
+<!-- export distribution archive -->
+<target name="PackageDistArchive" depends="dist,javadoc">
+	<tar destfile="${dist}/OpenXES-${version}.tar.gz" compression="gzip">
+		<tarfileset dir="${doc}" prefix="OpenXES-${version}/doc" mode="755" username="openxes" group="openxes">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="${lib}" prefix="OpenXES-${version}/lib" mode="755" username="openxes" group="openxes">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="${dist}" prefix="OpenXES-${version}/lib" mode="755" username="openxes" group="openxes">
+			<include name="OpenXES.jar"/>
+			<include name="OpenXES-XStream.jar"/>
+		</tarfileset>
+		<tarfileset dir="${src}" prefix="OpenXES-${version}/src" mode="755" username="openxes" group="openxes">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="${test}" prefix="OpenXES-${version}/test" mode="755" username="openxes" group="openxes">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="." prefix="OpenXES-${version}" mode="755" username="openxes" group="openxes">
+			<include name="LICENSE.txt"/>
+			<include name="build.xml"/>
+		</tarfileset>
+		<tarfileset dir="documentation" prefix="OpenXES-${version}" mode="755" username="openxes" group="openxes">
+			<include name="DeveloperGuide.pdf"/>
+			<include name="xes.xsd"/>
+			<include name="xesext.xsd"/>
+		</tarfileset>
+	</tar>
+</target>
+		
+		
+		
+</project>
