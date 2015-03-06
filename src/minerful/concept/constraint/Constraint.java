@@ -22,17 +22,21 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Constraint implements Comparable<Constraint> {
 	@XmlTransient
+    public static final double MIN_SUPPORT = 0;
+	@XmlTransient
     public static final double MAX_SUPPORT = 1.0;
 	@XmlTransient
 	public static final double DEFAULT_SUPPORT = MAX_SUPPORT;
 	@XmlTransient
-    public static final double MIN_SUPPORT = 0;
+	public static final double MIN_INTEREST_FACTOR = MIN_SUPPORT;
 	@XmlTransient
-	public static final double MIN_INTEREST_FACTOR = 0;
+	public static final double MAX_INTEREST_FACTOR = MAX_SUPPORT;
 	@XmlTransient
 	public static final double DEFAULT_INTEREST_FACTOR = MIN_INTEREST_FACTOR;
 	@XmlTransient
-	public static final double MIN_CONFIDENCE = 0;
+	public static final double MIN_CONFIDENCE = MIN_SUPPORT;
+	@XmlTransient
+	public static final double MAX_CONFIDENCE = MAX_SUPPORT;
 	@XmlTransient
 	public static final double DEFAULT_CONFIDENCE = MIN_CONFIDENCE;
 	@XmlTransient
