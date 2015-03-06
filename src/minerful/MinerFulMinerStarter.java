@@ -357,18 +357,6 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
             bag = bag.createCopyPrunedByThresholdConfidenceAndInterest(viewParams.supportThreshold, viewParams.confidenceThreshold, viewParams.interestThreshold);
         	printComputationStats(confliReso, beforeConflictResolution, afterConflictResolution);
         }
-        
-        // Attività "Foo" e "Goo"
-        TaskCharEncoderDecoder encdec = new TaskCharEncoderDecoder();
-        encdec.encode("Foo");
-        encdec.encode("Goo");
-        // ... e tutti gli altri encoding
-        
-        TaskCharArchive taskChArch = new TaskCharArchive(encdec.getTranslationMap());
-        Precedence precCon = new Precedence(taskChArch.getTaskChar("Foo"),taskChArch.getTaskChar("Goo"), 1.0);
-        precCon.confidence = 10;
-        precCon.interestFactor = 11;
-        
 
         System.gc();
 
