@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class Succession extends CoExistence {
 	@Override
@@ -47,4 +48,19 @@ public class Succession extends CoExistence {
                 &&  this.getHierarchyLevel() == forwardConstraint.getHierarchyLevel()
                 &&  this.getHierarchyLevel() == backwardConstraint.getHierarchyLevel();
     }
+	
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return new CoExistence(base, implied);
+	}
+
+	@Override
+	public Constraint getSupposedForwardConstraint() {
+		return new Response(base, implied);
+	}
+
+	@Override
+	public Constraint getSupposedBackwardConstraint() {
+		return new Precedence(base, implied);
+	}
 }

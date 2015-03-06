@@ -2,12 +2,13 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 
 public abstract class CouplingRelationConstraint extends RelationConstraint {
 
-	protected RespondedExistence forwardConstraint;
-	protected RespondedExistence backwardConstraint;
+	protected RelationConstraint forwardConstraint;
+	protected RelationConstraint backwardConstraint;
 
 	public CouplingRelationConstraint() {
 		super();
@@ -46,13 +47,24 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 	    return super.getHierarchyLevel() + 1;
 	}
 
-	public RespondedExistence getForwardConstraint() {
+	public RelationConstraint getForwardConstraint() {
 	    return forwardConstraint;
 	}
 
-	public RespondedExistence getBackwardConstraint() {
+	public RelationConstraint getBackwardConstraint() {
 	    return backwardConstraint;
 	}
+	
+	public boolean hasForwardConstraint() {
+	    return forwardConstraint != null;
+	}
+	
+	public boolean hasBackwardConstraint() {
+	    return backwardConstraint != null;
+	}
+
+	public abstract Constraint getSupposedForwardConstraint();
+	public abstract Constraint getSupposedBackwardConstraint();
 
 	public void setImplyingConstraints(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
 		this.forwardConstraint = forwardConstraint;
@@ -60,20 +72,26 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 	}
 
 	public boolean isMoreReliableThanTheImplyingConstraints() {
-	    return  this.support >= forwardConstraint.support &&
+	    return	this.support >= forwardConstraint.support &&
 	            this.support >= backwardConstraint.support;
 	}
 
 	protected boolean ckeckConsistency(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
-	    return      forwardConstraint.base.equals(backwardConstraint.implied)
+	    return     forwardConstraint.base.equals(backwardConstraint.implied)
 	            &&  forwardConstraint.implied.equals(backwardConstraint.base)
 	            &&  this.getHierarchyLevel() == forwardConstraint.getHierarchyLevel()
 	            &&  this.getHierarchyLevel() == backwardConstraint.getHierarchyLevel();
 	}
 
 	public boolean hasImplyingConstraints() {
-	    return  this.forwardConstraint != null &&
-	            this.backwardConstraint != null;
+		return	this.forwardConstraint != null &&
+				this.backwardConstraint != null;
 	}
 
+	public void setForwardConstraint(RelationConstraint forwardConstraint) {
+		this.forwardConstraint = forwardConstraint;
+	}
+	public void setBackwardConstraint(RelationConstraint backwardConstraint) {
+		this.backwardConstraint = backwardConstraint;
+	}
 }

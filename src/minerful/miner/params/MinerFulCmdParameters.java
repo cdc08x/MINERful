@@ -206,7 +206,7 @@ public class MinerFulCmdParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.withLongOpt("show-mem")
-        		.withDescription("show the memory consumption peak (could slower the overall computation)")
+        		.withDescription("show the memory consumption peak (could slow down the overall computation)")
         		.create(SHOW_MEMSPACE_USED_PARAM_NAME)
         		);
         return options;

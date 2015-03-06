@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class ChainResponse extends AlternateResponse {
 	@Override
@@ -30,4 +31,9 @@ public class ChainResponse extends AlternateResponse {
     public int getHierarchyLevel() {
         return super.getHierarchyLevel()+1;
     }
+	
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return new AlternateResponse(base, implied);
+	}
 }

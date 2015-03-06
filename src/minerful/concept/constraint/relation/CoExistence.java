@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class CoExistence extends CouplingRelationConstraint {
     @Override
@@ -40,5 +41,20 @@ public class CoExistence extends CouplingRelationConstraint {
 	}
 	public CoExistence(TaskChar base, TaskChar implied) {
 		super(base, implied);
+	}
+
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return null;
+	}
+
+	@Override
+	public Constraint getSupposedForwardConstraint() {
+		return new RespondedExistence(base, implied);
+	}
+
+	@Override
+	public Constraint getSupposedBackwardConstraint() {
+		return new RespondedExistence(implied, base);
 	}
 }

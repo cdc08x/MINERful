@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 
 public class RespondedExistence extends RelationConstraint {
@@ -77,4 +78,9 @@ public class RespondedExistence extends RelationConstraint {
     		return (int)StrictMath.round(expectedDistance + confidenceIntervalMargin);
     	return null;
     }
+
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return null;
+	}
 }

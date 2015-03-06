@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class ChainPrecedence extends AlternatePrecedence {
     
@@ -31,4 +32,9 @@ public class ChainPrecedence extends AlternatePrecedence {
     public int getHierarchyLevel() {
         return super.getHierarchyLevel() + 1;
     }
+	
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return new AlternatePrecedence(base, implied);
+	}
 }

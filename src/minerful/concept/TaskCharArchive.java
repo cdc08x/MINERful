@@ -23,7 +23,6 @@ public class TaskCharArchive {
 	public TaskCharArchive(Character[] alphabet) {
 		Collection<TaskChar> taskCharsCollection = toTaskChars(Arrays.asList(alphabet));
 		this.taskChars = new HashSet<TaskChar>(taskCharsCollection);
-		this.taskCharsMapById = new HashMap<Character, TaskChar>(this.taskChars.size());
 		TreeMap<Character, TaskChar>
 			fastTmpMapById = new TreeMap<Character, TaskChar>();
 		TreeMap<String, TaskChar>
@@ -33,17 +32,21 @@ public class TaskCharArchive {
 			fastTmpMapByName.put(tChr.name, tChr);
 		}
 		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMapById);
+		this.taskCharsMapByName = new HashMap<String, TaskChar>(fastTmpMapByName);
 	}
 
 	public TaskCharArchive(Map<Character, String> roughTaskChars) {
 		this.taskChars = new HashSet<TaskChar>();
-		TreeMap<Character, TaskChar> fastTmpMap = new TreeMap<Character, TaskChar>();
+		TreeMap<Character, TaskChar> fastTmpMapById = new TreeMap<Character, TaskChar>();
+		TreeMap<String, TaskChar> fastTmpMapByName = new TreeMap<String, TaskChar>();
 		for (Character chr : roughTaskChars.keySet()) {
 			TaskChar nuTaskChar = new TaskChar(chr, roughTaskChars.get(chr));
 			this.taskChars.add(nuTaskChar);
-			fastTmpMap.put(chr, nuTaskChar);
+			fastTmpMapById.put(chr, nuTaskChar);
+			fastTmpMapByName.put(roughTaskChars.get(chr), nuTaskChar);
 		}
-		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMap);
+		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMapById);
+		this.taskCharsMapByName = new HashMap<String, TaskChar>(fastTmpMapByName);
 	}
 	
 	public boolean isTranslationMapDefined() {

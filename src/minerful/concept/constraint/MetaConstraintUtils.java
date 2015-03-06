@@ -5,13 +5,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 import minerful.concept.TaskChar;
+import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.ExistenceConstraint;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
-import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -19,6 +20,8 @@ import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
 import minerful.concept.constraint.relation.CoExistence;
+import minerful.concept.constraint.relation.CouplingRelationConstraint;
+import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.concept.constraint.relation.NotCoExistence;
 import minerful.concept.constraint.relation.NotSuccession;
@@ -37,7 +40,37 @@ public class MetaConstraintUtils {
 	public static int NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES = ALL_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES.size();
 	public static int NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES = ALL_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES.size();
 
-	/* The coolest method I ever coded! */
+	public static Set<Constraint> createHierarchicalLinks(Set<Constraint> constraints) {
+		TreeSet<Constraint> treeConSet = new TreeSet<Constraint>(constraints);
+		for (Constraint con : constraints) {
+			Constraint constraintWhichThisShouldBeBasedUpon = con.getConstraintWhichThisShouldBeBasedUpon();
+			if (		constraintWhichThisShouldBeBasedUpon != null
+					&&	treeConSet.contains(constraintWhichThisShouldBeBasedUpon)
+				) {
+				con.setConstraintWhichThisIsBasedUpon(constraintWhichThisShouldBeBasedUpon);
+			}
+			if (con.getFamily().equals(ConstraintFamily.CO_FAMILY_ID)) {
+				CouplingRelationConstraint coReCon = (CouplingRelationConstraint) con;
+				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getSupposedForwardConstraint())) {
+					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getSupposedForwardConstraint()).first());
+				}
+				if (!coReCon.hasBackwardConstraint() && constraints.contains(coReCon.getSupposedBackwardConstraint())) {
+					coReCon.setBackwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getSupposedBackwardConstraint()).first());
+				}
+			}
+			if (con.getFamily().equals(ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID)) {
+				NegativeRelationConstraint negaCon = (NegativeRelationConstraint) con;
+				if (!negaCon.hasOpponent() && treeConSet.contains(negaCon.getSupposedOpponentConstraint())) {
+					negaCon.setOpponent((RelationConstraint) treeConSet.tailSet(negaCon.getSupposedOpponentConstraint()).first());
+				}
+			}
+		}
+		return constraints;
+	}
+	
+	/**
+	 *  The coolest method I have probably coded, ever!
+	 */
 	public Collection<Class<? extends Constraint>> getAllPossibleConstraintTemplatesStylish() {
 		Reflections reflections = new Reflections(this.getClass().getPackage().getName());
 		

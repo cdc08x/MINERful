@@ -237,8 +237,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 	
 	public void setConstraintWhichThisIsBasedUpon(Constraint constraintWhichThisIsBasedUpon) {
 	    if (this.constraintWhichThisIsBasedUpon == null) {
-	        if (constraintWhichThisIsBasedUpon.getHierarchyLevel() >= this.getHierarchyLevel())
-	        {
+	        if (constraintWhichThisIsBasedUpon.getHierarchyLevel() >= this.getHierarchyLevel()) {
 	            throw new IllegalArgumentException("Wrong hierarchy provided");
 	        }
 	        this.constraintWhichThisIsBasedUpon = constraintWhichThisIsBasedUpon;
@@ -256,4 +255,6 @@ public abstract class Constraint implements Comparable<Constraint> {
     public abstract ConstraintFamily getFamily();
     
     public abstract ConstraintSubFamily getSubFamily();
+    
+    public abstract Constraint getConstraintWhichThisShouldBeBasedUpon();
 }

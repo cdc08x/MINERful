@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class NotSuccession extends NotChainSuccession {
 	@Override
@@ -36,5 +37,14 @@ public class NotSuccession extends NotChainSuccession {
         super.setOpponent(opposedTo, Succession.class);
     }
     
-    
+
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return new NotChainSuccession(base, implied);
+	}
+
+	@Override
+	public Constraint getSupposedOpponentConstraint() {
+		return new Succession(base, implied);
+	}
 }

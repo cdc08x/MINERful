@@ -6,6 +6,7 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class AlternateSuccession extends Succession {
 	@Override
@@ -38,4 +39,19 @@ public class AlternateSuccession extends Succession {
     public int getHierarchyLevel() {
         return super.getHierarchyLevel() + 1;
     }
+	
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return new Succession(base, implied);
+	}
+
+	@Override
+	public Constraint getSupposedForwardConstraint() {
+		return new AlternateResponse(base, implied);
+	}
+
+	@Override
+	public Constraint getSupposedBackwardConstraint() {
+		return new AlternatePrecedence(base, implied);
+	}
 }

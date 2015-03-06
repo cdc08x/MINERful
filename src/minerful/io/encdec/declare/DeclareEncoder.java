@@ -13,11 +13,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.MetaConstraintUtils;
+import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.Init;
+import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.relation.AlternatePrecedence;
+import minerful.concept.constraint.relation.AlternateResponse;
+import minerful.concept.constraint.relation.AlternateSuccession;
+import minerful.concept.constraint.relation.ChainPrecedence;
+import minerful.concept.constraint.relation.ChainResponse;
+import minerful.concept.constraint.relation.ChainSuccession;
+import minerful.concept.constraint.relation.CoExistence;
+import minerful.concept.constraint.relation.NotChainSuccession;
+import minerful.concept.constraint.relation.NotCoExistence;
+import minerful.concept.constraint.relation.NotSuccession;
+import minerful.concept.constraint.relation.Precedence;
+import minerful.concept.constraint.relation.RespondedExistence;
+import minerful.concept.constraint.relation.Response;
+import minerful.concept.constraint.relation.Succession;
+import minerful.io.encdec.TaskCharEncoderDecoder;
 
 import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
@@ -59,12 +82,239 @@ public class DeclareEncoder {
 		}
 		createModel();
 	}
+	
+	public static ArrayList<Constraint> fromDeclareMinerOutputToMinerfulConstraints(String declareMinerOutputPath) {
+		ArrayList<Constraint> output = new ArrayList<Constraint>();
+		
+		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(declareMinerOutputPath);
+		AssignmentModel model = broker.readAssignment();
+		AssignmentModelView view = new AssignmentModelView(model);
+		broker.readAssignmentGraphical(model, view);
+
+		TaskCharEncoderDecoder encdec = new TaskCharEncoderDecoder();
+		ArrayList<String> params = new ArrayList<String>();
+		
+		for(ConstraintDefinition cd : model.getConstraintDefinitions()){
+			for(Parameter p : cd.getParameters()){
+				for(ActivityDefinition ad : cd.getBranches(p)){
+					encdec.encode(ad.getName());
+				}
+			}
+		}
+		TaskCharArchive taskChArch = new TaskCharArchive(encdec.getTranslationMap());
+		
+		for(ConstraintDefinition cd : model.getConstraintDefinitions()){
+			String template = cd.getName().replace("-", "").replace(" ", "").toLowerCase();
+			params = new ArrayList<String>();
+			
+			Pattern
+				supPattern = Pattern.compile(".*support;([0-9\\.]+).*"),
+				confiPattern = Pattern.compile(".*confidence;([0-9\\.]+).*"),
+				inteFaPattern = Pattern.compile(".*IF;([0-9\\.]+).*");
+			Matcher
+				supMatcher = supPattern.matcher(cd.getText().trim()),
+				confiMatcher = confiPattern.matcher(cd.getText().trim()),
+				inteFaMatcher = inteFaPattern.matcher(cd.getText().trim());
+
+			Double
+				support = (supMatcher.matches() && supMatcher.groupCount() > 0 ? Double.valueOf(supMatcher.group(1)) : Constraint.DEFAULT_SUPPORT),
+				confidence = (confiMatcher.matches() && confiMatcher.groupCount() > 0 ? Double.valueOf(confiMatcher.group(1)) : Constraint.DEFAULT_CONFIDENCE),
+				interestFact = (inteFaMatcher.matches() && inteFaMatcher.groupCount() > 0 ? Double.valueOf(inteFaMatcher.group(1)): Constraint.DEFAULT_INTEREST_FACTOR);
+			
+			
+
+//			Double support = new Double (cd.getText().split("|")[0].split(";")[1]);
+//			Double confidence = new Double (cd.getText().split("|")[1].split(";")[1]);
+//			Double interestFact = new Double (cd.getText().split("|")[2].split(";")[1]);
+			if(template.equals("alternateprecedence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				AlternatePrecedence minerConstr = new AlternatePrecedence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("alternateresponse")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				AlternateResponse minerConstr = new AlternateResponse(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("alternatesuccession")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				AlternateSuccession minerConstr = new AlternateSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("chainprecedence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				ChainPrecedence minerConstr = new ChainPrecedence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("chainresponse")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				ChainResponse minerConstr = new ChainResponse(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("chainsuccession")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				ChainSuccession minerConstr = new ChainSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("coexistence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				CoExistence minerConstr = new CoExistence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("notchainsuccession")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				NotChainSuccession minerConstr = new NotChainSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("notcoexistence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				NotCoExistence minerConstr = new NotCoExistence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("notsuccession")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				NotSuccession minerConstr = new NotSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("precedence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				Precedence minerConstr = new Precedence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("response")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				Response minerConstr = new Response(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("succession")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				Succession minerConstr = new Succession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("respondedexistence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				RespondedExistence minerConstr = new RespondedExistence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("init")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				Init minerConstr = new Init(taskChArch.getTaskChar(params.get(0)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("init")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				Init minerConstr = new Init(taskChArch.getTaskChar(params.get(0)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("existence")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				Participation minerConstr = new Participation(taskChArch.getTaskChar(params.get(0)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}else if(template.equals("absence2")){
+				for(Parameter p : cd.getParameters()){
+					for(ActivityDefinition ad : cd.getBranches(p)){
+						params.add(ad.getName());
+					}
+				}
+				AtMostOne minerConstr = new AtMostOne(taskChArch.getTaskChar(params.get(0)),support);
+				minerConstr.confidence = confidence;
+				minerConstr.interestFactor = interestFact;
+				output.add(minerConstr);
+			}
+		}
+		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(output));
+		return output;
+	}
 
 	public List<DeclareConstraintTransferObject> getConstraintTOs() {
 		return constraintTOs;
 	}
-
-
 
 	public void createModel(){
 		Vector<String> activityDefinitions = new Vector<String>();

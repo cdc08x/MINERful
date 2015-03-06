@@ -40,7 +40,7 @@ public class DeclareTemplateTranslator {
 		NAME_CONVERTER.put(RespondedExistence.class, DeclareTemplate.Responded_Existence);
 		NAME_CONVERTER.put(Response.class, DeclareTemplate.Response);
 		NAME_CONVERTER.put(Precedence.class, DeclareTemplate.Precedence);
-		NAME_CONVERTER.put(AlternateResponse.class, DeclareTemplate.Alternate_Precedence);
+		NAME_CONVERTER.put(AlternateResponse.class, DeclareTemplate.Alternate_Response);
 		NAME_CONVERTER.put(AlternatePrecedence.class, DeclareTemplate.Alternate_Precedence);
 		NAME_CONVERTER.put(ChainResponse.class, DeclareTemplate.Chain_Response);
 		NAME_CONVERTER.put(ChainPrecedence.class, DeclareTemplate.Chain_Precedence);

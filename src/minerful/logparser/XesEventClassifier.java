@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.classification.XEventNameClassifier;
 import org.deckfour.xes.extension.std.XConceptExtension;
@@ -22,7 +21,7 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 		super(eventClassificationType);
 		this.xesNativeEventClassifier = (eventClassificationType.equals(ClassificationType.LOG_SPECIFIED) ? null : DEFAULT_XES_EVENT_CLASSIFIER);
 	}
-	
+
 	public String classify(XEvent xesNativeEvent) {
 		String classString = null;
 		if (this.eventClassificationType.equals(ClassificationType.NAME)) {
@@ -46,7 +45,9 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 	public boolean addXesClassifiers(List<XEventClassifier> logSpecifiedEventClassifiers, XLog xLog) {
 		boolean newClassifierConsidered = false;
 		if (this.xesNativeEventClassifier == null) {
-			this.xesNativeEventClassifier = logSpecifiedEventClassifiers.get(0);
+			for(int i = 0; i < logSpecifiedEventClassifiers.size() && this.xesNativeEventClassifier == null; i++) {
+				this.xesNativeEventClassifier = logSpecifiedEventClassifiers.get(i);
+			}
 			newClassifierConsidered = true;
 		}
 		return newClassifierConsidered;
@@ -54,9 +55,16 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 	
 	public Collection<String> getClasses(XLog xLog) {
 		Collection<String> classes = new TreeSet<String>();
-		if (xLog.getInfo(this.xesNativeEventClassifier) != null && xLog.getInfo(this.xesNativeEventClassifier).getEventClasses() != null) {
-			for (XEventClass xEvClass : xLog.getInfo(this.xesNativeEventClassifier).getEventClasses().getClasses()) {
-				classes.add(xEvClass.getId());
+		if (this.xesNativeEventClassifier != null) {
+			for (XTrace xTrace : xLog) {
+/*
+				for (XEventClass xEvClass : xLog.getInfo(this.xesNativeEventClassifier).getEventClasses().getClasses()) {
+					classes.add(xEvClass.getId());
+				}
+*/
+				for (XEvent xEvent : xTrace) {
+					classes.add(this.xesNativeEventClassifier.getClassIdentity(xEvent));
+				}
 			}
 		} else {
 			if (this.xesNativeEventClassifier.equals(DEFAULT_XES_EVENT_CLASSIFIER)) {

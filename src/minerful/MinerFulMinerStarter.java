@@ -19,11 +19,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
 import minerful.concept.ProcessModel;
-import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
-import minerful.concept.constraint.relation.Precedence;
-import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
@@ -151,7 +148,17 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		switch (inputParams.inputLanguage) {
 		case xes:
 			try {
-				logParser = new XesLogParser(inputParams.inputFile, ClassificationType.NAME);
+				switch (inputParams.eventClassification) {
+				case name:
+					logParser = new XesLogParser(inputParams.inputFile, ClassificationType.NAME);
+					break;
+				case logspec:
+					logParser = new XesLogParser(inputParams.inputFile, ClassificationType.LOG_SPECIFIED);
+					break;
+				default:
+					throw new UnsupportedOperationException("Classification strategy " + inputParams.eventClassification + " not yet implemented");
+				}
+				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -323,10 +330,6 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         // If it is not soup, it is wet bread
         numOfRelationConstraintsBeforeHierarchyBasedPruning = numOfConstraintsBeforeHierarchyBasedPruning - numOfExistenceConstraintsBeforeHierarchyBasedPruning;
 
-        TaskCharRelatedConstraintsBag bigBag = null; // This serves only if minerFulParams.avoidConflicts is set to TRUE
-        if (minerFulParams.avoidConflicts) {
-        	bigBag = bag;
-        }
         if (minerFulParams.avoidRedundancy) {
         	bag = bag.createHierarchyUnredundantCopy();
             // Let us try to free memory from the unused clone of bag!
@@ -348,7 +351,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         relaConTime = after - before;
 
         if (minerFulParams.avoidConflicts) {
-        	ProcessModel process = new ProcessModel(bigBag);
+        	ProcessModel process = new ProcessModel(bag);
         	long beforeConflictResolution = System.currentTimeMillis();
         	ConflictResolver confliReso = new ConflictResolver(process);
         	confliReso.resolveConflicts();
@@ -386,7 +389,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         return bag;
     }
 
-	private void printComputationStats(ConflictResolver confliReso, long timingBeforeConflictResolution, long timingAfterConflictResolution) {
+	public void printComputationStats(ConflictResolver confliReso, long timingBeforeConflictResolution, long timingAfterConflictResolution) {
         StringBuffer
     	csvSummaryBuffer = new StringBuffer(),
     	csvSummaryLegendBuffer = new StringBuffer(),

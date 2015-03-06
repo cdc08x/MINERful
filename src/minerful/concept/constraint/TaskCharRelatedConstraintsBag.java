@@ -132,6 +132,7 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
         for (TaskChar key : this.taskChars) {
             for (Constraint currCon : this.bag.get(key)) {
                 if (currCon.hasConstraintToBaseUpon()) {
+
                     if (currCon.isMoreReliableThanGeneric()) {
                     	logger.trace("Removing the genealogy of " +
                     			currCon.getConstraintWhichThisIsBasedUpon() +

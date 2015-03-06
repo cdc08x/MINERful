@@ -6,8 +6,6 @@ package minerful.params;
 
 import java.io.File;
 
-import minerful.params.ParamsManager;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
@@ -16,12 +14,18 @@ import org.apache.commons.cli.Options;
 public class InputCmdParameters extends ParamsManager {
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
     public static final String INPUT_ENC_PARAM_NAME = "iE";
+	public static final String EVENT_CLASSIFICATION_PARAM_NAME = "eC";
 
 	public enum InputEncoding {
 		xes, strings;
 	}
+	
+	public enum EventClassification {
+		name, logspec
+	}
 
 	public InputEncoding inputLanguage = InputEncoding.xes;
+	public EventClassification eventClassification = EventClassification.name;
             
     public File inputFile = null;
 
@@ -52,6 +56,12 @@ public class InputCmdParameters extends ParamsManager {
                     this.inputLanguage.toString()
                 )
             );
+        this.eventClassification = EventClassification.valueOf(
+                line.getOptionValue(
+                	EVENT_CLASSIFICATION_PARAM_NAME,
+                    this.eventClassification.toString()
+                )
+            );
     }
     
 	@Override
@@ -76,6 +86,14 @@ public class InputCmdParameters extends ParamsManager {
                 .withDescription("input encoding language " + printValues(InputEncoding.values()))
                 .withType(new String())
                 .create(INPUT_ENC_PARAM_NAME)
+        );
+        options.addOption(
+                OptionBuilder
+                .hasArg().withArgName("class")
+                .withLongOpt("evt-class")
+                .withDescription("event classification (resp., by activity name, or according to the log-specified pattern) " + printValues(EventClassification.values()))
+                .withType(new String())
+                .create(EVENT_CLASSIFICATION_PARAM_NAME)
         );
         options.addOption(
                 OptionBuilder

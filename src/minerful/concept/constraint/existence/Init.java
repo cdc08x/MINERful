@@ -6,6 +6,7 @@ package minerful.concept.constraint.existence;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class Init extends Participation {
 	@Override
@@ -30,4 +31,9 @@ public class Init extends Participation {
     public int getHierarchyLevel() {
         return super.getHierarchyLevel() + 1;
     }
+
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return new Participation(this.base);
+	}
 }

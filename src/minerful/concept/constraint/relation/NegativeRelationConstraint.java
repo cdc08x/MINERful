@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 
 public abstract class NegativeRelationConstraint extends RelationConstraint {
@@ -66,4 +67,10 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
     public RelationConstraint getOpponent() {
         return opponent;
     }
+
+    public void setOpponent(RelationConstraint opponent) {
+		this.opponent = opponent;
+	}
+
+	public abstract Constraint getSupposedOpponentConstraint();
 }

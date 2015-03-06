@@ -2,6 +2,7 @@ package minerful.concept.constraint.existence;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 
 public class AtMostOne extends ExistenceConstraint {
 	@Override
@@ -20,5 +21,10 @@ public class AtMostOne extends ExistenceConstraint {
 	}
 	public AtMostOne(TaskCharSet base) {
 		super(base);
+	}
+
+	@Override
+	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+		return null;
 	}
 }
