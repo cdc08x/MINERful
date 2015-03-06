@@ -14,6 +14,7 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 
+@Deprecated
 public class XesDecoder {
 	// TODO It must become a user-specified parameter, not a constant
     public static final boolean CONSIDER_EVENT_LIFECYCLE = false;

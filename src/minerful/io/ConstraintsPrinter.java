@@ -26,8 +26,10 @@ import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
-import minerful.io.encdec.ConDecEncoder;
 import minerful.io.encdec.TaskCharEncoderDecoder;
+import minerful.io.encdec.declare.DeclareEncoder;
+import minerful.io.encdec.declare.OldConDecEncoder;
+import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
 public class ConstraintsPrinter {
@@ -41,7 +43,7 @@ public class ConstraintsPrinter {
 	private Automaton processAutomaton;
 
 	public ConstraintsPrinter(TaskCharRelatedConstraintsBag bag) {
-		this(bag, Constraint.MIN_SUPPORT, Constraint.MIN_INTEREST);
+		this(bag, Constraint.MIN_SUPPORT, Constraint.MIN_INTEREST_FACTOR);
 	}
 
 	public ConstraintsPrinter(TaskCharRelatedConstraintsBag bag,
@@ -225,16 +227,16 @@ public class ConstraintsPrinter {
         return sBld.toString();
     }
     
-    public String printConDecModel() {
-    	return new ConDecEncoder(process).encode();
+    public void printConDecModel(File outFile) throws IOException {
+		new DeclareEncoder(process).marshal(outFile.getCanonicalPath());
     }
     
-    public String printWeightedXmlAutomaton(String[] testBedArray) throws JAXBException {
+    public String printWeightedXmlAutomaton(LogParser logParser) throws JAXBException {
 		if (this.processAutomaton == null)
 			processAutomaton = this.process.buildAutomaton();
 		
 		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(bag));
-		WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, testBedArray);
+		WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, logParser);
 
 		if (wAut == null)
 			return null;
@@ -254,7 +256,7 @@ public class ConstraintsPrinter {
 		return strixWriter.toString();
     }
     
-    public NavigableMap<String, String> printWeightedXmlSubAutomata(String[] testBedArray) throws JAXBException {
+    public NavigableMap<String, String> printWeightedXmlSubAutomata(LogParser logParser) throws JAXBException {
 		Collection<SubAutomaton> partialAutomata =
 //				this.process.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
 				this.process.buildSubAutomata();
@@ -272,7 +274,7 @@ public class ConstraintsPrinter {
 		marsh.setProperty("jaxb.formatted.output", true);
 
 		for (SubAutomaton partialAuto : partialAutomata) {
-			wAut = wAF.augmentByReplay(partialAuto.automaton, testBedArray, true);
+			wAut = wAF.augmentByReplay(partialAuto.automaton, logParser, true);
 			if (wAut != null) {
 				strixWriter = new StringWriter();
 				marsh.marshal(wAut, strixWriter);

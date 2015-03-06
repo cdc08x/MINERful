@@ -23,7 +23,7 @@ MEMORY_MAX="2048m"
 ## Global variables
 constraints=(
  `Participation a`
- `Uniqueness a`
+ `AtMostOne a`
  `Init a`
  `End a`
  `RespondedExistence a b`

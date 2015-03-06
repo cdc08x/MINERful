@@ -18,16 +18,16 @@ clear
 ## Runtime environment constants
 MAINCLASS="minerful.MinerFulSimuStarter"
 
-THRESHOLD=0.0
+THRESHOLD=1.0
 MIN_STRLEN=2
-MAX_STRLEN=10
-TESTBED_SIZE=1000
+MAX_STRLEN=15
+TESTBED_SIZE=10000
 MEMORY_MAX="16G"
 
 ## Global variables
 constraints=(
  `Participation a`              #00
- `Uniqueness a`                 #01
+ `AtMostOne a`                  #01
  `Init a`                       #02
  `End a`                        #03
  `RespondedExistence a b`       #04
@@ -48,10 +48,10 @@ constraints=(
 
 # alphabetCharacters=("a" "b" "c" "d") #"e" "f" "g" "h" "i" "j" "k" "l")
 # alphabetCharacters=("A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L")
-alphabetCharacters=("a" "b" "c" "d" "e" "f")
+alphabetCharacters=("n" "p" "r" "c")
 
 ## Auxiliary variable
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-java -Xmx$MEMORY_MAX -cp $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE $* -r `Response a b` `AlternatePrecedence d e` # '[db]c?ec?[db]a?c?e' # -r ${constraints[15]} ${constraints[5]} # -r "[^bc]*(a.*[bc])*[^bc]*" $* # ${constraints[7]} $* #'[^abc]*(a(b|c)[^abc]*)*[^abc]*' $*
+java -Xmx$MEMORY_MAX -cp $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -t $THRESHOLD -s $TESTBED_SIZE $* -r `End n` `Response r p` `AlternatePrecedence r c` `Participation n` `AtMostOne n` `Succession p n` `RespondedExistence c p` # '[db]c?ec?[db]a?c?e' # -r ${constraints[15]} ${constraints[5]} # -r "[^bc]*(a.*[bc])*[^bc]*" $* # ${constraints[7]} $* #'[^abc]*(a(b|c)[^abc]*)*[^abc]*' $*

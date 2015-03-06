@@ -26,7 +26,7 @@ OUTPUT_FILE="/home/claudio/Dropbox/Research-and-programming-stuff/MailOfMine-SW/
 
 ## Global variables
 alphabetCharacters=("n" "p" "r" "c" "e" "f" "g" "h")
-uniquen=`Uniqueness n`
+uniquen=`AtMostOne n`
 participationn=`Participation n`
 endn=`End n`
 successionpn=`Succession p n`

@@ -16,6 +16,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.relation.Precedence;
+import minerful.concept.constraint.relation.RespondedExistence;
+import minerful.concept.constraint.relation.Response;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,7 +31,13 @@ public abstract class Constraint implements Comparable<Constraint> {
 	@XmlTransient
     public static final double MIN_SUPPORT = 0;
 	@XmlTransient
-	public static final double MIN_INTEREST = 0;
+	public static final double MIN_INTEREST_FACTOR = 0;
+	@XmlTransient
+	public static final double DEFAULT_INTEREST_FACTOR = MIN_INTEREST_FACTOR;
+	@XmlTransient
+	public static final double MIN_CONFIDENCE = 0;
+	@XmlTransient
+	public static final double DEFAULT_CONFIDENCE = MIN_CONFIDENCE;
 	@XmlTransient
     public static final double RANGE_FOR_SUPPORT = (MAX_SUPPORT - MIN_SUPPORT);
 	@XmlTransient
@@ -42,6 +52,8 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public final String type = this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') +1);
 	@XmlAttribute
 	public boolean redundant = false;
+	@XmlTransient
+    private Constraint constraintWhichThisIsBasedUpon;
 	
 	protected Constraint() {
 		this.base = null;
@@ -209,5 +221,38 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return this.base.size() > 1;
 	}
 
+    
+    public boolean isMoreReliableThanGeneric() {
+        if (!this.hasConstraintToBaseUpon())
+            return true;
+        Integer moreReliableThanGeneric = new Double(this.support).compareTo(constraintWhichThisIsBasedUpon.support);
+        if (moreReliableThanGeneric == 0)
+        	return constraintWhichThisIsBasedUpon.isMoreReliableThanGeneric();
+        return (moreReliableThanGeneric > 0);
+    }
+
 	public abstract Collection<TaskChar> getInvolvedTaskChars();
+
+	
+	public void setConstraintWhichThisIsBasedUpon(Constraint constraintWhichThisIsBasedUpon) {
+	    if (this.constraintWhichThisIsBasedUpon == null) {
+	        if (constraintWhichThisIsBasedUpon.getHierarchyLevel() >= this.getHierarchyLevel())
+	        {
+	            throw new IllegalArgumentException("Wrong hierarchy provided");
+	        }
+	        this.constraintWhichThisIsBasedUpon = constraintWhichThisIsBasedUpon;
+	    }
+	}
+	
+	public boolean hasConstraintToBaseUpon() {
+	    return this.constraintWhichThisIsBasedUpon != null;
+	}
+
+	public Constraint getConstraintWhichThisIsBasedUpon() {
+	    return constraintWhichThisIsBasedUpon;
+	}
+    
+    public abstract ConstraintFamily getFamily();
+    
+    public abstract ConstraintSubFamily getSubFamily();
 }

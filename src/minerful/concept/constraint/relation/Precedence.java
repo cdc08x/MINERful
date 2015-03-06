@@ -6,11 +6,9 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 
 public class Precedence extends RespondedExistence {  
-    
-    public static final int PRECEDENCE_SUB_FAMILY_ID = 12;
-    
     @Override
 	public String getRegularExpressionTemplate() {
 		return "[^%2$s]*(%1$s.*%2$s)*[^%2$s]*";
@@ -35,8 +33,8 @@ public class Precedence extends RespondedExistence {
     }
 
 	@Override
-    public int getSubFamily() {
-        return PRECEDENCE_SUB_FAMILY_ID;
+    public ConstraintSubFamily getSubFamily() {
+        return ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID;
     }
     
     @Override

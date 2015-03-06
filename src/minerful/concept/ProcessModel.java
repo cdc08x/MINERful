@@ -92,6 +92,10 @@ public class ProcessModel {
 			return AutomatonFactory.subAutomataFromRegularExpressionsInMultiThreading(regExpsMap, basicAlphabet);
 	}
 	
+	
+	/*
+	 * This turned out to be the best heuristic for computing the automaton!
+	 */
 	public Automaton buildAutomatonByBoundHeuristicInMultiThreading() {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);

@@ -8,11 +8,12 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 
 public abstract class RelationConstraint extends Constraint {
 	public static enum ImplicationVerse {
@@ -20,13 +21,6 @@ public abstract class RelationConstraint extends Constraint {
 		BACKWARD,
 		BOTH
 	}
-	@XmlTransient
-    public static final int RELATION_CONSTRAINT_FAMILY_ID = 0;
-	@XmlTransient
-    public static final int NO_SUB_FAMILY_ID = 0;
-	@XmlTransient
-    private RelationConstraint constraintWhichThisIsBasedUpon;
-
 	@XmlElement
     public final TaskCharSet implied;
 	
@@ -84,44 +78,39 @@ public abstract class RelationConstraint extends Constraint {
             if (t instanceof RelationConstraint) {
                 RelationConstraint other = (RelationConstraint) t;
                 if (this.implied.equals(other.implied)) {
-                    if (this.getFamily() > other.getFamily()) {
-                        return 1;
-                    } else if (this.getFamily() < other.getFamily()) {
-                        return -1;
-                    } else {
-                        if (this.getSubFamily() > other.getSubFamily()) {
-                            return 1;
-                        } else if (this.getSubFamily() < other.getSubFamily()) {
-                            return -1;
-                        } else {
-                            if (this.getName().compareTo(other.getName()) != 0) {
+                	result = this.getFamily().compareTo(other.getFamily());
+                	if (result == 0) {
+                		result = this.getSubFamily().compareTo(other.getSubFamily());
+                		if (result == 0) {
+                			result = this.getName().compareTo(other.getName());
+                			if (result != 0) {
                                 if (this.getClass().isInstance(t)) {
-                                    return -1;
+                                	result = -1;
                                 } else if (t.getClass().isInstance(this)) {
-                                    return +1;
+                                	result = +1;
                                 } else {
-                                    return 0;
+                                	result = 0;
                                 }
-                            } else {
-                                return this.getName().compareTo(other.getName());
-                            }
-                        }
-                    }
+                			}
+                		}
+                	}
                 } else {
-                    return this.implied.compareTo(other.implied);
+                	result = this.implied.compareTo(other.implied);
                 }
+            } else {
+                result = 1;
             }
-            return 1;
         }
         return result;
     }
     
-    public int getFamily() {
-        return RELATION_CONSTRAINT_FAMILY_ID;
+    @Override
+    public ConstraintFamily getFamily() {
+        return ConstraintFamily.RELATION_CONSTRAINT_FAMILY_ID;
     }
-    
-    public int getSubFamily() {
-        return NO_SUB_FAMILY_ID;
+    @Override
+    public ConstraintSubFamily getSubFamily() {
+        return ConstraintSubFamily.NO_SUB_FAMILY_ID;
     }
     
     @Override
@@ -133,33 +122,6 @@ public abstract class RelationConstraint extends Constraint {
         return
                     this.base.equals(relCon.base)
                 &&  this.implied.equals(relCon.implied);
-    }
-
-    public RelationConstraint getConstraintWhichThisIsBasedUpon() {
-        return constraintWhichThisIsBasedUpon;
-    }
-
-    public void setConstraintWhichThisIsBasedUpon(RelationConstraint constraintWhichThisIsBasedUpon) {
-        if (this.constraintWhichThisIsBasedUpon == null) {
-            if (constraintWhichThisIsBasedUpon.getHierarchyLevel() >= this.getHierarchyLevel())
-            {
-                throw new IllegalArgumentException("Wrong hierarchy provided");
-            }
-            this.constraintWhichThisIsBasedUpon = constraintWhichThisIsBasedUpon;
-        }
-    }
-    
-    public boolean isMoreReliableThanGeneric() {
-        if (!this.hasConstraintToBeBasedUpon())
-            return true;
-        Integer moreReliableThanGeneric = new Double(this.support).compareTo(constraintWhichThisIsBasedUpon.support);
-        if (moreReliableThanGeneric == 0)
-        	return constraintWhichThisIsBasedUpon.isMoreReliableThanGeneric();
-        return (moreReliableThanGeneric > 0);
-    }
-    
-    public boolean hasConstraintToBeBasedUpon() {
-        return this.constraintWhichThisIsBasedUpon != null;
     }
     
     @Override

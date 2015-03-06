@@ -2,12 +2,15 @@ package minerful.concept.constraint.existence;
 
 import java.util.Collection;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 
 public abstract class ExistenceConstraint extends Constraint {
-
     public ExistenceConstraint(TaskChar base, double support) {
         super(base, support);
     }
@@ -21,7 +24,7 @@ public abstract class ExistenceConstraint extends Constraint {
 		super(base);
 	}
 
-	public static String toExistenceQuantifiersString(Participation least, Uniqueness atMost) {
+	public static String toExistenceQuantifiersString(Participation least, AtMostOne atMost) {
         String min = "0",
                 max = "*";
         if (least != null) {
@@ -60,4 +63,13 @@ public abstract class ExistenceConstraint extends Constraint {
 	public Collection<TaskChar> getInvolvedTaskChars() {
 		return this.base.getTaskCharsCollection();
 	}
+    
+    @Override
+    public ConstraintFamily getFamily() {
+        return ConstraintFamily.EXISTENCE_CONSTRAINT_FAMILY_ID;
+    }
+    @Override
+    public ConstraintSubFamily getSubFamily() {
+        return ConstraintSubFamily.NO_SUB_FAMILY_ID;
+    }
 }

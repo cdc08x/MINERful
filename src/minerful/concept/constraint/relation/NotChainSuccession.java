@@ -7,7 +7,7 @@ package minerful.concept.constraint.relation;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 
-public class NotChainSuccession extends NegatedRelationConstraint {
+public class NotChainSuccession extends NegativeRelationConstraint {
     protected RelationConstraint opposedTo;
 
     @Override

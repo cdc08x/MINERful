@@ -6,7 +6,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
-import minerful.concept.constraint.existence.Uniqueness;
+import minerful.concept.constraint.existence.AtMostOne;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
@@ -38,7 +38,7 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	protected Constraint discoverUniquenessConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
 		if (localStats.repetitions.containsKey(0))
 			return null;
-		return new Uniqueness(base);
+		return new AtMostOne(base);
 		// Very very rough: a little statistical analysis on the trend would work better
 	}
 

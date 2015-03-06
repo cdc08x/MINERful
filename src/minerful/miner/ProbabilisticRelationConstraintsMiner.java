@@ -11,6 +11,8 @@ import java.util.Set;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.AlternatePrecedence;
@@ -20,7 +22,8 @@ import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
 import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.NegatedRelationConstraint;
+import minerful.concept.constraint.relation.CouplingRelationConstraint;
+import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.concept.constraint.relation.NotCoExistence;
 import minerful.concept.constraint.relation.NotSuccession;
@@ -106,7 +109,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
         LocalStatsWrapper
                 pivotLocalStats = globalStats.statsTable.get(pivot),
                 searchedLocalStats = null;
-        long    pivotAppearances = pivotLocalStats.getTotalAmountOfAppearances(),
+        long   pivotAppearances = pivotLocalStats.getTotalAmountOfAppearances(),
                 searchedAppearances = 0L;
 
         // For each other character
@@ -122,9 +125,10 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 searchedChr = this.taskCharArchive.getTaskChar(searched);
                 searchedAppearances = searchedLocalStats.getTotalAmountOfAppearances();
                 searchedParticipationFraction = this.computeParticipationFraction(searchedChr, searchedLocalStats, globalStats.logSize);
-
                 supportForRespondedExistence =
                         computeSupportForRespondedExistence(interplayStats, pivotAppearances);
+                supportForReversedRespondedExistence =
+                        computeSupportForRespondedExistence(reversedInterplayStats, searchedAppearances);
                 supportForResponse =
                         computeSupportForResponse(interplayStats, pivotAppearances);
                 supportForAlternateResponse =
@@ -175,7 +179,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                         new ChainPrecedence(pivotChr, searchedChr, supportForChainPrecedence);
                 nuRelaCons.add(chainPrecedo);
                 
-                CoExistence coExi = new CoExistence(
+                CouplingRelationConstraint coExi = new CoExistence(
                         responExi,
                         revResponExi,
                         supportForCoExistence);
@@ -231,7 +235,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
             	currentConstraint = (RelationConstraint) constraintsIterator.next();
             	refineByComputingRelevanceMetrics(currentConstraint, pivotParticipationFraction, searchedParticipationFraction);
             	if (this.isForeseeingDistances()) {
-            		if (currentConstraint.getSubFamily() == Precedence.PRECEDENCE_SUB_FAMILY_ID)
+            		if (currentConstraint.getSubFamily() == ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID)
             			refineByComputingDistances(currentConstraint, searchedLocalStats, pivot);
             		else
             			refineByComputingDistances(currentConstraint, pivotLocalStats, searched);
@@ -369,9 +373,9 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     }
     
     public static RelationConstraint refineByComputingConfidenceLevel(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
-    	if (relCon.getFamily() == CoExistence.CO_FAMILY_ID || relCon.getFamily() == NegatedRelationConstraint.NOT_FAMILY_ID) {
+    	if (relCon.getFamily() == ConstraintFamily.CO_FAMILY_ID || relCon.getFamily() == ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID) {
     		relCon.confidence = relCon.support * (pivotParticipationFraction < searchedParticipationFraction ? pivotParticipationFraction : searchedParticipationFraction);
-    	} else if (relCon.getFamily() == Precedence.PRECEDENCE_SUB_FAMILY_ID) {
+    	} else if (relCon.getSubFamily() == ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID) {
     		relCon.confidence = relCon.support * searchedParticipationFraction;
     	} else {
     		relCon.confidence = relCon.support * pivotParticipationFraction;
@@ -381,7 +385,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     
     public static RelationConstraint refineByComputingRelevanceMetrics(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
     	relCon = refineByComputingConfidenceLevel(relCon, pivotParticipationFraction, searchedParticipationFraction);
-    	if (relCon.getFamily() != NegatedRelationConstraint.NOT_FAMILY_ID || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
+    	if (relCon.getFamily() != ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
     		relCon.interestFactor =
     				relCon.support
     				*
@@ -409,7 +413,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 	    	NavigableMap<Integer, Integer> distancesMap = implyingLocalStats.localStatsTable.get(implied).distances;
 	    	
 	    	switch (resEx.getSubFamily()) {
-			case Response.RESPONSE_SUB_FAMILY_ID:
+			case RESPONSE_SUB_FAMILY_ID:
 				distancesMap = distancesMap.tailMap(0, false).headMap(StatsCell.NEVER_ONWARDS, false);
 				for (Integer distance : distancesMap.keySet()) {
 					if (distance != StatsCell.NEVER_EVER) {
@@ -419,7 +423,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 					}
 				}
 				break;
-			case Precedence.PRECEDENCE_SUB_FAMILY_ID:
+			case PRECEDENCE_SUB_FAMILY_ID:
 				distancesMap = distancesMap.tailMap(StatsCell.NEVER_BACKWARDS, false).headMap(0, false);
 				for (Integer distance : distancesMap.keySet()) {
 					if (distance != StatsCell.NEVER_EVER) {
@@ -429,7 +433,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 					}
 				}
 				break;
-			case RelationConstraint.NO_SUB_FAMILY_ID:
+			case NO_SUB_FAMILY_ID:
 				distancesMap = distancesMap.tailMap(StatsCell.NEVER_BACKWARDS, false).headMap(StatsCell.NEVER_ONWARDS, false);
 				for (Integer distance : distancesMap.keySet()) {
 					if (distance != StatsCell.NEVER_EVER) {

@@ -15,10 +15,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
-import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.NegatedRelationConstraint;
-import minerful.concept.constraint.relation.Precedence;
-import minerful.concept.constraint.relation.RelationConstraint;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.relation.CouplingRelationConstraint;
+import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.xmlenc.ConstraintsBagMapAdapter;
 import minerful.io.ConstraintsPrinter;
 
@@ -127,76 +126,71 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
                 (TaskCharRelatedConstraintsBag) this.clone();
 
         // exploit the ordering
-        RelationConstraint currCon = null;
-        CoExistence coExiCon = null;
-        NegatedRelationConstraint noRelCon = null;
+        CouplingRelationConstraint coExiCon = null;
+        NegativeRelationConstraint noRelCon = null;
 
         for (TaskChar key : this.taskChars) {
-            for (Constraint c : this.bag.get(key)) {
-                if (c instanceof RelationConstraint) {
-                    currCon = (RelationConstraint) c;
-
-                    if (currCon.hasConstraintToBeBasedUpon()) {
-                        if (currCon.isMoreReliableThanGeneric()) {
-                        	logger.trace("Removing the genealogy of " +
-                        			currCon.getConstraintWhichThisIsBasedUpon() +
-                        			" because " +
-                        			currCon +
-                        			" is subsuming and more reliable");
-                            nuBag = destroyGenealogy(currCon.getConstraintWhichThisIsBasedUpon(), key, nuBag);
-                        } else {
-                        	logger.trace("Removing " +
-                        			currCon +
-                        			" because " +
-                        			currCon.getConstraintWhichThisIsBasedUpon() +
-                        			" is more reliable and this is based upon it");
-                            nuBag.remove(key, currCon);
-                        }
+            for (Constraint currCon : this.bag.get(key)) {
+                if (currCon.hasConstraintToBaseUpon()) {
+                    if (currCon.isMoreReliableThanGeneric()) {
+                    	logger.trace("Removing the genealogy of " +
+                    			currCon.getConstraintWhichThisIsBasedUpon() +
+                    			" because " +
+                    			currCon +
+                    			" is subsuming and more reliable");
+                        destroyGenealogy(currCon.getConstraintWhichThisIsBasedUpon(), currCon, key, nuBag);
+                    } else {
+                    	logger.trace("Removing " +
+                    			currCon +
+                    			" because " +
+                    			currCon.getConstraintWhichThisIsBasedUpon() +
+                    			" is more reliable and this is based upon it");
+                        nuBag.remove(key, currCon);
                     }
-                    if (currCon.getFamily() == CoExistence.CO_FAMILY_ID) {
-                        coExiCon = (CoExistence) currCon;
-                        if (coExiCon.hasImplyingConstraints()) {
-                            if (coExiCon.isMoreReliableThanTheImplyingConstraints()) {
-                            	logger.trace("Removing the genealogy of " +
-                            			coExiCon.getForwardConstraint() +
-                            			", which is the forward, and the genealogy of " +
-                            			coExiCon.getBackwardConstraint() +
-                            			", which is the backward, because " +
-                            			coExiCon +
-                            			" is the Mutual Relation referring to them and more reliable");
+                }
+                if (currCon.getFamily() == ConstraintFamily.CO_FAMILY_ID) {
+                    coExiCon = (CouplingRelationConstraint) currCon;
+                    if (coExiCon.hasImplyingConstraints()) {
+                        if (coExiCon.isMoreReliableThanTheImplyingConstraints()) {
+                        	logger.trace("Removing " +
+                        			coExiCon.getForwardConstraint() +
+                        			", which is the forward, and " +
+                        			coExiCon.getBackwardConstraint() +
+                        			", which is the backward, because " +
+                        			coExiCon +
+                        			" is the Mutual Relation referring to them and more reliable");
 // BUGFIX: these two lines worked horribly, if, say, you have ChainSuccession(A, B), ChainResponse(A, B) and ChainPrecedence(A, B) sharing the same support, equal to 0.
 //                                nuBag = destroyGenealogy(coExiCon.getForwardConstraint(), key, nuBag);
 //                                nuBag = destroyGenealogy(coExiCon.getBackwardConstraint(), key, nuBag);
-                            	nuBag.remove(key, coExiCon.getForwardConstraint());
-                            	nuBag.remove(key, coExiCon.getBackwardConstraint());
+                        	nuBag.remove(key, coExiCon.getForwardConstraint());
+                        	nuBag.remove(key, coExiCon.getBackwardConstraint());
 //                                nuBag.remove(key, coExiCon.getForwardConstraint());
 //                                nuBag.remove(key, coExiCon.getBackwardConstraint());
-                            } else {
+                        } else {
 //                                nuBag.remove(key, coExiCon);
-                            }
                         }
                     }
-                    if (currCon.getFamily() == NegatedRelationConstraint.NOT_FAMILY_ID) {
-                        noRelCon = (NegatedRelationConstraint) currCon;
-                        if (noRelCon.hasOpponent()) {
-                            if (noRelCon.isMoreReliableThanTheOpponent()) {
-                            	logger.trace("Removing " +
-                            			noRelCon.getOpponent() +
-                            			" because it is the opponent of " +
-                            			noRelCon +
-                            			" but less reliable");
-                                nuBag.remove(key, noRelCon.getOpponent());
-                            } else {
-                            	logger.trace("Removing " +
-                            			noRelCon +
-                            			" because it is the opponent of " +
-                            			noRelCon.getOpponent() +
-                            			" but less reliable");
-                                nuBag.remove(key, noRelCon);
-                            }
+                }
+                if (currCon.getFamily() == ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID) {
+                    noRelCon = (NegativeRelationConstraint) currCon;
+                    if (noRelCon.hasOpponent()) {
+                        if (noRelCon.isMoreReliableThanTheOpponent()) {
+                        	logger.trace("Removing " +
+                        			noRelCon.getOpponent() +
+                        			" because it is the opponent of " +
+                        			noRelCon +
+                        			" but less reliable");
+                            nuBag.remove(key, noRelCon.getOpponent());
+                        } else {
+                        	logger.trace("Removing " +
+                        			noRelCon +
+                        			" because it is the opponent of " +
+                        			noRelCon.getOpponent() +
+                        			" but less reliable");
+                            nuBag.remove(key, noRelCon);
                         }
+                    }
 
-                    }
                 }
             }
         }
@@ -204,15 +198,19 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
     }
 
     private TaskCharRelatedConstraintsBag destroyGenealogy(
-            RelationConstraint lastSon,
+            Constraint lastSon,
+            Constraint lastSurvivor,
             TaskChar key,
             TaskCharRelatedConstraintsBag genealogyTree) {
-        RelationConstraint genealogyDestroyer = lastSon;
-        int destructionGeneratorsFamily = lastSon.getSubFamily();
+        Constraint genealogyDestroyer = lastSon;
+        ConstraintSubFamily destructionGeneratorsFamily = lastSurvivor.getSubFamily();
         while (genealogyDestroyer != null) {
         	// The ancestor of *Precedence(a, b) is RespondedExistence(b, a), thus under a different indexing character!
         	// TODO: solve this issue, because "binary" Precedence and branched Precedences do not work the same in this regard!
-        	if (destructionGeneratorsFamily == Precedence.PRECEDENCE_SUB_FAMILY_ID && !genealogyDestroyer.isBranched() && genealogyDestroyer.getFamily() != Precedence.PRECEDENCE_SUB_FAMILY_ID) {
+        	if (	destructionGeneratorsFamily.equals(ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID)
+        		&&	!genealogyDestroyer.isBranched()
+        		&&	!genealogyDestroyer.getSubFamily().equals(ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID)
+        	) {
         		key = genealogyDestroyer.base.getFirstTaskChar();
         	}
             genealogyTree.remove(key, genealogyDestroyer);
@@ -222,12 +220,12 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
         return genealogyTree;
     }
     
-    public TaskCharRelatedConstraintsBag createCopyPrunedByThresholdConfidenceAndInterest(double threshold, double confidence, double interest) {
+    public TaskCharRelatedConstraintsBag createCopyPrunedByThresholdConfidenceAndInterest(double supportThreshold, double confidence, double interest) {
         TaskCharRelatedConstraintsBag nuBag =
                 (TaskCharRelatedConstraintsBag) this.clone();
         for (TaskChar key : this.taskChars) {
             for (Constraint con : this.bag.get(key)) {
-            	if (!(con.hasSufficientSupport(threshold) && con.isConfident(confidence) && con.isOfInterest(interest))) {
+            	if (!(con.hasSufficientSupport(supportThreshold) && con.isConfident(confidence) && con.isOfInterest(interest))) {
 					nuBag.getConstraintsOf(key).remove(con);
 				}
             }
@@ -236,8 +234,26 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
         return nuBag;
     }
 
-	public Long howManyConstraints() {
-		long i = 0L;
+    public TaskCharRelatedConstraintsBag createCopyPrunedByThreshold(double supportThreshold) {
+        return createCopyPrunedByThresholdConfidenceAndInterest(supportThreshold, Constraint.DEFAULT_CONFIDENCE, Constraint.DEFAULT_INTEREST_FACTOR);
+    }
+
+    public TaskCharRelatedConstraintsBag createComplementOfCopyPrunedByThreshold(double supportThreshold) {
+        TaskCharRelatedConstraintsBag nuBag =
+                (TaskCharRelatedConstraintsBag) this.clone();
+        for (TaskChar key : this.taskChars) {
+            for (Constraint con : this.bag.get(key)) {
+            	if (con.hasSufficientSupport(supportThreshold)) {
+					nuBag.getConstraintsOf(key).remove(con);
+				}
+            }
+        }
+        
+        return nuBag;
+    }
+
+	public int howManyConstraints() {
+		int i = 0;
         for (TaskChar key : this.taskChars) {
         	i += this.bag.get(key).size();
         }

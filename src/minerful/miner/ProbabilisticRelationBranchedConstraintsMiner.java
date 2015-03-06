@@ -117,8 +117,6 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		
 		ConstraintIndexHasseInverseDepthFirstStepper stepper = new ConstraintIndexHasseInverseDepthFirstStepper(hasseOutMaker.hasseDiagram);
 		
-		ConstraintIndexHasseNode tempNode = null;
-		
 		Set<Constraint> discoveredConstraints = new TreeSet<Constraint>();
 
 		if (!globalStats.isForBranchedConstraints())

@@ -27,7 +27,7 @@ MEMORY_MAX="2048m"
 ## Global variables
 constraints=(
  `Participation a`
- `Uniqueness a`
+ `AtMostOne a`
  `Init a`
  `End a`
  `RespondedExistence a b`
@@ -47,7 +47,7 @@ constraints=(
 )
 constraintNames=(
  "Participation_a"
- "Uniqueness_a"
+ "AtMostOne_a"
  "Init_a"
  "End_a"
  "RespondedExistence_a__b"

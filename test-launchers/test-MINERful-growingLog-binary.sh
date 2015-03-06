@@ -16,7 +16,7 @@ STATSFILE="./out/memtime.xagerate.txt"
 DEBUGLEVEL='none'
 THRESHOLD=0.75
 
-uniquen=`Uniqueness n`
+uniquen=`AtMostOne n`
 participationn=`Participation n`
 endn=`End n`
 successionpn=`Succession p n`

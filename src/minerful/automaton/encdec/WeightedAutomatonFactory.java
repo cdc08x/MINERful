@@ -1,5 +1,6 @@
 package minerful.automaton.encdec;
 
+import java.util.Iterator;
 import java.util.NavigableMap;
 
 import minerful.automaton.AutomatonFactory;
@@ -8,6 +9,8 @@ import minerful.automaton.concept.WeightedAutomatonStats;
 import minerful.automaton.concept.WeightedState;
 import minerful.automaton.concept.WeightedTransition;
 import minerful.automaton.utils.AutomatonUtils;
+import minerful.logparser.LogParser;
+import minerful.logparser.LogTraceParser;
 
 import org.apache.log4j.Logger;
 
@@ -35,11 +38,11 @@ public class WeightedAutomatonFactory {
 		this.translationMap = translationMap;
 	}
 
-	public WeightedAutomaton augmentByReplay(Automaton automaton, String[] testBedArray) {
-		return this.augmentByReplay(automaton, testBedArray, false);
+	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser) {
+		return this.augmentByReplay(automaton, logParser, false);
 	}
 
-	public WeightedAutomaton augmentByReplay(Automaton automaton, String[] testBedArray, boolean ignoreIfNotCompliant) {
+	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser, boolean ignoreIfNotCompliant) {
 		if (automaton == null || automaton.isEmpty())
 			return null;
 		WeightedAutomaton weightedAutomaton = new WeightedAutomaton(automaton, translationMap);
@@ -52,41 +55,41 @@ public class WeightedAutomatonFactory {
 		String trace = null;
 		
 		boolean illegalEventReached = false;
-		char[] charArrayTrace = null;
-		Character event = null;
-
-		for (int i = 0; i < testBedArray.length; i++) {
-			trace = testBedArray[i];
+		int i = 0;
+		Character auxEvtIdentifier = null;
+		LogTraceParser auXTraPar = null;
+		Iterator<LogTraceParser> traceParsersIterator = logParser.traceIterator();
+		
+		while (traceParsersIterator.hasNext()) {
+			auXTraPar = traceParsersIterator.next();
+			auXTraPar.init();
 			
 			if (AutomatonUtils.accepts(automaton, trace)) {
 				nextState = initState;
 				nextState.increaseWeight(); // This is the initial state: at every start of a trace, a +1 is added to the visit counter
 
-				logger.trace("Replaying legal trace #" + (i+1) + "/" + testBedArray.length);
+				logger.trace("Replaying legal trace #" + (i++) + "/" + logParser.length());
 				
-				charArrayTrace = trace.toCharArray();
-				
-				for (int j = 0; j < charArrayTrace.length; j++) {
-					event = charArrayTrace[j];
+				while(!auXTraPar.isParsingOver()) {
+					auxEvtIdentifier = auXTraPar.parseSubsequentAndEncode();
 					currentState = nextState;
 					
-					nextState = currentState.stepAndIncreaseTransitionWeight(event);
+					nextState = currentState.stepAndIncreaseTransitionWeight(auxEvtIdentifier);
 					nextState.increaseWeight();
 				}
+				
 			} else if (!ignoreIfNotCompliant) {
 				soFar = new StringBuilder();
 				illegalEventReached = false;
 				nextState = initState;
 				nextState.increaseNonConformityWeight(); // This is the initial state: at every start of a trace, a +1 is added to the visit counter
 				
-				logger.trace("Replaying trace #" + (i+1) + "/" + testBedArray.length);
+				logger.trace("Replaying trace #" + (i++) + "/" + logParser.length());
 				
-				charArrayTrace = trace.toCharArray();
-				
-				for (int j = 0; j < charArrayTrace.length && !illegalEventReached; j++) {
-					event = charArrayTrace[j];
+				while(!auXTraPar.isParsingOver() && !illegalEventReached) {
+					auxEvtIdentifier = auXTraPar.parseSubsequentAndEncode();
 					currentState = nextState;
-					nextState = currentState.stepAndIncreaseTransitionsNonConformityWeight(event);
+					nextState = currentState.stepAndIncreaseTransitionsNonConformityWeight(auxEvtIdentifier);
 					if (nextState != null) {
 						nextState.increaseNonConformityWeight();
 					} else {
@@ -96,7 +99,7 @@ public class WeightedAutomatonFactory {
 						WeightedState illegalState = new WeightedState();
 						illegalState.setIllegal(true);
 						// New illegal transition
-						WeightedTransition illegalTransition = new WeightedTransition(event, illegalState, this.translationMap.get(event));
+						WeightedTransition illegalTransition = new WeightedTransition(auxEvtIdentifier, illegalState, this.translationMap.get(auxEvtIdentifier));
 						illegalTransition.setIllegal(true);
 						// Connect the transition to the current state
 						currentState.addTransition(illegalTransition);
@@ -105,7 +108,7 @@ public class WeightedAutomatonFactory {
 						illegalTransition.increaseNonConformityWeight();
 					}
 					// TODO Record somewhere and somewhat the illegal trace + the state where it took place the last legal action!
-					soFar.append(this.translationMap.get(event));
+					soFar.append(this.translationMap.get(auxEvtIdentifier));
 					soFar.append(", ");
 				}
 				logger.trace("Legal trunk of replayed trace: " + soFar.substring(0, soFar.length() - 2));

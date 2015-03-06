@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.relation.NegatedRelationConstraint;
+import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.relation.RelationConstraint;
 
 @XmlRootElement
@@ -19,7 +19,7 @@ public class ConstraintsSetAdapter extends XmlAdapter<ConstraintsSetAdapter.SetL
 		@XmlElements({
 			@XmlElement(type=Constraint.class, name="existenceConstraint"),
 			@XmlElement(type=RelationConstraint.class, name="relationConstraint"),
-			@XmlElement(type=NegatedRelationConstraint.class, name="negativeRelationConstraint"),
+			@XmlElement(type=NegativeRelationConstraint.class, name="negativeRelationConstraint"),
 		})
 		public ArrayList<Constraint> list = null;
 

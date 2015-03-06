@@ -6,10 +6,14 @@ package minerful.miner.stats;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import minerful.logparser.LogParser;
+import minerful.logparser.LogTraceParser;
 
 import org.apache.log4j.Logger;
 
@@ -21,40 +25,44 @@ public class OccurrencesStatsBuilder {
 
     private Character[] alphabet;
     private GlobalStatsTable statsTable;
-    private Character contemporaneityDelimiter = null;
+//    private Character contemporaneityDelimiter = null;
     
-    private void commonConstructorOperations(Character[] alphabet, Character contemporaneityDelimiter) {
+//    private void commonConstructorOperations(Character[] alphabet, Character contemporaneityDelimiter) {
+    private void commonConstructorOperations(Character[] alphabet) {
     	this.alphabet = alphabet;
-    	this.contemporaneityDelimiter = contemporaneityDelimiter;
+//    	this.contemporaneityDelimiter = contemporaneityDelimiter;
         if (logger == null) {
             logger = Logger.getLogger(this.getClass().getCanonicalName());
         }
     }
     
-    public OccurrencesStatsBuilder(Character[] alphabet, Character contemporaneityDelimiter) {
-    	this.commonConstructorOperations(alphabet, contemporaneityDelimiter);
+//  public OccurrencesStatsBuilder(Character[] alphabet, Character contemporaneityDelimiter) {
+//	this.commonConstructorOperations(alphabet, contemporaneityDelimiter);
+    public OccurrencesStatsBuilder(Character[] alphabet) {
+    	this.commonConstructorOperations(alphabet);
     	this.statsTable = new GlobalStatsTable(alphabet);
     }
     
-    public OccurrencesStatsBuilder(Character[] alphabet, Character contemporaneityDelimiter, Integer maximumBranchingFactor) {
-    	this.commonConstructorOperations(alphabet, contemporaneityDelimiter);
+//  public OccurrencesStatsBuilder(Character[] alphabet, Character contemporaneityDelimiter, Integer maximumBranchingFactor) {
+//	this.commonConstructorOperations(alphabet, contemporaneityDelimiter);
+	public OccurrencesStatsBuilder(Character[] alphabet, Integer maximumBranchingFactor) {
+		this.commonConstructorOperations(alphabet);
         this.statsTable = new GlobalStatsTable(alphabet, maximumBranchingFactor);
     }
     
-    public GlobalStatsTable checkThisOut(String[] testbed) {
-        this.statsTable.logSize += testbed.length;
-        this.checkThisOut(testbed, ONWARDS);
-        this.checkThisOut(testbed, BACKWARDS, true);
-        System.out.println();
+    public GlobalStatsTable checkThisOut(LogParser logParser) {
+        this.statsTable.logSize += logParser.length();
+        this.checkThisOut(logParser, ONWARDS);
+        this.checkThisOut(logParser, BACKWARDS, true);
         return this.statsTable;
     }
         
-    public GlobalStatsTable checkThisOut(String[] testbed, boolean onwards) {
-        return this.checkThisOut(testbed, onwards, false);
+    public GlobalStatsTable checkThisOut(LogParser logParser, boolean onwards) {
+        return this.checkThisOut(logParser, onwards, false);
     }
         
-    public GlobalStatsTable checkThisOut(String[] testbed, boolean onwards, boolean secondPass) {
-        // for sake of robustness
+    public GlobalStatsTable checkThisOut(LogParser logParser, boolean onwards, boolean secondPass) {
+    	// for the sake of robustness
         SortedSet<Character> sortedSetOfCharsInTheAlphabet = new TreeSet<Character>();
         for (Character s: alphabet) {
         	sortedSetOfCharsInTheAlphabet.add(s);
@@ -63,34 +71,38 @@ public class OccurrencesStatsBuilder {
         int counter = 0;
         int analysedPortion = 0;
 
-        for (String testbedString: testbed) {
+        Iterator<LogTraceParser> traceParsersIterator = logParser.traceIterator();
+        LogTraceParser auxTraceParser = null;
+        
+        while (traceParsersIterator.hasNext()) {
+        	auxTraceParser = traceParsersIterator.next();
             if (!onwards) {
-                testbedString = new StringBuilder(testbedString).reverse().toString();
+            	auxTraceParser.reverse();
             }
-            char[] chars = testbedString.toCharArray();
-            SortedSet<Character> appearedChars = new TreeSet<Character>();
-            Character chr = null;
+        	auxTraceParser.init();
+
+            SortedSet<Character> occurredEvents = new TreeSet<Character>();
+            Character auxEvtIdentifier = null;
             int positionCursor = 0;
-            boolean contemporaneity = false;
-            
-            for (int i = 0; i < chars.length; i++) {
-                chr = chars[i];
-            	if (chr.equals(this.contemporaneityDelimiter)) {
-            		contemporaneity = true;
-            	} else {
+//            boolean contemporaneity = false;
+            while (!auxTraceParser.isParsingOver()) {
+            	auxEvtIdentifier = auxTraceParser.parseSubsequentAndEncode();
+//            	if (chr.equals(this.contemporaneityDelimiter)) {
+//            		contemporaneity = true;
+//            	} else {
                     // for the sake of robustness
-	                if (!contemporaneity) {
+//	                if (!contemporaneity) {
 	                	positionCursor++;
-	                } else {
-	                	contemporaneity = false;
-	                }
-                    if (sortedSetOfCharsInTheAlphabet.contains(chr)) {
+//	                } else {
+//	                	contemporaneity = false;
+//	                }
+                    if (sortedSetOfCharsInTheAlphabet.contains(auxEvtIdentifier)) {
     	                // record the occurrence of this chr in the current string
-    	                appearedChars.add(chr);
-    	                for (Character appChr : appearedChars) {
+    	                occurredEvents.add(auxEvtIdentifier);
+    	                for (Character appChr : occurredEvents) {
     	                    // for each already appeared chr, register the new occurrence of the current in its own stats table, at the proper distance.
-    	                    this.statsTable.statsTable.get(appChr).newAtPosition(
-    	                            chr, 
+    	                	this.statsTable.statsTable.get(appChr).newAtPosition(
+    	                    		auxEvtIdentifier, 
     	                            (   onwards
     	                                ?   positionCursor
     	                                :   0 - positionCursor
@@ -99,14 +111,14 @@ public class OccurrencesStatsBuilder {
     	                    );
     	                }
                     }
-            	}
-           	}
+//            	}
+            }
             if (!secondPass) {
                 /* Record the information of which is the last character! */
-                if (chr != null && sortedSetOfCharsInTheAlphabet.contains(chr))
-                    this.statsTable.statsTable.get(chr).appearancesAsLast += 1;
+                if (auxEvtIdentifier != null && sortedSetOfCharsInTheAlphabet.contains(auxEvtIdentifier))
+                    this.statsTable.statsTable.get(auxEvtIdentifier).appearancesAsLast += 1;
                 /* Record which character did not ever appear in the local stats tables! */
-                this.setNeverAppearedStuffAtThisStep(appearedChars);
+                this.setNeverAppearedStuffAtThisStep(occurredEvents);
             }
             /*
              * Reset local stats table counters,
@@ -117,15 +129,16 @@ public class OccurrencesStatsBuilder {
             this.finalizeAnalysisStep(onwards, secondPass);
             
         	counter++;
-        	if ( counter > (double)testbed.length / PROGRESS_BAR_SCALE * (analysedPortion+1) ) {
+        	if ( counter > logParser.length() / PROGRESS_BAR_SCALE * (analysedPortion+1) ) {
         		for (int i = analysedPortion +1;
-        				i < ((double)counter / testbed.length * PROGRESS_BAR_SCALE);
+        				i < ((double)counter / logParser.length() * PROGRESS_BAR_SCALE);
         				i++) {
         			System.out.print("|");
         		}
-        		analysedPortion = (int) Math.floor((double)counter / testbed.length * PROGRESS_BAR_SCALE);
+        		analysedPortion = (int) Math.floor((double)counter / logParser.length() * PROGRESS_BAR_SCALE);
         	}
         }
+        if (secondPass) { System.out.println(); }
         return this.statsTable;
     }
     
@@ -148,16 +161,5 @@ public class OccurrencesStatsBuilder {
             	this.statsTable.statsTable.get(appearedChr).setAsNeverAppeared(neverAppearedStuff);
             }
         }
-    }
-
-    public static String[] printAlphabet(String[] testbed) {
-        SortedSet<String> alphabet = new TreeSet<String>();
-        for (String testbedString: testbed) {
-            char[] chars = testbedString.toCharArray();
-            for (char character : chars) {
-                alphabet.add(String.valueOf(character));
-            }
-        }
-        return alphabet.toArray(new String[alphabet.size()]);
     }
 }

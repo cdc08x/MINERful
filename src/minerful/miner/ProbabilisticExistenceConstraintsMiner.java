@@ -7,7 +7,7 @@ import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
-import minerful.concept.constraint.existence.Uniqueness;
+import minerful.concept.constraint.existence.AtMostOne;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
@@ -46,10 +46,12 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 	            
 	            Constraint init = this.discoverInitConstraint(base, localStats, this.globalStats.logSize);
 	            refineByComputingInterestLevels(init, baseParticipationFraction);
+	            init.setConstraintWhichThisIsBasedUpon(participation);
 	            constraintsBag.add(base, init);
 	            
 	            Constraint end = this.discoverEndConstraint(base, localStats, this.globalStats.logSize);
 	            refineByComputingInterestLevels(end, baseParticipationFraction);
+	            end.setConstraintWhichThisIsBasedUpon(participation);
 	            constraintsBag.add(base, end);
 	            
 	            if (hasValuesAboveThresholds(participation)) this.computedConstraintsAboveThresholds++;
@@ -85,7 +87,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         }
         double support =
                 (double) appearancesAsUpToOne / (double) testbedSize;
-        return new Uniqueness(base, support);
+        return new AtMostOne(base, support);
     }
 
     @Override

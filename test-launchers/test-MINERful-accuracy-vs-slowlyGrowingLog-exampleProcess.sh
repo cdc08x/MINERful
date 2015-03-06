@@ -42,7 +42,7 @@ stringlenthrangemax[1]=$(( 1 * 2 * 4 * ${#alphabetCharacters[*]} ))
 stringlenthrangemin[2]=$(( 1 * 2 * ${#alphabetCharacters[*]} ))
 stringlenthrangemax[2]=$(( 1 * 2 * 4 * 8 * ${#alphabetCharacters[*]} ))
 
-uniquen=`Uniqueness n`
+uniquen=`AtMostOne n`
 participationn=`Participation n`
 endn=`End n`
 successionpn=`Succession p n`
@@ -57,19 +57,19 @@ constraints[3]="${constraints[ 2 ]} $respondedexistencecp"
 constraints[4]="${constraints[ 3 ]} $alternateprecedencerc"
 
 constraintNames=(
- 'Uniqueness_n-Participation_n-End_n'
- 'Uniqueness_n-Participation_n-End_n-Succession_p__n'
- 'Uniqueness_n-Participation_n-End_n-Succession_p__n-Respose_r__p'
- 'Uniqueness_n-Participation_n-End_n-Succession_p__n-Respose_r__p-RespondedExistence_c__p'
- 'Uniqueness_n-Participation_n-End_n-Succession_p__n-Respose_r__p-RespondedExistence_c__p-AlternatePrecedence_r__c'
+ 'AtMostOne_n-Participation_n-End_n'
+ 'AtMostOne_n-Participation_n-End_n-Succession_p__n'
+ 'AtMostOne_n-Participation_n-End_n-Succession_p__n-Respose_r__p'
+ 'AtMostOne_n-Participation_n-End_n-Succession_p__n-Respose_r__p-RespondedExistence_c__p'
+ 'AtMostOne_n-Participation_n-End_n-Succession_p__n-Respose_r__p-RespondedExistence_c__p-AlternatePrecedence_r__c'
 )
 
 constraintSerifNames=(
- '{Uniqueness(n), Participation(n), End(n)}'
- '{Uniqueness(n), Participation(n), End(n), Succession(p, n)}'
- '{Uniqueness(n), Participation(n), End(n), Succession(p, n), Respose(r, p)}'
- '{Uniqueness(n), Participation(n), End(n), Succession(p, n), Respose(r, p), RespondedExistence(c, p)}'
- '{Uniqueness(n), Participation(n), End(n), Succession(p, n), Respose(r, p), RespondedExistence(c, p), AlternatePrecedence(r, c)}'
+ '{AtMostOne(n), Participation(n), End(n)}'
+ '{AtMostOne(n), Participation(n), End(n), Succession(p, n)}'
+ '{AtMostOne(n), Participation(n), End(n), Succession(p, n), Respose(r, p)}'
+ '{AtMostOne(n), Participation(n), End(n), Succession(p, n), Respose(r, p), RespondedExistence(c, p)}'
+ '{AtMostOne(n), Participation(n), End(n), Succession(p, n), Respose(r, p), RespondedExistence(c, p), AlternatePrecedence(r, c)}'
 )
 
 ## The game begins!

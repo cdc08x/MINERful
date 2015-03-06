@@ -2,6 +2,7 @@ package minerful;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -11,6 +12,7 @@ import javax.xml.bind.JAXBException;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.ConstraintsPrinter;
+import minerful.logparser.LogParser;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 
@@ -55,7 +57,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 
 	}
 	
-	public void print(TaskCharRelatedConstraintsBag bag, ViewCmdParameters viewParams, SystemCmdParameters systemParams, String[] testBedArray) {
+	public void print(TaskCharRelatedConstraintsBag bag, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
 		ConstraintsPrinter printer = new ConstraintsPrinter(bag, viewParams.supportThreshold, viewParams.interestThreshold);
 		PrintWriter outWriter = null;
 
@@ -80,12 +82,9 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
         }
         if (viewParams.fileToSaveConDecDefinition != null) {
         	try {
-				outWriter = new PrintWriter(viewParams.fileToSaveConDecDefinition);
-	        	outWriter.print(printer.printConDecModel());
-	        	outWriter.flush();
-	        	outWriter.close();
-	        	System.out.println("Discovered process written in ConDec format on " + viewParams.fileToSaveConDecDefinition);
-			} catch (FileNotFoundException e) {
+				printer.printConDecModel(viewParams.fileToSaveConDecDefinition);
+	        	System.out.println("Discovered process written in ConDec/Declare XML format on " + viewParams.fileToSaveConDecDefinition);
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -147,7 +146,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 		if (viewParams.fileToSaveXmlFileForAutomaton != null) {
         	try {
         		outWriter = new PrintWriter(new File(viewParams.fileToSaveXmlFileForAutomaton.getAbsolutePath()));
-	        	outWriter.print(printer.printWeightedXmlAutomaton(testBedArray));
+	        	outWriter.print(printer.printWeightedXmlAutomaton(logParser));
 	        	outWriter.flush();
 	        	outWriter.close();
 	        	System.out.println("Discovered weighted process automaton written in XML format on " + viewParams.fileToSaveXmlFileForAutomaton);
@@ -159,7 +158,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 		
 		if (viewParams.folderToSaveXmlFilesForPartialAutomata != null) {
         	try {
-        		NavigableMap<String, String> partialAutoMap = printer.printWeightedXmlSubAutomata(testBedArray);
+        		NavigableMap<String, String> partialAutoMap = printer.printWeightedXmlSubAutomata(logParser);
 				StringBuilder subAutomataPathsBuilder = new StringBuilder();
 				String subAutomatonPath = null;
 				

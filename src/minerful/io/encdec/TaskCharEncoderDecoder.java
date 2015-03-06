@@ -354,7 +354,6 @@ public class TaskCharEncoderDecoder {
 	private void removeFromTranslationMap(String activityToExclude) {
 		Character charToRemove = null;
 		activityToExclude = XesDecoder.cleanEvtIdentifierTransitionStatus(activityToExclude);
-System.err.println("Ma stramannaggia il porco di un maiale. Voglio che togli QUESTO: " + activityToExclude);
 		for (String key : this.tasksDictionary.keySet().toArray(new String[0])) {
 			if (XesDecoder.matchesEvtIdentifierWithTransitionStatus(key, activityToExclude)) {
 				charToRemove = tasksDictionary.remove(key);

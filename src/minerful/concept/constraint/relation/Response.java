@@ -6,9 +6,9 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 
 public class Response extends RespondedExistence {
-    public static final int RESPONSE_SUB_FAMILY_ID = 11;
 
     @Override
 	public String getRegularExpressionTemplate() {
@@ -30,8 +30,8 @@ public class Response extends RespondedExistence {
 	}
 
 	@Override
-    public int getSubFamily() {
-        return RESPONSE_SUB_FAMILY_ID;
+    public ConstraintSubFamily getSubFamily() {
+        return ConstraintSubFamily.RESPONSE_SUB_FAMILY_ID;
     }
     
     @Override

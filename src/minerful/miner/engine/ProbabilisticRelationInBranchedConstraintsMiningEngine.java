@@ -11,6 +11,7 @@ import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
 import minerful.concept.constraint.relation.CoExistence;
+import minerful.concept.constraint.relation.CouplingRelationConstraint;
 import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
@@ -247,12 +248,12 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		return nuConstraint;
 	}
 
-	public CoExistence discoverBranchedCoExistenceConstraints(
+	public CouplingRelationConstraint discoverBranchedCoExistenceConstraints(
 			TaskChar searched,
 			LocalStatsWrapper searchedLocalStats,
 			long searchedAppearances,
 			TaskCharSet comboToAnalyze) {
-		CoExistence nuConstraint = null;
+		CouplingRelationConstraint nuConstraint = null;
 		
 		int	negativeOccurrences = 0,
 			denominator = 0;

@@ -7,7 +7,7 @@ package minerful.concept.constraint.existence;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 
-public class End extends ExistenceConstraint {
+public class End extends Participation {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return ".*%1$s";
@@ -25,4 +25,9 @@ public class End extends ExistenceConstraint {
 	public End(TaskCharSet base) {
 		super(base);
 	}
+
+	@Override
+    public int getHierarchyLevel() {
+        return super.getHierarchyLevel() + 1;
+    }
 }

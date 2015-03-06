@@ -44,7 +44,7 @@ stringlenthrangemax[2]=$(( 1 * 2 * 4 * 8 * ${#alphabetCharacters[*]} ))
 
 constraints=(
  `Participation a`              #00
- `Uniqueness a`                 #01
+ `AtMostOne a`                 #01
  `Init a`                       #02
  `End a`                        #03
  `RespondedExistence a b`       #04
@@ -64,7 +64,7 @@ constraints=(
 )
 constraintNames=(
  "Participation_a"              #00
- "Uniqueness_a"                 #01
+ "AtMostOne_a"                 #01
  "Init_a"                       #02
  "End_a"                        #03
  "RespondedExistence_a__b"      #04
@@ -84,7 +84,7 @@ constraintNames=(
 )
 constraintSerifNames=(
  "'Participation(a)'"           #00
- "'Uniqueness(a)'"              #01
+ "'AtMostOne(a)'"              #01
  "'Init(a)'"                    #02
  "'End(a)'"                     #03
  "'RespondedExistence(a, b)'"   #04

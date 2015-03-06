@@ -4,3 +4,6 @@ logs
 proc
 count-constraints.sh
 print-regexps.sh
+.classpath
+.project
+/bin/

@@ -6,9 +6,9 @@ package minerful.concept.constraint.relation;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.ConstraintFamily;
 
 public class RespondedExistence extends RelationConstraint {
-    public static final int RESPONDED_EXISTENCE_FAMILY_ID = 1;
     public static final String DISTANCE_PRINT_TEMPLATE = " <%+d \u00F7 %+d> ";
 
     public Double expectedDistance;
@@ -34,8 +34,8 @@ public class RespondedExistence extends RelationConstraint {
 	}
 
 	@Override
-    public int getFamily() {
-        return RESPONDED_EXISTENCE_FAMILY_ID;
+    public ConstraintFamily getFamily() {
+        return ConstraintFamily.RESPONDED_EXISTENCE_FAMILY_ID;
     }
     
     @Override

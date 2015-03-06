@@ -73,6 +73,22 @@ public class LinearConstraintsIndexFactory {
 			);
 		}
 	}
+	public static class SupportConfidenceInterestFactorBasedComparator implements Comparator<Constraint> {
+		@Override
+		public int compare(Constraint o1, Constraint o2) {
+			int result = Double.valueOf(o1.support).compareTo(o2.support);
+			if (result == 0) {
+				result = Double.valueOf(o1.confidence).compareTo(o2.confidence);
+				if (result == 0) {
+					result = Double.valueOf(o1.interestFactor).compareTo(o2.interestFactor);
+					if (result == 0) {
+						result = o1.compareTo(o2);
+					}
+				}
+			}
+			return result * (-1);
+		}
+	}
 	
 	public static TaskCharRelatedConstraintsBag indexByTaskCharAndSupport(TaskCharRelatedConstraintsBag bag) {
 		TaskCharRelatedConstraintsBag bagCopy = (TaskCharRelatedConstraintsBag) bag.clone();
@@ -184,6 +200,16 @@ public class LinearConstraintsIndexFactory {
 	
 	public static SortedSet<Constraint> getAllConstraintsSortedBySupport(TaskCharRelatedConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportBasedComparator());
+		for (TaskChar tChr : bag.getTaskChars()) {
+			for (Constraint con : bag.getConstraintsOf(tChr)) {
+				allConstraints.add(con);
+			}
+		}
+		return allConstraints;
+	}
+	
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportConfidenceInterestFactorBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);

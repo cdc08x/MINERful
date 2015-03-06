@@ -15,15 +15,16 @@ clear
 ## Runtime environment constants
 MAINCLASS="minerful.MinerFulTracesMakerStarter"
 
-MIN_STRLEN=4
-MAX_STRLEN=25
-TESTBED_SIZE=100
+MIN_STRLEN=2
+MAX_STRLEN=10
+TESTBED_SIZE=10000
 MEMORY_MAX="2048m"
+OUTPUT_FILE="/home/claudio/Desktop/WhereTheDonkeyFalls-example.xes"
 
 ## Global variables
 constraints=(
  `Participation a`
- `Uniqueness a`
+ `AtMostOne a`
  `Init a`
  `End a`
  `RespondedExistence a b`
@@ -42,10 +43,12 @@ constraints=(
  `NotCoExistence a b`
 )
 
-alphabetCharacters=("a" "b" "c" "d" "e")
+alphabetCharacters=("a" "b" "c" "d")
 
 ## Auxiliary variable
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -r ${constraints[2]} ${constraints[5]} $*
+# java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -r ${constraints[2]} $*
+. ./libs.cfg
+java -Xmx$MEMORY_MAX -classpath $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r `End d` `Response a b` `AlternatePrecedence c d`

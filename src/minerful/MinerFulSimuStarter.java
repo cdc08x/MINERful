@@ -4,7 +4,11 @@
  */
 package minerful;
 
+import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.logparser.LogParser;
+import minerful.logparser.StringLogParser;
+import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
@@ -80,11 +84,20 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
         String[] testBedArray = new String[0];
         
         testBedArray = new MinerFulTracesMaker().makeTraces(tracesMakParams);
+		try {
+			LogParser stringLogParser = new StringLogParser(testBedArray, ClassificationType.NAME);
+			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
-        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-        TaskCharRelatedConstraintsBag bag = minerSimuStarter.mine(testBedArray, minerFulParams, viewParams, systemParams, tracesMakParams.alphabet);
-        
-        MinerFulProcessViewerStarter proViewStarter = new MinerFulProcessViewerStarter(); 
-        proViewStarter.print(bag, viewParams, systemParams, testBedArray);
+	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
+	        TaskCharRelatedConstraintsBag bag = minerSimuStarter.mine(stringLogParser, minerFulParams, viewParams, systemParams, taskCharArchive);
+	        
+	        MinerFulProcessViewerStarter proViewStarter = new MinerFulProcessViewerStarter(); 
+	        proViewStarter.print(bag, viewParams, systemParams, stringLogParser);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
     }
  }

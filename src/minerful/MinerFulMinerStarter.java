@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,11 +18,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
+import minerful.concept.ProcessModel;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
-import minerful.io.encdec.TaskCharEncoderDecoder;
-import minerful.io.encdec.TaskTracesFromStringsLog;
-import minerful.io.encdec.XesDecoder;
+import minerful.logparser.LogEventClassifier.ClassificationType;
+import minerful.logparser.LogParser;
+import minerful.logparser.StringLogParser;
+import minerful.logparser.XesLogParser;
 import minerful.miner.IConstraintsMiner;
 import minerful.miner.ProbabilisticExistenceConstraintsMiner;
 import minerful.miner.ProbabilisticRelationBranchedConstraintsMiner;
@@ -34,6 +35,7 @@ import minerful.miner.stats.OccurrencesStatsBuilder;
 import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
+import minerful.simplification.ConflictResolver;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -42,7 +44,7 @@ import org.apache.log4j.LogMF;
 
 public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
-	public static final String MINERFUL_XMLNS = "http://www.dis.uniroma1.it/minerful";
+	public static final String MINERFUL_XMLNS = "http://www.claudiodiciccio.net/minerful";
 
 	@Override
 	public Options setupOptions() {
@@ -109,73 +111,16 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         
         configureLogging(systemParams.debugLevel);
         
-        String[] testBedArray = null;
-        Character[] alphabet = null;
-        TaskCharEncoderDecoder taChaEncoDeco = new TaskCharEncoderDecoder();
-        boolean alphabetRequiresEncodingAndDecoding = false;
-        
-        switch(inputParams.inputLanguage) {
-	        case xes :
-	        	alphabetRequiresEncodingAndDecoding = true;
-	        	break;
-	        case strings:
-	        	alphabetRequiresEncodingAndDecoding = false;
-	        	break;
-	    	default:
-	    		throw new UnsupportedOperationException("This encoding (" + inputParams.inputLanguage + ") is not supported yet");
-        }       
-        
         logger.info("Loading log...");
         
-        switch(inputParams.inputLanguage) {
-	        case xes :
-	        	XesDecoder xesDeco = null;
-	            List<List<String>> inputTestBed = null;
-	
-	            try {
-	    			xesDeco = new XesDecoder(inputParams.inputFile);
-	    			inputTestBed = xesDeco.decode();
-	    		} catch (Exception e) {
-	    			e.printStackTrace();
-	    			System.exit(1);
-	    		}
-	            
-	            testBedArray = taChaEncoDeco.encode(inputTestBed);
-	            
-	            // Remove from the analysed alphabet those activities that are specified in a user-defined list
-	            taChaEncoDeco.excludeThese(minerFulParams.activitiesToExcludeFromResult);
-	            
-	            alphabet = taChaEncoDeco.encodedTasks();
-
-	            // Let us try to free memory from the unused XesDecoder!
-	            System.gc();
-	        	break;
-	        case strings:
-	        	TaskTracesFromStringsLog taTraFroSLog = null;
-				try {
-					taTraFroSLog = new TaskTracesFromStringsLog(inputParams.inputFile);
-					testBedArray = taTraFroSLog.extractTraces();
-				} catch (Exception e) {
-	    			e.printStackTrace();
-	    			System.exit(1);
-				}
-				alphabet = taTraFroSLog.getAlphabet();
-				break;
-			default:
-	    		throw new UnsupportedOperationException("This encoding (" + inputParams.inputLanguage + ") is not supported yet");
-        }
+        LogParser logParser = deriveLogParserFromLog(inputParams, minerFulParams);
         
-        TaskCharArchive taskCharArchive = null;
-        if (alphabetRequiresEncodingAndDecoding) {
-        	taskCharArchive = new TaskCharArchive(taChaEncoDeco.getTranslationMap());
-        } else {
-        	taskCharArchive = new TaskCharArchive(alphabet);
-        }
+        TaskCharArchive taskCharArchive = new TaskCharArchive(logParser.getEventEncoderDecoder().getTranslationMap());
 
         TaskCharRelatedConstraintsBag bag =
-        		minerMinaStarter.mine(testBedArray, minerFulParams, viewParams, systemParams, taskCharArchive);
+        		minerMinaStarter.mine(logParser, minerFulParams, viewParams, systemParams, taskCharArchive);
         
-        new MinerFulProcessViewerStarter().print(bag, viewParams, systemParams, testBedArray);
+        new MinerFulProcessViewerStarter().print(bag, viewParams, systemParams, logParser);
     	
         if (minerFulParams.processSchemeOutputFile != null) {
         	File procSchmOutFile =  minerFulParams.processSchemeOutputFile;
@@ -197,6 +142,40 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         }
         
     }
+
+	private static LogParser deriveLogParserFromLog(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
+		LogParser logParser = null;
+		switch (inputParams.inputLanguage) {
+		case xes:
+			try {
+				logParser = new XesLogParser(inputParams.inputFile, ClassificationType.NAME);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			// Remove from the analysed alphabet those activities that are
+			// specified in a user-defined list
+			logParser.getEventEncoderDecoder().excludeThese(minerFulParams.activitiesToExcludeFromResult);
+
+			// Let us try to free memory from the unused XesDecoder!
+			System.gc();
+			break;
+		case strings:
+			try {
+				logParser = new StringLogParser(inputParams.inputFile, ClassificationType.NAME);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			break;
+		default:
+			throw new UnsupportedOperationException("This encoding ("
+					+ inputParams.inputLanguage + ") is not supported yet");
+		}
+
+		return logParser;
+	}
 
 	public static void marshalMinedProcessScheme(
 			TaskCharRelatedConstraintsBag bag, File procSchmOutFile)
@@ -221,14 +200,14 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		strixFileWriter.close();
 	}
 	
-	public TaskCharRelatedConstraintsBag mine(String[] testBedArray,
+	public TaskCharRelatedConstraintsBag mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams,
 			SystemCmdParameters systemParams, Character[] alphabet) {
 		TaskCharArchive taskCharArchive = new TaskCharArchive(alphabet);
-		return this.mine(testBedArray, minerFulParams, viewParams, systemParams, taskCharArchive);
+		return this.mine(logParser, minerFulParams, viewParams, systemParams, taskCharArchive);
 	}
 	
-    public TaskCharRelatedConstraintsBag mine(String[] testBedArray, MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, TaskCharArchive taskCharArchive) {
+    public TaskCharRelatedConstraintsBag mine(LogParser logParser, MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, TaskCharArchive taskCharArchive) {
         logger.info("\nComputing occurrences/distances table...");
         
         Integer branchingLimit = null;
@@ -257,9 +236,10 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         long before = System.currentTimeMillis();
         // initialize the stats builder
         OccurrencesStatsBuilder statsBuilder =
-                new OccurrencesStatsBuilder(alphabet, TaskCharEncoderDecoder.CONTEMPORANEITY_CHARACTER_DELIMITER, branchingLimit);
+//                new OccurrencesStatsBuilder(alphabet, TaskCharEncoderDecoder.CONTEMPORANEITY_CHARACTER_DELIMITER, branchingLimit);
+        		new OccurrencesStatsBuilder(alphabet, branchingLimit);
         // builds the (empty) stats table
-        GlobalStatsTable statsTable = statsBuilder.checkThisOut(testBedArray);
+        GlobalStatsTable statsTable = statsBuilder.checkThisOut(logParser);
         logger.info("Done!");
         long after = System.currentTimeMillis();
 
@@ -283,14 +263,14 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         }
 
         before = System.currentTimeMillis();
-        
+
         // search for existence constraints
         IConstraintsMiner exiConMiner = new ProbabilisticExistenceConstraintsMiner(statsTable, taskCharArchive);
         exiConMiner.setSupportThreshold(viewParams.supportThreshold);
         exiConMiner.setConfidenceThreshold(viewParams.confidenceThreshold);
         exiConMiner.setInterestFactorThreshold(viewParams.interestThreshold);
         TaskCharRelatedConstraintsBag bag = exiConMiner.discoverConstraints();
-        
+
         after = System.currentTimeMillis();
 
         long exiConTime = after - before;
@@ -340,6 +320,10 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         // If it is not soup, it is wet bread
         numOfRelationConstraintsBeforeHierarchyBasedPruning = numOfConstraintsBeforeHierarchyBasedPruning - numOfExistenceConstraintsBeforeHierarchyBasedPruning;
 
+        TaskCharRelatedConstraintsBag bigBag = null; // This serves only if minerFulParams.avoidConflicts is set to TRUE
+        if (minerFulParams.avoidConflicts) {
+        	bigBag = bag;
+        }
         if (minerFulParams.avoidRedundancy) {
         	bag = bag.createHierarchyUnredundantCopy();
             // Let us try to free memory from the unused clone of bag!
@@ -353,20 +337,32 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         	numOfPrunedByHierarchyExistenceConstraints = numOfExistenceConstraintsBeforeHierarchyBasedPruning;
         	numOfPrunedByHierarchyRelationConstraints = numOfRelationConstraintsBeforeHierarchyBasedPruning;
         }
+        
         bag = bag.createCopyPrunedByThresholdConfidenceAndInterest(viewParams.supportThreshold, viewParams.confidenceThreshold, viewParams.interestThreshold);
         // Let us try to free memory from the unused clone of bag!
-        System.gc();
 
         after = System.currentTimeMillis();
         relaConTime = after - before;
+
+        if (minerFulParams.avoidConflicts) {
+        	ProcessModel process = new ProcessModel(bigBag);
+        	long beforeConflictResolution = System.currentTimeMillis();
+        	ConflictResolver confliReso = new ConflictResolver(process);
+        	confliReso.resolveConflicts();
+        	bag = confliReso.getSafeProcess().bag;
+        	long afterConflictResolution = System.currentTimeMillis();
+            bag = bag.createCopyPrunedByThresholdConfidenceAndInterest(viewParams.supportThreshold, viewParams.confidenceThreshold, viewParams.interestThreshold);
+        	printComputationStats(confliReso, beforeConflictResolution, afterConflictResolution);
+        }
+
+        System.gc();
 
         numOfConstraintsAfterPruningAndThresholding = bag.howManyConstraints();
         numOfExistenceConstraintsAfterPruningAndThresholding = bag.howManyExistenceConstraints();
         // If it is not soup, it is wet bread
         numOfRelationConstraintsAfterPruningAndThresholding = numOfConstraintsAfterPruningAndThresholding - numOfExistenceConstraintsAfterPruningAndThresholding;
-
-        	
-        printComputationStats(testBedArray, alphabet, occuTabTime,
+        
+        printComputationStats(logParser, alphabet, occuTabTime,
 				exiConTime, relaConTime, maxMemUsage,
 				possibleNumberOfConstraints,
 				possibleNumberOfExistenceConstraints,
@@ -387,7 +383,48 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         return bag;
     }
 
-	public void printComputationStats(String[] testBedArray,
+	private void printComputationStats(ConflictResolver confliReso, long timingBeforeConflictResolution, long timingAfterConflictResolution) {
+        StringBuffer
+    	csvSummaryBuffer = new StringBuffer(),
+    	csvSummaryLegendBuffer = new StringBuffer(),
+    	csvSummaryComprehensiveBuffer = new StringBuffer();
+
+        csvSummaryBuffer.append("'CR'");
+        csvSummaryLegendBuffer.append("'Operation code'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(confliReso.inputConstraints().size());
+        csvSummaryLegendBuffer.append("'Input constraints for conflict check'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(confliReso.performedChecks());
+        csvSummaryLegendBuffer.append("'Performed checks'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(confliReso.checkedConflictingConstraints().size());
+        csvSummaryLegendBuffer.append("'Checked conflicting constraints'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(confliReso.conflictingConstraintsInOriginalModel().size());
+        csvSummaryLegendBuffer.append("'Conflicting constraints in original model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(confliReso.conflictingConstraintsInOriginalUnredundantModel().size());
+        csvSummaryLegendBuffer.append("'Conflicting constraints in original hierarchy-unredundant model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(timingAfterConflictResolution - timingBeforeConflictResolution);
+        csvSummaryLegendBuffer.append("'Time to resolve conflicts'");
+
+        csvSummaryComprehensiveBuffer.append("\n\nConflict resolution: \n");
+        csvSummaryComprehensiveBuffer.append(csvSummaryLegendBuffer.toString());
+        csvSummaryComprehensiveBuffer.append("\n");
+        csvSummaryComprehensiveBuffer.append(csvSummaryBuffer.toString());
+
+        logger.info(csvSummaryComprehensiveBuffer.toString());
+	}
+
+	public void printComputationStats(LogParser logParser,
 			Character[] encodedAlphabet, long occuTabTime, long exiConTime,
 			long relaConTime, long maxMemUsage,
 			long possibleNumberOfConstraints,
@@ -405,25 +442,20 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			long numOfConstraintsAfterPruningAndThresholding,
 			long numOfExistenceConstraintsAfterPruningAndThresholding,
 			long numOfRelationConstraintsAfterPruningAndThresholding) {
-		long	totalChrs = 0L;
-        int		minChrs = 0,
-        		maxChrs = 0;
-        for (String string: testBedArray) {
-        	totalChrs += string.length();
-        	if (minChrs > string.length()) {
-        		minChrs = string.length();
-        	}
-        	if (maxChrs < string.length()) {
-        		maxChrs = string.length();
-        	}
-        }
-        Double avgChrsPerString = 1.0 * totalChrs / testBedArray.length;
+		long	totalChrs = logParser.numberOfEvents();
+        int		minChrs = logParser.maximumTraceLength(),
+        		maxChrs = logParser.maximumTraceLength();
+        Double avgChrsPerString = 1.0 * totalChrs / logParser.length();
         
         StringBuffer
         	csvSummaryBuffer = new StringBuffer(),
         	csvSummaryLegendBuffer = new StringBuffer(),
         	csvSummaryComprehensiveBuffer = new StringBuffer();
-        csvSummaryBuffer.append(testBedArray.length);
+        csvSummaryBuffer.append("'M'");
+        csvSummaryLegendBuffer.append("'Operation code'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(logParser.length());
         csvSummaryLegendBuffer.append("'Number of traces'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
