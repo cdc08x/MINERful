@@ -11,22 +11,28 @@ import java.util.TreeSet;
 
 public class TaskCharArchive {
 	private HashSet<TaskChar> taskChars;
-	private HashMap<Character, TaskChar> taskCharsMap;
+	private HashMap<Character, TaskChar> taskCharsMapById;
+	private HashMap<String, TaskChar> taskCharsMapByName;
 
 	public TaskCharArchive() {
 		this.taskChars = new HashSet<TaskChar>();
-		this.taskCharsMap = null;
+		this.taskCharsMapById = null;
+		this.taskCharsMapByName = null;
 	}
 	
 	public TaskCharArchive(Character[] alphabet) {
 		Collection<TaskChar> taskCharsCollection = toTaskChars(Arrays.asList(alphabet));
 		this.taskChars = new HashSet<TaskChar>(taskCharsCollection);
-		this.taskCharsMap = new HashMap<Character, TaskChar>(this.taskChars.size());
-		TreeMap<Character, TaskChar> fastTmpMap = new TreeMap<Character, TaskChar>();
+		this.taskCharsMapById = new HashMap<Character, TaskChar>(this.taskChars.size());
+		TreeMap<Character, TaskChar>
+			fastTmpMapById = new TreeMap<Character, TaskChar>();
+		TreeMap<String, TaskChar>
+			fastTmpMapByName = new TreeMap<String, TaskChar>();
 		for (TaskChar tChr : taskCharsCollection) {
-			fastTmpMap.put(tChr.identifier, tChr);
+			fastTmpMapById.put(tChr.identifier, tChr);
+			fastTmpMapByName.put(tChr.name, tChr);
 		}
-		this.taskCharsMap = new HashMap<Character, TaskChar>(fastTmpMap);
+		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMapById);
 	}
 
 	public TaskCharArchive(Map<Character, String> roughTaskChars) {
@@ -37,19 +43,27 @@ public class TaskCharArchive {
 			this.taskChars.add(nuTaskChar);
 			fastTmpMap.put(chr, nuTaskChar);
 		}
-		this.taskCharsMap = new HashMap<Character, TaskChar>(fastTmpMap);
+		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMap);
 	}
 	
 	public boolean isTranslationMapDefined() {
-		return (this.taskCharsMap != null);
+		return (this.taskCharsMapById != null);
 	}
 
 	/**
-	 * Returns a shallow copy of the translation map.
-	 * @return A shallow copy of the translation map
+	 * Returns a shallow copy of the translation map by identifier.
+	 * @return A shallow copy of the translation map by identifier
 	 */
-	public Map<Character, TaskChar> getTranslationMap() {
-		return new HashMap<Character, TaskChar>(this.taskCharsMap);
+	public Map<Character, TaskChar> getTranslationMapById() {
+		return new HashMap<Character, TaskChar>(this.taskCharsMapById);
+	}
+
+	/**
+	 * Returns a shallow copy of the translation map by task name.
+	 * @return A shallow copy of the translation map by task name
+	 */
+	public Map<String, TaskChar> getTranslationMapByName() {
+		return new HashMap<String, TaskChar>(this.taskCharsMapByName);
 	}
 
 	/**
@@ -88,17 +102,21 @@ public class TaskCharArchive {
 		return this.getAlphabet().toArray(new Character[this.howManyTaskChars()]);
 	}
 	public Collection<Character> getAlphabet() {
-		return this.taskCharsMap.keySet();
+		return this.taskCharsMapById.keySet();
 	}
 	
 	public TaskChar getTaskChar(Character chr) {
-		return this.taskCharsMap.get(chr);
+		return this.taskCharsMapById.get(chr);
+	}
+
+	public TaskChar getTaskChar(String name) {
+		return this.taskCharsMapByName.get(name);
 	}
 
 	@Override
 	public String toString() {
 		return "TaskCharArchive [taskChars=" + taskChars + ", taskCharsMap="
-				+ taskCharsMap + "]";
+				+ taskCharsMapById + "]";
 	}
 
 	public int howManyTaskChars() {

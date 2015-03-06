@@ -17,9 +17,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
-import minerful.concept.constraint.relation.Precedence;
-import minerful.concept.constraint.relation.RespondedExistence;
-import minerful.concept.constraint.relation.Response;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
