@@ -34,6 +34,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static final String FORESEE_DISTANCES_PARAM_NAME = "fD";
 	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "sMS";
 	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "xF";
+	public static final char AVOID_CONFLICTS_PARAM = 'C';
 
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
             
@@ -79,6 +80,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 					" (must be equal to or greater than " + (MINIMUM_BRANCHING_LIMIT) + ")");
 		}
         this.avoidRedundancy = line.hasOption(AVOID_REDUNDANCY_PARAM);
+        this.avoidConflicts = line.hasOption(AVOID_CONFLICTS_PARAM);
 
         this.foreseeDistances = line.hasOption(FORESEE_DISTANCES_PARAM_NAME);
         this.memSpaceShowingRequested = line.hasOption(SHOW_MEMSPACE_USED_PARAM_NAME);
@@ -184,8 +186,16 @@ public class MinerFulCmdParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.withLongOpt("noredundancy")
-        		.withDescription("avoid redundancy")
+        		.withDescription(
+        				attachInstabilityWarningToDescription("avoid redundancy")
+        		)
         		.create(AVOID_REDUNDANCY_PARAM)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.withLongOpt("noconflict")
+        		.withDescription("avoid conflicts")
+        		.create(AVOID_CONFLICTS_PARAM)
         		);
         options.addOption(
         		OptionBuilder
