@@ -32,7 +32,7 @@ public class Response extends RespondedExistence {
 
 	@Override
     public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.RESPONSE_SUB_FAMILY_ID;
+        return ConstraintSubFamily.RESPONSE;
     }
     
     @Override

@@ -27,6 +27,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 	}
 	
 	public static final char AVOID_REDUNDANCY_PARAM = 'R';
+	public static final String DEEP_AVOID_REDUNDANCY_PARAM = "dR";
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
 	public static final String STATS_OUT_PATH_PARAM_NAME = "oSF";
 	public static final String PROCESS_SCHEME_OUT_PATH_PARAM_NAME = "oPF";
@@ -39,6 +40,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
             
     public Boolean avoidRedundancy = null;
+    public Boolean deepAvoidRedundancy = null;
     public Integer branchingLimit = MINIMUM_BRANCHING_LIMIT;
     public File inputFile = null;
     public File statsOutputFile = null;
@@ -52,6 +54,7 @@ public class MinerFulCmdParameters extends ParamsManager {
     public MinerFulCmdParameters() {
 		super();
 		this.avoidRedundancy = false;
+		this.deepAvoidRedundancy = false;
 		this.avoidConflicts = false;
 		this.foreseeDistances = false;
 		this.memSpaceShowingRequested = false;
@@ -80,6 +83,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 					" (must be equal to or greater than " + (MINIMUM_BRANCHING_LIMIT) + ")");
 		}
         this.avoidRedundancy = line.hasOption(AVOID_REDUNDANCY_PARAM);
+        this.deepAvoidRedundancy = line.hasOption(DEEP_AVOID_REDUNDANCY_PARAM);
         this.avoidConflicts = line.hasOption(AVOID_CONFLICTS_PARAM);
 
         this.foreseeDistances = line.hasOption(FORESEE_DISTANCES_PARAM_NAME);
@@ -186,10 +190,14 @@ public class MinerFulCmdParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.withLongOpt("noredundancy")
-        		.withDescription(
-        				attachInstabilityWarningToDescription("avoid redundancy")
-        		)
+        		.withDescription("avoid redundancy")
         		.create(AVOID_REDUNDANCY_PARAM)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.withLongOpt("deepnoredundancy")
+        		.withDescription("avoid redundancy with automata-based checking")
+        		.create(DEEP_AVOID_REDUNDANCY_PARAM)
         		);
         options.addOption(
         		OptionBuilder

@@ -39,7 +39,7 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 
 	@Override
 	public ConstraintFamily getFamily() {
-	    return ConstraintFamily.CO_FAMILY_ID;
+	    return ConstraintFamily.COUPLING;
 	}
 
 	@Override

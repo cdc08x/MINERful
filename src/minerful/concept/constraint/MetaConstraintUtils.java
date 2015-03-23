@@ -49,7 +49,7 @@ public class MetaConstraintUtils {
 				) {
 				con.setConstraintWhichThisIsBasedUpon(constraintWhichThisShouldBeBasedUpon);
 			}
-			if (con.getFamily().equals(ConstraintFamily.CO_FAMILY_ID)) {
+			if (con.getFamily().equals(ConstraintFamily.COUPLING)) {
 				CouplingRelationConstraint coReCon = (CouplingRelationConstraint) con;
 				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getSupposedForwardConstraint())) {
 					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getSupposedForwardConstraint()).first());
@@ -58,7 +58,7 @@ public class MetaConstraintUtils {
 					coReCon.setBackwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getSupposedBackwardConstraint()).first());
 				}
 			}
-			if (con.getFamily().equals(ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID)) {
+			if (con.getFamily().equals(ConstraintFamily.NEGATIVE)) {
 				NegativeRelationConstraint negaCon = (NegativeRelationConstraint) con;
 				if (!negaCon.hasOpponent() && treeConSet.contains(negaCon.getSupposedOpponentConstraint())) {
 					negaCon.setOpponent((RelationConstraint) treeConSet.tailSet(negaCon.getSupposedOpponentConstraint()).first());

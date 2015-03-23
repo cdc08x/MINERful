@@ -35,7 +35,7 @@ public class Precedence extends RespondedExistence {
 
 	@Override
     public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID;
+        return ConstraintSubFamily.PRECEDENCE;
     }
     
     @Override

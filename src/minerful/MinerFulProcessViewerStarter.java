@@ -110,6 +110,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
         		break;
         	case type:
     		default:
+    			logger.debug(printer.printUnfoldedBag());
     			break;
         	}
         } else {

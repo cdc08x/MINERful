@@ -176,6 +176,10 @@ public class ConstraintsPrinter {
 		return sBld.toString();
 	}
 
+	public String printUnfoldedBag() {
+		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraints(bag));
+	}
+
 	public String printUnfoldedBagOrderedBySupport() {
 		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraintsSortedBySupport(bag));
 	}

@@ -10,7 +10,7 @@ import org.apache.commons.cli.PosixParser;
 
 public abstract class ParamsManager {
     public static final String EXPERIMENTAL_DEVELOPMENT_STAGE_MESSAGE = 
-			"*** WARNING: unstable implementation!";
+			"*** WARNING: experimental development stage of implementation!";
 
     public void printHelp() {
     	this.printHelp(this.listParseableOptions());

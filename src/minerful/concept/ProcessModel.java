@@ -52,7 +52,11 @@ public class ProcessModel {
 	}
 
 	public Automaton buildAutomaton() {
-		return buildAutomatonByBoundHeuristicInMultiThreading();
+		return buildAutomatonByBoundHeuristic();
+	}
+
+	public Automaton buildAlphabetAcceptingAutomaton() {
+		return AutomatonFactory.fromRegularExpressions(new ArrayList<String>(0), basicAlphabet);
 	}
 	
 	public Collection<SubAutomaton> buildSubAutomata() {
@@ -96,37 +100,9 @@ public class ProcessModel {
 	/*
 	 * This turned out to be the best heuristic for computing the automaton!
 	 */
-	public Automaton buildAutomatonByBoundHeuristicInMultiThreading() {
-		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
-				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
-		List<TaskChar> taskCharsSortedByNumberOfConnections =
-				getTaskCharsSortedByNumberOfConnections(
-						this.createMapOfConnections(map));
-		Collection<Constraint> constraints = new ArrayList<Constraint>();
+	public Automaton buildAutomatonByBoundHeuristic() {
 		Collection<String> regularExpressions = null;
-		Map<TaskChar, NavigableSet<Constraint>>
-			subMap = null,
-			subMapReverse = null;
-		
-		Set<TaskChar>
-			taskCharsReverse = new TreeSet<TaskChar>(map.keySet());
-		
-		for (TaskChar tCh : taskCharsSortedByNumberOfConnections) {
-			subMap = map.get(tCh);
-			for (TaskChar tChRev : taskCharsReverse) {
-				if (subMap.containsKey(tChRev) && subMap.get(tChRev) != null && subMap.get(tChRev).size() > 0) {
-					constraints.addAll(subMap.get(tChRev));
-					subMap.put(tChRev, null);
-				}
-				if (map.containsKey(tChRev)) {
-					subMapReverse = map.get(tChRev);
-					if (subMapReverse.containsKey(tCh) && subMapReverse.get(tCh) != null && subMapReverse.get(tCh).size() > 0) {
-						constraints.addAll(subMapReverse.get(tCh));
-						subMapReverse.put(tCh, null);
-					}
-				}
-			}
-		}
+		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactor(this.bag);
 
 		regularExpressions = new ArrayList<String>(constraints.size());
 		for (Constraint con : constraints) {
@@ -139,8 +115,8 @@ public class ProcessModel {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
-				getTaskCharsSortedByNumberOfConnections(
-						this.createMapOfConnections(map));
+				LinearConstraintsIndexFactory.getTaskCharsSortedByNumberOfConnections(
+						LinearConstraintsIndexFactory.createMapOfConnections(map));
 		Collection<Constraint> constraints = null;
 		Collection<String> regularExpressions = null;
 		AbstractMap<TaskChar, Automaton> subAutomata = new TreeMap<TaskChar, Automaton>();
@@ -260,44 +236,5 @@ for (Constraint con : impliedIndexedBag.getConstraintsOf(new TaskChar('a'))) {
 		}
 		
 		return AutomatonFactory.fromRegularExpressionsByDimensionalityHeuristicInMultiThreading(regExpsMap, basicAlphabet);
-	}
-	
-	public Map<TaskChar, Set<TaskChar>> createMapOfConnections() {
-		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
-				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
-		
-		return this.createMapOfConnections(map);
-	}
-
-	private Map<TaskChar, Set<TaskChar>> createMapOfConnections(
-			Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map) {
-		Map<TaskChar, Set<TaskChar>> mapOfConnections =
-				new TreeMap<TaskChar, Set<TaskChar>>();
-		for (TaskChar tChr : map.keySet()) {
-			mapOfConnections.put(tChr, map.get(tChr).keySet());
-		}
-		return mapOfConnections;
-	}
-	
-	private List<TaskChar> getTaskCharsSortedByNumberOfConnections(Map<TaskChar, Set<TaskChar>> map) {
-		TreeMap<Integer, Set<TaskChar>> orderingMap = new TreeMap<Integer, Set<TaskChar>>();
-		ArrayList<TaskChar> orderedTaskChars = new ArrayList<TaskChar>(map.keySet().size());
-		
-		Integer howManyCorrelatedTasks = 0;
-		for (TaskChar tChr : map.keySet()) {
-			howManyCorrelatedTasks = map.get(tChr).size();
-			if (!orderingMap.containsKey(howManyCorrelatedTasks)) {
-				orderingMap.put(howManyCorrelatedTasks, new TreeSet<TaskChar>());
-			}
-			orderingMap.get(howManyCorrelatedTasks).add(tChr);
-		}
-		for (Integer key : orderingMap.descendingKeySet()) {
-			orderedTaskChars.addAll(orderingMap.get(key));
-		}
-		
-		logger.trace(map);
-		logger.trace(orderedTaskChars);
-		
-		return orderedTaskChars;
 	}
 }

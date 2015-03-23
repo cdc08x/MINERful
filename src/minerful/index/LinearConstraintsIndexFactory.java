@@ -1,8 +1,10 @@
 package minerful.index;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -83,6 +85,25 @@ public class LinearConstraintsIndexFactory {
 					result = Double.valueOf(o1.interestFactor).compareTo(o2.interestFactor);
 					if (result == 0) {
 						result = o1.compareTo(o2);
+					}
+				}
+			}
+			return result * (-1);
+		}
+	}
+	public static class SupportFamilyConfidenceInterestFactorBasedComparator implements Comparator<Constraint> {
+		@Override
+		public int compare(Constraint o1, Constraint o2) {
+			int result = Double.valueOf(o1.support).compareTo(o2.support);
+			if (result == 0) {
+				result = o1.getFamily().compareTo(o2.getFamily()) * (-1);
+				if (result == 0) {
+					result = Double.valueOf(o1.confidence).compareTo(o2.confidence);
+					if (result == 0) {
+						result = Double.valueOf(o1.interestFactor).compareTo(o2.interestFactor);
+						if (result == 0) {
+							result = o1.compareTo(o2);
+						}
 					}
 				}
 			}
@@ -187,6 +208,79 @@ public class LinearConstraintsIndexFactory {
 		
 		return map;
 	}
+
+	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
+		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
+				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
+		List<TaskChar> taskCharsSortedByNumberOfConnections =
+				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(map));
+		Collection<Constraint> constraints = new ArrayList<Constraint>();
+		Map<TaskChar, NavigableSet<Constraint>>
+			subMap = null,
+			subMapReverse = null;
+		
+		Set<TaskChar>
+			taskCharsReverse = new TreeSet<TaskChar>(map.keySet());
+		SortedSet<Constraint> tmpReorderingSet = null;
+		
+		for (TaskChar tCh : taskCharsSortedByNumberOfConnections) {
+			subMap = map.get(tCh);
+			for (TaskChar tChRev : taskCharsReverse) {
+				if (subMap.containsKey(tChRev) && subMap.get(tChRev) != null && subMap.get(tChRev).size() > 0) {
+					tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorBasedComparator());
+					tmpReorderingSet.addAll(subMap.get(tChRev));
+					constraints.addAll(tmpReorderingSet);
+					subMap.put(tChRev, null);
+				}
+				if (map.containsKey(tChRev)) {
+					subMapReverse = map.get(tChRev);
+					if (subMapReverse.containsKey(tCh) && subMapReverse.get(tCh) != null && subMapReverse.get(tCh).size() > 0) {
+						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorBasedComparator());
+						tmpReorderingSet.addAll(subMapReverse.get(tCh));
+						constraints.addAll(tmpReorderingSet);
+						subMapReverse.put(tCh, null);
+					}
+				}
+			}
+		}
+		return constraints;
+	}
+	
+	public static Map<TaskChar, Set<TaskChar>> createMapOfConnections(TaskCharRelatedConstraintsBag bag) {
+		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
+				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
+		
+		return createMapOfConnections(map);
+	}
+	
+	public static List<TaskChar> getTaskCharsSortedByNumberOfConnections(Map<TaskChar, Set<TaskChar>> map) {
+		TreeMap<Integer, Set<TaskChar>> orderingMap = new TreeMap<Integer, Set<TaskChar>>();
+		ArrayList<TaskChar> orderedTaskChars = new ArrayList<TaskChar>(map.keySet().size());
+		
+		Integer howManyCorrelatedTasks = 0;
+		for (TaskChar tChr : map.keySet()) {
+			howManyCorrelatedTasks = map.get(tChr).size();
+			if (!orderingMap.containsKey(howManyCorrelatedTasks)) {
+				orderingMap.put(howManyCorrelatedTasks, new TreeSet<TaskChar>());
+			}
+			orderingMap.get(howManyCorrelatedTasks).add(tChr);
+		}
+		for (Integer key : orderingMap.descendingKeySet()) {
+			orderedTaskChars.addAll(orderingMap.get(key));
+		}
+		
+		return orderedTaskChars;
+	}
+
+	public static Map<TaskChar, Set<TaskChar>> createMapOfConnections(
+			Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map) {
+		Map<TaskChar, Set<TaskChar>> mapOfConnections =
+				new TreeMap<TaskChar, Set<TaskChar>>();
+		for (TaskChar tChr : map.keySet()) {
+			mapOfConnections.put(tChr, map.get(tChr).keySet());
+		}
+		return mapOfConnections;
+	}
 	
 	public static SortedSet<Constraint> getAllConstraints(TaskCharRelatedConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>();
@@ -210,6 +304,16 @@ public class LinearConstraintsIndexFactory {
 	
 	public static SortedSet<Constraint> getAllConstraintsSortedBySupportConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportConfidenceInterestFactorBasedComparator());
+		for (TaskChar tChr : bag.getTaskChars()) {
+			for (Constraint con : bag.getConstraintsOf(tChr)) {
+				allConstraints.add(con);
+			}
+		}
+		return allConstraints;
+	}
+	
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);

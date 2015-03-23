@@ -106,11 +106,11 @@ public abstract class RelationConstraint extends Constraint {
     
     @Override
     public ConstraintFamily getFamily() {
-        return ConstraintFamily.RELATION_CONSTRAINT_FAMILY_ID;
+        return ConstraintFamily.RELATION;
     }
     @Override
     public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.NO_SUB_FAMILY_ID;
+        return ConstraintSubFamily.NONE;
     }
     
     @Override

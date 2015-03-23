@@ -66,10 +66,10 @@ public abstract class ExistenceConstraint extends Constraint {
     
     @Override
     public ConstraintFamily getFamily() {
-        return ConstraintFamily.EXISTENCE_CONSTRAINT_FAMILY_ID;
+        return ConstraintFamily.EXISTENCE;
     }
     @Override
     public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.NO_SUB_FAMILY_ID;
+        return ConstraintSubFamily.NONE;
     }
 }

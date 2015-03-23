@@ -120,6 +120,10 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
         
         return nuBag;
     }
+    
+    public TaskCharRelatedConstraintsBag createEmptyIndexedCopy() {
+    	return new TaskCharRelatedConstraintsBag(getTaskChars());
+    }
 
     public TaskCharRelatedConstraintsBag createHierarchyUnredundantCopy() {
         TaskCharRelatedConstraintsBag nuBag =
@@ -149,7 +153,7 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
                         nuBag.remove(key, currCon);
                     }
                 }
-                if (currCon.getFamily() == ConstraintFamily.CO_FAMILY_ID) {
+                if (currCon.getFamily() == ConstraintFamily.COUPLING) {
                     coExiCon = (CouplingRelationConstraint) currCon;
                     if (coExiCon.hasImplyingConstraints()) {
                         if (coExiCon.isMoreReliableThanTheImplyingConstraints()) {
@@ -172,7 +176,7 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
                         }
                     }
                 }
-                if (currCon.getFamily() == ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID) {
+                if (currCon.getFamily() == ConstraintFamily.NEGATIVE) {
                     noRelCon = (NegativeRelationConstraint) currCon;
                     if (noRelCon.hasOpponent()) {
                         if (noRelCon.isMoreReliableThanTheOpponent()) {
@@ -208,9 +212,9 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
         while (genealogyDestroyer != null) {
         	// The ancestor of *Precedence(a, b) is RespondedExistence(b, a), thus under a different indexing character!
         	// TODO: solve this issue, because "binary" Precedence and branched Precedences do not work the same in this regard!
-        	if (	destructionGeneratorsFamily.equals(ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID)
+        	if (	destructionGeneratorsFamily.equals(ConstraintSubFamily.PRECEDENCE)
         		&&	!genealogyDestroyer.isBranched()
-        		&&	!genealogyDestroyer.getSubFamily().equals(ConstraintSubFamily.PRECEDENCE_SUB_FAMILY_ID)
+        		&&	!genealogyDestroyer.getSubFamily().equals(ConstraintSubFamily.PRECEDENCE)
         	) {
         		key = genealogyDestroyer.base.getFirstTaskChar();
         	}

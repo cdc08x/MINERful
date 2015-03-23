@@ -16,7 +16,7 @@ clear
 MAINCLASS="minerful.MinerFulMinerStarter"
 
 DEBUGLEVEL="none"
-MEMORY_MAX="12G"
+MEMORY_MAX="16G"
 THRESHOLD=0.0
 
 ## Run!

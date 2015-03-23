@@ -33,11 +33,6 @@ public class RespondedExistence extends RelationConstraint {
 	public RespondedExistence(TaskCharSet base, TaskCharSet implied) {
 		super(base, implied);
 	}
-
-	@Override
-    public ConstraintFamily getFamily() {
-        return ConstraintFamily.RESPONDED_EXISTENCE_FAMILY_ID;
-    }
     
     @Override
     public int getHierarchyLevel() {

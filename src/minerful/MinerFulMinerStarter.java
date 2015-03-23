@@ -353,7 +353,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         if (minerFulParams.avoidConflicts) {
         	ProcessModel process = new ProcessModel(bag);
         	long beforeConflictResolution = System.currentTimeMillis();
-        	ConflictResolver confliReso = new ConflictResolver(process);
+        	ConflictResolver confliReso = new ConflictResolver(process, minerFulParams.deepAvoidRedundancy);
         	confliReso.resolveConflicts();
         	bag = confliReso.getSafeProcess().bag;
         	long afterConflictResolution = System.currentTimeMillis();
@@ -399,26 +399,52 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         csvSummaryLegendBuffer.append("'Operation code'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
+      // --------------------------------
         csvSummaryBuffer.append(confliReso.inputConstraints().size());
         csvSummaryLegendBuffer.append("'Input constraints for conflict check'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
-        csvSummaryBuffer.append(confliReso.performedChecks());
-        csvSummaryLegendBuffer.append("'Performed checks'");
+     // --------------------------------
+        csvSummaryBuffer.append(confliReso.performedConflictChecks());
+        csvSummaryLegendBuffer.append("'Performed conflict checks'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
+     // --------------------------------
         csvSummaryBuffer.append(confliReso.checkedConflictingConstraints().size());
         csvSummaryLegendBuffer.append("'Checked conflicting constraints'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
+     // --------------------------------
         csvSummaryBuffer.append(confliReso.conflictingConstraintsInOriginalModel().size());
         csvSummaryLegendBuffer.append("'Conflicting constraints in original model'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
+     // --------------------------------
         csvSummaryBuffer.append(confliReso.conflictingConstraintsInOriginalUnredundantModel().size());
         csvSummaryLegendBuffer.append("'Conflicting constraints in original hierarchy-unredundant model'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(confliReso.performedRedundancyChecks());
+        csvSummaryLegendBuffer.append("'Performed redundancy checks'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(confliReso.checkedRedundantConstraints().size());
+        csvSummaryLegendBuffer.append("'Checked redundant constraints'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        // --------------------------------
+        csvSummaryBuffer.append(confliReso.redundantConstraintsInOriginalModel().size());
+        csvSummaryLegendBuffer.append("'Redundant constraints in original model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(confliReso.redundantConstraintsInOriginalUnredundantModel().size());
+        csvSummaryLegendBuffer.append("'Redundant constraints in original hierarchy-unredundant model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
         csvSummaryBuffer.append(timingAfterConflictResolution - timingBeforeConflictResolution);
         csvSummaryLegendBuffer.append("'Time to resolve conflicts'");
 

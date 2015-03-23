@@ -35,7 +35,7 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
 
 	@Override
     public ConstraintFamily getFamily() {
-        return ConstraintFamily.NEGATIVE_RELATION_FAMILY_ID;
+        return ConstraintFamily.NEGATIVE;
     }
     
 	@Override
