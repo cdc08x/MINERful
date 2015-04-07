@@ -16,12 +16,18 @@ import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 
 public class MinerFulLauncher {
+//	public static final String TEST_OUTPUT = "~/test.declare-xml";
 	private InputCmdParameters inputParams;
 	private MinerFulCmdParameters minerFulParams;
 	private ViewCmdParameters viewParams;
 	private SystemCmdParameters systemParams;
 	private MinerFulMinerStarter minerFulStarter;
 	
+	/**
+	 * For dummy testing only.
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
     	MinerFulMinerStarter minerMinaStarter = new MinerFulMinerStarter();
     	Options cmdLineOptions = minerMinaStarter.setupOptions();
@@ -57,7 +63,10 @@ public class MinerFulLauncher {
         
         XesLogParser logParser = new XesLogParser(inputParams.inputFile, fromInputParamToXesLogClassificationType(inputParams.eventClassification));
         
-        DeclareEncoderDecoder.marshal("/home/claudio/Desktop/porcheriediraraspecie.xml", new MinerFulLauncher(inputParams, minerFulParams, viewParams, systemParams).mine(logParser.getFirstXLog()));
+//        DeclareEncoderDecoder.marshal(MinerFulLauncher.TEST_OUTPUT, new MinerFulLauncher(inputParams, minerFulParams, viewParams, systemParams).mine(logParser.getFirstXLog()));
+        new MinerFulLauncher(inputParams, minerFulParams, viewParams, systemParams).mine(logParser.getFirstXLog());
+        
+        System.exit(0);
 	}
 
 	public MinerFulLauncher(InputCmdParameters inputParams,
