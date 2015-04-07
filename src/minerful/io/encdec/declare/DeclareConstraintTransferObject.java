@@ -22,13 +22,13 @@ public class DeclareConstraintTransferObject {
 			secondParamSet = new TreeSet<String>();
 		
 		for (TaskChar tChars : con.base.getTaskChars()) {
-			firstParamSet.add(tChars.name);
+			firstParamSet.add(tChars.taskClass.getName());
 		}
 		
 		if (con instanceof RelationConstraint) {
 			RelationConstraint relaCon = (RelationConstraint) con;
 			for (TaskChar tChars : relaCon.implied.getTaskChars()) {
-				secondParamSet.add(tChars.name);
+				secondParamSet.add(tChars.taskClass.getName());
 			}
 		}
 

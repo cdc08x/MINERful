@@ -4,7 +4,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class VariableCharactersSetFixedCountersCollection extends CharactersSetCountersCollection {
+import minerful.concept.TaskChar;
+
+public class VariableCharactersSetFixedCountersCollection extends TaskSetCountersCollection {
 	private Integer maximumCharactersSetSize;
 	
 	public VariableCharactersSetFixedCountersCollection() {
@@ -13,65 +15,65 @@ public class VariableCharactersSetFixedCountersCollection extends CharactersSetC
 
 	public VariableCharactersSetFixedCountersCollection(
 			Integer maximumCharactersSetSize) {
-		this.charactersSetCounterCollection = new TreeSet<CharactersSetCounter>();
-		this.singleCharIndexer = new TreeMap<Character, TreeSet<CharactersSetCounter>>();
+		this.tasksSetCounterCollection = new TreeSet<TasksSetCounter>();
+		this.singleTaskIndexer = new TreeMap<TaskChar, TreeSet<TasksSetCounter>>();
 		this.maximumCharactersSetSize = maximumCharactersSetSize;
 	}
 
 	@Override
-	protected void reIndex(Set<Character> stuff, CharactersSetCounter indexed) {
-		for (Character chr : stuff) {
-			if (!this.singleCharIndexer.containsKey(chr))
-				this.singleCharIndexer.put(chr, new TreeSet<CharactersSetCounter>());
-			this.singleCharIndexer.get(chr).add(indexed);
+	protected void reIndex(Set<TaskChar> stuff, TasksSetCounter indexed) {
+		for (TaskChar chr : stuff) {
+			if (!this.singleTaskIndexer.containsKey(chr))
+				this.singleTaskIndexer.put(chr, new TreeSet<TasksSetCounter>());
+			this.singleTaskIndexer.get(chr).add(indexed);
 		}
 	}
 	
-	public boolean hasIndex(Character indexer) {
+	public boolean hasIndex(TaskChar indexer) {
 		return this.getIndexedBy(indexer) != null;
 	}
 	
-	public Set<CharactersSetCounter> getIndexedBy(Character indexer) {
-		return this.singleCharIndexer.get(indexer);
+	public Set<TasksSetCounter> getIndexedBy(TaskChar indexer) {
+		return this.singleTaskIndexer.get(indexer);
 	}
 	
-	public Set<CharactersSetCounter> getIndexedByOrInterleave(Character indexer) {
+	public Set<TasksSetCounter> getIndexedByOrInterleave(TaskChar indexer) {
 		this.interleave(indexer);
-		return this.singleCharIndexer.get(indexer);
+		return this.singleTaskIndexer.get(indexer);
 	}
 	
-	public void storeAndReIndex(CharactersSetCounter nuCharactersSetCounter) {
-		this.charactersSetCounterCollection.add(nuCharactersSetCounter);
-		this.reIndex(nuCharactersSetCounter.getCharactersSet(), nuCharactersSetCounter);
+	public void storeAndReIndex(TasksSetCounter nuCharactersSetCounter) {
+		this.tasksSetCounterCollection.add(nuCharactersSetCounter);
+		this.reIndex(nuCharactersSetCounter.getTaskCharSet(), nuCharactersSetCounter);
 	}
 	
-	private boolean interleave(Character indexer) {
+	private boolean interleave(TaskChar indexer) {
 		return this.interleave(indexer, false);
 	}
 	
-	private boolean interleave(Character indexer, boolean inheritCountFromExisting) {
-		Set<CharactersSetCounter> nuCharSetCounters = null;
+	private boolean interleave(TaskChar indexer, boolean inheritCountFromExisting) {
+		Set<TasksSetCounter> nuCharSetCounters = null;
 		
-		if (!this.singleCharIndexer.containsKey(indexer)) {
-			nuCharSetCounters = new TreeSet<CharactersSetCounter>();
+		if (!this.singleTaskIndexer.containsKey(indexer)) {
+			nuCharSetCounters = new TreeSet<TasksSetCounter>();
 			// Add the singleton
-			CharactersSetCounter nuCharSetCounter = new CharactersSetCounter(indexer);
-			Set<Character> nuCharSet = nuCharSetCounter.getCharactersSet();
+			TasksSetCounter nuCharSetCounter = new TasksSetCounter(indexer);
+			Set<TaskChar> nuCharSet = nuCharSetCounter.getTaskCharSet();
 			this.addAndReIndex(nuCharSet, nuCharSetCounter);
 			
 			// Combine indexer with existing character sets
-			for(CharactersSetCounter existingCharSetCounter : this.charactersSetCounterCollection) {
+			for(TasksSetCounter existingCharSetCounter : this.tasksSetCounterCollection) {
 				if (this.maximumCharactersSetSize == null || existingCharSetCounter.howManyCharactersInSet() < this.maximumCharactersSetSize) {
-					nuCharSet = existingCharSetCounter.getCharactersSet();
+					nuCharSet = existingCharSetCounter.getTaskCharSet();
 					nuCharSet.add(indexer);
-					nuCharSetCounter = new CharactersSetCounter(nuCharSet);
+					nuCharSetCounter = new TasksSetCounter(nuCharSet);
 					if (inheritCountFromExisting)
 						nuCharSetCounter.incrementCounter(existingCharSetCounter.getCounter());
 					nuCharSetCounters.add(nuCharSetCounter);
 				}
 			}
-			for (CharactersSetCounter nuCharSetCounterToAdd : nuCharSetCounters)
-				this.addAndReIndex(nuCharSetCounterToAdd.getCharactersSet(), nuCharSetCounterToAdd);
+			for (TasksSetCounter nuCharSetCounterToAdd : nuCharSetCounters)
+				this.addAndReIndex(nuCharSetCounterToAdd.getTaskCharSet(), nuCharSetCounterToAdd);
 			
 			return true;
 		}
@@ -79,18 +81,18 @@ public class VariableCharactersSetFixedCountersCollection extends CharactersSetC
 		return false;
 	}
     
-    private void mergeAndReindex (CharactersSetCounter chSetCounter) {
-        if (this.charactersSetCounterCollection.contains(chSetCounter)) {
-            CharactersSetCounter alreadyExisting = this.charactersSetCounterCollection.tailSet(chSetCounter).first();
+    private void mergeAndReindex (TasksSetCounter chSetCounter) {
+        if (this.tasksSetCounterCollection.contains(chSetCounter)) {
+            TasksSetCounter alreadyExisting = this.tasksSetCounterCollection.tailSet(chSetCounter).first();
             alreadyExisting.incrementCounter(chSetCounter.getCounter());
         } else {
-            this.addAndReIndex(chSetCounter.getCharactersSet(), chSetCounter);
+            this.addAndReIndex(chSetCounter.getTaskCharSet(), chSetCounter);
         }
     }
     
     public void merge (VariableCharactersSetFixedCountersCollection other) {
     	other = this.prepareForMerging(other);
-        for (CharactersSetCounter chSetCounter : other.charactersSetCounterCollection) {
+        for (TasksSetCounter chSetCounter : other.tasksSetCounterCollection) {
             this.mergeAndReindex(chSetCounter);
         }
     }
@@ -98,16 +100,16 @@ public class VariableCharactersSetFixedCountersCollection extends CharactersSetC
 	private VariableCharactersSetFixedCountersCollection prepareForMerging(
 			VariableCharactersSetFixedCountersCollection other) {
 		// Check this' single-character indexers. If some are missing, wrt other, it means that some characters did not appear in the previous traces.
-		if (!this.singleCharIndexer.keySet().containsAll(other.singleCharIndexer.keySet())) {
+		if (!this.singleTaskIndexer.keySet().containsAll(other.singleTaskIndexer.keySet())) {
 			// If some are missing, for each of them you must copy and enlarge the existing sets adding the missing characters, including the counter.
-			for (Character otherIndexer : other.singleCharIndexer.keySet()) {
+			for (TaskChar otherIndexer : other.singleTaskIndexer.keySet()) {
 				this.interleave(otherIndexer, true);
 			}
 		}
 		// The other way round, for other and this
-		if (!other.singleCharIndexer.keySet().containsAll(this.singleCharIndexer.keySet())) {
+		if (!other.singleTaskIndexer.keySet().containsAll(this.singleTaskIndexer.keySet())) {
 			// If some are missing, for each of them you must copy and enlarge the existing sets adding the missing characters, including the counter.
-			for (Character thisIndexer : this.singleCharIndexer.keySet()) {
+			for (TaskChar thisIndexer : this.singleTaskIndexer.keySet()) {
 				other.interleave(thisIndexer, true);
 			}
 		}

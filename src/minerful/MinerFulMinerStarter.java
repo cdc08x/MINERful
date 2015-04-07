@@ -35,7 +35,7 @@ import minerful.miner.stats.OccurrencesStatsBuilder;
 import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.simplification.ConflictResolver;
+import minerful.simplification.ConflictAndRedundancyResolver;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -113,9 +113,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         
         logger.info("Loading log...");
         
-        LogParser logParser = deriveLogParserFromLog(inputParams, minerFulParams);
+        LogParser logParser = deriveLogParserFromLogFile(inputParams, minerFulParams);
         
-        TaskCharArchive taskCharArchive = new TaskCharArchive(logParser.getEventEncoderDecoder().getTranslationMap());
+        TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
         TaskCharRelatedConstraintsBag bag =
         		minerMinaStarter.mine(logParser, minerFulParams, viewParams, systemParams, taskCharArchive);
@@ -143,22 +143,13 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         
     }
 
-	private static LogParser deriveLogParserFromLog(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
+	private static LogParser deriveLogParserFromLogFile(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
 		LogParser logParser = null;
 		switch (inputParams.inputLanguage) {
 		case xes:
+			ClassificationType evtClassi = MinerFulLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
 			try {
-				switch (inputParams.eventClassification) {
-				case name:
-					logParser = new XesLogParser(inputParams.inputFile, ClassificationType.NAME);
-					break;
-				case logspec:
-					logParser = new XesLogParser(inputParams.inputFile, ClassificationType.LOG_SPECIFIED);
-					break;
-				default:
-					throw new UnsupportedOperationException("Classification strategy " + inputParams.eventClassification + " not yet implemented");
-				}
-				
+				logParser = new XesLogParser(inputParams.inputFile, evtClassi);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -240,20 +231,27 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         	numOfPrunedByHierarchyRelationConstraints = 0L,
         	numOfConstraintsAfterPruningAndThresholding = 0L,
         	numOfExistenceConstraintsAfterPruningAndThresholding = 0L,
-        	numOfRelationConstraintsAfterPruningAndThresholding = 0L;
-        Character[] alphabet = taskCharArchive.getAlphabetArray();
+        	numOfRelationConstraintsAfterPruningAndThresholding = 0L,
+        	
+        	before = 0L,
+        	after = 0L,
+        	occuTabTime = 0L,
+        	exiConTime = 0L,
+        	relaConTime = 0L,
+        	pruniTime = 0L;
         
-        long before = System.currentTimeMillis();
+        before = System.currentTimeMillis();
         // initialize the stats builder
         OccurrencesStatsBuilder statsBuilder =
 //                new OccurrencesStatsBuilder(alphabet, TaskCharEncoderDecoder.CONTEMPORANEITY_CHARACTER_DELIMITER, branchingLimit);
-        		new OccurrencesStatsBuilder(alphabet, branchingLimit);
+        		new OccurrencesStatsBuilder(taskCharArchive, branchingLimit);
         // builds the (empty) stats table
         GlobalStatsTable statsTable = statsBuilder.checkThisOut(logParser);
         logger.info("Done!");
-        long after = System.currentTimeMillis();
+        
+        after = System.currentTimeMillis();
 
-        long occuTabTime = after - before;
+        occuTabTime = after - before;
 
         logger.trace("Occurrences/distances table, computed in: " + occuTabTime + " msec");
         // By using LogMF from the extras companion write, you will not incur the cost of parameter construction if debugging is disabled for logger
@@ -283,7 +281,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
         after = System.currentTimeMillis();
 
-        long exiConTime = after - before;
+        exiConTime = after - before;
+        
         logger.debug("Existence constraints, computed in: " + exiConTime + " msec");
         possibleNumberOfExistenceConstraints = exiConMiner.howManyPossibleConstraints();
         possibleNumberOfConstraints += possibleNumberOfExistenceConstraints;
@@ -294,7 +293,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         before = System.currentTimeMillis();
         // search for relation constraints
         
-        long relaConTime = 0;
+        relaConTime = 0;
         IConstraintsMiner relaConMiner = null;
         
         if (minerFulParams.branchingLimit.equals(MinerFulCmdParameters.MINIMUM_BRANCHING_LIMIT)) {
@@ -318,6 +317,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         // Let us try to free memory from the unused statsTable!
         System.gc();
         
+        logger.info("Done!");
+
         logger.debug("Relation constraints, computed in: " + relaConTime + " msec");
         possibleNumberOfRelationConstraints = relaConMiner.howManyPossibleConstraints();
         possibleNumberOfConstraints += possibleNumberOfRelationConstraints;
@@ -331,7 +332,15 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         numOfRelationConstraintsBeforeHierarchyBasedPruning = numOfConstraintsBeforeHierarchyBasedPruning - numOfExistenceConstraintsBeforeHierarchyBasedPruning;
 
         if (minerFulParams.avoidRedundancy) {
+            logger.info("Pruning redundancy, on the basis of hierarchy subsumption");
+
+            before = System.currentTimeMillis();
+
         	bag = bag.createHierarchyUnredundantCopy();
+        	
+        	after = System.currentTimeMillis();
+        	pruniTime = after - before;
+        	
             // Let us try to free memory from the unused clone of bag!
             System.gc();
             numOfPrunedByHierarchyConstraints = bag.howManyConstraints();
@@ -350,10 +359,10 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         after = System.currentTimeMillis();
         relaConTime = after - before;
 
-        if (minerFulParams.avoidConflicts) {
+        if (minerFulParams.avoidConflicts || minerFulParams.deepAvoidRedundancy) {
         	ProcessModel process = new ProcessModel(bag);
         	long beforeConflictResolution = System.currentTimeMillis();
-        	ConflictResolver confliReso = new ConflictResolver(process, minerFulParams.deepAvoidRedundancy);
+        	ConflictAndRedundancyResolver confliReso = new ConflictAndRedundancyResolver(process, minerFulParams.deepAvoidRedundancy);
         	confliReso.resolveConflicts();
         	bag = confliReso.getSafeProcess().bag;
         	long afterConflictResolution = System.currentTimeMillis();
@@ -368,8 +377,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         // If it is not soup, it is wet bread
         numOfRelationConstraintsAfterPruningAndThresholding = numOfConstraintsAfterPruningAndThresholding - numOfExistenceConstraintsAfterPruningAndThresholding;
         
-        printComputationStats(logParser, alphabet, occuTabTime,
-				exiConTime, relaConTime, maxMemUsage,
+        printComputationStats(logParser, taskCharArchive, occuTabTime,
+				exiConTime, relaConTime, pruniTime, maxMemUsage,
 				possibleNumberOfConstraints,
 				possibleNumberOfExistenceConstraints,
 				possibleNumberOfRelationConstraints,
@@ -389,7 +398,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         return bag;
     }
 
-	public void printComputationStats(ConflictResolver confliReso, long timingBeforeConflictResolution, long timingAfterConflictResolution) {
+	public void printComputationStats(ConflictAndRedundancyResolver confliReso, long timingBeforeConflictResolution, long timingAfterConflictResolution) {
         StringBuffer
     	csvSummaryBuffer = new StringBuffer(),
     	csvSummaryLegendBuffer = new StringBuffer(),
@@ -457,7 +466,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 	}
 
 	public void printComputationStats(LogParser logParser,
-			Character[] encodedAlphabet, long occuTabTime, long exiConTime,
+			TaskCharArchive taskCharArchive, long occuTabTime, long exiConTime, long pruniTime,
 			long relaConTime, long maxMemUsage,
 			long possibleNumberOfConstraints,
 			long possibleNumberOfExistenceConstraints,
@@ -507,22 +516,26 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
         csvSummaryLegendBuffer.append("'Total characters read'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
-        csvSummaryBuffer.append(encodedAlphabet.length);
+        csvSummaryBuffer.append(taskCharArchive.size());
         csvSummaryLegendBuffer.append("'Alphabet size'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
 
         csvSummaryLegendBuffer.append("'Total time'");
         csvSummaryLegendBuffer.append(";");
-        csvSummaryBuffer.append(occuTabTime + exiConTime + relaConTime);
+        csvSummaryBuffer.append(occuTabTime + exiConTime + relaConTime + pruniTime);
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append("'Statistics computation time'");
         csvSummaryLegendBuffer.append(";");
         csvSummaryBuffer.append(occuTabTime);
         csvSummaryBuffer.append(";");
-        csvSummaryLegendBuffer.append("'Total mining time'");
+        csvSummaryLegendBuffer.append("'Constraints check time'");
         csvSummaryLegendBuffer.append(";");
         csvSummaryBuffer.append(exiConTime + relaConTime);
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append("'Subsumption hierarchy pruning time'");
+        csvSummaryLegendBuffer.append(";");
+        csvSummaryBuffer.append(pruniTime);
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append("'Relation constraints discovery time'");
         csvSummaryLegendBuffer.append(";");
@@ -624,7 +637,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
     		Matcher match = p.matcher(rawXml);
     		String auxDecodedTask = null;
 			while (match.find()) {
-				auxDecodedTask = StringEscapeUtils.escapeXml(taskCharArchive.getTaskChar(match.group(1).charAt(0)).name);
+				auxDecodedTask = StringEscapeUtils.escapeXml(taskCharArchive.getTaskChar(match.group(1).charAt(0)).getName());
 				match.appendReplacement(sBuf, "task=\"" + auxDecodedTask + "\"");
 			}
 			match.appendTail(sBuf);

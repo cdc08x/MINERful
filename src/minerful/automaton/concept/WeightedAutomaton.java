@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import minerful.concept.TaskClass;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
@@ -24,7 +25,7 @@ import dk.brics.automaton.Transition;
 public class WeightedAutomaton extends Automaton {
 
 	private static final long serialVersionUID = 7002546525205169853L;
-	private NavigableMap<Character, String> translationMap;
+	private NavigableMap<Character, TaskClass> translationMap;
 
 	@SuppressWarnings("unused")
 	private WeightedAutomaton() {
@@ -36,7 +37,7 @@ public class WeightedAutomaton extends Automaton {
 	}
 
 	public WeightedAutomaton(Automaton automaton,
-			NavigableMap<Character, String> translationMap) {
+			NavigableMap<Character, TaskClass> translationMap) {
 		this.translationMap = translationMap;
 		
 		NavigableMap<State, WeightedState> statesTranslationMap = new TreeMap<State, WeightedState>();
@@ -80,7 +81,7 @@ public class WeightedAutomaton extends Automaton {
 			}
 			for (char evt = trans.getMin(); evt <= trans.getMax(); evt++) {
 				currentWState.addTransition(new WeightedTransition(evt,
-						destinationWState, translationMap.get(evt)));
+						destinationWState, translationMap.get(evt).toString()));
 			}
 
 			visitedStates.add(currentState);

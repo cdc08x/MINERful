@@ -10,6 +10,6 @@ public interface TraceParser {
 
 	int length();
 
-	EventParser next();
+	LogEventParser next();
 
 }

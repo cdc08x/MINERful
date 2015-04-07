@@ -6,6 +6,8 @@ package minerful.tracemaker.params;
 
 import java.io.File;
 
+import minerful.errorinjector.ErrorInjector;
+import minerful.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.params.ParamsManager;
 
@@ -55,21 +57,34 @@ public class TracesMakerCmdParameters extends ParamsManager {
     public static final Integer MIN_OCCURRENCES = 0;
     public static final Integer MAX_OCCURRENCES = Integer.MAX_VALUE;
             
-    public String[] regexps = null;
-    public Integer numOfCases = null;
-    public Character[] alphabet = null;
-    public Integer minChrsPerString = null;
-    public Integer maxChrsPerString = null;
-    public Long size = null;
-    public File logFile = null;
-    public Encoding outputEncoding = Encoding.string;
+    public String[] regexps;
+    public Integer numOfCases;
+    public Character[] alphabet;
+    public Integer minChrsPerString;
+    public Integer maxChrsPerString;
+    public Long size;
+    public File logFile;
+    public Encoding outputEncoding;
+    
+    public TracesMakerCmdParameters() {
+        regexps = new String[]{TEST_REGEXP};
+        numOfCases = null;
+        alphabet = TEST_ALPHABET;
+        minChrsPerString = MIN_OCCURRENCES;
+        maxChrsPerString = MAX_OCCURRENCES;
+        size = SIZE;
+        logFile = null;
+        outputEncoding = Encoding.string;
+    }
     
     public TracesMakerCmdParameters(Options options, String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
 	public TracesMakerCmdParameters(String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
 	}
@@ -80,15 +95,17 @@ public class TracesMakerCmdParameters extends ParamsManager {
         this.regexps = line.getOptionValues(TracesMakerCmdParameters.REG_EXPS_PARAM_NAME);
         if (this.regexps == null)
             this.regexps = new String[]{TEST_REGEXP};
-        if (line.getOptionValues(TracesMakerCmdParameters.ALPHABET_PARAM_NAME) == null) {
-            this.alphabet = TEST_ALPHABET;
-        }
-        else {
+        if (line.getOptionValues(TracesMakerCmdParameters.ALPHABET_PARAM_NAME) != null) {
             this.alphabet = TaskCharEncoderDecoder.faultyEncode(line.getOptionValue(TracesMakerCmdParameters.ALPHABET_PARAM_NAME).toString().split(ALPHABET_CHARACTERS_SEPARATOR));
         }
-        this.minChrsPerString = Integer.valueOf(line.getOptionValue(TracesMakerCmdParameters.MIN_LEN_PARAM_NAME, MIN_OCCURRENCES.toString()));
-        this.maxChrsPerString = Integer.valueOf(line.getOptionValue(TracesMakerCmdParameters.MAX_LEN_PARAM_NAME, MAX_OCCURRENCES.toString()));
-        this.size = Long.valueOf(line.getOptionValue(TracesMakerCmdParameters.SIZE_PARAM_NAME, SIZE.toString()));
+        this.minChrsPerString =
+        		Integer.valueOf(
+        				line.getOptionValue(TracesMakerCmdParameters.MIN_LEN_PARAM_NAME,this.minChrsPerString.toString()));
+        this.maxChrsPerString =
+        		Integer.valueOf(
+        				line.getOptionValue(TracesMakerCmdParameters.MAX_LEN_PARAM_NAME, this.maxChrsPerString.toString()));
+        this.size =
+        		Long.valueOf(line.getOptionValue(TracesMakerCmdParameters.SIZE_PARAM_NAME, this.size.toString()));
         this.outputEncoding = Enum.valueOf(
         		Encoding.class,
         		line.getOptionValue(OUT_ENC_PARAM_NAME, this.outputEncoding.toString())

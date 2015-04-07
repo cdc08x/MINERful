@@ -43,7 +43,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             constraintsBag = new TaskCharRelatedConstraintsBag(taskCharArchive.getTaskChars());
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxRelCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.howManyTaskChars()));
+        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.size()));
         for (TaskChar tCh: this.taskCharArchive.getTaskChars()) {
             auxLocalStats = this.globalStats.statsTable.get(tCh.identifier);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
@@ -61,8 +61,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
     // Very very rough: a little statistical analysis on the trend would be better
 	@Override
     protected Set<Constraint> discoverRelationConstraints(TaskChar taskChUnderAnalysis) {
-		Character character = taskChUnderAnalysis.identifier;
-        LocalStatsWrapper localStats = globalStats.statsTable.get(character);
+        LocalStatsWrapper localStats = globalStats.statsTable.get(taskChUnderAnalysis);
         // For each other character
         StatsCell auxStatsCell = null;
         boolean never = false, neverAfter = false, neverBefore = false,
@@ -70,8 +69,8 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                 alwaysNeverAlternatingAfter = false, alwaysNeverAlternatingBefore = false,
                 alwaysNever = false, alwaysNeverAfter = false, alwaysNeverOneStepAfter = false;
         Set<Constraint> relaCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.taskCharArchive.howManyTaskChars()));
-        for (Character other: localStats.localStatsTable.keySet()) {
+        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.taskCharArchive.size()));
+        for (TaskChar other: localStats.localStatsTable.keySet()) {
             never = false;
             neverAfter = false;
             neverBefore = false;
@@ -80,7 +79,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             alwaysNever = false;
             alwaysNeverAfter = false;
             alwaysNeverOneStepAfter = false;
-            if (!other.equals(character)) {
+            if (!other.equals(taskChUnderAnalysis)) {
                 auxStatsCell = localStats.localStatsTable.get(other);
                // Did it ever happen to the analyzed character NOT to appear WHENEVER the base character occurred?
                 never = (auxStatsCell.howManyTimesItNeverAppearedAtAll() > 0);
@@ -134,56 +133,40 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                     if (!neverAfter) {
                         if (alwaysNeverAlternatingAfter) {
                             if (alwaysOneStepAfter) {
-                                relaCons.add(new ChainResponse(
-                                        this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)));
+                                relaCons.add(new ChainResponse(taskChUnderAnalysis, other));
                             }
                             else {
-                                relaCons.add(new AlternateResponse(
-                                        this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)));
+                                relaCons.add(new AlternateResponse(taskChUnderAnalysis, other));
                             }
                         }
                         else
-                            relaCons.add(new Response(
-                                    this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)));
+                            relaCons.add(new Response(taskChUnderAnalysis, other));
                     }
                     if (!neverBefore) {
                         if (alwaysNeverAlternatingBefore) {
                             if (alwaysOneStepBefore) {
-                                relaCons.add(new ChainPrecedence(
-                                        this.taskCharArchive.getTaskChar(other), this.taskCharArchive.getTaskChar(character)));
+                                relaCons.add(new ChainPrecedence(other, taskChUnderAnalysis));
                             }
                             else {
-                                relaCons.add(new AlternatePrecedence(
-                                        this.taskCharArchive.getTaskChar(other), this.taskCharArchive.getTaskChar(character)));
+                                relaCons.add(new AlternatePrecedence(other, taskChUnderAnalysis));
                             }
                         }
                         else
-                            relaCons.add(new Precedence(
-                                    this.taskCharArchive.getTaskChar(other), this.taskCharArchive.getTaskChar(character)));
+                            relaCons.add(new Precedence(other, taskChUnderAnalysis));
                     }
                     if (neverAfter && neverBefore) {
-                        relaCons.add(new RespondedExistence(
-                                    this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)));
+                        relaCons.add(new RespondedExistence(taskChUnderAnalysis, other));
                     }
                     
                 }
                 if (alwaysNever) {
-                    relaCons.add(new NotCoExistence(
-                                this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)
-                            )
-                    );
+                    relaCons.add(new NotCoExistence(taskChUnderAnalysis, other));
                 } else {
                     if (alwaysNeverAfter) {
-                        relaCons.add(new NotSuccession(
-                                this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)
-                            )
-                        );
+                        relaCons.add(new NotSuccession(taskChUnderAnalysis, other));
                     } else {
                         if (alwaysNeverOneStepAfter) {
-                            relaCons.add(new NotChainSuccession(
-                                    this.taskCharArchive.getTaskChar(character), this.taskCharArchive.getTaskChar(other)
-                                )
-                            );
+                            relaCons.add(new NotChainSuccession(taskChUnderAnalysis, other));
                         }
                     }
                 }
@@ -195,7 +178,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
 	@Override
     protected Set<Constraint> refineRelationConstraints(Set<Constraint> setOfConstraints) {
         Set<Constraint> auxSet = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.howManyTaskChars()));
+        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.size()));
 
         RelationConstraint auxConstraint = null, testConstraint = null;
         RelationConstraint[] refinedConstraints = null;

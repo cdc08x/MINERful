@@ -2,6 +2,7 @@ package minerful.logparser;
 
 import java.util.Iterator;
 
+import minerful.concept.TaskCharArchive;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public interface LogParser {
@@ -15,4 +16,5 @@ public interface LogParser {
 	TaskCharEncoderDecoder getEventEncoderDecoder();
 	LogEventClassifier getEventClassifier();
 	int numberOfEvents();
+	TaskCharArchive getTaskCharArchive();
 }

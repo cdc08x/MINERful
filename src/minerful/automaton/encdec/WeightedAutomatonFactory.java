@@ -9,6 +9,7 @@ import minerful.automaton.concept.WeightedAutomatonStats;
 import minerful.automaton.concept.WeightedState;
 import minerful.automaton.concept.WeightedTransition;
 import minerful.automaton.utils.AutomatonUtils;
+import minerful.concept.TaskClass;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
 
@@ -19,7 +20,7 @@ import dk.brics.automaton.Automaton;
 public class WeightedAutomatonFactory {
 	private static Logger logger = Logger.getLogger(AutomatonFactory.class
 			.getCanonicalName());
-	private NavigableMap<Character, String> translationMap;
+	private NavigableMap<Character, TaskClass> translationMap;
 
 	public static class IllegalTransitionException extends IllegalStateException {
 		private static final long serialVersionUID = -562295596335012451L;
@@ -34,8 +35,8 @@ public class WeightedAutomatonFactory {
 		}
 	}
 	
-	public WeightedAutomatonFactory(NavigableMap<Character, String> translationMap) {
-		this.translationMap = translationMap;
+	public WeightedAutomatonFactory(NavigableMap<Character, TaskClass> navigableMap) {
+		this.translationMap = navigableMap;
 	}
 
 	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser) {
@@ -99,7 +100,7 @@ public class WeightedAutomatonFactory {
 						WeightedState illegalState = new WeightedState();
 						illegalState.setIllegal(true);
 						// New illegal transition
-						WeightedTransition illegalTransition = new WeightedTransition(auxEvtIdentifier, illegalState, this.translationMap.get(auxEvtIdentifier));
+						WeightedTransition illegalTransition = new WeightedTransition(auxEvtIdentifier, illegalState, this.translationMap.get(auxEvtIdentifier).getName());
 						illegalTransition.setIllegal(true);
 						// Connect the transition to the current state
 						currentState.addTransition(illegalTransition);

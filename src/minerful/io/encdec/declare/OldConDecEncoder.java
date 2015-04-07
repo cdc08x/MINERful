@@ -159,7 +159,7 @@ public class OldConDecEncoder {
 	
 
 	private String makeItACompleteEvent(TaskChar tCh) {
-		return StringEscapeUtils.escapeXml(tCh.name) + COMPLETE_EVENT_SUFFIX;
+		return StringEscapeUtils.escapeXml(tCh.getName()) + COMPLETE_EVENT_SUFFIX;
 	}
 	
 	public String encode() {

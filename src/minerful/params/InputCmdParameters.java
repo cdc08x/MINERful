@@ -24,17 +24,24 @@ public class InputCmdParameters extends ParamsManager {
 		name, logspec
 	}
 
-	public InputEncoding inputLanguage = InputEncoding.xes;
-	public EventClassification eventClassification = EventClassification.name;
-            
-    public File inputFile = null;
+	public InputEncoding inputLanguage;
+	public EventClassification eventClassification;
+    public File inputFile;
 
+    public InputCmdParameters() {
+    	inputLanguage = InputEncoding.xes;
+    	eventClassification = EventClassification.name;
+    	inputFile = null;
+    }
+    
     public InputCmdParameters(Options options, String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
 	public InputCmdParameters(String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
 	}

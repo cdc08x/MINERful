@@ -17,19 +17,22 @@ public class SystemCmdParameters extends ParamsManager {
     public static final char DEBUG_PARAM_NAME = 'd';
 	public static final char HELP_PARAM_NAME = 'h';
 
-    public DebugLevel debugLevel = DebugLevel.info;
-	public Boolean help = null;
+    public DebugLevel debugLevel;
+	public Boolean help;
 
 	public SystemCmdParameters() {
-		super();
+		debugLevel = DebugLevel.info;
+		help = false;
 	}
 	
     public SystemCmdParameters(Options options, String[] args) {
-        // parse the command line arguments
+        this();
+    	// parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
 	public SystemCmdParameters(String[] args) {
+        this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
 	}

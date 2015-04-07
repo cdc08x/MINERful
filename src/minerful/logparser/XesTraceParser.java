@@ -7,8 +7,7 @@ import org.deckfour.xes.model.XTrace;
 
 public class XesTraceParser extends AbstractTraceParser implements LogTraceParser {
 	private XTrace xesTrace;
-	private XEvent currentXesEvent;
-	private final XesEventParser xesEventParser;
+	private XesEventParser xesEventParser;
 
 	protected XesLogParser xesLogParser;
 	private ListIterator<XEvent> traceIterator;
@@ -17,9 +16,7 @@ public class XesTraceParser extends AbstractTraceParser implements LogTraceParse
 		this.xesTrace = xesTrace;
 		this.xesLogParser = xesLogParser;
 		this.traceIterator = xesTrace.listIterator();
-		this.xesEventParser = new XesEventParser(this);
 		this.parsing = true;
-		this.currentXesEvent = null;
 	}
 
 	@Override
@@ -59,9 +56,17 @@ public class XesTraceParser extends AbstractTraceParser implements LogTraceParse
 	public Character parseSubsequentAndEncode() {
 		Character encodedEvent = null;
 		if (stepToSubsequent()) {
-			encodedEvent = xesEventParser.encode(this.currentXesEvent);
+			encodedEvent = xesEventParser.evtIdentifier();
 		}
 		return encodedEvent;
+	}
+
+	@Override
+	public LogEventParser parseSubsequent() {
+		if (stepToSubsequent()) {
+			return xesEventParser;
+		}
+		return null;
 	}
 
 	@Override
@@ -69,15 +74,15 @@ public class XesTraceParser extends AbstractTraceParser implements LogTraceParse
 		if (!isParsingOver()) {
 			switch(this.senseOfReading) {
 			case ONWARDS:
-				this.currentXesEvent = this.traceIterator.next();
+				this.xesEventParser = new XesEventParser(this, this.traceIterator.next());
 				break;
 			case BACKWARDS:
-				this.currentXesEvent = this.traceIterator.previous();
+				this.xesEventParser = new XesEventParser(this, this.traceIterator.previous());
 			default:
 				break;
 			}
 		} else {
-			this.currentXesEvent = null;
+			this.xesEventParser = null;
 			this.parsing = false;
 		}
 		return isParsing();

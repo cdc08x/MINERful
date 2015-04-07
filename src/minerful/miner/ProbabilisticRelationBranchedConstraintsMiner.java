@@ -32,7 +32,7 @@ import minerful.miner.engine.ProbabilisticRelationOutBranchedConstraintsMiningEn
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 import minerful.miner.stats.LocalStatsWrapperForCharsets;
-import minerful.miner.stats.charsets.CharactersSetCounter;
+import minerful.miner.stats.charsets.TasksSetCounter;
 
 import org.apache.commons.math3.util.ArithmeticUtils;
 
@@ -66,7 +66,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 			GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, int branchingLimit) {
 		this(globalStats, taskCharArchive);
 		this.branchingLimit =
-				(		(branchingLimit < this.taskCharArchive.howManyTaskChars())
+				(		(branchingLimit < this.taskCharArchive.size())
 						?	branchingLimit
 						:	NO_LIMITS_IN_BRANCHING
 				);
@@ -438,12 +438,12 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		return (pivotLocalStats instanceof LocalStatsWrapperForCharsets);
 	}
 
-	protected Collection<Character> getTheRestOfTheAlphabet(Collection<Character> alphabet, CharactersSetCounter charSetCounter,
-			Character chrToExclude) {
-				Collection<Character> supportingChrs = new TreeSet<Character>(alphabet);
-				supportingChrs.removeAll(charSetCounter.getCharactersSet());
-				supportingChrs.remove(chrToExclude);
-				return supportingChrs;
+	protected Collection<TaskChar> getTheRestOfTheAlphabet(Collection<TaskChar> alphabet, TasksSetCounter charSetCounter,
+			TaskChar taskToExclude) {
+				Collection<TaskChar> supportingTasks = new TreeSet<TaskChar>(alphabet);
+				supportingTasks.removeAll(charSetCounter.getTaskCharSet());
+				supportingTasks.remove(taskToExclude);
+				return supportingTasks;
 			}
 
 	public static boolean isBranchingLimited(int branchingLimit) {
@@ -453,9 +453,9 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 	@Override
 	public long howManyPossibleConstraints() {
 		int realBranchingLimit =
-				(this.branchingLimit < this.taskCharArchive.howManyTaskChars()
+				(this.branchingLimit < this.taskCharArchive.size()
 				?	this.branchingLimit
-				:	this.taskCharArchive.howManyTaskChars() - 1);
+				:	this.taskCharArchive.size() - 1);
 		
 		long numberOfPossibleConstraintsPerActivity = 0;
 		
@@ -463,7 +463,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 			numberOfPossibleConstraintsPerActivity +=
 				ArithmeticUtils
 				.binomialCoefficient(
-						this.taskCharArchive.howManyTaskChars(), // n
+						this.taskCharArchive.size(), // n
 						i); // k
 		}
 		
@@ -471,7 +471,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 				(	MetaConstraintUtils.getAllPossibleOnwardsRelationConstraintTemplates().size() -1 + // out-branching
 					MetaConstraintUtils.getAllPossibleBackwardsRelationConstraintTemplates().size() -1 // in branching
 				)
-				* taskCharArchive.howManyTaskChars()
+				* taskCharArchive.size()
 				* numberOfPossibleConstraintsPerActivity;
 	}
 }

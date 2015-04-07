@@ -11,7 +11,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import minerful.concept.TaskChar;
+import minerful.concept.TaskClass;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.logparser.StringTaskClass;
 
 import org.apache.log4j.Logger;
 
@@ -119,35 +121,35 @@ public class TaskCharEncoderDecoder {
 		return total;
 	}
 
-	public static final String[] TEST_TASKS = { "deliverable", "package", "wp",
-			"meeting", "deadline", "task force", "submission", "report",
-			"demo", "contribution", "project", "timeline", "presentation",
-			"agenda", "timetable", "slide", "integration", "iteration",
-			"release", "requirement", "review", "reviewer", "agreement",
-			"interaction", "logistics", "payment", "paper", "video",
-			"commitment", "draft", "call", "publication", "proposal",
-			"document", "invitation", "update", "status", "cost", "step",
-			"version", "frame", "introduction", "finance", "management",
-			"form", "comment", "strategy", "final", "periodic", "dow", "note",
-			"objective",
-			"change",
-			"showcase",
-			"issue",
-			"activity",
+	public static final TaskClass[] TEST_TASK_CLASSES = { new StringTaskClass("deliverable"), new StringTaskClass("package"), new StringTaskClass("wp"),
+			new StringTaskClass("meeting"), new StringTaskClass("deadline"), new StringTaskClass("task force"), new StringTaskClass("submission"), new StringTaskClass("report"),
+			new StringTaskClass("demo"), new StringTaskClass("contribution"), new StringTaskClass("project"), new StringTaskClass("timeline"), new StringTaskClass("presentation"),
+			new StringTaskClass("agenda"), new StringTaskClass("timetable"), new StringTaskClass("slide"), new StringTaskClass("integration"), new StringTaskClass("iteration"),
+			new StringTaskClass("release"), new StringTaskClass("requirement"), new StringTaskClass("review"), new StringTaskClass("reviewer"), new StringTaskClass("agreement"),
+			new StringTaskClass("interaction"), new StringTaskClass("logistics"), new StringTaskClass("payment"), new StringTaskClass("paper"), new StringTaskClass("video"),
+			new StringTaskClass("commitment"), new StringTaskClass("draft"), new StringTaskClass("call"), new StringTaskClass("publication"), new StringTaskClass("proposal"),
+			new StringTaskClass("document"), new StringTaskClass("invitation"), new StringTaskClass("update"), new StringTaskClass("status"), new StringTaskClass("cost"), new StringTaskClass("step"),
+			new StringTaskClass("version"), new StringTaskClass("frame"), new StringTaskClass("introduction"), new StringTaskClass("finance"), new StringTaskClass("management"),
+			new StringTaskClass("form"), new StringTaskClass("comment"), new StringTaskClass("strategy"), new StringTaskClass("final"), new StringTaskClass("periodic"), new StringTaskClass("dow"), new StringTaskClass("note"),
+			new StringTaskClass("objective"),
+			new StringTaskClass("change"),
+			new StringTaskClass("showcase"),
+			new StringTaskClass("issue"),
+			new StringTaskClass("activity"),
 			// here I start inventing!
-			"invention", "innovation", "html", "css", "xhtml", "jquery", "php",
-			"java", "c++", "python", "div", "love", "merry", "christmas",
-			"brandybuck", "frodo", "rings", "sonic", "eggman", "kukukukchu",
-			"failure", "cover", "rehearsal", "circle", "artist", "wallet",
-			"steal", "driving", "license", "avis", "trouble", "avignon",
-			"birthday", "princess", "castle" };
+			new StringTaskClass("invention"), new StringTaskClass("innovation"), new StringTaskClass("html"), new StringTaskClass("css"), new StringTaskClass("xhtml"), new StringTaskClass("jquery"), new StringTaskClass("php"),
+			new StringTaskClass("java"), new StringTaskClass("c++"), new StringTaskClass("python"), new StringTaskClass("div"), new StringTaskClass("love"), new StringTaskClass("merry"), new StringTaskClass("christmas"),
+			new StringTaskClass("brandybuck"), new StringTaskClass("frodo"), new StringTaskClass("rings"), new StringTaskClass("sonic"), new StringTaskClass("eggman"), new StringTaskClass("kukukukchu"),
+			new StringTaskClass("failure"), new StringTaskClass("cover"), new StringTaskClass("rehearsal"), new StringTaskClass("circle"), new StringTaskClass("artist"), new StringTaskClass("wallet"),
+			new StringTaskClass("steal"), new StringTaskClass("driving"), new StringTaskClass("license"), new StringTaskClass("avis"), new StringTaskClass("trouble"), new StringTaskClass("avignon"),
+			new StringTaskClass("birthday"), new StringTaskClass("princess"), new StringTaskClass("castle") };
 
 	public static final String SPACE_REPLACER = "_";
 
 	public static final String WILDCARD_CHAR = " ";
 
-	private TreeMap<String, Character> tasksDictionary;
-	private TreeMap<Character, String> inverseTasksDictionary;
+	private TreeMap<TaskClass, Character> tasksDictionary;
+	private TreeMap<Character, TaskClass> inverseTasksDictionary;
 	private int charCursor, tasksCursor, boundCursor;
 
 	private static Logger logger;
@@ -157,22 +159,22 @@ public class TaskCharEncoderDecoder {
 		this.tasksCursor = 0;
 		this.boundCursor = 0;
 
-		this.tasksDictionary = new TreeMap<String, Character>();
-		this.inverseTasksDictionary = new TreeMap<Character, String>();
+		this.tasksDictionary = new TreeMap<TaskClass, Character>();
+		this.inverseTasksDictionary = new TreeMap<Character, TaskClass>();
 
 		if (logger == null) {
 			logger = Logger.getLogger(this.getClass().getCanonicalName());
 		}
 	}
 	
-	public Map<Character, String> getTranslationMap() {
-		return new HashMap<Character, String>(this.inverseTasksDictionary);
+	public Map<Character, TaskClass> getTranslationMap() {
+		return new HashMap<Character, TaskClass>(this.inverseTasksDictionary);
 	}
 
-	public static NavigableMap<Character, String> getTranslationMap(TaskCharRelatedConstraintsBag bag) {
-		NavigableMap<Character, String> transMap = new TreeMap<Character, String>();
+	public static NavigableMap<Character, TaskClass> getTranslationMap(TaskCharRelatedConstraintsBag bag) {
+		NavigableMap<Character, TaskClass> transMap = new TreeMap<Character, TaskClass>();
 		for (TaskChar tChr : bag.getTaskChars()) {
-			transMap.put(tChr.identifier, tChr.name);
+			transMap.put(tChr.identifier, tChr.taskClass);
 		}
 		return transMap;
 	}
@@ -187,44 +189,44 @@ public class TaskCharEncoderDecoder {
 		return encodedTasks;
 	}
 
-	public Character[] encode(String[] tasks) {
+	public Character[] encode(TaskClass[] taskClasses) {
 		Character[] encodedTasks = new Character[0];
 
-		while (tasksCursor < tasks.length && boundCursor < LOWER_BOUNDS.length
+		while (tasksCursor < taskClasses.length && boundCursor < LOWER_BOUNDS.length
 				&& boundCursor < UPPER_BOUNDS.length) {
 			charCursor = LOWER_BOUNDS[boundCursor];
 
-			for (; tasksCursor < tasks.length
+			for (; tasksCursor < taskClasses.length
 					&& charCursor < UPPER_BOUNDS[boundCursor]; charCursor++, tasksCursor++) {
-				tasksDictionary.put(tasks[tasksCursor],
+				tasksDictionary.put(taskClasses[tasksCursor],
 						Character.valueOf((char) charCursor));
 				inverseTasksDictionary.put(
 						Character.valueOf((char) charCursor),
-						tasks[tasksCursor]);
+						taskClasses[tasksCursor]);
 			}
 
-			if (tasksCursor < tasks.length) {
+			if (tasksCursor < taskClasses.length) {
 				boundCursor++;
 			}
 		}
 
-		if (tasksCursor < tasks.length)
+		if (tasksCursor < taskClasses.length)
 			throw new UnsupportedOperationException("The method was not able"
 					+ " to encode the whole collection of tasks");
 
 		return inverseTasksDictionary.keySet().toArray(encodedTasks);
 	}
 
-	public Character encode(String task) {
-		if (task == null) {
+	public Character encode(TaskClass taskClass) {
+		if (taskClass == null) {
 			logger.error("A task is identified by a NULL value: skipping this task");
 			return null;
-		} else if (task.length() == 0) {
+		} else if (taskClass.toString().length() == 0) {
 			logger.warn("A task is identified by an empty string");
 		}
 
 		// If the tasks dictionary already contains this task, skip this!
-		if (!this.tasksDictionary.containsKey(task)) {
+		if (!this.tasksDictionary.containsKey(taskClass)) {
 			// If the bound was not reached for the current translation group,
 			// skip this!
 			if (charCursor >= UPPER_BOUNDS[boundCursor]) {
@@ -246,24 +248,24 @@ public class TaskCharEncoderDecoder {
 				charCursor = LOWER_BOUNDS[boundCursor];
 			}
 
-			tasksDictionary.put(task, Character.valueOf((char) charCursor));
+			tasksDictionary.put(taskClass, Character.valueOf((char) charCursor));
 			inverseTasksDictionary.put(Character.valueOf((char) charCursor),
-					task);
+					taskClass);
 			charCursor++;
 		}
 
-		return this.tasksDictionary.get(task);
+		return this.tasksDictionary.get(taskClass);
 	}
 	
-	public String[] encode(List<List<String>> tasksTraces) {
+	public String[] encode(List<List<TaskClass>> tasksTraces) {
 		String[] stringsTracesArray = new String[0];
 		List<String> stringTraces = new ArrayList<String>(tasksTraces.size());
 		StringBuilder striTraBuilder = new StringBuilder();
 		Character c = null;
 		
-		for (List<String> tasksTrace : tasksTraces) {
+		for (List<TaskClass> tasksTrace : tasksTraces) {
 			striTraBuilder.delete(0, striTraBuilder.length());
-			for (String task : tasksTrace) {
+			for (TaskClass task : tasksTrace) {
 				c = this.encode(task);
 				striTraBuilder.append(c);
 			}
@@ -274,18 +276,8 @@ public class TaskCharEncoderDecoder {
 		return stringsTracesArray;
 	}
 
-	public String decode(Character encodedTask) {
-		return this.decode(encodedTask, true);
-	}
-
-	public String decode(Character encodedTask, boolean removeNonWordCharacters) {
-		if (!removeNonWordCharacters)
-			return this.inverseTasksDictionary.get(encodedTask);
-		else {
-			return replaceNonWordCharacters(
-					this.inverseTasksDictionary.get(encodedTask)
-					);
-		}
+	public TaskClass decode(Character encodedTask) {
+		return this.inverseTasksDictionary.get(encodedTask);
 	}
 	
 	public static char encodedCharFromString(String encodedCharString) {
@@ -295,31 +287,19 @@ public class TaskCharEncoderDecoder {
 				:	encodedCharString.charAt(0);
 	}
 
-	public Set<String> getTasks() {
-		return this.getTasks(true);
-	}
-
-	public Set<String> getTasks(boolean removeSpaces) {
-		Set<String> tasks = this.tasksDictionary.keySet();
-		if (!removeSpaces)
-			return tasks;
-
-		Set<String> tasksWoSpaces = new TreeSet<String>();
-		for (String task : tasks) {
-			tasksWoSpaces.add(replaceNonWordCharacters(task));
-		}
-		return tasksWoSpaces;
+	public Set<TaskClass> getTaskClasses() {
+		return this.tasksDictionary.keySet();
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer sBuf = new StringBuffer();
-		for (String task : tasksDictionary.keySet()) {
-			sBuf.append(tasksDictionary.get(task));
+		for (TaskClass taskClass : tasksDictionary.keySet()) {
+			sBuf.append(tasksDictionary.get(taskClass));
 			sBuf.append(" <= ");
-			sBuf.append(task);
+			sBuf.append(taskClass);
 			sBuf.append(" (");
-			sBuf.append(replaceNonWordCharacters(task));
+			sBuf.append(taskClass);
 			sBuf.append(")\n");
 		}
 		return sBuf.toString();
@@ -335,7 +315,7 @@ public class TaskCharEncoderDecoder {
 	
 	public static void main(String[] args) {
 		TaskCharEncoderDecoder taChEnDe = new TaskCharEncoderDecoder();
-		taChEnDe.encode(TEST_TASKS);
+		taChEnDe.encode(TEST_TASK_CLASSES);
 		logger.debug(taChEnDe);
 	}
 

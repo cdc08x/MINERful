@@ -60,9 +60,9 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
         }
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxRelCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.howManyTaskChars()));
+        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.size()));
         for (TaskChar tChUnderAnalysis : this.taskCharArchive.getTaskChars()) {
-            auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis.identifier);
+            auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
             if (auxLocalStats.getTotalAmountOfAppearances() > 0) {
                 auxRelCons.addAll(
@@ -77,7 +77,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 
     // Very very rough: a little statistical analysis on the trend would be better
     @Override
-    protected Set<? extends Constraint> discoverRelationConstraints(TaskChar pivotChr) {
+    protected Set<? extends Constraint> discoverRelationConstraints(TaskChar pivotTask) {
         double	supportForRespondedExistence = 0.0,
                 supportForReversedRespondedExistence = 0.0,
                 supportForResponse = 0.0,
@@ -96,35 +96,30 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 
 		        pivotParticipationFraction = 0.0,
 		        searchedParticipationFraction = 0.0;
-        TaskChar
-                searchedChr = null;
-        Character pivot = pivotChr.identifier;
         StatsCell   interplayStats = null,
                     reversedInterplayStats = null;
         Set<Constraint>
         	relaCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.taskCharArchive.howManyTaskChars())),
+        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.taskCharArchive.size())),
         	nuRelaCons = super.makeNavigableSet();
         	
         LocalStatsWrapper
-                pivotLocalStats = globalStats.statsTable.get(pivot),
+                pivotLocalStats = globalStats.statsTable.get(pivotTask),
                 searchedLocalStats = null;
         long   pivotAppearances = pivotLocalStats.getTotalAmountOfAppearances(),
                 searchedAppearances = 0L;
 
         // For each other character
-        for (Character searched : pivotLocalStats.localStatsTable.keySet()) {
+        for (TaskChar searchedTask : pivotLocalStats.localStatsTable.keySet()) {
         	nuRelaCons = super.makeNavigableSet();
-            pivotChr = this.taskCharArchive.getTaskChar(pivot);
-            pivotParticipationFraction = this.computeParticipationFraction(pivotChr, pivotLocalStats, globalStats.logSize);
+            pivotParticipationFraction = this.computeParticipationFraction(pivotTask, pivotLocalStats, globalStats.logSize);
 
-            if (!searched.equals(pivot)) {
-                searchedLocalStats = globalStats.statsTable.get(searched);
-                interplayStats = pivotLocalStats.localStatsTable.get(searched);
-                reversedInterplayStats = searchedLocalStats.localStatsTable.get(pivot);
-                searchedChr = this.taskCharArchive.getTaskChar(searched);
+            if (!searchedTask.equals(pivotTask)) {
+                searchedLocalStats = globalStats.statsTable.get(searchedTask);
+                interplayStats = pivotLocalStats.localStatsTable.get(searchedTask);
+                reversedInterplayStats = searchedLocalStats.localStatsTable.get(pivotTask);
                 searchedAppearances = searchedLocalStats.getTotalAmountOfAppearances();
-                searchedParticipationFraction = this.computeParticipationFraction(searchedChr, searchedLocalStats, globalStats.logSize);
+                searchedParticipationFraction = this.computeParticipationFraction(searchedTask, searchedLocalStats, globalStats.logSize);
                 supportForRespondedExistence =
                         computeSupportForRespondedExistence(interplayStats, pivotAppearances);
                 supportForReversedRespondedExistence =
@@ -156,27 +151,27 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 supportForNotChainSuccession =
                         computeSupportForNotChainSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
                 RespondedExistence responExi =
-                        new RespondedExistence(pivotChr, searchedChr, supportForRespondedExistence);
+                        new RespondedExistence(pivotTask, searchedTask, supportForRespondedExistence);
                 RespondedExistence revResponExi =
-                        new RespondedExistence(searchedChr, pivotChr, supportForReversedRespondedExistence);
+                        new RespondedExistence(searchedTask, pivotTask, supportForReversedRespondedExistence);
                 nuRelaCons.add(responExi);
                 Response respo =
-                        new Response(pivotChr, searchedChr, supportForResponse);
+                        new Response(pivotTask, searchedTask, supportForResponse);
                 nuRelaCons.add(respo);
                 AlternateResponse altRespo =
-                        new AlternateResponse(pivotChr, searchedChr, supportForAlternateResponse);
+                        new AlternateResponse(pivotTask, searchedTask, supportForAlternateResponse);
                 nuRelaCons.add(altRespo);
                 ChainResponse chainRespo =
-                        new ChainResponse(pivotChr, searchedChr, supportForChainResponse);
+                        new ChainResponse(pivotTask, searchedTask, supportForChainResponse);
                 nuRelaCons.add(chainRespo);
                 Precedence precedo =
-                        new Precedence(pivotChr, searchedChr, supportForPrecedence);
+                        new Precedence(pivotTask, searchedTask, supportForPrecedence);
                 nuRelaCons.add(precedo);
                 AlternatePrecedence altPrecedo =
-                        new AlternatePrecedence(pivotChr, searchedChr, supportForAlternatePrecedence);
+                        new AlternatePrecedence(pivotTask, searchedTask, supportForAlternatePrecedence);
                 nuRelaCons.add(altPrecedo);
                 ChainPrecedence chainPrecedo =
-                        new ChainPrecedence(pivotChr, searchedChr, supportForChainPrecedence);
+                        new ChainPrecedence(pivotTask, searchedTask, supportForChainPrecedence);
                 nuRelaCons.add(chainPrecedo);
                 
                 CouplingRelationConstraint coExi = new CoExistence(
@@ -201,13 +196,13 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 nuRelaCons.add(chainSuccessio);
                 
                 NotCoExistence notCoExi =
-                        new NotCoExistence(pivotChr, searchedChr, supportForNotCoExistence);
+                        new NotCoExistence(pivotTask, searchedTask, supportForNotCoExistence);
                 nuRelaCons.add(notCoExi);
                 NotSuccession notSuccessio =
-                        new NotSuccession(pivotChr, searchedChr, supportForNotSuccession);
+                        new NotSuccession(pivotTask, searchedTask, supportForNotSuccession);
                 nuRelaCons.add(notSuccessio);
                 NotChainSuccession notChainSuccessio =
-                        new NotChainSuccession(pivotChr, searchedChr, supportForNotChainSuccession);
+                        new NotChainSuccession(pivotTask, searchedTask, supportForNotChainSuccession);
                 nuRelaCons.add(notChainSuccessio);
                 
                 precedo.setConstraintWhichThisIsBasedUpon(revResponExi);
@@ -236,9 +231,9 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
             	refineByComputingRelevanceMetrics(currentConstraint, pivotParticipationFraction, searchedParticipationFraction);
             	if (this.isForeseeingDistances()) {
             		if (currentConstraint.getSubFamily() == ConstraintSubFamily.PRECEDENCE)
-            			refineByComputingDistances(currentConstraint, searchedLocalStats, pivot);
+            			refineByComputingDistances(currentConstraint, searchedLocalStats, pivotTask);
             		else
-            			refineByComputingDistances(currentConstraint, pivotLocalStats, searched);
+            			refineByComputingDistances(currentConstraint, pivotLocalStats, searchedTask);
             	}
             	
             	if (hasValuesAboveThresholds(currentConstraint)) this.computedConstraintsAboveThresholds++;
@@ -406,7 +401,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 
     private static RelationConstraint refineByComputingDistances(
 			RelationConstraint relCon,
-			LocalStatsWrapper implyingLocalStats, Character implied) {
+			LocalStatsWrapper implyingLocalStats, TaskChar implied) {
     	if (relCon instanceof RespondedExistence) {
     		RespondedExistence resEx = (RespondedExistence)relCon;
 	    	SummaryStatistics distancesSumStats = new SummaryStatistics();

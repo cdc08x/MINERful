@@ -36,6 +36,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "sMS";
 	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "xF";
 	public static final char AVOID_CONFLICTS_PARAM = 'C';
+//	public static final String TIME_ANALYSIS_PARAM = "time";
 
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
             
@@ -49,6 +50,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public Boolean memSpaceShowingRequested = null;
     public Collection<String> activitiesToExcludeFromResult = null;
 	public Boolean avoidConflicts = null;
+//	public Boolean takeTime = null;
 
     
     public MinerFulCmdParameters() {
@@ -58,6 +60,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 		this.avoidConflicts = false;
 		this.foreseeDistances = false;
 		this.memSpaceShowingRequested = false;
+//		this.takeTime = false;
 	}
     
     public MinerFulCmdParameters(Options options, String[] args) {
@@ -88,6 +91,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 
         this.foreseeDistances = line.hasOption(FORESEE_DISTANCES_PARAM_NAME);
         this.memSpaceShowingRequested = line.hasOption(SHOW_MEMSPACE_USED_PARAM_NAME);
+//        this.takeTime = line.hasOption(TIME_ANALYSIS_PARAM);
         
         String
         	inputFilePath = line.getOptionValue(INPUT_LOGFILE_PATH_PARAM_NAME),
@@ -190,7 +194,7 @@ public class MinerFulCmdParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.withLongOpt("noredundancy")
-        		.withDescription("avoid redundancy")
+        		.withDescription("avoid redundancy with hierarchy-subsumption checking")
         		.create(AVOID_REDUNDANCY_PARAM)
         		);
         options.addOption(
@@ -213,6 +217,14 @@ public class MinerFulCmdParameters extends ParamsManager {
         		)
         		.create(FORESEE_DISTANCES_PARAM_NAME)
         		);
+//        options.addOption(
+//        		OptionBuilder
+//        		.withLongOpt("time-aware")
+//        		.withDescription(
+//        				attachInstabilityWarningToDescription("include the analysis of event timestamps into discovery")
+//        		)
+//        		.create(TIME_ANALYSIS_PARAM)
+//        		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("show-mem")

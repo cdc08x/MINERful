@@ -4,40 +4,38 @@
  */
 package minerful.miner.stats;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeSet;
-
-import minerful.miner.stats.charsets.FixedCharactersSetIncrementalCountersCollection;
+import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
+import minerful.miner.stats.charsets.FixedTaskSetIncrementalCountersCollection;
 
 public abstract class LocalStatsWrapperForCharsets extends LocalStatsWrapper {
-    protected FixedCharactersSetIncrementalCountersCollection neverAppearedCharacterSets;
-    protected FixedCharactersSetIncrementalCountersCollection neverMoreAppearedAfterCharacterSets;
-    protected FixedCharactersSetIncrementalCountersCollection neverMoreAppearedBeforeCharacterSets;
-    protected FixedCharactersSetIncrementalCountersCollection repetitionsBeforeCharactersAppearingAfter;
-    protected FixedCharactersSetIncrementalCountersCollection repetitionsAfterCharactersAppearingBefore;
-    protected Map<String, Character> nearestMatesAtThisStep;
-    protected ArrayList<Character> orderedAlreadyMetCharsAtThisStep;
-    protected TreeSet<Character> alreadyMetCharsAtThisStep;
-    protected Integer maximumCharactersSetSize;
+    protected FixedTaskSetIncrementalCountersCollection neverAppearedCharacterSets;
+    protected FixedTaskSetIncrementalCountersCollection neverMoreAppearedAfterCharacterSets;
+    protected FixedTaskSetIncrementalCountersCollection neverMoreAppearedBeforeCharacterSets;
+    protected FixedTaskSetIncrementalCountersCollection repetitionsBeforeCharactersAppearingAfter;
+    protected FixedTaskSetIncrementalCountersCollection repetitionsAfterCharactersAppearingBefore;
+//    protected Map<String, TaskChar> nearestMatesAtThisStep;
+//    protected ArrayList<TaskChar> orderedAlreadyMetCharsAtThisStep;
+//    protected TreeSet<TaskChar> alreadyMetCharsAtThisStep;
+    protected Integer maximumTasksSetSize;
 
-    public LocalStatsWrapperForCharsets(Character[] alphabet, Character baseCharacter) {
-		super(alphabet, baseCharacter);
+    public LocalStatsWrapperForCharsets(TaskCharArchive archive, TaskChar baseTask) {
+		super(archive, baseTask);
 	}
 
-	public FixedCharactersSetIncrementalCountersCollection getNeverAppearedCharacterSets() {
+	public FixedTaskSetIncrementalCountersCollection getNeverAppearedCharacterSets() {
 		return neverAppearedCharacterSets;
 	}
-	public FixedCharactersSetIncrementalCountersCollection getNeverMoreAppearedAfterCharacterSets() {
+	public FixedTaskSetIncrementalCountersCollection getNeverMoreAppearedAfterCharacterSets() {
 		return neverMoreAppearedAfterCharacterSets;
 	}
-	public FixedCharactersSetIncrementalCountersCollection getNeverMoreAppearedBeforeCharacterSets() {
+	public FixedTaskSetIncrementalCountersCollection getNeverMoreAppearedBeforeCharacterSets() {
 		return neverMoreAppearedBeforeCharacterSets;
 	}
-	public FixedCharactersSetIncrementalCountersCollection getRepetitionsBeforeCharactersAppearingAfter() {
+	public FixedTaskSetIncrementalCountersCollection getRepetitionsBeforeCharactersAppearingAfter() {
 		return repetitionsBeforeCharactersAppearingAfter;
 	}
-	public FixedCharactersSetIncrementalCountersCollection getRepetitionsAfterCharactersAppearingBefore() {
+	public FixedTaskSetIncrementalCountersCollection getRepetitionsAfterCharactersAppearingBefore() {
 		return repetitionsAfterCharactersAppearingBefore;
 	}
 }

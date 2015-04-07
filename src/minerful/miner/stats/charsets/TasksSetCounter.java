@@ -5,13 +5,13 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.StringUtils;
+import minerful.concept.TaskChar;
 
-public class CharactersSetCounter implements Comparable<CharactersSetCounter>, Cloneable {
+public class TasksSetCounter implements Comparable<TasksSetCounter>, Cloneable {
 
-	public static class CharactersSetByAscendingCounterComparator implements Comparator<CharactersSetCounter> {
+	public static class TaskSetByAscendingCounterComparator implements Comparator<TasksSetCounter> {
 		@Override
-		public int compare(CharactersSetCounter o1, CharactersSetCounter o2) {
+		public int compare(TasksSetCounter o1, TasksSetCounter o2) {
 			int result = Integer.valueOf(o1.counter).compareTo(Integer.valueOf(o2.counter));
 			return (
 					( result == 0 )
@@ -22,39 +22,50 @@ public class CharactersSetCounter implements Comparable<CharactersSetCounter>, C
 	}
 
 	private final String charactersSetString;
-	private final TreeSet<Character> charactersSet;
+	private final TreeSet<TaskChar> taskCharSet;
 	private int counter;
 	
-	public CharactersSetCounter(Character character) {
-		this.charactersSetString = String.valueOf(character);
-		this.charactersSet = new TreeSet<Character>();
-		this.charactersSet.add(character);
+	public TasksSetCounter(TaskChar task) {
+		this.charactersSetString = String.valueOf(task);
+		this.taskCharSet = new TreeSet<TaskChar>();
+		this.taskCharSet.add(task);
 		this.counter = 0;
 	}
 
-	public CharactersSetCounter(Collection<Character> charactersSet) {
-		String charsImplosion = StringUtils.join(charactersSet, "");
+	public TasksSetCounter(Collection<TaskChar> charactersSet) {
+		String charsImplosion = createCharSetString(charactersSet);
 		this.charactersSetString = charsImplosion;
-		this.charactersSet = new TreeSet<Character>(charactersSet);
+		this.taskCharSet = new TreeSet<TaskChar>(charactersSet);
 		this.counter = 0;
+	}
+
+	private String createCharSetString(Collection<TaskChar> charactersSet) {
+		StringBuilder sBuil = new StringBuilder(charactersSet.size());
+		for (TaskChar tCh : charactersSet)
+			sBuil.append(tCh.identifier);
+		return sBuil.toString();
 	}
 	
-	private CharactersSetCounter(Collection<Character> charactersSet, String charactersSetString, int counter) {
+	private TasksSetCounter(Collection<TaskChar> taskCharCollection, String charactersSetString, int counter) {
 		this.counter = counter;
-		this.charactersSet = new TreeSet<Character>(charactersSet);
-		this.charactersSetString = StringUtils.join(charactersSet, "");
+		this.taskCharSet = new TreeSet<TaskChar>(taskCharCollection);
+		this.charactersSetString = createCharSetString(taskCharCollection);
 	}
 
-	public CharactersSetCounter(Collection<Character> charactersSet, Character characterOnMore) {
+	public TasksSetCounter(Collection<TaskChar> charactersSet, TaskChar characterOnMore) {
 		charactersSet.add(characterOnMore);
-		String charsImplosion = StringUtils.join(charactersSet, "");
+		String charsImplosion = createCharSetString(charactersSet);
 		this.charactersSetString = charsImplosion;
-		this.charactersSet = new TreeSet<Character>(charactersSet);
+		this.taskCharSet = new TreeSet<TaskChar>(charactersSet);
 		this.counter = 0;
 	}
 
-	public Set<Character> getCharactersSet() {
-		return (Set<Character>)(this.charactersSet.clone());
+	public Set<TaskChar> getTaskCharSet() {
+		return this.taskCharSet;
+	}
+
+	public Set<TaskChar> getCopyOfCharactersSet() {
+		return (Set<TaskChar>)(this.taskCharSet.clone());
 	}
 	
 	public String getCharactersSetString() {
@@ -75,27 +86,27 @@ public class CharactersSetCounter implements Comparable<CharactersSetCounter>, C
 	}
     
     public int howManyCharactersInSet() {
-        return this.charactersSet.size();
+        return this.taskCharSet.size();
     }
     public boolean isSingleton() {
         return howManyCharactersInSet() == 1;
     }
 
 	@Override
-	public int compareTo(CharactersSetCounter other) {
+	public int compareTo(TasksSetCounter other) {
 		return this.charactersSetString.compareTo(other.charactersSetString);
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		return this.charactersSetString.equals(
-				((CharactersSetCounter)other).getCharactersSetString()
+				((TasksSetCounter)other).getCharactersSetString()
 			);
 	}
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return new CharactersSetCounter(charactersSet, this.charactersSetString, this.counter);
+		return new TasksSetCounter(taskCharSet, this.charactersSetString, this.counter);
 	}
 
 	@Override

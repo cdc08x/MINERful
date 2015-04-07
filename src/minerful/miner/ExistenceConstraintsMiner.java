@@ -21,9 +21,9 @@ public abstract class ExistenceConstraintsMiner extends ConstraintsMiner {
     public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
         if (constraintsBag == null)
             constraintsBag = new TaskCharRelatedConstraintsBag(taskCharArchive.getTaskChars());
-        for (Character character: this.globalStats.alphabet) {
-            LocalStatsWrapper localStats = this.globalStats.statsTable.get(character);
-            TaskChar base = taskCharArchive.getTaskChar(character);
+        for (TaskChar task: taskCharArchive.getTaskChars()) {
+            LocalStatsWrapper localStats = this.globalStats.statsTable.get(task);
+            TaskChar base = task;
 
             Constraint uniqueness = this.discoverUniquenessConstraint(base, localStats, this.globalStats.logSize);
             if (uniqueness != null)
@@ -44,7 +44,7 @@ public abstract class ExistenceConstraintsMiner extends ConstraintsMiner {
 
 	@Override
 	public long howManyPossibleConstraints() {
-		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * taskCharArchive.howManyTaskChars();
+		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * taskCharArchive.size();
 	}
 
 	protected abstract Constraint discoverParticipationConstraint(TaskChar base,

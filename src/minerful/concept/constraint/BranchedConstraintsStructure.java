@@ -15,7 +15,7 @@ public class BranchedConstraintsStructure {
 	public BranchedConstraintsStructure() {
 	}
 	public BranchedConstraintsStructure(TaskCharArchive taskCharArchive) {
-		this.inBranchedStructuresMap = new HashMap<TaskChar, ConstraintIndexHasseDiagram>(taskCharArchive.howManyTaskChars(), (float) 1.0);
-		this.outBranchedStructuresMap = new HashMap<TaskChar, ConstraintIndexHasseDiagram>(taskCharArchive.howManyTaskChars(), (float) 1.0);
+		this.inBranchedStructuresMap = new HashMap<TaskChar, ConstraintIndexHasseDiagram>(taskCharArchive.size(), (float) 1.0);
+		this.outBranchedStructuresMap = new HashMap<TaskChar, ConstraintIndexHasseDiagram>(taskCharArchive.size(), (float) 1.0);
 	}
 }

@@ -1,9 +1,14 @@
 package minerful.logparser;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
+import minerful.concept.TaskClass;
+
+import org.deckfour.xes.classification.XEventClass;
+import org.deckfour.xes.classification.XEventClasses;
 import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.classification.XEventNameClassifier;
 import org.deckfour.xes.extension.std.XConceptExtension;
@@ -16,24 +21,20 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 	private XEventClassifier DEFAULT_XES_EVENT_CLASSIFIER = new XEventNameClassifier();
 	
 	private XEventClassifier xesNativeEventClassifier;
+	private XLog xLog;
+	private XEventClasses xEvtClasses;
 	
 	public XesEventClassifier(LogEventClassifier.ClassificationType eventClassificationType) {
 		super(eventClassificationType);
 		this.xesNativeEventClassifier = (eventClassificationType.equals(ClassificationType.LOG_SPECIFIED) ? null : DEFAULT_XES_EVENT_CLASSIFIER);
+		this.xEvtClasses = ( this.xesNativeEventClassifier == null ? null : new XEventClasses(this.xesNativeEventClassifier) );
 	}
 
-	public String classify(XEvent xesNativeEvent) {
-		String classString = null;
-		if (this.eventClassificationType.equals(ClassificationType.NAME)) {
-			classString = ((XAttributeLiteral)(xesNativeEvent.getAttributes().get(XConceptExtension.KEY_NAME))).getValue();
-		} else {
-			if (this.xesNativeEventClassifier != null) {
-				classString = this.xesNativeEventClassifier.getClassIdentity(xesNativeEvent);
-			} else {
-				throw new IllegalStateException("Native event classifier not yet defined!");
-			}
-		}
-		return classString;
+	public XesTaskClass classify(XEvent xesNativeEvent) {
+		if (this.xEvtClasses == null)
+			throw new IllegalStateException("No classes for events available, until at least an instance of XLog has been parsed");
+
+		return new XesTaskClass(xEvtClasses.getClassOf(xesNativeEvent));
 	}
 
 	/**
@@ -50,11 +51,43 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 			}
 			newClassifierConsidered = true;
 		}
+		if (newClassifierConsidered || this.xEvtClasses.size() == 0) {
+			this.xEvtClasses = XEventClasses.deriveEventClasses(xesNativeEventClassifier, xLog);
+		}
 		return newClassifierConsidered;
 	}
 	
-	public Collection<String> getClasses(XLog xLog) {
+
+	@Deprecated
+	public String getClassNameOf(XEvent xesNativeEvent) {
+		String classString = null;
+		if (this.eventClassificationType.equals(ClassificationType.NAME)) {
+			classString = ((XAttributeLiteral)(xesNativeEvent.getAttributes().get(XConceptExtension.KEY_NAME))).getValue();
+		} else {
+			if (this.xesNativeEventClassifier != null) {
+				classString = this.xesNativeEventClassifier.getClassIdentity(xesNativeEvent);
+			} else {
+				throw new IllegalStateException("Native event classifier not yet defined!");
+			}
+		}
+		return classString;
+	}
+	
+	public Collection<TaskClass> getTaskClasses() {
+		if (this.xEvtClasses == null)
+			throw new IllegalStateException("No classes for events available, until at least an instance of XLog has been parsed");
+
+		Collection<TaskClass> taskClasses = new ArrayList<TaskClass>(this.xEvtClasses.size());
+		for ( int i = 0; i < this.xEvtClasses.size(); i++ ) {
+			taskClasses.add(new XesTaskClass(this.xEvtClasses.getByIndex(i)));
+		}
+		return taskClasses;
+	}
+
+	@Deprecated
+	public Collection<String> getClassNames() {
 		Collection<String> classes = new TreeSet<String>();
+		
 		if (this.xesNativeEventClassifier != null) {
 			for (XTrace xTrace : xLog) {
 /*

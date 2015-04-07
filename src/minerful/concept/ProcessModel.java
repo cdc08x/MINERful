@@ -102,7 +102,7 @@ public class ProcessModel {
 	 */
 	public Automaton buildAutomatonByBoundHeuristic() {
 		Collection<String> regularExpressions = null;
-		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactor(this.bag);
+		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(this.bag);
 
 		regularExpressions = new ArrayList<String>(constraints.size());
 		for (Constraint con : constraints) {

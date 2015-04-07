@@ -10,23 +10,25 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class FixedCharactersSetIncrementalCountersCollection extends CharactersSetCountersCollection {	
-	public FixedCharactersSetIncrementalCountersCollection(Character[] alphabet) {
-		this.charactersSetCounterCollection = new TreeSet<CharactersSetCounter>();
-		this.singleCharIndexer = new HashMap<Character, TreeSet<CharactersSetCounter>>(alphabet.length);
+import minerful.concept.TaskChar;
+
+public class FixedTaskSetIncrementalCountersCollection extends TaskSetCountersCollection {	
+	public FixedTaskSetIncrementalCountersCollection(Set<TaskChar> alphabet) {
+		this.tasksSetCounterCollection = new TreeSet<TasksSetCounter>();
+		this.singleTaskIndexer = new HashMap<TaskChar, TreeSet<TasksSetCounter>>(alphabet.size());
 		this.setupSingleCharIndexer(alphabet);
 	}
 
-	private void setupSingleCharIndexer(Character[] alphabet) {
-		for (Character chr : alphabet) {
-			this.singleCharIndexer.put(chr, new TreeSet<CharactersSetCounter>());
+	private void setupSingleCharIndexer(Set<TaskChar> alphabet) {
+		for (TaskChar chr : alphabet) {
+			this.singleTaskIndexer.put(chr, new TreeSet<TasksSetCounter>());
 		}
 	}
 	
 	@Override
-	protected void reIndex(Set<Character> stuff, CharactersSetCounter indexed) {
-		for (Character chr : stuff) {
-			this.singleCharIndexer.get(chr).add(indexed);
+	protected void reIndex(Set<TaskChar> stuff, TasksSetCounter indexed) {
+		for (TaskChar chr : stuff) {
+			this.singleTaskIndexer.get(chr).add(indexed);
 		}
 	}
 	
@@ -35,29 +37,29 @@ public class FixedCharactersSetIncrementalCountersCollection extends CharactersS
 	 * @param source A Map connecting a numeric value to single characters
 	 * @return An aggregated information concerning subsets of characters, given the set of keys in the <code>source</code> Map
 	 */
-	public static FixedCharactersSetIncrementalCountersCollection fromNumberedSingletons(Map<Character, Integer> source) {
+	public static FixedTaskSetIncrementalCountersCollection fromNumberedSingletons(Map<TaskChar, Integer> source) {
 		// The return value
-		FixedCharactersSetIncrementalCountersCollection charSetCountColln = null;
+		FixedTaskSetIncrementalCountersCollection charSetCountColln = null;
 		// Key idea 1: let us revert numbers and characters: we aggregate characters sharing the same numeric value!
-		Map<Integer, SortedSet<Character>> reversedMap = new TreeMap<Integer, SortedSet<Character>>();
+		Map<Integer, SortedSet<TaskChar>> reversedMap = new TreeMap<Integer, SortedSet<TaskChar>>();
 		// Temporary variable, storing those numeric values that are associated to characters
 		int auxSum = 0;
 		// This variable will come into play later. Please wait... By now, just remind that it's meant to record the numeric values acting as keys in reversedMap, in ascending order
 		Set<Integer> sortedSums = new TreeSet<Integer>();
 		// The "local" alphabet of characters
-		SortedSet<Character> alphaList = new TreeSet<Character>();
+		SortedSet<TaskChar> alphaList = new TreeSet<TaskChar>();
 		
-		for (Character keyChr : source.keySet()) {
-			auxSum = source.get(keyChr);
+		for (TaskChar key : source.keySet()) {
+			auxSum = source.get(key);
 			// We do not care about 0's
 			if (auxSum > 0) {
 				if (!reversedMap.containsKey(auxSum)) {
-					reversedMap.put(auxSum, new TreeSet<Character>());
+					reversedMap.put(auxSum, new TreeSet<TaskChar>());
 				}
 				// If it was already there, no problem! It won't be added, actually.
-				reversedMap.get(auxSum).add(keyChr);
+				reversedMap.get(auxSum).add(key);
 				// Read above!
-				alphaList.add(keyChr);
+				alphaList.add(key);
 				sortedSums.add(auxSum);
 			}
 		}
@@ -99,18 +101,16 @@ public class FixedCharactersSetIncrementalCountersCollection extends CharactersS
 		 */
 		charSetCountColln = fromCountedCharSets(
 					reversedMap,
-					alphaList.toArray(
-							new Character[alphaList.size()]
-					)
+					alphaList
 				);
 
 		return charSetCountColln;
 	}
 
-	public static FixedCharactersSetIncrementalCountersCollection fromCountedCharSets(
-			Map<Integer, SortedSet<Character>> counterForCharSets, Character[] alphabet) {
-		FixedCharactersSetIncrementalCountersCollection charSetConCol = new FixedCharactersSetIncrementalCountersCollection(alphabet);
-		SortedSet<Character> auxCharSet = null;
+	public static FixedTaskSetIncrementalCountersCollection fromCountedCharSets(
+			Map<Integer, SortedSet<TaskChar>> counterForCharSets, Set<TaskChar> alphabet) {
+		FixedTaskSetIncrementalCountersCollection charSetConCol = new FixedTaskSetIncrementalCountersCollection(alphabet);
+		SortedSet<TaskChar> auxCharSet = null;
 		int difference = 0;
 		
 		// Ascending order
@@ -123,64 +123,67 @@ public class FixedCharactersSetIncrementalCountersCollection extends CharactersS
 		return charSetConCol;
 	}
 	
-	public void merge(FixedCharactersSetIncrementalCountersCollection other) {
-		for (CharactersSetCounter otherCharSetCounter : other.charactersSetCounterCollection) {
-			this.incrementAt(otherCharSetCounter.getCharactersSet(), otherCharSetCounter.getCounter());
+	public void merge(FixedTaskSetIncrementalCountersCollection other) {
+		for (TasksSetCounter otherCharSetCounter : other.tasksSetCounterCollection) {
+			this.incrementAt(otherCharSetCounter.getTaskCharSet(), otherCharSetCounter.getCounter());
 		}
 	}
 	
-	/**
-	 * No idea of what it does :P
-	 * @param charactersForIndexing
-	 * @return
-	 */
-	@Deprecated
-	public CharactersSetCounter intersectByCharacters(SortedSet<Character> charactersForIndexing) {
-		TreeSet<CharactersSetCounter> intersected =
-				new TreeSet<CharactersSetCounter>(
-						singleCharIndexer.get(charactersForIndexing.first()));
-		
-		return intersected.tailSet(new CharactersSetCounter(charactersForIndexing)).first();
-	}
-	
-	public SortedSet<CharactersSetCounter> selectCharSetCountersSharedAmong(
-            Collection<Character> sharingCharacters) {
-		Iterator<Character> charIterator = sharingCharacters.iterator();
-		Character chr = null;
-		TreeSet<CharactersSetCounter>
+	public SortedSet<TasksSetCounter> selectCharSetCountersSharedAmong(
+            Collection<TaskChar> sharingTasks) {
+		Iterator<TaskChar> taskIterator = sharingTasks.iterator();
+		TaskChar currTask = null;
+		TreeSet<TasksSetCounter>
 			shared =
-				new TreeSet<CharactersSetCounter>(),
+				new TreeSet<TasksSetCounter>(),
 			tmpShared =
 				null;
 
-		if (charIterator.hasNext()) {
-			chr = charIterator.next();
-			shared = new TreeSet<CharactersSetCounter>(singleCharIndexer.get(chr));
+		if (taskIterator.hasNext()) {
+			currTask = taskIterator.next();
+			shared = new TreeSet<TasksSetCounter>(singleTaskIndexer.get(currTask));
 		} else {
 			return shared;
 		}
 
-		while(charIterator.hasNext()) {
-			chr = charIterator.next();
-			tmpShared = singleCharIndexer.get(chr);
+		while(taskIterator.hasNext()) {
+			currTask = taskIterator.next();
+			tmpShared = singleTaskIndexer.get(currTask);
 			shared.retainAll(tmpShared);
 		}
 		return shared;
 	}
+	
+	public SortedSet<TasksSetCounter> selectCharSetCountersSharedAmong(
+            TaskChar[] sharingTasks) {
+		TreeSet<TasksSetCounter>
+			shared =
+				new TreeSet<TasksSetCounter>(),
+			tmpShared =
+				null;
 
-	@Override
-	public Character[] alphabet() {
-		return this.singleCharIndexer.keySet().toArray(new Character[this.singleCharIndexer.keySet().size()]);
+		if (sharingTasks.length > 0) {
+			for (TaskChar currTask : sharingTasks) {
+				if (shared == null) {
+					shared = new TreeSet<TasksSetCounter>(singleTaskIndexer.get(currTask));
+				} else {
+					tmpShared = singleTaskIndexer.get(currTask);
+					shared.retainAll(tmpShared);
+				}
+			}
+		}
+
+		return shared;
 	}
 	
 	@Override
-	public SortedSet<CharactersSetCounter> getCharactersSetsOrderedByAscendingCounter() {
-		SortedSet<CharactersSetCounter> nuCharSetCounter =
-				new TreeSet<CharactersSetCounter>(
-						new CharactersSetCounter.CharactersSetByAscendingCounterComparator()
+	public SortedSet<TasksSetCounter> getCharactersSetsOrderedByAscendingCounter() {
+		SortedSet<TasksSetCounter> nuCharSetCounter =
+				new TreeSet<TasksSetCounter>(
+						new TasksSetCounter.TaskSetByAscendingCounterComparator()
 				);
 		
-		nuCharSetCounter.addAll(this.charactersSetCounterCollection);
+		nuCharSetCounter.addAll(this.tasksSetCounterCollection);
 		
 		return nuCharSetCounter;
 	}

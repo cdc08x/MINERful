@@ -23,13 +23,10 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             constraintsBag = new TaskCharRelatedConstraintsBag(this.taskCharArchive.getTaskChars());
         }
         LocalStatsWrapper localStats = null;
-        TaskChar base = null;
         double baseParticipationFraction = 0.0;
 
-        for (Character character: this.globalStats.alphabet) {
-        	localStats = this.globalStats.statsTable.get(character);
-
-        	base = taskCharArchive.getTaskChar(character);
+        for (TaskChar base: taskCharArchive.getTaskChars()) {
+        	localStats = this.globalStats.statsTable.get(base);
 
         	// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it.
         	// Thus, it is perfectly useless to indagate over it!

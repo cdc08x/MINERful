@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 
-public class ConflictResolver {
+public class ConflictAndRedundancyResolver {
 	public static final boolean DEFAULT_BEHAVIOUR_FOR_REDUNDANCY_CHECK = true;
 	private ProcessModel safeProcess;
 	private boolean checking;
@@ -27,7 +27,7 @@ public class ConflictResolver {
 
 	private Map<Constraint, Boolean> blackboard;
 
-	private static Logger logger = Logger.getLogger(ConflictResolver.class
+	private static Logger logger = Logger.getLogger(ConflictAndRedundancyResolver.class
 			.getCanonicalName());
 	
 	private Set<Constraint>
@@ -43,11 +43,11 @@ public class ConflictResolver {
 	private int conflictChecksPerformed,
 		redundancyChecksPerformed;
 
-	public ConflictResolver(ProcessModel process) {
+	public ConflictAndRedundancyResolver(ProcessModel process) {
 		this(process, DEFAULT_BEHAVIOUR_FOR_REDUNDANCY_CHECK);
 	}
 	
-	public ConflictResolver(ProcessModel process, boolean avoidingRedundancy) {
+	public ConflictAndRedundancyResolver(ProcessModel process, boolean avoidingRedundancy) {
 		this.avoidingRedundancy = avoidingRedundancy;
 
 		this.checking = false;
@@ -74,19 +74,35 @@ public class ConflictResolver {
 		 * them: the log itself. So, their conjunction cannot be unsatisfiable.
 		 */
 		if (avoidingRedundancy) {
-			TaskCharRelatedConstraintsBag emptyBag = safeBag.createEmptyIndexedCopy();
+			TaskCharRelatedConstraintsBag
+				emptyBag = safeBag.createEmptyIndexedCopy();
 			this.safeProcess = new ProcessModel(emptyBag);
 			Automaton candidateAutomaton = null;
 			
 			this.safeAutomaton = this.safeProcess.buildAlphabetAcceptingAutomaton();
-			// Order constraints by their support, then the family, then confidence and interest factor
-			for (Constraint candidateCon : LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactor(safeBag)) {
+			
+			Automaton safeAutomatonFirstPass = this.safeProcess.buildAlphabetAcceptingAutomaton();
+			TaskCharRelatedConstraintsBag safeBagFirstPass = safeBag.createEmptyIndexedCopy();
+			
+			// First pass: order constraints by their number of connections (for the sake of computation), then their support, family, confidence interest factor
+			for (Constraint candidateCon : LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(safeBag)) {
+				logger.trace("Checking redundancy of " + candidateCon);
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
-				if (!this.isConstraintAlreadyChecked(candidateCon) && this.checkRedundancy(candidateAutomaton, candidateCon)) {
-					this.safeAutomaton = this.safeAutomaton.intersection(candidateAutomaton);
-					safeProcess.bag.add(candidateCon.base, candidateCon);
+				if (!this.isConstraintAlreadyChecked(candidateCon) && this.checkRedundancy(safeAutomatonFirstPass, safeBagFirstPass, candidateAutomaton, candidateCon)) {
+					safeAutomatonFirstPass = this.intersect(safeAutomatonFirstPass, candidateAutomaton);
+					safeBagFirstPass.add(candidateCon.base, candidateCon);
 				}
 				blackboard.put(candidateCon, true);
+			}
+
+			// Second pass: order constraints by their support, then family, confidence interest factor
+			for (Constraint candidateCon : LinearConstraintsIndexFactory.getAllConstraintsSortedBySupportFamilyConfidenceInterestFactorHierarchyLevel(safeBagFirstPass)) {
+				logger.trace("Checking redundancy of " + candidateCon + " for the second time");
+				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
+				if (this.checkRedundancy(candidateAutomaton, candidateCon)) {
+					this.safeAutomaton = this.intersect(this.safeAutomaton, candidateAutomaton);
+					safeProcess.bag.add(candidateCon.base, candidateCon);
+				}
 			}
 		} else {
 			this.safeProcess = new ProcessModel(safeBag.createHierarchyUnredundantCopy());
@@ -103,17 +119,29 @@ public class ConflictResolver {
 		}
 		
 		this.notSurelySafeProcessConstraints = LinearConstraintsIndexFactory
-				.getAllConstraintsSortedBySupportFamilyConfidenceInterestFactor(unsafeBag);
+				.getAllConstraintsSortedBySupportFamilyConfidenceInterestFactorHierarchyLevel(unsafeBag);
+	}
+
+	private Automaton intersect(Automaton automaton, Automaton candidateAutomaton) {
+		Automaton intersectedAutomaton = automaton.intersection(candidateAutomaton);
+		
+		logger.trace("Automaton states: " + intersectedAutomaton.getNumberOfStates() + "; transitions: " + intersectedAutomaton.getNumberOfTransitions());
+		
+		return intersectedAutomaton;
 	}
 
 	private boolean checkRedundancy(Automaton candidateAutomaton, Constraint candidateCon) {
+		return checkRedundancy(this.safeAutomaton, this.safeProcess.bag, candidateAutomaton, candidateCon);
+	}
+	
+	private boolean checkRedundancy(Automaton safeAutomaton, TaskCharRelatedConstraintsBag safeBag, Automaton candidateAutomaton, Constraint candidateCon) {
 		redundancyChecksPerformed++;
 		// If candidateCon is not redundant, i.e., if the language of safeAutomaton is not a subset of the language of automaton, then candidateCon can be included
 		if (!safeAutomaton.subsetOf(candidateAutomaton)) {
 			return true;
 		} else {
 			logger.trace("Ignoring " + candidateCon + " because it is already implied" +
-					(safeProcess.bag.howManyConstraints() < 25 ? " by " + LinearConstraintsIndexFactory.getAllConstraints(this.safeProcess.bag) : ""));
+					(safeBag.howManyConstraints() < 25 ? " by " + LinearConstraintsIndexFactory.getAllConstraints(safeBag) : ""));
 			this.redundantConstraints.add(candidateCon);
 			return false;
 		}
@@ -123,6 +151,7 @@ public class ConflictResolver {
 		this.checking = true;
 		Automaton candidateAutomaton = null;
 		for (Constraint candidateCon : this.notSurelySafeProcessConstraints) {
+			logger.trace("Checking consistency of " + candidateCon);
 			if (!isConstraintAlreadyChecked(candidateCon)) {
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
 				if (!this.avoidingRedundancy || this.checkRedundancy(candidateAutomaton, candidateCon))
@@ -144,7 +173,7 @@ public class ConflictResolver {
 		}
 
 		logger.trace("Conjuncting the safe automaton with " + candidateCon);
-		Automaton auxAutomaton = this.safeAutomaton.intersection(candidateAutomaton);
+		Automaton auxAutomaton = this.intersect(this.safeAutomaton, candidateAutomaton);
 		Constraint relaxedCon = null;
 
 		if (isAutomatonEmpty(auxAutomaton)) {

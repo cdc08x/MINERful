@@ -6,13 +6,11 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 	private String strTrace;
 	StringLogParser strLogParser;
 	private int currentIndex;
-	private final StringEventParser strEventParser;
-	private Character currentStrEvent;
+	private StringEventParser strEventParser;
 
 	public StringTraceParser(String strTrace, StringLogParser strLogParser) {
 		this.strTrace = strTrace;
 		this.strLogParser = strLogParser;
-		this.strEventParser = new StringEventParser(this);
 		this.parsing = true;
 		
 		this.init();
@@ -27,8 +25,16 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 	public Character parseSubsequentAndEncode() {
 		Character encodedEvent = null;
 		if (stepToSubsequent())
-			encodedEvent = strEventParser.encode(this.currentStrEvent);
+			encodedEvent = strEventParser.evtIdentifier();
 		return encodedEvent;
+	}
+
+	@Override
+	public LogEventParser parseSubsequent() {
+		Character encodedEvent = null;
+		if (stepToSubsequent())
+			return strEventParser;
+		return null;
 	}
 
 	@Override
@@ -46,16 +52,16 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 			switch(this.senseOfReading) {
 			case ONWARDS:
 				this.currentIndex++;
-				this.currentStrEvent = this.strTrace.charAt(currentIndex);
+				this.strEventParser = new StringEventParser(this, this.strTrace.charAt(currentIndex));
 				break;
 			case BACKWARDS:
 				this.currentIndex--;
-				this.currentStrEvent = this.strTrace.charAt(currentIndex);
+				this.strEventParser = new StringEventParser(this, this.strTrace.charAt(currentIndex));
 			default:
 				break;
 			}
 		} else {
-			this.currentStrEvent = null;
+			this.strEventParser = null;
 			this.parsing = false;
 		}
 		return isParsing();

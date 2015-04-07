@@ -15,6 +15,7 @@ public interface LogTraceParser {
 	int length();
 	LogParser getLogParser();
 	boolean isParsing();
+	LogEventParser parseSubsequent();
 	Character parseSubsequentAndEncode();
 	boolean isParsingOver();
 	boolean stepToSubsequent();

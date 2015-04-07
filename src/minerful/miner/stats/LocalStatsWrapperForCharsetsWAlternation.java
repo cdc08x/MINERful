@@ -4,7 +4,6 @@
  */
 package minerful.miner.stats;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -12,114 +11,119 @@ import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import minerful.miner.stats.LocalStatsWrapper.AlternatingCounterSwitcher;
-import minerful.miner.stats.charsets.CharactersSetCounter;
-import minerful.miner.stats.charsets.FixedCharactersSetIncrementalCountersCollection;
-import minerful.miner.stats.charsets.VariableCharactersSetFixedCountersCollection;
+import minerful.concept.Event;
+import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
+import minerful.miner.stats.charsets.FixedTaskSetIncrementalCountersCollection;
 
 public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperForCharsets {
 	@XmlTransient
-	protected Map<Character, Integer> missingAtThisStepBeforeNextRepetition;
+	protected Map<TaskChar, Integer> missingAtThisStepBeforeNextRepetition;
 
-    public LocalStatsWrapperForCharsetsWAlternation(Character[] alphabet, Character baseCharacter, Integer maximumCharactersSetSize) {
-    	super(alphabet, baseCharacter);
-        this.neverAppearedCharacterSets = new FixedCharactersSetIncrementalCountersCollection(alphabet);
-        this.neverMoreAppearedAfterCharacterSets = new FixedCharactersSetIncrementalCountersCollection(alphabet);
-        this.neverMoreAppearedBeforeCharacterSets = new FixedCharactersSetIncrementalCountersCollection(alphabet);
+    public LocalStatsWrapperForCharsetsWAlternation(TaskCharArchive archive, TaskChar baseTask, Integer maximumCharactersSetSize) {
+    	super(archive, baseTask);
+    	Set<TaskChar> alphabet = archive.getTaskChars();
+        this.neverAppearedCharacterSets = new FixedTaskSetIncrementalCountersCollection(alphabet);
+        this.neverMoreAppearedAfterCharacterSets = new FixedTaskSetIncrementalCountersCollection(alphabet);
+        this.neverMoreAppearedBeforeCharacterSets = new FixedTaskSetIncrementalCountersCollection(alphabet);
 //		this.orderedAlreadyMetCharsAtThisStep = new ArrayList<Character>();
 //		this.alreadyMetCharsAtThisStep = new TreeSet<Character>();
 //		this.nearestMatesAtThisStep = new TreeMap<String, Character>();
-        this.maximumCharactersSetSize = (
+        this.maximumTasksSetSize = (
         		maximumCharactersSetSize == null ? null :
-        			(maximumCharactersSetSize < alphabet.length ? maximumCharactersSetSize : alphabet.length)
+        			(maximumCharactersSetSize < archive.size() ? maximumCharactersSetSize : archive.size())
 		);
-        if (this.maximumCharactersSetSize != null && this.maximumCharactersSetSize < alphabet.length) {
-	        this.repetitionsBeforeCharactersAppearingAfter = new FixedCharactersSetIncrementalCountersCollection(alphabet);
-	        this.repetitionsAfterCharactersAppearingBefore = new FixedCharactersSetIncrementalCountersCollection(alphabet);
+        if (this.maximumTasksSetSize != null && this.maximumTasksSetSize < archive.size()) {
+	        this.repetitionsBeforeCharactersAppearingAfter = new FixedTaskSetIncrementalCountersCollection(alphabet);
+	        this.repetitionsAfterCharactersAppearingBefore = new FixedTaskSetIncrementalCountersCollection(alphabet);
         } else {
-	        this.repetitionsBeforeCharactersAppearingAfter = new FixedCharactersSetIncrementalCountersCollection(alphabet);
-	        this.repetitionsAfterCharactersAppearingBefore = new FixedCharactersSetIncrementalCountersCollection(alphabet);
+	        this.repetitionsBeforeCharactersAppearingAfter = new FixedTaskSetIncrementalCountersCollection(alphabet);
+	        this.repetitionsAfterCharactersAppearingBefore = new FixedTaskSetIncrementalCountersCollection(alphabet);
         }
     }
 
-    public LocalStatsWrapperForCharsetsWAlternation(Character[] alphabet, Character baseCharacter) {
-    	this(alphabet, baseCharacter, null);
+    public LocalStatsWrapperForCharsetsWAlternation(TaskCharArchive archive, TaskChar baseTask) {
+    	this(archive, baseTask, null);
     }
 
     public int getMaximumCharactersSetSize() {
-		return this.maximumCharactersSetSize;
+		return this.maximumTasksSetSize;
 	}
 
 	@Override
-	protected void initLocalStatsTable(Character[] alphabet) {
+	protected void initLocalStatsTable(Set<TaskChar> alphabet) {
     	super.initLocalStatsTable(alphabet);
-		this.missingAtThisStepBeforeNextRepetition = new TreeMap<Character, Integer>();
-		for (Character letter : alphabet) {
-			this.localStatsTable.put(letter, new StatsCell());
-			if (!letter.equals(this.baseCharacter)) {
-				this.missingAtThisStepBeforeNextRepetition.put(letter, 0);
+		this.missingAtThisStepBeforeNextRepetition = new TreeMap<TaskChar, Integer>();
+		for (TaskChar task : alphabet) {
+			this.localStatsTable.put(task, new StatsCell());
+			if (!task.equals(this.baseTask)) {
+				this.missingAtThisStepBeforeNextRepetition.put(task, 0);
 			}
 		}
 	}
     
     @Override
-	void newAtPosition(Character character, int position, boolean onwards) {
-        /* if the appeared character is equal to this */
-        if (character.equals(this.baseCharacter)) {
-            for (Character chr: this.neverMoreAppearancesAtThisStep.keySet()) {
-                this.neverMoreAppearancesAtThisStep.put(chr,
-                        this.neverMoreAppearancesAtThisStep.get(chr) + 1
-                );
-            }
-            /* if this is the first occurrence in the step, record it */
-            if (this.firstOccurrenceInStep == null) {
-                this.firstOccurrenceInStep = position;
-            } else {
-                /* if this is not the first time this chr appears in the step, initialize the repetitions register */
-                if (repetitionsAtThisStep == null) {
-                    repetitionsAtThisStep = new TreeSet<Integer>();
-                }
-            }
-            if (onwards) {
-            	this.repetitionsBeforeCharactersAppearingAfter.merge(
-            			FixedCharactersSetIncrementalCountersCollection.fromNumberedSingletons(missingAtThisStepBeforeNextRepetition)
-            	);
-            }
-            else {
-            	this.repetitionsAfterCharactersAppearingBefore.merge(
-            			FixedCharactersSetIncrementalCountersCollection.fromNumberedSingletons(missingAtThisStepBeforeNextRepetition)
-            	);
-            }
-            // TODO Document this passage: it is crucial!
-            for (Character chr: this.missingAtThisStepBeforeNextRepetition.keySet()) {
-                this.missingAtThisStepBeforeNextRepetition.put(chr, 1);
-            }
-        }
-        /* if the appeared character is NOT equal to this */
-        else {
-            /* store the info that chr appears after the pivot */
-            this.neverMoreAppearancesAtThisStep.put(character, 0);
-            this.missingAtThisStepBeforeNextRepetition.put(character, 0);
-        }
-
-        if (repetitionsAtThisStep != null) {
-            /* for each repetition of the same character during the analysis, record not only the info of the appearance at a distance equal to (chr.position - firstOccurrenceInStep.position), but also at the (chr.position - otherOccurrenceInStep.position) for each other appearance of the pivot! */
-            /* THIS IS THE VERY BIG TRICK TO AVOID ANY TRANSITIVE CLOSURE!! */
-            for (Integer occurredAlsoAt : repetitionsAtThisStep) {
-                this.localStatsTable.get(character).newAtDistance(position - occurredAlsoAt);
-            }
-        }
-        /* If this is not the first occurrence position, record the distance equal to (chr.position - firstOccurrenceInStep.position) */
-        if (firstOccurrenceInStep != position)
-            this.localStatsTable.get(character).newAtDistance(position - firstOccurrenceInStep);
-        /* If this is the repetition of the pivot, record it (it is needed for the computation of all the other distances!) */
-        if (this.repetitionsAtThisStep != null && character.equals(this.baseCharacter)) {
-            this.repetitionsAtThisStep.add(position);
-        }
-
-//      this.alreadyMetCharsAtThisStep.add(character);
-//    	this.orderedAlreadyMetCharsAtThisStep.remove(character);
-//      this.orderedAlreadyMetCharsAtThisStep.add(0, character);
+	void newAtPosition(Event event, int position, boolean onwards) {
+		if (this.archive.containsTaskCharByEvent(event)) {
+			TaskChar tCh = this.archive.getTaskCharByEvent(event);
+			
+	        /* if the appeared character is equal to this */
+	        if (tCh.equals(this.baseTask)) {
+	            for (TaskChar nevMoreAppTCh: this.neverMoreAppearancesAtThisStep.keySet()) {
+	                this.neverMoreAppearancesAtThisStep.put(nevMoreAppTCh,
+	                        this.neverMoreAppearancesAtThisStep.get(nevMoreAppTCh) + 1
+	                );
+	            }
+	            /* if this is the first occurrence in the step, record it */
+	            if (this.firstOccurrenceInStep == null) {
+	                this.firstOccurrenceInStep = position;
+	            } else {
+	                /* if this is not the first time this chr appears in the step, initialize the repetitions register */
+	                if (repetitionsAtThisStep == null) {
+	                    repetitionsAtThisStep = new TreeSet<Integer>();
+	                }
+	            }
+	            if (onwards) {
+	            	this.repetitionsBeforeCharactersAppearingAfter.merge(
+	            			FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(missingAtThisStepBeforeNextRepetition)
+	            	);
+	            }
+	            else {
+	            	this.repetitionsAfterCharactersAppearingBefore.merge(
+	            			FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(missingAtThisStepBeforeNextRepetition)
+	            	);
+	            }
+	            // TODO Document this passage: it is crucial!
+	            for (TaskChar chr: this.missingAtThisStepBeforeNextRepetition.keySet()) {
+	                this.missingAtThisStepBeforeNextRepetition.put(chr, 1);
+	            }
+	        }
+	        /* if the appeared character is NOT equal to this */
+	        else {
+	            /* store the info that chr appears after the pivot */
+	            this.neverMoreAppearancesAtThisStep.put(tCh, 0);
+	            this.missingAtThisStepBeforeNextRepetition.put(tCh, 0);
+	        }
+	
+	        if (repetitionsAtThisStep != null) {
+	            /* for each repetition of the same character during the analysis, record not only the info of the appearance at a distance equal to (chr.position - firstOccurrenceInStep.position), but also at the (chr.position - otherOccurrenceInStep.position) for each other appearance of the pivot! */
+	            /* THIS IS THE VERY BIG TRICK TO AVOID ANY TRANSITIVE CLOSURE!! */
+	            for (Integer occurredAlsoAt : repetitionsAtThisStep) {
+	                this.localStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
+	            }
+	        }
+	        /* If this is not the first occurrence position, record the distance equal to (chr.position - firstOccurrenceInStep.position) */
+	        if (firstOccurrenceInStep != position)
+	            this.localStatsTable.get(tCh).newAtDistance(position - firstOccurrenceInStep);
+	        /* If this is the repetition of the pivot, record it (it is needed for the computation of all the other distances!) */
+	        if (this.repetitionsAtThisStep != null && tCh.equals(this.baseTask)) {
+	            this.repetitionsAtThisStep.add(position);
+	        }
+	
+//			this.alreadyMetCharsAtThisStep.add(character);
+//			this.orderedAlreadyMetCharsAtThisStep.remove(character);
+//			this.orderedAlreadyMetCharsAtThisStep.add(0, character);
+		}
     }
 
     @Override
@@ -130,18 +134,18 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
     	/* Resets the switchers for the alternations counter */
     	/* Resets the local stats table counters */
         super.finalizeAnalysisStep(onwards, secondPass);
-        for (Character chr: this.missingAtThisStepBeforeNextRepetition.keySet()) {
+        for (TaskChar chr: this.missingAtThisStepBeforeNextRepetition.keySet()) {
             this.missingAtThisStepBeforeNextRepetition.put(chr, 0);
         }
     }
 
     @Override
-	protected void setAsNeverAppeared(Set<Character> neverAppearedStuff) {
+	protected void setAsNeverAppeared(Set<TaskChar> neverAppearedStuff) {
     	if (neverAppearedStuff.size() < 1) {
     		return;
     	}
     	// Step 1: each character in neverAppearedStuff must be recorded as never appearing in the current string 
-    	for (Character neverAppearedChr : neverAppearedStuff) {
+    	for (TaskChar neverAppearedChr : neverAppearedStuff) {
     		super.setAsNeverAppeared(neverAppearedChr);
     	}
     	// Step 2: the whole set of characters has to be recorded at once
@@ -155,7 +159,7 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
             );
     }
     
-    protected void addSetToNeverAppearedCharSets(Set<Character> neverAppearedStuff, int sum) {
+    protected void addSetToNeverAppearedCharSets(Set<TaskChar> neverAppearedStuff, int sum) {
     	this.neverAppearedCharacterSets.incrementAt(neverAppearedStuff, sum);
     }
      
@@ -164,11 +168,11 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
     	// Step 1: aggregate this.neverMoreAppearancesInStep and record
     	if (onwards) {
 	    	this.neverMoreAppearedAfterCharacterSets.merge(
-	    			FixedCharactersSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreAppearancesAtThisStep)
+	    			FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreAppearancesAtThisStep)
 	    	);
     	} else {
     		this.neverMoreAppearedBeforeCharacterSets.merge(
-	    			FixedCharactersSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreAppearancesAtThisStep)
+	    			FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreAppearancesAtThisStep)
 	    	);
     	}
     	// Step 2: update singletons
@@ -181,7 +185,7 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
             return "";
 
         StringBuilder sBuf = new StringBuilder();
-        for (Character key : this.localStatsTable.keySet()) {
+        for (TaskChar key : this.localStatsTable.keySet()) {
             sBuf.append("\t\t[" + key + "] => " + this.localStatsTable.get(key).toString());
         }
         sBuf.append("\n\t\t\tnever's " + this.neverAppearedCharacterSets.toString().replace("\n", "\n\t\t\t\t"));

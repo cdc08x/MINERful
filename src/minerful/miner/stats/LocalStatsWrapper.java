@@ -15,6 +15,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import minerful.concept.Event;
+import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
 import minerful.miner.stats.xmlenc.FirstOccurrencesMapAdapter;
 import minerful.miner.stats.xmlenc.LocalStatsMapAdapter;
 import minerful.miner.stats.xmlenc.RepetitionsMapAdapter;
@@ -23,7 +26,7 @@ import minerful.miner.stats.xmlenc.RepetitionsMapAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LocalStatsWrapper {
-	public static final int FIRST_POSITION_IN_STRING = 1;
+	public static final int FIRST_POSITION_IN_TRACE = 1;
 
 	// TODO Do not consider this a constant, but rather a user-definable
 	// parameter
@@ -83,7 +86,9 @@ public class LocalStatsWrapper {
 	}
 
 	@XmlTransient
-	protected Character baseCharacter;
+	protected TaskChar baseTask;
+	@XmlTransient
+	protected TaskCharArchive archive;
 	@XmlTransient
 	protected Integer firstOccurrenceInStep;
 	@XmlTransient
@@ -93,11 +98,11 @@ public class LocalStatsWrapper {
 	public Map<Integer, Integer> repetitions;
 	@XmlElement(name = "interplayStats")
 	@XmlJavaTypeAdapter(value = LocalStatsMapAdapter.class)
-	public Map<Character, StatsCell> localStatsTable;
+	public Map<TaskChar, StatsCell> localStatsTable;
 	@XmlTransient
-	protected Map<Character, Integer> neverMoreAppearancesAtThisStep;
+	protected Map<TaskChar, Integer> neverMoreAppearancesAtThisStep;
 	@XmlTransient
-	protected Map<Character, AlternatingCounterSwitcher> alternatingCntSwAtThisStep;
+	protected Map<TaskChar, AlternatingCounterSwitcher> alternatingCntSwAtThisStep;
 	@XmlAttribute
 	public int appearancesAsFirst;
 	@XmlAttribute
@@ -111,10 +116,11 @@ public class LocalStatsWrapper {
 	protected LocalStatsWrapper() {
 	}
 
-	public LocalStatsWrapper(Character[] alphabet, Character baseCharacter) {
+	public LocalStatsWrapper(TaskCharArchive archive, TaskChar baseTask) {
 		this();
-		this.baseCharacter = baseCharacter;
-		this.initLocalStatsTable(alphabet);
+		this.baseTask = baseTask;
+		this.archive = archive;
+		this.initLocalStatsTable(archive.getTaskChars());
 		this.repetitions = new TreeMap<Integer, Integer>();
 		this.firstOccurrences = new TreeMap<Integer, Integer>();
 		this.totalAmountOfAppearances = 0;
@@ -122,155 +128,156 @@ public class LocalStatsWrapper {
 		this.appearancesAsLast = 0;
 	}
 
-	protected void initLocalStatsTable(Character[] alphabet) {
-		this.localStatsTable = new TreeMap<Character, StatsCell>();
-		this.neverMoreAppearancesAtThisStep = new TreeMap<Character, Integer>();
-		this.alternatingCntSwAtThisStep = new TreeMap<Character, AlternatingCounterSwitcher>();
-		for (Character letter : alphabet) {
-			this.localStatsTable.put(letter, new StatsCell());
-			if (!letter.equals(this.baseCharacter)) {
-				this.neverMoreAppearancesAtThisStep.put(letter, 0);
-				this.alternatingCntSwAtThisStep.put(letter,
+	protected void initLocalStatsTable(Set<TaskChar> alphabet) {
+		this.localStatsTable = new TreeMap<TaskChar, StatsCell>();
+		this.neverMoreAppearancesAtThisStep = new TreeMap<TaskChar, Integer>();
+		this.alternatingCntSwAtThisStep = new TreeMap<TaskChar, AlternatingCounterSwitcher>();
+		for (TaskChar task : alphabet) {
+			this.localStatsTable.put(task, new StatsCell());
+			if (!task.equals(this.baseTask)) {
+				this.neverMoreAppearancesAtThisStep.put(task, 0);
+				this.alternatingCntSwAtThisStep.put(task,
 						new AlternatingCounterSwitcher());
 			}
 		}
 	}
 
-	void newAtPosition(Character character, int position, boolean onwards) {
-		/* if the appeared character is equal to this */
-		if (character.equals(this.baseCharacter)) {
-			for (Character chr : this.neverMoreAppearancesAtThisStep.keySet()) {
-				this.neverMoreAppearancesAtThisStep.put(chr,
-						this.neverMoreAppearancesAtThisStep.get(chr) + 1);
-			}
-			/* if this is the first occurrence in the step, record it */
-			if (this.firstOccurrenceInStep == null) {
-				this.firstOccurrenceInStep = position;
-				if (this.firstOccurrences.containsKey(position))
-					this.firstOccurrences.put(position, this.firstOccurrences.get(position) + 1);
-				else
-					this.firstOccurrences.put(position, 1);
-			} else {
+	void newAtPosition(Event event, int position, boolean onwards) {
+		if (this.archive.containsTaskCharByEvent(event)) {
+			TaskChar tCh = this.archive.getTaskCharByEvent(event);
+			/* if the appeared character is equal to this */
+			if (tCh.equals(this.baseTask)) {
+				for (TaskChar otherTCh : this.neverMoreAppearancesAtThisStep.keySet()) {
+					this.neverMoreAppearancesAtThisStep.put(otherTCh,
+							this.neverMoreAppearancesAtThisStep.get(otherTCh) + 1);
+				}
+				/* if this is the first occurrence in the step, record it */
+				if (this.firstOccurrenceInStep == null) {
+					this.firstOccurrenceInStep = position;
+					if (this.firstOccurrences.containsKey(position))
+						this.firstOccurrences.put(position, this.firstOccurrences.get(position) + 1);
+					else
+						this.firstOccurrences.put(position, 1);
+				} else {
+					/*
+					 * if this is not the first time this chr appears in the step,
+					 * initialize the repetitions register
+					 */
+					if (repetitionsAtThisStep == null) {
+						repetitionsAtThisStep = new TreeSet<Integer>();
+					}
+				}
+				
 				/*
-				 * if this is not the first time this chr appears in the step,
-				 * initialize the repetitions register
+				 * record the alternation, i.e., the repetition of the chr itself
+				 * between its first appearance and the following different
+				 * character
 				 */
-				if (repetitionsAtThisStep == null) {
-					repetitionsAtThisStep = new TreeSet<Integer>();
+				for (AlternatingCounterSwitcher sw : this.alternatingCntSwAtThisStep
+						.values()) {
+					sw.charge();
 				}
 			}
-			
-			/*
-			 * record the alternation, i.e., the repetition of the chr itself
-			 * between its first appearance and the following different
-			 * character
-			 */
-			for (AlternatingCounterSwitcher sw : this.alternatingCntSwAtThisStep
-					.values()) {
-				sw.charge();
-			}
-		}
-		/* if the appeared character is NOT equal to this */
-		else {
-			AlternatingCounterSwitcher myAltCountSwitcher = this.alternatingCntSwAtThisStep
-					.get(character);
-			StatsCell statsCell = this.localStatsTable.get(character);
-			/* store the info that chr appears after the pivot */
-			this.neverMoreAppearancesAtThisStep.put(character, 0);
-			/* is this reading analysis onwards? */
-			if (onwards) {// onwards?
-				/* If there has been an alternation, record it! */
-				// TODO In the next future
-				// if (myAltCountSwitcher.alternating)
-				// statsCell.alternatedOnwards++;
-				/*
-				 * Record the repetitions in-between (reading the string from
-				 * left to right, i.e., onwards) and restart the counter
-				 */
-				statsCell.betweenOnwards += myAltCountSwitcher.flush();
-			} else {
-				/* If there has been an alternation, record it! */
-				// TODO In the next future
-				// if (myAltCountSwitcher.alternating)
-				// statsCell.alternatedBackwards++;
-				/*
-				 * otherwise, record the repetitions in-between (reading the
-				 * string from left to right, i.e., backwards) and restart the
-				 * counter
-				 */
-				statsCell.betweenBackwards += myAltCountSwitcher.flush();
-			}
-		}
-
-		// if (baseCharacter.equals("a")) {System.out.print("Seen " + character
-		// + " by " + baseCharacter); System.out.println(" " +
-		// this.alternatingCntSwInStep.get(character)); }
-
-		if (repetitionsAtThisStep != null) {
-			/*
-			 * for each repetition of the same character during the analysis,
-			 * record not only the info of the appearance at a distance equal to
-			 * (chr.position - firstOccurrenceInStep.position), but also at the
-			 * (chr.position - otherOccurrenceInStep.position) for each other
-			 * appearance of the pivot!
-			 */
-			/* THIS IS THE VERY BIG TRICK TO AVOID ANY TRANSITIVE CLOSURE!! */
-			for (Integer occurredAlsoAt : repetitionsAtThisStep) {
-				this.localStatsTable.get(character).newAtDistance(
-						position - occurredAlsoAt);
-			}
-		}
-		/*
-		 * If this is not the first occurrence position, record the distance
-		 * equal to (chr.position - firstOccurrenceInStep.position)
-		 */
-		if (firstOccurrenceInStep != position) {
-			/*
-			 * START OF: event-centred analysis modification Comment this line
-			 * to get back to previous version
-			 */
-			if (EVENT_CENTRIC) {
-				if (repetitionsAtThisStep == null || repetitionsAtThisStep.size() < 1) {
-					this.localStatsTable.get(character).newAtDistance(
-						position - firstOccurrenceInStep);
+			/* if the appeared character is NOT equal to this */
+			else {
+				AlternatingCounterSwitcher myAltCountSwitcher = this.alternatingCntSwAtThisStep.get(tCh);
+				StatsCell statsCell = this.localStatsTable.get(tCh);
+				/* store the info that chr appears after the pivot */
+				this.neverMoreAppearancesAtThisStep.put(tCh, 0);
+				/* is this reading analysis onwards? */
+				if (onwards) {// onwards?
+					/* If there has been an alternation, record it! */
+					// TODO In the next future
+					// if (myAltCountSwitcher.alternating)
+					// statsCell.alternatedOnwards++;
+					/*
+					 * Record the repetitions in-between (reading the string from
+					 * left to right, i.e., onwards) and restart the counter
+					 */
+					statsCell.betweenOnwards += myAltCountSwitcher.flush();
+				} else {
+					/* If there has been an alternation, record it! */
+					// TODO In the next future
+					// if (myAltCountSwitcher.alternating)
+					// statsCell.alternatedBackwards++;
+					/*
+					 * otherwise, record the repetitions in-between (reading the
+					 * string from left to right, i.e., backwards) and restart the
+					 * counter
+					 */
+					statsCell.betweenBackwards += myAltCountSwitcher.flush();
 				}
-			} else {
+			}
+	
+			// if (baseCharacter.equals("a")) {System.out.print("Seen " + character
+			// + " by " + baseCharacter); System.out.println(" " +
+			// this.alternatingCntSwInStep.get(character)); }
+	
+			if (repetitionsAtThisStep != null) {
+				/*
+				 * for each repetition of the same character during the analysis,
+				 * record not only the info of the appearance at a distance equal to
+				 * (chr.position - firstOccurrenceInStep.position), but also at the
+				 * (chr.position - otherOccurrenceInStep.position) for each other
+				 * appearance of the pivot!
+				 */
+				/* THIS IS THE VERY BIG TRICK TO AVOID ANY TRANSITIVE CLOSURE!! */
+				for (Integer occurredAlsoAt : repetitionsAtThisStep) {
+					this.localStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
+				}
+			}
+			/*
+			 * If this is not the first occurrence position, record the distance
+			 * equal to (chr.position - firstOccurrenceInStep.position)
+			 */
+			if (firstOccurrenceInStep != position) {
+				/*
+				 * START OF: event-centred analysis modification Comment this line
+				 * to get back to previous version
+				 */
+				if (EVENT_CENTRIC) {
+					if (repetitionsAtThisStep == null || repetitionsAtThisStep.size() < 1) {
+						this.localStatsTable.get(tCh).newAtDistance(
+							position - firstOccurrenceInStep);
+					}
+				} else {
+					/*
+					 * END OF: event-centred analysis modification
+					 */
+					this.localStatsTable.get(tCh).newAtDistance(
+							position - firstOccurrenceInStep);
+				}
+			}
+			/*
+			 * If this is the repetition of the pivot, record it (it is needed for
+			 * the computation of all the other distances!)
+			 */
+			if (this.repetitionsAtThisStep != null
+					&& tCh.equals(this.baseTask)) {
+				/*
+				 * START OF: event-centred analysis modification Comment these lines
+				 * to get back to previous version
+				 */
+				if (EVENT_CENTRIC) {
+					this.repetitionsAtThisStep.clear();
+				}
 				/*
 				 * END OF: event-centred analysis modification
 				 */
-				this.localStatsTable.get(character).newAtDistance(
-						position - firstOccurrenceInStep);
+				this.repetitionsAtThisStep.add(position);
 			}
+	
+			// if (baseCharacter.equals("f")) {System.out.print("Seen " + character
+			// + " by "); System.out.print(baseCharacter + "\t"); for (String chr:
+			// neverMoreAppearancesInStep.keySet()) System.out.print(", " + chr +
+			// ": " + neverMoreAppearancesInStep.get(chr)); System.out.print("\n");}
 		}
-		/*
-		 * If this is the repetition of the pivot, record it (it is needed for
-		 * the computation of all the other distances!)
-		 */
-		if (this.repetitionsAtThisStep != null
-				&& character.equals(this.baseCharacter)) {
-			/*
-			 * START OF: event-centred analysis modification Comment these lines
-			 * to get back to previous version
-			 */
-			if (EVENT_CENTRIC) {
-				this.repetitionsAtThisStep.clear();
-			}
-			/*
-			 * END OF: event-centred analysis modification
-			 */
-			this.repetitionsAtThisStep.add(position);
-		}
-
-		// if (baseCharacter.equals("f")) {System.out.print("Seen " + character
-		// + " by "); System.out.print(baseCharacter + "\t"); for (String chr:
-		// neverMoreAppearancesInStep.keySet()) System.out.print(", " + chr +
-		// ": " + neverMoreAppearancesInStep.get(chr)); System.out.print("\n");}
 	}
 
-	protected void setAsNeverAppeared(Character neverAppearedChr) {
-		if (!neverAppearedChr.equals(this.baseCharacter)) {
+	protected void setAsNeverAppeared(TaskChar neverAppearedTask) {
+		if (!neverAppearedTask.equals(this.baseTask)) {
 			this.localStatsTable
-					.get(neverAppearedChr)
+					.get(neverAppearedTask)
 					.setAsNeverAppeared(
 							((this.repetitionsAtThisStep == null || this.repetitionsAtThisStep
 									.size() < 1) ? 1
@@ -278,8 +285,8 @@ public class LocalStatsWrapper {
 		}
 	}
 
-	protected void setAsNeverAppeared(Set<Character> neverAppearedStuff) {
-		for (Character chr : neverAppearedStuff) {
+	protected void setAsNeverAppeared(Set<TaskChar> neverAppearedStuff) {
+		for (TaskChar chr : neverAppearedStuff) {
 			this.setAsNeverAppeared(chr);
 		}
 	}
@@ -313,21 +320,21 @@ public class LocalStatsWrapper {
 	protected void recordCharactersThatNeverAppearedAnymoreInStep(
 			boolean onwards) {
 		/* For each character, appeared or not in the step */
-		for (Character chrNoMore : this.neverMoreAppearancesAtThisStep.keySet()) {
+		for (TaskChar tChNoMore : this.neverMoreAppearancesAtThisStep.keySet()) {
 			/* If it appeared no more */
-			if (this.neverMoreAppearancesAtThisStep.get(chrNoMore) > 0) {
+			if (this.neverMoreAppearancesAtThisStep.get(tChNoMore) > 0) {
 				/* Set it appeared no more */
-				this.localStatsTable.get(chrNoMore).setAsNeverAppearedAnyMore(
-						this.neverMoreAppearancesAtThisStep.get(chrNoMore),
+				this.localStatsTable.get(tChNoMore).setAsNeverAppearedAnyMore(
+						this.neverMoreAppearancesAtThisStep.get(tChNoMore),
 						onwards);
 				/* Reset the counter! */
-				this.neverMoreAppearancesAtThisStep.put(chrNoMore, 0);
+				this.neverMoreAppearancesAtThisStep.put(tChNoMore, 0);
 			}
 		}
 		if (this.firstOccurrenceInStep != null
 				&& (this.repetitionsAtThisStep == null || this.repetitionsAtThisStep
 						.size() == 0)) {
-			this.localStatsTable.get(this.baseCharacter)
+			this.localStatsTable.get(this.baseTask)
 					.setAsNeverAppearedAnyMore(1, onwards);
 		}
 	}
@@ -347,7 +354,7 @@ public class LocalStatsWrapper {
 			 * Increment (if needed) the appearances as this character as the
 			 * first
 			 */
-			if (this.firstOccurrenceInStep == FIRST_POSITION_IN_STRING) {
+			if (this.firstOccurrenceInStep == FIRST_POSITION_IN_TRACE) {
 				this.appearancesAsFirst++;
 			}
 		}
@@ -382,7 +389,7 @@ public class LocalStatsWrapper {
 			return "";
 
 		StringBuilder sBuf = new StringBuilder();
-		for (Character key : this.localStatsTable.keySet()) {
+		for (TaskChar key : this.localStatsTable.keySet()) {
 			sBuf.append("\t\t[" + key + "] => "
 					+ this.localStatsTable.get(key).toString());
 		}

@@ -96,7 +96,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 			strRep += "{";
 		Iterator<TaskChar> tcIter = base.getTaskCharsCollection().iterator();
 		while (tcIter.hasNext()) {
-			strRep += tcIter.next().name;
+			strRep += tcIter.next().taskClass;
 			if(tcIter.hasNext())
 				strRep += ",";
 		}
@@ -111,7 +111,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 				strRep += "{";
 			tcIter = this.getImplied().getTaskCharsCollection().iterator();
 			while (tcIter.hasNext()) {
-				strRep += tcIter.next().name;
+				strRep += tcIter.next().taskClass;
 				if(tcIter.hasNext())
 					strRep += ",";
 			}

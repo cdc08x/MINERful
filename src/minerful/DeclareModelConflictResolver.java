@@ -9,9 +9,9 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
-import minerful.io.encdec.declare.DeclareEncoder;
+import minerful.io.encdec.declare.DeclareEncoderDecoder;
 import minerful.params.SystemCmdParameters.DebugLevel;
-import minerful.simplification.ConflictResolver;
+import minerful.simplification.ConflictAndRedundancyResolver;
 
 public class DeclareModelConflictResolver {
 	public static void main(String[] args) throws Exception {
@@ -26,7 +26,7 @@ public class DeclareModelConflictResolver {
 		
 		AbstractMinerFulStarter.configureLogging(DebugLevel.trace);
 
-		TreeSet<Constraint> constraintsALaMinerFul = new TreeSet<Constraint>(DeclareEncoder.fromDeclareMinerOutputToMinerfulConstraints(xmlFileIn));
+		TreeSet<Constraint> constraintsALaMinerFul = new TreeSet<Constraint>(DeclareEncoderDecoder.fromDeclareMinerOutputToMinerfulConstraints(xmlFileIn));
 		TreeSet<TaskChar> taskChars = new TreeSet<TaskChar>();
 		ProcessModel proMod = new ProcessModel(new TaskCharRelatedConstraintsBag(taskChars));
 		
@@ -42,7 +42,7 @@ public class DeclareModelConflictResolver {
 		
 		long timingBeforeConflictResolution = System.currentTimeMillis();
 
-		ConflictResolver coRes = new ConflictResolver(proMod);
+		ConflictAndRedundancyResolver coRes = new ConflictAndRedundancyResolver(proMod);
 		
 		coRes.resolveConflicts();
 		

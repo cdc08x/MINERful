@@ -4,41 +4,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class TaskCharArchive {
-	private HashSet<TaskChar> taskChars;
+	private TreeSet<TaskChar> taskChars;
 	private HashMap<Character, TaskChar> taskCharsMapById;
-	private HashMap<String, TaskChar> taskCharsMapByName;
+	private HashMap<TaskClass, TaskChar> taskCharsMapByClass;
 
 	public TaskCharArchive() {
-		this.taskChars = new HashSet<TaskChar>();
+		this.taskChars = new TreeSet<TaskChar>();
 		this.taskCharsMapById = null;
-		this.taskCharsMapByName = null;
+		this.taskCharsMapByClass = null;
 	}
 	
 	public TaskCharArchive(Character[] alphabet) {
 		Collection<TaskChar> taskCharsCollection = toTaskChars(Arrays.asList(alphabet));
-		this.taskChars = new HashSet<TaskChar>(taskCharsCollection);
+		this.taskChars = new TreeSet<TaskChar>(taskCharsCollection);
 		TreeMap<Character, TaskChar>
 			fastTmpMapById = new TreeMap<Character, TaskChar>();
-		TreeMap<String, TaskChar>
-			fastTmpMapByName = new TreeMap<String, TaskChar>();
+		TreeMap<TaskClass, TaskChar>
+			fastTmpMapByName = new TreeMap<TaskClass, TaskChar>();
 		for (TaskChar tChr : taskCharsCollection) {
 			fastTmpMapById.put(tChr.identifier, tChr);
-			fastTmpMapByName.put(tChr.name, tChr);
+			fastTmpMapByName.put(tChr.taskClass, tChr);
 		}
 		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMapById);
-		this.taskCharsMapByName = new HashMap<String, TaskChar>(fastTmpMapByName);
+		this.taskCharsMapByClass = new HashMap<TaskClass, TaskChar>(fastTmpMapByName);
 	}
 
-	public TaskCharArchive(Map<Character, String> roughTaskChars) {
-		this.taskChars = new HashSet<TaskChar>();
+	public TaskCharArchive(Map<Character, TaskClass> roughTaskChars) {
+		this.taskChars = new TreeSet<TaskChar>();
 		TreeMap<Character, TaskChar> fastTmpMapById = new TreeMap<Character, TaskChar>();
-		TreeMap<String, TaskChar> fastTmpMapByName = new TreeMap<String, TaskChar>();
+		TreeMap<TaskClass, TaskChar> fastTmpMapByName = new TreeMap<TaskClass, TaskChar>();
 		for (Character chr : roughTaskChars.keySet()) {
 			TaskChar nuTaskChar = new TaskChar(chr, roughTaskChars.get(chr));
 			this.taskChars.add(nuTaskChar);
@@ -46,7 +45,7 @@ public class TaskCharArchive {
 			fastTmpMapByName.put(roughTaskChars.get(chr), nuTaskChar);
 		}
 		this.taskCharsMapById = new HashMap<Character, TaskChar>(fastTmpMapById);
-		this.taskCharsMapByName = new HashMap<String, TaskChar>(fastTmpMapByName);
+		this.taskCharsMapByClass = new HashMap<TaskClass, TaskChar>(fastTmpMapByName);
 	}
 	
 	public boolean isTranslationMapDefined() {
@@ -65,15 +64,19 @@ public class TaskCharArchive {
 	 * Returns a shallow copy of the translation map by task name.
 	 * @return A shallow copy of the translation map by task name
 	 */
-	public Map<String, TaskChar> getTranslationMapByName() {
-		return new HashMap<String, TaskChar>(this.taskCharsMapByName);
+	public Map<TaskClass, TaskChar> getTranslationMapByName() {
+		return new HashMap<TaskClass, TaskChar>(this.taskCharsMapByClass);
+	}
+
+	public TreeSet<TaskChar> getTaskChars() {
+		return this.taskChars;
 	}
 
 	/**
 	 * Returns a shallow copy of the set of TaskChar's.
 	 * @return A shallow copy of the set of TaskChar's
 	 */
-	public TreeSet<TaskChar> getTaskChars() {
+	public TreeSet<TaskChar> getCopyOfTaskChars() {
 		return new TreeSet<TaskChar>(this.taskChars);
 	}
 
@@ -102,7 +105,7 @@ public class TaskCharArchive {
 	}
 
 	public Character[] getAlphabetArray() {
-		return this.getAlphabet().toArray(new Character[this.howManyTaskChars()]);
+		return this.getAlphabet().toArray(new Character[this.size()]);
 	}
 	public Collection<Character> getAlphabet() {
 		return this.taskCharsMapById.keySet();
@@ -113,7 +116,19 @@ public class TaskCharArchive {
 	}
 
 	public TaskChar getTaskChar(String name) {
-		return this.taskCharsMapByName.get(name);
+		return this.taskCharsMapByClass.get(name);
+	}
+
+	public TaskChar getTaskChar(TaskClass taskClass) {
+		return this.taskCharsMapByClass.get(taskClass.getName());
+	}
+
+	public boolean containsTaskCharByEvent(Event event) {
+		return this.taskCharsMapByClass.containsKey(event.taskClass);
+	}
+	
+	public TaskChar getTaskCharByEvent(Event event) {
+		return this.taskCharsMapByClass.get(event.taskClass);
 	}
 
 	@Override
@@ -122,7 +137,7 @@ public class TaskCharArchive {
 				+ taskCharsMapById + "]";
 	}
 
-	public int howManyTaskChars() {
+	public int size() {
 		return this.taskChars.size();
 	}
 }

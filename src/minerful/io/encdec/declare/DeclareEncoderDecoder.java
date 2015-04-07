@@ -41,6 +41,7 @@ import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
 import minerful.concept.constraint.relation.Succession;
 import minerful.io.encdec.TaskCharEncoderDecoder;
+import minerful.logparser.StringTaskClass;
 
 import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
@@ -59,15 +60,15 @@ import org.processmining.plugins.declareminer.visualizing.XMLBrokerFactory;
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
 
-public class DeclareEncoder {
+public class DeclareEncoderDecoder {
 	public static final String TEMPLATE_TEMP_FILE_EXTENSION = ".xml";
 	public static final String TEMPLATE_TMP_FILE_BASENAME = "template";
 	public static final String DECLARE_XML_TEMPLATE = "resources/template.xml";
 
 	private List<DeclareConstraintTransferObject> constraintTOs;
 	private DeclareMap map;
-	
-	public DeclareEncoder(ProcessModel process) {
+
+	public DeclareEncoderDecoder(ProcessModel process) {
 		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(process.bag.howManyConstraints());
 		Collection<Constraint> auxConstraints = null;
 		DeclareConstraintTransferObject auxDeclareConstraintTO = null;
@@ -97,7 +98,7 @@ public class DeclareEncoder {
 		for(ConstraintDefinition cd : model.getConstraintDefinitions()){
 			for(Parameter p : cd.getParameters()){
 				for(ActivityDefinition ad : cd.getBranches(p)){
-					encdec.encode(ad.getName());
+					encdec.encode(new StringTaskClass(ad.getName()));
 				}
 			}
 		}
@@ -316,6 +317,10 @@ public class DeclareEncoder {
 		return constraintTOs;
 	}
 
+	public DeclareMap getMap() {
+		return map;
+	}
+
 	public void createModel(){
 		Vector<String> activityDefinitions = new Vector<String>();
 		Map<String, DeclareTemplate> templateNameStringDeclareTemplateMap = new HashMap<String, DeclareTemplate>();
@@ -326,10 +331,10 @@ public class DeclareEncoder {
 		}
 		Map<DeclareTemplate, ConstraintTemplate> declareTemplateConstraintTemplateMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
 
-		InputStream ir = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareEncoder.DECLARE_XML_TEMPLATE);
+		InputStream ir = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareEncoderDecoder.DECLARE_XML_TEMPLATE);
 		File language = null;
 		try {
-			language = File.createTempFile(DeclareEncoder.TEMPLATE_TMP_FILE_BASENAME, DeclareEncoder.TEMPLATE_TEMP_FILE_EXTENSION);
+			language = File.createTempFile(DeclareEncoderDecoder.TEMPLATE_TMP_FILE_BASENAME, DeclareEncoderDecoder.TEMPLATE_TEMP_FILE_EXTENSION);
 			BufferedReader br = new BufferedReader(new InputStreamReader(ir));
 			String line = br.readLine();
 			PrintStream out = new PrintStream(language);
@@ -404,16 +409,19 @@ public class DeclareEncoder {
 	}
 
 	public void marshal(String outfilePath){
-		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(outfilePath);
-		broker.addAssignmentAndView(map.getModel(),map.getView());
+		marshal(outfilePath, this.map);
 	}
 
+	public static void marshal(String outfilePath, DeclareMap map) {
+		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(outfilePath);
+		broker.addAssignmentAndView(map.getModel(), map.getView());
+	}
 
 	public static Map<DeclareTemplate, ConstraintTemplate> readConstraintTemplates(Map<String, DeclareTemplate> templateNameStringDeclareTemplateMap){
-		InputStream templateInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareEncoder.DECLARE_XML_TEMPLATE);
+		InputStream templateInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareEncoderDecoder.DECLARE_XML_TEMPLATE);
 		File languageFile = null;
 		try {
-			languageFile = File.createTempFile(DeclareEncoder.TEMPLATE_TMP_FILE_BASENAME, DeclareEncoder.TEMPLATE_TEMP_FILE_EXTENSION);
+			languageFile = File.createTempFile(DeclareEncoderDecoder.TEMPLATE_TMP_FILE_BASENAME, DeclareEncoderDecoder.TEMPLATE_TEMP_FILE_EXTENSION);
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(templateInputStream));
 			String line = bufferedReader.readLine();
 			PrintStream out = new PrintStream(languageFile);

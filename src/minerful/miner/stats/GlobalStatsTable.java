@@ -5,6 +5,7 @@
 package minerful.miner.stats;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,21 +16,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
 import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalStatsTable {
-	
-	@XmlTransient
-	// TODO To be made user-defined, not a constant within the code
-	public static final Boolean INCLUDING_ALTERNATION = true;
 
 	@XmlElement
 	@XmlJavaTypeAdapter(value=GlobalStatsMapAdapter.class)
-    public Map<Character, LocalStatsWrapper> statsTable;
+    public Map<TaskChar, LocalStatsWrapper> statsTable;
 	@XmlTransient
-    public Character[] alphabet;
+    public final TaskCharArchive taskCharArchive;
 	@XmlAttribute
     public long logSize;
 	@XmlAttribute
@@ -37,36 +36,33 @@ public class GlobalStatsTable {
 	
 	private GlobalStatsTable() {
 		this.maximumBranchingFactor = null;
+		this.taskCharArchive = new TaskCharArchive();
 	}
 
-	public GlobalStatsTable(Character[] alphabet, long testbedDimension, Integer maximumBranchingFactor) {
-		this.alphabet = alphabet;
+	public GlobalStatsTable(TaskCharArchive taskCharArchive, long testbedDimension, Integer maximumBranchingFactor) {
+		this.taskCharArchive = taskCharArchive;
 		this.logSize = testbedDimension;
 		this.maximumBranchingFactor = maximumBranchingFactor;
 		this.initGlobalStatsTable();
 	}
 
-    public GlobalStatsTable(Character[] alphabet) {
-        this(alphabet, 0, null);
+    public GlobalStatsTable(TaskCharArchive taskCharArchive) {
+        this(taskCharArchive, 0, null);
     }
-    public GlobalStatsTable(Character[] alphabet, Integer maximumBranchingFactor) {
-    	this(alphabet, 0, maximumBranchingFactor);
+    public GlobalStatsTable(TaskCharArchive taskCharArchive, Integer maximumBranchingFactor) {
+    	this(taskCharArchive, 0, maximumBranchingFactor);
     }
 
     private void initGlobalStatsTable() {
-        this.statsTable = new TreeMap<Character, LocalStatsWrapper>();
+        this.statsTable = new TreeMap<TaskChar, LocalStatsWrapper>();
+        Set<TaskChar> alphabet = this.taskCharArchive.getTaskChars();
         if (this.isForBranchedConstraints()) {
-        	for (Character letter: alphabet) {
-        		if (INCLUDING_ALTERNATION) {
-        			this.statsTable.put(letter, new LocalStatsWrapperForCharsetsWAlternation(alphabet, letter, maximumBranchingFactor));
-        		}
-        		else {
-        			this.statsTable.put(letter, new LocalStatsWrapperForCharsetsWOAlternation(alphabet, letter, maximumBranchingFactor));
-        		}
+        	for (TaskChar task: this.taskCharArchive.getTaskChars()) {
+       			this.statsTable.put(task, new LocalStatsWrapperForCharsetsWAlternation(taskCharArchive, task, maximumBranchingFactor));
 	        }
         } else {
-        	for (Character letter: alphabet) {
-	            this.statsTable.put(letter, new LocalStatsWrapper(alphabet, letter));
+        	for (TaskChar task: alphabet) {
+	            this.statsTable.put(task, new LocalStatsWrapper(taskCharArchive, task));
 	        }
         }
     }
@@ -78,7 +74,7 @@ public class GlobalStatsTable {
     @Override
     public String toString() {
         StringBuilder sBuf = new StringBuilder();
-        for(Character key: this.statsTable.keySet()) {
+        for(TaskChar key: this.statsTable.keySet()) {
             StringBuilder aggregateAppearancesBuffer = new StringBuilder();
             LocalStatsWrapper statsWrapper = this.statsTable.get(key);
             if (statsWrapper.repetitions != null) {

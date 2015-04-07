@@ -13,15 +13,10 @@ import org.apache.commons.cli.Options;
 
 public class ErrorInjectorCmdParameters extends ParamsManager {
 	private static final String ERROR_SPREADING_POLICY_PARAM_NAME = "eS";
-
 	private static final String ERROR_TYPE_PARAM_NAME = "eT";
-
 	private static final String ERROR_PERCENTAGE_PARAM_NAME = "eP";
-
 	private static final String TARGET_CHAR_PARAM_NAME = "eC";
-
 	public static final String OUTPUT_LOG_PATH_PARAM_NAME = "eLF";
-
 	public static final int ERROR_INJECTION_PERCENTAGE_DEFAULT = 0;
 
 	private ErrorInjector.SpreadingPolicy errorInjectionSpreadingPolicy;
@@ -30,12 +25,22 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
 	private Character targetChar;
 	public File logFile;
 
+	public ErrorInjectorCmdParameters() {
+		this.errorInjectionSpreadingPolicy = ErrorInjector.SpreadingPolicy.getDefault();
+		this.errorType = ErrorInjector.ErrorType.getDefault();
+		this.errorsInjectionPercentage = ERROR_INJECTION_PERCENTAGE_DEFAULT;
+		this.targetChar = null;
+		this.logFile = null;
+	}
+	
     public ErrorInjectorCmdParameters(Options options, String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
 	public ErrorInjectorCmdParameters(String[] args) {
+		this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
 	}
@@ -46,27 +51,25 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
         		ErrorInjector.SpreadingPolicy.valueOf(
 	        		line.getOptionValue(
 	        				ErrorInjectorCmdParameters.ERROR_SPREADING_POLICY_PARAM_NAME,
-	        				ErrorInjector.SpreadingPolicy.getDefault().toString()
+	        				this.errorInjectionSpreadingPolicy.toString()
 	        		)
         		);
         this.errorType =
         		ErrorInjector.ErrorType.valueOf(
         			line.getOptionValue(
         					ErrorInjectorCmdParameters.ERROR_TYPE_PARAM_NAME,
-        					ErrorInjector.ErrorType.getDefault().toString()
+        					errorType.toString()
         			)
         		);
         this.errorsInjectionPercentage = Integer.valueOf(
         		line.getOptionValue(ErrorInjectorCmdParameters.ERROR_PERCENTAGE_PARAM_NAME,
-        				String.valueOf(ERROR_INJECTION_PERCENTAGE_DEFAULT)));
-        this.targetChar =
-        		(line.hasOption(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME)
-        				? Character.valueOf((line.getOptionValue(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME)).charAt(0))
-        				: null);
-        this.logFile = 
-        		(line.hasOption(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME)
-        				? new File(line.getOptionValue(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME))
-        				: null);
+        				String.valueOf(this.errorsInjectionPercentage)));
+        if (line.hasOption(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME)) {
+        	this.targetChar = Character.valueOf(line.getOptionValue(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME).charAt(0));
+        }
+        if (line.hasOption(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME)) {
+        	this.logFile = new File(line.getOptionValue(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME));
+        }
    }
     
 	@Override

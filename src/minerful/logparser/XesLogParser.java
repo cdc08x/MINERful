@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 
+import minerful.concept.TaskClass;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 import org.deckfour.xes.classification.XEventClassifier;
@@ -17,12 +17,18 @@ import org.deckfour.xes.model.XTrace;
 public class XesLogParser extends AbstractLogParser implements LogParser {
     protected XesXmlParser parser;
     XesEventClassifier xesEventClassifier;
-
-    public XesLogParser(File xesFile, LogEventClassifier.ClassificationType evtClassType) throws Exception {
+    protected List<XLog> xLogs = null;
+    
+    private void init(LogEventClassifier.ClassificationType evtClassType) {
         this.traceParsers = new ArrayList<LogTraceParser>();
         this.taChaEncoDeco = new TaskCharEncoderDecoder();
         this.parser = new XesXmlParser();
         this.xesEventClassifier = new XesEventClassifier(evtClassType);
+    }
+
+    public XesLogParser(File xesFile, LogEventClassifier.ClassificationType evtClassType) throws Exception {
+    	this.init(evtClassType);
+    	
         if (!this.parser.canParse(xesFile)) {
         	this.parser = new XesXmlGZIPParser();
         	if (!this.parser.canParse(xesFile)) {
@@ -30,21 +36,25 @@ public class XesLogParser extends AbstractLogParser implements LogParser {
         	}
         }
 
-		this.parseLog(xesFile);
+        super.archiveTaskChars(this.parseLog(xesFile));
 	}
+    
+    public XesLogParser(XLog xLog, LogEventClassifier.ClassificationType evtClassType) {
+    	this.init(evtClassType);
+    	
+    	super.archiveTaskChars(this.parseLog(xLog));
+    }
 	
     @Override
-	protected void parseLog(File xesFile) throws Exception {
-        List<XLog> xLogs = parser.parse(xesFile);
-        Collection<String> classes = new TreeSet<String>();
+	protected Collection<TaskClass> parseLog(File xesFile) throws Exception {
+        this.xLogs = parser.parse(xesFile);
         XesTraceParser auXTraPar = null;
 
         for (XLog xLog : xLogs) {
         	List<XEventClassifier> logSpecifiedEventClassifiers = xLog.getClassifiers();
 
-        	if (!logSpecifiedEventClassifiers.isEmpty()) {
-        		this.xesEventClassifier.addXesClassifiers(logSpecifiedEventClassifiers, xLog);
-        	}
+        	this.xesEventClassifier.addXesClassifiers(logSpecifiedEventClassifiers, xLog);
+
 	        for (XTrace trace : xLog) {
 	        	auXTraPar = new XesTraceParser(trace, this);
 	        	this.traceParsers.add(auXTraPar);
@@ -53,15 +63,32 @@ public class XesLogParser extends AbstractLogParser implements LogParser {
 	        	updateNumberOfEvents(auXTraPar.length());
 	        }
         }
-        for (XLog xLog : xLogs) {
-        	classes.addAll(this.xesEventClassifier.getClasses(xLog));
-        }
-        super.archiveTaskChars(classes);
+        
+        return this.xesEventClassifier.getTaskClasses();
 	}
+    
+    protected Collection<TaskClass> parseLog(XLog xLog) {
+    	List<XEventClassifier> logSpecifiedEventClassifiers = xLog.getClassifiers();
+        XesTraceParser auXTraPar = null;
+
+    	this.xesEventClassifier.addXesClassifiers(logSpecifiedEventClassifiers, xLog);
+
+        for (XTrace trace : xLog) {
+        	auXTraPar = new XesTraceParser(trace, this);
+        	this.traceParsers.add(auXTraPar);
+        	updateMaximumTraceLength(auXTraPar.length());
+        	updateMinimumTraceLength(auXTraPar.length());
+        	updateNumberOfEvents(auXTraPar.length());
+        }
+        return this.xesEventClassifier.getTaskClasses();
+    }
 
 	@Override
 	public LogEventClassifier getEventClassifier() {
 		return this.xesEventClassifier;
 	}
 
+	public XLog getFirstXLog() {
+		return this.xLogs.get(0);
+	}
 }

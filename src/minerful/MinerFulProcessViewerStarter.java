@@ -9,6 +9,7 @@ import java.util.NavigableMap;
 
 import javax.xml.bind.JAXBException;
 
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.ConstraintsPrinter;
@@ -57,8 +58,8 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 
 	}
 	
-	public void print(TaskCharRelatedConstraintsBag bag, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
-		ConstraintsPrinter printer = new ConstraintsPrinter(bag, viewParams.supportThreshold, viewParams.interestThreshold);
+	public void print(TaskCharRelatedConstraintsBag bag, NavigableMap<Constraint, String> additionalCnsIndexedInfo, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
+		ConstraintsPrinter printer = new ConstraintsPrinter(bag, viewParams.supportThreshold, viewParams.interestThreshold, additionalCnsIndexedInfo);
 		PrintWriter outWriter = null;
 
 		if (viewParams.machineReadableResults) {
@@ -104,17 +105,17 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
         if (viewParams.noFoldingRequired) {
         	switch (viewParams.constraintsSorting) {
         	case interest:
-        		logger.debug(printer.printUnfoldedBagOrderedByInterest());
+        		System.out.println(printer.printUnfoldedBagOrderedByInterest());
         	case support:
-        		logger.debug(printer.printUnfoldedBagOrderedBySupport());
+        		System.out.println(printer.printUnfoldedBagOrderedBySupport());
         		break;
         	case type:
     		default:
-    			logger.debug(printer.printUnfoldedBag());
+    			System.out.println(printer.printUnfoldedBag());
     			break;
         	}
         } else {
-        	logger.info(printer.printBag());
+        	System.out.println(printer.printBag());
         }
     	
         
@@ -223,5 +224,11 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 			}
 			System.out.println(subAutomataPathsBuilder.toString());
 		}
+	}
+
+	public void print(TaskCharRelatedConstraintsBag bag,
+			ViewCmdParameters viewParams, SystemCmdParameters systemParams,
+			LogParser logParser) {
+		this.print(bag, null, viewParams, systemParams, logParser);
 	}
 }

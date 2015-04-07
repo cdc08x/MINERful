@@ -28,35 +28,49 @@ public class ViewCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_INTEREST = 0.0;
 	public static final Double DEFAULT_CONFIDENCE = 0.0;
 
-    public Boolean machineReadableResults = false;
-    public ConstraintsSorting constraintsSorting = ConstraintsSorting.type;
-    public Boolean noFoldingRequired = false;
-    public Double supportThreshold = DEFAULT_THRESHOLD;
-    public Double confidenceThreshold = DEFAULT_CONFIDENCE;
-	public Double interestThreshold = DEFAULT_INTEREST;
-	public File fileToSaveConstraintsCsv = null;
-	public File folderToSaveDotFilesForPartialAutomata = null;
-	public File fileToSaveTsmlFileForAutomaton = null;
-	public File fileToSaveDotFileForAutomaton = null;
-	public File fileToSaveConDecDefinition = null;
-	public File fileToSaveXmlFileForAutomaton = null;
-	public File folderToSaveXmlFilesForPartialAutomata = null;
+    public Boolean machineReadableResults;
+    public ConstraintsSorting constraintsSorting;
+    public Boolean noFoldingRequired;
+    public Double supportThreshold;
+    public Double confidenceThreshold;
+	public Double interestThreshold;
+	public File fileToSaveConstraintsCsv;
+	public File folderToSaveDotFilesForPartialAutomata;
+	public File fileToSaveTsmlFileForAutomaton;
+	public File fileToSaveDotFileForAutomaton;
+	public File fileToSaveConDecDefinition;
+	public File fileToSaveXmlFileForAutomaton;
+	public File folderToSaveXmlFilesForPartialAutomata;
 
-
-    public ViewCmdParameters(Options options, String[] args) {
-        // parse the command line arguments
-    	this.parseAndSetup(options, args);
-	}
 
 	/**
 	 * 
 	 */
 	public ViewCmdParameters() {
-		super();
-		// TODO Auto-generated constructor stub
+	    machineReadableResults = false;
+	    constraintsSorting = ConstraintsSorting.type;
+	    noFoldingRequired = false;
+	    supportThreshold = DEFAULT_THRESHOLD;
+	    confidenceThreshold = DEFAULT_CONFIDENCE;
+		interestThreshold = DEFAULT_INTEREST;
+		fileToSaveConstraintsCsv = null;
+		folderToSaveDotFilesForPartialAutomata = null;
+		fileToSaveTsmlFileForAutomaton = null;
+		fileToSaveDotFileForAutomaton = null;
+		fileToSaveConDecDefinition = null;
+		fileToSaveXmlFileForAutomaton = null;
+		folderToSaveXmlFilesForPartialAutomata = null;
 	}
 
-	public ViewCmdParameters(String[] args) {
+
+    public ViewCmdParameters(Options options, String[] args) {
+    	this();
+        // parse the command line arguments
+    	this.parseAndSetup(options, args);
+	}
+
+    public ViewCmdParameters(String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
 	}

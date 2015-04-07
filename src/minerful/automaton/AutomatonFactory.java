@@ -42,17 +42,17 @@ public class AutomatonFactory {
 				alphabet.size());
 		ExecutorService executor = Executors.newFixedThreadPool(THREAD_MAX);
 
-		for (Character tChr : regExpsMap.keySet()) {
+		for (Character tIdChr : regExpsMap.keySet()) {
 			regExps = new ArrayList<String>();
-			regExps.addAll(regExpsMap.get(tChr));
+			regExps.addAll(regExpsMap.get(tIdChr));
 			if (maxActions <= AutomatonFactory.NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA) {
 				autoMakers
 						.add(new DimensionalityHeuristicBasedCallableSubAutomataMaker(
-								tChr, regExps));
+								tIdChr, regExps));
 			} else {
 				autoMakers
 						.add(new DimensionalityHeuristicBasedCallableBriefSubAutomataMaker(
-								tChr, regExps, maxActions));
+								tIdChr, regExps, maxActions));
 			}
 		}
 

@@ -8,9 +8,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.xmlenc.CharAdapter;
+import minerful.logparser.CharTaskClass;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,26 +20,26 @@ public class TaskChar implements Comparable<TaskChar> {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value=CharAdapter.class)
     public final Character identifier;
-	@XmlAttribute
-    public String name;
+	@XmlTransient
+    public final TaskClass taskClass;
     
 	protected TaskChar() {
 		this.identifier = null;
+		this.taskClass = null;
 	}
 	
     public TaskChar(Character identifier) {
-        this.identifier = identifier;
-        this.name = this.identifier.toString();
+        this(identifier, new CharTaskClass(identifier));
     }
 
-    public TaskChar(Character identifier, String name) {
+    public TaskChar(Character identifier, TaskClass taskClass) {
     	this.identifier = identifier;
-		this.name = name;
+    	this.taskClass = taskClass;
 	}
 
 	@Override
     public String toString() {
-        return this.name.toString();
+        return this.getName();
     }
 
     @Override
@@ -54,11 +56,19 @@ public class TaskChar implements Comparable<TaskChar> {
         }
         return true;
     }
-
+    
     @Override
+	public int hashCode() {
+		return this.taskClass.hashCode();
+	}
+
+	@Override
     public int compareTo(TaskChar t) {
         return this.identifier.compareTo(t.identifier);
     }
 
-    
+    @XmlAttribute(name="name")
+    public String getName() {
+    	return this.taskClass.toString();
+    }
 }

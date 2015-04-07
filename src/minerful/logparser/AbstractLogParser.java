@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import minerful.concept.TaskCharArchive;
+import minerful.concept.TaskClass;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public abstract class AbstractLogParser implements LogParser {
@@ -17,7 +18,7 @@ public abstract class AbstractLogParser implements LogParser {
 	protected TaskCharArchive taskCharArchive;
     protected List<LogTraceParser> traceParsers;
 	
-	protected abstract void parseLog(File logFile) throws Exception;
+	protected abstract Collection<TaskClass> parseLog(File logFile) throws Exception;
 
 	protected void updateNumberOfEvents(int numberOfEvents) {
 		this.numberOfEvents += numberOfEvents;
@@ -61,9 +62,13 @@ public abstract class AbstractLogParser implements LogParser {
 		return this.traceParsers.size();
 	}
 
-	protected void archiveTaskChars(Collection<String> classes) {
-		this.taChaEncoDeco.encode(classes.toArray(new String[classes.size()]));
+	protected void archiveTaskChars(Collection<TaskClass> classes) {
+		this.taChaEncoDeco.encode(classes.toArray(new TaskClass[classes.size()]));
 	    this.taskCharArchive = new TaskCharArchive(this.taChaEncoDeco.getTranslationMap());
 	}
 
+	@Override
+	public TaskCharArchive getTaskCharArchive() {
+		return this.taskCharArchive;
+	}
 }

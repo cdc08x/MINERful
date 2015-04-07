@@ -17,7 +17,7 @@ public abstract class RelationConstraintsMiner extends ConstraintsMiner {
 
 	@Override
 	public long howManyPossibleConstraints() {
-		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES * taskCharArchive.howManyTaskChars() * (taskCharArchive.howManyTaskChars() - 1);
+		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES * taskCharArchive.size() * (taskCharArchive.size() - 1);
 	}
 
     protected abstract Set<? extends Constraint> refineRelationConstraints(

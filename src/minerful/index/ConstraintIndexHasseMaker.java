@@ -33,15 +33,15 @@ public class ConstraintIndexHasseMaker extends ConstraintIndexHasseManager {
 		this.currentNode = hasseDiagram.root;
 		this.currentTaskCharSet = TaskCharSet.VOID_TASK_CHAR_SET;
 		
-		if (maxSizeOfCombos > this.taskCharArchive.howManyTaskChars() - (excludedTaskChar == null ? 0 : 1))
-			maxSizeOfCombos = this.taskCharArchive.howManyTaskChars() - (excludedTaskChar == null ? 0 : 1);
+		if (maxSizeOfCombos > this.taskCharArchive.size() - (excludedTaskChar == null ? 0 : 1))
+			maxSizeOfCombos = this.taskCharArchive.size() - (excludedTaskChar == null ? 0 : 1);
 		
 		TreeMap<TaskChar, TreeMap<String, ConstraintIndexHasseNode>>
 			currentDepthNodes = new TreeMap<TaskChar, TreeMap<String, ConstraintIndexHasseNode>>(),
 			newRootNodes = null,
 			newGenerationNodes = new TreeMap<TaskChar, TreeMap<String, ConstraintIndexHasseNode>>();
 		
-		TreeSet<TaskChar> taskChars = this.taskCharArchive.getTaskChars();
+		TreeSet<TaskChar> taskChars = this.taskCharArchive.getCopyOfTaskChars();
 		if (excludedTaskChar != null)
 			taskChars.remove(excludedTaskChar);
 		

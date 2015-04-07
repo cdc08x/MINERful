@@ -91,7 +91,7 @@ public class LinearConstraintsIndexFactory {
 			return result * (-1);
 		}
 	}
-	public static class SupportFamilyConfidenceInterestFactorBasedComparator implements Comparator<Constraint> {
+	public static class SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator implements Comparator<Constraint> {
 		@Override
 		public int compare(Constraint o1, Constraint o2) {
 			int result = Double.valueOf(o1.support).compareTo(o2.support);
@@ -102,7 +102,10 @@ public class LinearConstraintsIndexFactory {
 					if (result == 0) {
 						result = Double.valueOf(o1.interestFactor).compareTo(o2.interestFactor);
 						if (result == 0) {
-							result = o1.compareTo(o2);
+							result = Integer.valueOf(o1.getHierarchyLevel()).compareTo(Integer.valueOf(o2.getHierarchyLevel()));
+							if (result == 0) {
+								result = o1.compareTo(o2);
+							}
 						}
 					}
 				}
@@ -209,7 +212,7 @@ public class LinearConstraintsIndexFactory {
 		return map;
 	}
 
-	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
+	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(TaskCharRelatedConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
@@ -227,7 +230,7 @@ public class LinearConstraintsIndexFactory {
 			subMap = map.get(tCh);
 			for (TaskChar tChRev : taskCharsReverse) {
 				if (subMap.containsKey(tChRev) && subMap.get(tChRev) != null && subMap.get(tChRev).size() > 0) {
-					tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorBasedComparator());
+					tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
 					tmpReorderingSet.addAll(subMap.get(tChRev));
 					constraints.addAll(tmpReorderingSet);
 					subMap.put(tChRev, null);
@@ -235,7 +238,7 @@ public class LinearConstraintsIndexFactory {
 				if (map.containsKey(tChRev)) {
 					subMapReverse = map.get(tChRev);
 					if (subMapReverse.containsKey(tCh) && subMapReverse.get(tCh) != null && subMapReverse.get(tCh).size() > 0) {
-						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorBasedComparator());
+						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
 						tmpReorderingSet.addAll(subMapReverse.get(tCh));
 						constraints.addAll(tmpReorderingSet);
 						subMapReverse.put(tCh, null);
@@ -312,8 +315,8 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
-		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorBasedComparator());
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceInterestFactorHierarchyLevel(TaskCharRelatedConstraintsBag bag) {
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);
