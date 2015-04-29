@@ -45,7 +45,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
         Set<Constraint> auxRelCons = super.makeTemporarySet(
         		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.size()));
         for (TaskChar tCh: this.taskCharArchive.getTaskChars()) {
-            auxLocalStats = this.globalStats.statsTable.get(tCh.identifier);
+            auxLocalStats = this.globalStats.statsTable.get(tCh);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
             if (auxLocalStats.getTotalAmountOfAppearances() > 0) {
                 auxRelCons.addAll(

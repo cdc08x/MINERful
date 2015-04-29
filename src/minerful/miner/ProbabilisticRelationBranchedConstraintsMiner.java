@@ -21,12 +21,9 @@ import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
-import minerful.index.ConstraintIndexHasseBreadthFirstStepper;
 import minerful.index.ConstraintIndexHasseInverseDepthFirstStepper;
 import minerful.index.ConstraintIndexHasseMaker;
-import minerful.index.ConstraintIndexHasseNode;
 import minerful.index.ConstraintIndexHassePruner;
-import minerful.index.ConstraintIndexHasseManager.NavDirection;
 import minerful.miner.engine.ProbabilisticRelationInBranchedConstraintsMiningEngine;
 import minerful.miner.engine.ProbabilisticRelationOutBranchedConstraintsMiningEngine;
 import minerful.miner.stats.GlobalStatsTable;
@@ -89,7 +86,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
         Set<Constraint> auxCons = super.makeTemporarySet();
 
         for (TaskChar tChUnderAnalysis : this.taskCharArchive.getTaskChars()) {
-            auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis.identifier);
+            auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
             if (auxLocalStats.getTotalAmountOfAppearances() > 0) {
             	logger.info("Evaluating constraints for: " + tChUnderAnalysis + "... ");
@@ -122,7 +119,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		if (!globalStats.isForBranchedConstraints())
 			return discoveredConstraints;
 		
-		LocalStatsWrapper tChUnderAnalysisLocalStats = globalStats.statsTable.get(taskChUnderAnalysis.identifier);
+		LocalStatsWrapper tChUnderAnalysisLocalStats = globalStats.statsTable.get(taskChUnderAnalysis);
 		
 		// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
 		long tChUnderAnalysisAppearances = tChUnderAnalysisLocalStats.getTotalAmountOfAppearances();

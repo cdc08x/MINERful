@@ -158,7 +158,7 @@ public class FixedTaskSetIncrementalCountersCollection extends TaskSetCountersCo
             TaskChar[] sharingTasks) {
 		TreeSet<TasksSetCounter>
 			shared =
-				new TreeSet<TasksSetCounter>(),
+				null,
 			tmpShared =
 				null;
 
@@ -169,7 +169,7 @@ public class FixedTaskSetIncrementalCountersCollection extends TaskSetCountersCo
 				} else {
 					tmpShared = singleTaskIndexer.get(currTask);
 					shared.retainAll(tmpShared);
-				}
+					}
 			}
 		}
 
