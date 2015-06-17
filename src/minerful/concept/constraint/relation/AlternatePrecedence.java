@@ -14,18 +14,18 @@ public class AlternatePrecedence extends Precedence {
 		return "[^%2$s]*(%1$s[^%2$s]*%2$s[^%2$s]*)*[^%2$s]*";
 	}
 
-    public AlternatePrecedence(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public AlternatePrecedence(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public AlternatePrecedence(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public AlternatePrecedence(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public AlternatePrecedence(TaskCharSet base, TaskCharSet implied,
+    public AlternatePrecedence(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
-	public AlternatePrecedence(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public AlternatePrecedence(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

@@ -13,14 +13,10 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
 public abstract class RelationConstraint extends Constraint {
-	public static enum ImplicationVerse {
-		FORWARD,
-		BACKWARD,
-		BOTH
-	}
 	@XmlElement
     public final TaskCharSet implied;
 	
@@ -29,74 +25,77 @@ public abstract class RelationConstraint extends Constraint {
 		this.implied = null;
 	}
 
-    public RelationConstraint(TaskCharSet base, TaskCharSet implied, double support) {
-        super(base, support);
-        this.implied = implied;
+    public RelationConstraint(TaskCharSet param1, TaskCharSet param2, double support) {
+        super(param1, support);
+        this.implied = param2;
+        this.parameters.add(this.implied);
     }
-    public RelationConstraint(TaskCharSet base, TaskCharSet implied) {
-        super(base);
-        this.implied = implied;
+    public RelationConstraint(TaskCharSet param1, TaskCharSet param2) {
+        super(param1);
+        this.implied = param2;
+        this.parameters.add(this.implied);
     }
-    public RelationConstraint(TaskChar base, TaskChar implied, double support) {
-        super(base, support);
-        this.implied = new TaskCharSet(implied);
+    public RelationConstraint(TaskChar param1, TaskChar param2, double support) {
+        super(param1, support);
+        this.implied = new TaskCharSet(param2);
+        this.parameters.add(this.implied);
     }
-    public RelationConstraint(TaskChar base, TaskChar implied) {
-        super(base);
-        this.implied = new TaskCharSet(implied);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString()
-                + "(" + base + ", " + implied + ")";
+    public RelationConstraint(TaskChar param1, TaskChar param2) {
+        super(param1);
+        this.implied = new TaskCharSet(param2);
+        this.parameters.add(this.implied);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final RelationConstraint other = (RelationConstraint) obj;
-        if (this.implied != other.implied && (this.implied == null || !this.implied.equals(other.implied))) {
-            return false;
-        }
-        return true;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((implied == null) ? 0 : implied.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RelationConstraint other = (RelationConstraint) obj;
+		if (implied == null) {
+			if (other.implied != null)
+				return false;
+		} else if (!implied.equals(other.implied))
+			return false;
+		return true;
+	}
 
     @Override
-    public int compareTo(Constraint t) {
-    	// this.base.compareTo(t.base)
-        int result = super.compareTo(t);
+    public int compareTo(Constraint o) {
+        int result = super.compareTo(o);
         if (result == 0) {
-            if (t instanceof RelationConstraint) {
-                RelationConstraint other = (RelationConstraint) t;
-                if (this.implied.equals(other.implied)) {
-                	result = this.getFamily().compareTo(other.getFamily());
-                	if (result == 0) {
-                		result = this.getSubFamily().compareTo(other.getSubFamily());
-                		if (result == 0) {
-                			result = this.getName().compareTo(other.getName());
-                			if (result != 0) {
-                                if (this.getClass().isInstance(t)) {
-                                	result = -1;
-                                } else if (t.getClass().isInstance(this)) {
-                                	result = +1;
-                                } else {
-                                	result = 0;
-                                }
-                			}
-                		}
-                	}
-                } else {
-                	result = this.implied.compareTo(other.implied);
-                }
+            if (o instanceof RelationConstraint) {
+                RelationConstraint other = (RelationConstraint) o;
+            	result = this.getFamily().compareTo(other.getFamily());
+            	if (result == 0) {
+            		result = this.getSubFamily().compareTo(other.getSubFamily());
+            		if (result == 0) {
+            			result = this.getImplicationVerse().compareTo(other.getImplicationVerse());
+	            		if (result == 0) {
+	            			result = this.getName().compareTo(other.getName());
+	            			if (result != 0) {
+	                            if (this.getClass().isInstance(o)) {
+	                            	result = -1;
+	                            } else if (o.getClass().isInstance(this)) {
+	                            	result = +1;
+	                            } else {
+	                            	result = 0;
+	                            }
+	            			}
+	            		}
+            		}
+            	}
             } else {
                 result = 1;
             }
@@ -108,9 +107,11 @@ public abstract class RelationConstraint extends Constraint {
     public ConstraintFamily getFamily() {
         return ConstraintFamily.RELATION;
     }
+
+    @SuppressWarnings("unchecked")
     @Override
-    public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.NONE;
+    public RelationConstraintSubFamily getSubFamily() {
+        return RelationConstraintSubFamily.NONE;
     }
     
     @Override
@@ -142,22 +143,64 @@ public abstract class RelationConstraint extends Constraint {
 		return involvedChars;
 	}
 	
-	public abstract ImplicationVerse getImplicationVerse();
+	public abstract ConstraintImplicationVerse getImplicationVerse();
 	
-	public boolean isInBranched() {
+	public boolean isActivationBranched() {
 		return this.base.size() > 1 && this.implied.size() < 2;
 	}
 
-	public boolean isOutBranched() {
-		return this.implied.size() > 1 && this.implied.size() < 2;
+	public boolean isTargetBranched() {
+		return this.implied.size() > 1 && this.base.size() < 2;
 	}
 	
 	public boolean isBranchedBothWays() {
-		return this.isInBranched() && this.isOutBranched();
+		return this.isActivationBranched() && this.isTargetBranched();
 	}
 	
 	@Override
 	public boolean isBranched() {
-		return this.isInBranched() || this.isOutBranched();
+		return this.isActivationBranched() || this.isTargetBranched();
+	}
+	
+	public boolean hasActivationSetStrictlyIncludingTheOneOf(Constraint c) {
+		return
+				this.isActivationBranched()
+			&&	this.base.strictlyIncludes(c.base);
+	}
+	
+	public boolean hasTargetSetStrictlyIncludingTheOneOf(Constraint c) {
+		return
+				this.isTargetBranched()
+			&&	this.implied.strictlyIncludes(c.getImplied());
+	}
+
+	@Override
+	public boolean isDescendantAlongSameBranchOf(Constraint c) {
+		if (super.isDescendantAlongSameBranchOf(c) == false) {
+			return false;
+		}
+		if (!(c instanceof RelationConstraint)) {
+			return false;
+		}
+		RelationConstraint relaCon = ((RelationConstraint)c);
+		return
+				this.getImplicationVerse() == relaCon.getImplicationVerse()
+			// FIXME This is a trick which could be inconsistent with possible model extensions
+			||	relaCon.getClass().equals(RespondedExistence.class);
+	}
+
+	@Override
+	public boolean isTemplateDescendantAlongSameBranchOf(Constraint c) {
+		if (super.isTemplateDescendantAlongSameBranchOf(c) == false) {
+			return false;
+		}
+		if (!(c instanceof RelationConstraint)) {
+			return false;
+		}
+		RelationConstraint relaCon = ((RelationConstraint)c);
+		return
+				this.getImplicationVerse() == relaCon.getImplicationVerse()
+			// FIXME This is a trick which could be inconsistent with possible model extensions
+			||	relaCon.getClass().equals(RespondedExistence.class);
 	}
 }

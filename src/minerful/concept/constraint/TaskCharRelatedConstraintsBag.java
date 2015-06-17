@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.relation.CouplingRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.xmlenc.ConstraintsBagMapAdapter;
@@ -153,7 +153,7 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
                         nuBag.remove(key, currCon);
                     }
                 }
-                if (currCon.getFamily() == ConstraintFamily.COUPLING) {
+                if (currCon.getSubFamily() == RelationConstraintSubFamily.COUPLING) {
                     coExiCon = (CouplingRelationConstraint) currCon;
                     if (coExiCon.hasImplyingConstraints()) {
                         if (coExiCon.isMoreReliableThanTheImplyingConstraints()) {
@@ -176,7 +176,7 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
                         }
                     }
                 }
-                if (currCon.getFamily() == ConstraintFamily.NEGATIVE) {
+                if (currCon.getSubFamily() == RelationConstraintSubFamily.NEGATIVE) {
                     noRelCon = (NegativeRelationConstraint) currCon;
                     if (noRelCon.hasOpponent()) {
                         if (noRelCon.isMoreReliableThanTheOpponent()) {
@@ -208,16 +208,16 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
             TaskChar key,
             TaskCharRelatedConstraintsBag genealogyTree) {
         Constraint genealogyDestroyer = lastSon;
-        ConstraintSubFamily destructionGeneratorsFamily = lastSurvivor.getSubFamily();
+//        ConstraintImplicationVerse destructionGeneratorsFamily = lastSurvivor.getSubFamily();
         while (genealogyDestroyer != null) {
         	// The ancestor of *Precedence(a, b) is RespondedExistence(b, a), thus under a different indexing character!
         	// TODO: solve this issue, because "binary" Precedence and branched Precedences do not work the same in this regard!
-        	if (	destructionGeneratorsFamily.equals(ConstraintSubFamily.PRECEDENCE)
-        		&&	!genealogyDestroyer.isBranched()
-        		&&	!genealogyDestroyer.getSubFamily().equals(ConstraintSubFamily.PRECEDENCE)
-        	) {
+//        	if (	destructionGeneratorsFamily.equals(ConstraintImplicationVerse.BACKWARD)
+//        		&&	!genealogyDestroyer.isBranched()
+//        		&&	!genealogyDestroyer.getSubFamily().equals(ConstraintImplicationVerse.BACKWARD)
+//        	) {
         		key = genealogyDestroyer.base.getFirstTaskChar();
-        	}
+//        	}
             genealogyTree.remove(key, genealogyDestroyer);
             genealogyDestroyer = genealogyDestroyer.getConstraintWhichThisIsBasedUpon();
         }

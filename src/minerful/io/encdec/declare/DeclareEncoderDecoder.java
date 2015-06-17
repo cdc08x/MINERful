@@ -93,7 +93,7 @@ public class DeclareEncoderDecoder {
 		broker.readAssignmentGraphical(model, view);
 
 		TaskCharEncoderDecoder encdec = new TaskCharEncoderDecoder();
-		ArrayList<String> params = new ArrayList<String>();
+		ArrayList<StringTaskClass> params = new ArrayList<StringTaskClass>();
 		
 		for(ConstraintDefinition cd : model.getConstraintDefinitions()){
 			for(Parameter p : cd.getParameters()){
@@ -106,7 +106,7 @@ public class DeclareEncoderDecoder {
 		
 		for(ConstraintDefinition cd : model.getConstraintDefinitions()){
 			String template = cd.getName().replace("-", "").replace(" ", "").toLowerCase();
-			params = new ArrayList<String>();
+			params = new ArrayList<StringTaskClass>();
 			
 			Pattern
 				supPattern = Pattern.compile(".*support;([0-9\\.]+).*"),
@@ -130,7 +130,7 @@ public class DeclareEncoderDecoder {
 			if(template.equals("alternateprecedence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				AlternatePrecedence minerConstr = new AlternatePrecedence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -140,7 +140,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("alternateresponse")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				AlternateResponse minerConstr = new AlternateResponse(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -150,7 +150,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("alternatesuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				AlternateSuccession minerConstr = new AlternateSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -160,7 +160,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("chainprecedence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				ChainPrecedence minerConstr = new ChainPrecedence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -170,7 +170,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("chainresponse")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				ChainResponse minerConstr = new ChainResponse(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -180,7 +180,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("chainsuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				ChainSuccession minerConstr = new ChainSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -190,7 +190,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("coexistence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				CoExistence minerConstr = new CoExistence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -200,7 +200,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("notchainsuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				NotChainSuccession minerConstr = new NotChainSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -210,7 +210,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("notcoexistence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				NotCoExistence minerConstr = new NotCoExistence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -220,7 +220,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("notsuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				NotSuccession minerConstr = new NotSuccession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -230,7 +230,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("precedence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				Precedence minerConstr = new Precedence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -240,7 +240,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("response")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				Response minerConstr = new Response(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -250,7 +250,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("succession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				Succession minerConstr = new Succession(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -260,7 +260,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("respondedexistence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				RespondedExistence minerConstr = new RespondedExistence(taskChArch.getTaskChar(params.get(0)),taskChArch.getTaskChar(params.get(1)),support);
@@ -270,7 +270,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("init")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				Init minerConstr = new Init(taskChArch.getTaskChar(params.get(0)),support);
@@ -280,7 +280,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("init")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				Init minerConstr = new Init(taskChArch.getTaskChar(params.get(0)),support);
@@ -290,7 +290,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("existence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				Participation minerConstr = new Participation(taskChArch.getTaskChar(params.get(0)),support);
@@ -300,7 +300,7 @@ public class DeclareEncoderDecoder {
 			}else if(template.equals("absence2")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
+						params.add(new StringTaskClass(ad.getName()));
 					}
 				}
 				AtMostOne minerConstr = new AtMostOne(taskChArch.getTaskChar(params.get(0)),support);

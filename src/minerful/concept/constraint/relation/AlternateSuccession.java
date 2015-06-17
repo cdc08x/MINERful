@@ -21,18 +21,18 @@ public class AlternateSuccession extends Succession {
     public AlternateSuccession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
         super(forwardConstraint, backwardConstraint);
     }
-    public AlternateSuccession(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public AlternateSuccession(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public AlternateSuccession(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public AlternateSuccession(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public AlternateSuccession(TaskCharSet base, TaskCharSet implied,
+    public AlternateSuccession(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
-	public AlternateSuccession(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public AlternateSuccession(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override
@@ -46,12 +46,12 @@ public class AlternateSuccession extends Succession {
 	}
 
 	@Override
-	public Constraint getSupposedForwardConstraint() {
+	public AlternateResponse getPlausibleForwardConstraint() {
 		return new AlternateResponse(base, implied);
 	}
 
 	@Override
-	public Constraint getSupposedBackwardConstraint() {
+	public AlternatePrecedence getPlausibleBackwardConstraint() {
 		return new AlternatePrecedence(base, implied);
 	}
 }

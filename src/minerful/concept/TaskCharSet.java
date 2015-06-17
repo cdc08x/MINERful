@@ -190,4 +190,11 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	public boolean isPrefixOf(TaskCharSet other) {
 		return StringUtils.startsWith(other.getJoinedStringOfIdentifiers(), this.getJoinedStringOfIdentifiers());
 	}
+
+	public boolean strictlyIncludes(TaskCharSet other) {
+		return
+			this.listOfIdentifiers.size() > other.listOfIdentifiers.size()
+			&&
+			this.listOfIdentifiers.containsAll(other.listOfIdentifiers);
+	}
 }

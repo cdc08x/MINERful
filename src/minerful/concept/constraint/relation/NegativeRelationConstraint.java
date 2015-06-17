@@ -9,7 +9,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
 public abstract class NegativeRelationConstraint extends RelationConstraint {
     @XmlTransient
@@ -19,31 +20,31 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
     	super();
     }
     
-    public NegativeRelationConstraint(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public NegativeRelationConstraint(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public NegativeRelationConstraint(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public NegativeRelationConstraint(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public NegativeRelationConstraint(TaskCharSet base, TaskCharSet implied,
+    public NegativeRelationConstraint(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
-	public NegativeRelationConstraint(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public NegativeRelationConstraint(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override
-    public ConstraintFamily getFamily() {
-        return ConstraintFamily.NEGATIVE;
+    public ConstraintImplicationVerse getImplicationVerse() {
+    	return ConstraintImplicationVerse.BOTH;
     }
-    
-	@Override
-    public ImplicationVerse getImplicationVerse() {
-    	return ImplicationVerse.BOTH;
-    }
-    
+	
     @Override
+	public RelationConstraintSubFamily getSubFamily() {
+		return RelationConstraintSubFamily.NEGATIVE;
+	}
+
+	@Override
     public int getHierarchyLevel() {
         return super.getHierarchyLevel()+1;
     }

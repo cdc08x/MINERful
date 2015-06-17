@@ -65,8 +65,7 @@ public class ConstraintsPrinter {
         StringBuilder sBld = new StringBuilder();
         // The first pass is to understand how to pad the constraints' names
 		int
-			maxPadding =  computePaddingForConstraintNames(),
-			i = 0;
+			maxPadding =  computePaddingForConstraintNames();
 
         for (TaskChar key : bag.getTaskChars()) {
             sBld.append("\n\t[");
@@ -75,14 +74,11 @@ public class ConstraintsPrinter {
             sBld.append("] => {\n"
                     + "\t\t");
             for (Constraint c : bag.getConstraintsOf(key)) {
-            	i++;
         		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding, HALF_NUMBER_OF_BARS));
                 sBld.append("\n\t\t");
             }
             sBld.append("\n\t}\n");
         }
-//        sBld.append("\n");
-//        sBld.append("Constraints shown: " + i + "\n");
 
         return sBld.toString();
 	}

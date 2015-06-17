@@ -14,17 +14,17 @@ public class NotCoExistence extends NotSuccession {
 		return "[^%1$s^%2$s]*((%1$s[^%2$s]*)|(%2$s[^%1$s]*))?";
 	}
 
-    public NotCoExistence(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public NotCoExistence(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public NotCoExistence(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public NotCoExistence(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public NotCoExistence(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public NotCoExistence(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public NotCoExistence(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public NotCoExistence(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-MINERful RC2 (2015/02/16)
+MINERful RC2 (2015/06/15)
 =========================
 
 
@@ -6,6 +6,7 @@ What is it?
 -----------
 
 MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic. MINERful can also create logs on the fly and inject errors inside them, too.
+Please notice that this is the command-line version of MINERful. For the GUI-equipped release, please download the [ProM Nightly Build](http://www.promtools.org/prom6/nightly/) and install DeclareMinerFul package.
 
 
 The Latest Version

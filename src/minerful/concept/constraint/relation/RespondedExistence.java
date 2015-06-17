@@ -8,6 +8,8 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
 public class RespondedExistence extends RelationConstraint {
     public static final String DISTANCE_PRINT_TEMPLATE = " <%+d \u00F7 %+d> ";
@@ -20,18 +22,18 @@ public class RespondedExistence extends RelationConstraint {
 		return "[^%1$s]*((%1$s.*%2$s.*)|(%2$s.*%1$s.*))*[^%1$s]*";
     }
 
-    public RespondedExistence(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public RespondedExistence(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public RespondedExistence(TaskChar pivot, TaskChar searched, double support) {
-        super(pivot, searched, support);
+    public RespondedExistence(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public RespondedExistence(TaskCharSet base, TaskCharSet implied,
+    public RespondedExistence(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
-	public RespondedExistence(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public RespondedExistence(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
     
     @Override
@@ -44,11 +46,16 @@ public class RespondedExistence extends RelationConstraint {
     }
     
     @Override
-    public ImplicationVerse getImplicationVerse() {
-    	return ImplicationVerse.FORWARD;
+    public ConstraintImplicationVerse getImplicationVerse() {
+    	return ConstraintImplicationVerse.FORWARD;
     }
     
     @Override
+	public RelationConstraintSubFamily getSubFamily() {
+		return RelationConstraintSubFamily.SINGLE_ACTIVATION;
+	}
+
+	@Override
     public String toString() {
     	if (isExpectedDistanceConfidenceIntervalProvided()) {
     		return super.toString().replace(", ", printDistances());

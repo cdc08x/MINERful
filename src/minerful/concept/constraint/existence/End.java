@@ -7,6 +7,7 @@ package minerful.concept.constraint.existence;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 public class End extends Participation {
 	@Override
@@ -14,17 +15,17 @@ public class End extends Participation {
 		return ".*%1$s";
 	}
 
-	public End(TaskChar base) {
-        super(base);
+	public End(TaskChar param1) {
+        super(param1);
     }
-	public End(TaskChar base, double support) {
-		super(base, support);
+	public End(TaskChar param1, double support) {
+		super(param1, support);
 	}
-	public End(TaskCharSet base, double support) {
-		super(base, support);
+	public End(TaskCharSet param1, double support) {
+		super(param1, support);
 	}
-	public End(TaskCharSet base) {
-		super(base);
+	public End(TaskCharSet param1) {
+		super(param1);
 	}
 
 	@Override
@@ -35,5 +36,10 @@ public class End extends Participation {
 	@Override
 	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
 		return new Participation(this.base);
+	}
+
+	@Override
+	public ExistenceConstraintSubFamily getSubFamily() {
+		return ExistenceConstraintSubFamily.POSITION;
 	}
 }

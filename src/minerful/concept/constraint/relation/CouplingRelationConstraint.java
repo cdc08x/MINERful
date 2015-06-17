@@ -3,7 +3,8 @@ package minerful.concept.constraint.relation;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
 public abstract class CouplingRelationConstraint extends RelationConstraint {
 
@@ -14,32 +15,32 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 		super();
 	}
 
-	public CouplingRelationConstraint(TaskCharSet base, TaskCharSet implied,
+	public CouplingRelationConstraint(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
 
-	public CouplingRelationConstraint(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public CouplingRelationConstraint(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
-	public CouplingRelationConstraint(TaskChar base, TaskChar implied,
+	public CouplingRelationConstraint(TaskChar param1, TaskChar param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
 
-	public CouplingRelationConstraint(TaskChar base, TaskChar implied) {
-		super(base, implied);
+	public CouplingRelationConstraint(TaskChar param1, TaskChar param2) {
+		super(param1, param2);
 	}
 
 	@Override
-	public ImplicationVerse getImplicationVerse() {
-		return ImplicationVerse.BOTH;
+	public ConstraintImplicationVerse getImplicationVerse() {
+		return ConstraintImplicationVerse.BOTH;
 	}
 
 	@Override
-	public ConstraintFamily getFamily() {
-	    return ConstraintFamily.COUPLING;
+	public RelationConstraintSubFamily getSubFamily() {
+	    return RelationConstraintSubFamily.COUPLING;
 	}
 
 	@Override
@@ -63,10 +64,7 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 	    return backwardConstraint != null;
 	}
 
-	public abstract Constraint getSupposedForwardConstraint();
-	public abstract Constraint getSupposedBackwardConstraint();
-
-	public void setImplyingConstraints(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
+	public void setImplyingConstraints(RelationConstraint forwardConstraint, RelationConstraint backwardConstraint) {
 		this.forwardConstraint = forwardConstraint;
 		this.backwardConstraint = backwardConstraint;
 	}
@@ -76,9 +74,9 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 	            this.support >= backwardConstraint.support;
 	}
 
-	protected boolean ckeckConsistency(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
-	    return     forwardConstraint.base.equals(backwardConstraint.implied)
-	            &&  forwardConstraint.implied.equals(backwardConstraint.base)
+	protected boolean ckeckConsistency(RelationConstraint forwardConstraint, RelationConstraint backwardConstraint) {
+	    return     forwardConstraint.getParameters().containsAll(backwardConstraint.getParameters())
+	    		&&	backwardConstraint.getParameters().containsAll(forwardConstraint.getParameters())
 	            &&  this.getHierarchyLevel() == forwardConstraint.getHierarchyLevel()
 	            &&  this.getHierarchyLevel() == backwardConstraint.getHierarchyLevel();
 	}
@@ -91,7 +89,20 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 	public void setForwardConstraint(RelationConstraint forwardConstraint) {
 		this.forwardConstraint = forwardConstraint;
 	}
+
 	public void setBackwardConstraint(RelationConstraint backwardConstraint) {
 		this.backwardConstraint = backwardConstraint;
+	}
+
+	public RelationConstraint getPlausibleForwardConstraint() {
+		if (this.hasForwardConstraint())
+			return this.getForwardConstraint();
+		return null;
+	}
+
+	public RelationConstraint getPlausibleBackwardConstraint() {
+		if (this.hasBackwardConstraint())
+			return this.getBackwardConstraint();
+		return null;
 	}
 }

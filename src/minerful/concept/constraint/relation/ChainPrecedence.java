@@ -15,17 +15,17 @@ public class ChainPrecedence extends AlternatePrecedence {
 		return "[^%2$s]*(%1$s%2$s[^%2$s]*)*[^%2$s]*";
 	}
 
-    public ChainPrecedence(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public ChainPrecedence(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public ChainPrecedence(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public ChainPrecedence(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public ChainPrecedence(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public ChainPrecedence(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public ChainPrecedence(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public ChainPrecedence(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

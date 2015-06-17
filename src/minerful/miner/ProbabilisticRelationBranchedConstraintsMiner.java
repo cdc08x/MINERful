@@ -98,7 +98,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
         }
         for (Constraint con : auxCons) {
         	RelationConstraint relCon = (RelationConstraint)con;// come on, I know it can only be a Relation Constraint!
-        	if (relCon.isInBranched())
+        	if (relCon.isActivationBranched())
         		constraintsBag.add(relCon.implied, relCon);
         	else
         		constraintsBag.add(relCon.base, relCon);

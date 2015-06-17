@@ -14,18 +14,18 @@ public class AlternateResponse extends Response {
 		return "[^%1$s]*(%1$s[^%1$s]*%2$s[^%1$s]*)*[^%1$s]*";
 	}
 
-    public AlternateResponse(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public AlternateResponse(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public AlternateResponse(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public AlternateResponse(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public AlternateResponse(TaskCharSet base, TaskCharSet implied,
+    public AlternateResponse(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
-	public AlternateResponse(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public AlternateResponse(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

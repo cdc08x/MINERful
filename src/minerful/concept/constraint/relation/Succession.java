@@ -21,17 +21,17 @@ public class Succession extends CoExistence {
         super(forwardConstraint, backwardConstraint, support);
     }
 
-    public Succession(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public Succession(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public Succession(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public Succession(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public Succession(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public Succession(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public Succession(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public Succession(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override
@@ -41,12 +41,9 @@ public class Succession extends CoExistence {
     
     @Override
     protected boolean ckeckConsistency(
-            RespondedExistence forwardConstraint,
-            RespondedExistence backwardConstraint) {
-        return      forwardConstraint.base.equals(backwardConstraint.base)
-                &&  forwardConstraint.implied.equals(backwardConstraint.implied)
-                &&  this.getHierarchyLevel() == forwardConstraint.getHierarchyLevel()
-                &&  this.getHierarchyLevel() == backwardConstraint.getHierarchyLevel();
+            RelationConstraint forwardConstraint,
+            RelationConstraint backwardConstraint) {
+        return super.ckeckConsistency(forwardConstraint, backwardConstraint);
     }
 	
 	@Override
@@ -55,12 +52,12 @@ public class Succession extends CoExistence {
 	}
 
 	@Override
-	public Constraint getSupposedForwardConstraint() {
+	public Response getPlausibleForwardConstraint() {
 		return new Response(base, implied);
 	}
 
 	@Override
-	public Constraint getSupposedBackwardConstraint() {
+	public Precedence getPlausibleBackwardConstraint() {
 		return new Precedence(base, implied);
 	}
 }

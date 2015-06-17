@@ -7,7 +7,7 @@ package minerful.concept.constraint.relation;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
 public class Response extends RespondedExistence {
 
@@ -17,22 +17,22 @@ public class Response extends RespondedExistence {
 		// [^a]*(a.*b)*[^a]*
     }
 
-    public Response(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public Response(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public Response(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public Response(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public Response(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public Response(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public Response(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public Response(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override
-    public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.RESPONSE;
+    public ConstraintImplicationVerse getImplicationVerse() {
+        return ConstraintImplicationVerse.FORWARD;
     }
     
     @Override

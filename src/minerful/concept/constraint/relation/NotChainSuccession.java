@@ -16,19 +16,19 @@ public class NotChainSuccession extends NegativeRelationConstraint {
 		return "[^%1$s]*(%1$s%1$s*[^%1$s^%2$s][^%1$s]*)*([^%1$s]*|%1$s)";
     }
 
-    public NotChainSuccession(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public NotChainSuccession(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public NotChainSuccession(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public NotChainSuccession(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public NotChainSuccession(TaskCharSet base, TaskCharSet implied,
+    public NotChainSuccession(TaskCharSet param1, TaskCharSet param2,
 			double support) {
-		super(base, implied, support);
+		super(param1, param2, support);
 	}
 
-	public NotChainSuccession(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public NotChainSuccession(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

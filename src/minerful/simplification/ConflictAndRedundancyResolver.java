@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.CouplingRelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
@@ -191,7 +192,7 @@ public class ConflictAndRedundancyResolver {
 				resolveConflictsRecursively(new RegExp(relaxedCon.getRegularExpression()).toAutomaton(), relaxedCon);
 			}
 
-			if (candidateCon.getFamily().equals(ConstraintFamily.COUPLING)) {
+			if (candidateCon.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
 				CouplingRelationConstraint coCandidateCon = (CouplingRelationConstraint) candidateCon;
 				Constraint
 					forwardCon = coCandidateCon.getForwardConstraint(),

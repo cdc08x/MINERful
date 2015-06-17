@@ -117,8 +117,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
         } else {
         	System.out.println(printer.printBag());
         }
-    	
-        
+
 		if (viewParams.fileToSaveDotFileForAutomaton != null) {
         	try {
 				outWriter = new PrintWriter(viewParams.fileToSaveDotFileForAutomaton);
@@ -131,7 +130,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 				e.printStackTrace();
 			}
         }
-		
+
 		if (viewParams.fileToSaveTsmlFileForAutomaton != null) {
         	try {
         		outWriter = new PrintWriter(new File(viewParams.fileToSaveTsmlFileForAutomaton.getAbsolutePath()));
@@ -144,7 +143,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (viewParams.fileToSaveXmlFileForAutomaton != null) {
         	try {
         		outWriter = new PrintWriter(new File(viewParams.fileToSaveXmlFileForAutomaton.getAbsolutePath()));
@@ -157,7 +156,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (viewParams.folderToSaveXmlFilesForPartialAutomata != null) {
         	try {
         		NavigableMap<String, String> partialAutoMap = printer.printWeightedXmlSubAutomata(logParser);
@@ -193,7 +192,7 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 				e.printStackTrace();
 			}
 		}
-       
+
 		if (viewParams.folderToSaveDotFilesForPartialAutomata != null) {
 			NavigableMap<String, String> partialAutoMap = printer.printDotPartialAutomata();
 			StringBuilder subAutomataPathsBuilder = new StringBuilder();

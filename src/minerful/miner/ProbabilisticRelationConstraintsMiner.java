@@ -12,7 +12,8 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.AlternatePrecedence;
@@ -230,7 +231,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
             	currentConstraint = (RelationConstraint) constraintsIterator.next();
             	refineByComputingRelevanceMetrics(currentConstraint, pivotParticipationFraction, searchedParticipationFraction);
             	if (this.isForeseeingDistances()) {
-            		if (currentConstraint.getSubFamily() == ConstraintSubFamily.PRECEDENCE)
+            		if (currentConstraint.getImplicationVerse() == ConstraintImplicationVerse.BACKWARD)
             			refineByComputingDistances(currentConstraint, searchedLocalStats, pivotTask);
             		else
             			refineByComputingDistances(currentConstraint, pivotLocalStats, searchedTask);
@@ -368,9 +369,9 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     }
     
     public static RelationConstraint refineByComputingConfidenceLevel(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
-    	if (relCon.getFamily() == ConstraintFamily.COUPLING || relCon.getFamily() == ConstraintFamily.NEGATIVE) {
+    	if (relCon.getSubFamily() == RelationConstraintSubFamily.COUPLING || relCon.getSubFamily() == RelationConstraintSubFamily.NEGATIVE) {
     		relCon.confidence = relCon.support * (pivotParticipationFraction < searchedParticipationFraction ? pivotParticipationFraction : searchedParticipationFraction);
-    	} else if (relCon.getSubFamily() == ConstraintSubFamily.PRECEDENCE) {
+    	} else if (relCon.getImplicationVerse() == ConstraintImplicationVerse.BACKWARD) {
     		relCon.confidence = relCon.support * searchedParticipationFraction;
     	} else {
     		relCon.confidence = relCon.support * pivotParticipationFraction;
@@ -380,7 +381,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     
     public static RelationConstraint refineByComputingRelevanceMetrics(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
     	relCon = refineByComputingConfidenceLevel(relCon, pivotParticipationFraction, searchedParticipationFraction);
-    	if (relCon.getFamily() != ConstraintFamily.NEGATIVE || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
+    	if (relCon.getSubFamily() != RelationConstraintSubFamily.NEGATIVE || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
     		relCon.interestFactor =
     				relCon.support
     				*
@@ -407,8 +408,9 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 	    	SummaryStatistics distancesSumStats = new SummaryStatistics();
 	    	NavigableMap<Integer, Integer> distancesMap = implyingLocalStats.localStatsTable.get(implied).distances;
 	    	
-	    	switch (resEx.getSubFamily()) {
-			case RESPONSE:
+	    	// FIXME Watch out, this is by chance so: one thing is saying that the implication verse is from the second parameter towards the first, another thing is to state that the temporal constraint is exerted on the occurrence onwards or backwards
+	    	switch (resEx.getImplicationVerse()) {
+			case FORWARD:
 				distancesMap = distancesMap.tailMap(0, false).headMap(StatsCell.NEVER_ONWARDS, false);
 				for (Integer distance : distancesMap.keySet()) {
 					if (distance != StatsCell.NEVER_EVER) {
@@ -418,7 +420,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 					}
 				}
 				break;
-			case PRECEDENCE:
+			case BACKWARD:
 				distancesMap = distancesMap.tailMap(StatsCell.NEVER_BACKWARDS, false).headMap(0, false);
 				for (Integer distance : distancesMap.keySet()) {
 					if (distance != StatsCell.NEVER_EVER) {
@@ -428,7 +430,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 					}
 				}
 				break;
-			case NONE:
+			case BOTH:
 				distancesMap = distancesMap.tailMap(StatsCell.NEVER_BACKWARDS, false).headMap(StatsCell.NEVER_ONWARDS, false);
 				for (Integer distance : distancesMap.keySet()) {
 					if (distance != StatsCell.NEVER_EVER) {

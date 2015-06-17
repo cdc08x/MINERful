@@ -17,7 +17,7 @@ public class CoExistence extends CouplingRelationConstraint {
     public CoExistence(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint, double support) {
         this(forwardConstraint.base, forwardConstraint.implied, support);
         if (!this.ckeckConsistency(forwardConstraint, backwardConstraint)) {
-            throw new IllegalArgumentException("Illegal constraints combination");
+            throw new IllegalArgumentException("Illegal constraints combination: provided " + forwardConstraint + " and " + backwardConstraint + " resp. as forward and backward constraints of " + this);
         }
         this.forwardConstraint = forwardConstraint;
         this.backwardConstraint = backwardConstraint;
@@ -30,17 +30,17 @@ public class CoExistence extends CouplingRelationConstraint {
     }
 
     
-    public CoExistence(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public CoExistence(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public CoExistence(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public CoExistence(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
-	public CoExistence(TaskChar base, TaskChar implied, double support) {
-		super(base, implied, support);
+	public CoExistence(TaskChar param1, TaskChar param2, double support) {
+		super(param1, param2, support);
 	}
-	public CoExistence(TaskChar base, TaskChar implied) {
-		super(base, implied);
+	public CoExistence(TaskChar param1, TaskChar param2) {
+		super(param1, param2);
 	}
 
 	@Override
@@ -49,12 +49,12 @@ public class CoExistence extends CouplingRelationConstraint {
 	}
 
 	@Override
-	public Constraint getSupposedForwardConstraint() {
+	public RespondedExistence getPlausibleForwardConstraint() {
 		return new RespondedExistence(base, implied);
 	}
 
 	@Override
-	public Constraint getSupposedBackwardConstraint() {
+	public RespondedExistence getPlausibleBackwardConstraint() {
 		return new RespondedExistence(implied, base);
 	}
 }

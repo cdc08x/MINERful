@@ -31,12 +31,12 @@ public abstract class ExistenceLimitsConstraint extends Constraint {
         return minimum;
     }
 
-    public void setMinimum(TaskChar base, int minimum) {
+    public void setMinimum(TaskChar param1, int minimum) {
         this.minimum = minimum;
     }
 
-    public ExistenceLimitsConstraint(TaskChar base, int minimum, int maximum) {
-        super(base);
+    public ExistenceLimitsConstraint(TaskChar param1, int minimum, int maximum) {
+        super(param1);
         this.minimum = minimum;
         this.maximum = maximum;
     }

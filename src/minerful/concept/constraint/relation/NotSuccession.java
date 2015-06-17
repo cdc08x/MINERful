@@ -14,17 +14,17 @@ public class NotSuccession extends NotChainSuccession {
 		return "[^%1$s]*(%1$s[^%2$s]*)*[^%1$s^%2$s]*";
 	}
 
-    public NotSuccession(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public NotSuccession(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public NotSuccession(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public NotSuccession(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public NotSuccession(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public NotSuccession(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public NotSuccession(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public NotSuccession(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

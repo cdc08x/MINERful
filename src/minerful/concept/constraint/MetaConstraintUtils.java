@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import minerful.concept.TaskChar;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.ExistenceConstraint;
@@ -49,16 +50,16 @@ public class MetaConstraintUtils {
 				) {
 				con.setConstraintWhichThisIsBasedUpon(constraintWhichThisShouldBeBasedUpon);
 			}
-			if (con.getFamily().equals(ConstraintFamily.COUPLING)) {
+			if (con.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
 				CouplingRelationConstraint coReCon = (CouplingRelationConstraint) con;
-				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getSupposedForwardConstraint())) {
-					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getSupposedForwardConstraint()).first());
+				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getPlausibleForwardConstraint())) {
+					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getPlausibleForwardConstraint()).first());
 				}
-				if (!coReCon.hasBackwardConstraint() && constraints.contains(coReCon.getSupposedBackwardConstraint())) {
-					coReCon.setBackwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getSupposedBackwardConstraint()).first());
+				if (!coReCon.hasBackwardConstraint() && constraints.contains(coReCon.getPlausibleBackwardConstraint())) {
+					coReCon.setBackwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getPlausibleBackwardConstraint()).first());
 				}
 			}
-			if (con.getFamily().equals(ConstraintFamily.NEGATIVE)) {
+			if (con.getSubFamily().equals(RelationConstraintSubFamily.NEGATIVE)) {
 				NegativeRelationConstraint negaCon = (NegativeRelationConstraint) con;
 				if (!negaCon.hasOpponent() && treeConSet.contains(negaCon.getSupposedOpponentConstraint())) {
 					negaCon.setOpponent((RelationConstraint) treeConSet.tailSet(negaCon.getSupposedOpponentConstraint()).first());

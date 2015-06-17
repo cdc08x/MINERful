@@ -4,40 +4,45 @@
  */
 package minerful.concept.constraint.relation;
 
+import java.util.Collections;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
 public class Precedence extends RespondedExistence {  
     @Override
 	public String getRegularExpressionTemplate() {
 		return "[^%2$s]*(%1$s.*%2$s)*[^%2$s]*";
     }
-    
-    public Precedence(TaskChar base, TaskChar implied) {
-        super(base, implied);
+
+    public Precedence(TaskChar param1, TaskChar param2) {
+        super(param2, param1);
+        this.invertOrderOfParams();
     }
-	public Precedence(TaskChar base, TaskChar implied, double support) {
-		super(base, implied, support);
+	public Precedence(TaskChar param1, TaskChar param2, double support) {
+		super(param2, param1, support);
+		this.invertOrderOfParams();
 	}
-    public Precedence(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public Precedence(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param2, param1, support);
+		this.invertOrderOfParams();
 	}
-	public Precedence(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public Precedence(TaskCharSet param1, TaskCharSet param2) {
+		super(param2, param1);
+		this.invertOrderOfParams();
 	}
 	
-	@Override
-    public ImplicationVerse getImplicationVerse() {
-    	return ImplicationVerse.BACKWARD;
-    }
+	protected void invertOrderOfParams() {
+		Collections.reverse(this.parameters);
+	}
 
 	@Override
-    public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.PRECEDENCE;
+    public ConstraintImplicationVerse getImplicationVerse() {
+    	return ConstraintImplicationVerse.BACKWARD;
     }
-    
+
     @Override
     public int getHierarchyLevel() {
         return super.getHierarchyLevel()+1;

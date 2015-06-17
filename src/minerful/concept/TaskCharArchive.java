@@ -115,12 +115,8 @@ public class TaskCharArchive {
 		return this.taskCharsMapById.get(chr);
 	}
 
-	public TaskChar getTaskChar(String name) {
-		return this.taskCharsMapByClass.get(name);
-	}
-
 	public TaskChar getTaskChar(TaskClass taskClass) {
-		return this.taskCharsMapByClass.get(taskClass.getName());
+		return this.taskCharsMapByClass.get(taskClass);
 	}
 
 	public boolean containsTaskCharByEvent(Event event) {

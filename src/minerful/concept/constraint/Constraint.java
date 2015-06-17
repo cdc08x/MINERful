@@ -4,8 +4,9 @@
  */
 package minerful.concept.constraint;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -54,10 +55,13 @@ public abstract class Constraint implements Comparable<Constraint> {
 	@XmlAttribute
 	public boolean redundant = false;
 	@XmlTransient
-    private Constraint constraintWhichThisIsBasedUpon;
+    protected Constraint constraintWhichThisIsBasedUpon;
+	@XmlTransient
+	protected List<TaskCharSet> parameters;
 	
 	protected Constraint() {
 		this.base = null;
+		this.parameters = null;
 	}
 
 	public Constraint(TaskChar base) {
@@ -75,81 +79,89 @@ public abstract class Constraint implements Comparable<Constraint> {
         return;
     }
 
-	public Constraint(TaskChar base, double support) {
+	public Constraint(TaskChar param1, double support) {
 		this.checkSupport();
-		this.base = new TaskCharSet(base);
+		this.base = new TaskCharSet(param1);
 		this.support = support;
+		this.parameters = new ArrayList<TaskCharSet>(1);
+		this.parameters.add(this.base);
 	}
-    public Constraint(TaskCharSet base, double support) {
+    public Constraint(TaskCharSet param1, double support) {
     	this.checkSupport();
-        this.base = base;
+        this.base = param1;
         this.support = support;
+		this.parameters = new ArrayList<TaskCharSet>(1);
+		this.parameters.add(this.base);
     }
 
 	@Override
     public String toString() {
-//      return " \"" + getRegularExpression() + "\" " + this.getName();
+		StringBuilder sBuil = new StringBuilder();
 		
-		String strRep = getName() + "(";
+		sBuil.append(getName());
+		sBuil.append("(");
 		
-		if(base.getTaskChars().length>1)
-			strRep += "{";
-		Iterator<TaskChar> tcIter = base.getTaskCharsCollection().iterator();
-		while (tcIter.hasNext()) {
-			strRep += tcIter.next().taskClass;
-			if(tcIter.hasNext())
-				strRep += ",";
+		boolean firstParam = true;
+		
+		for (TaskCharSet param : this.parameters) {
+			if (firstParam) { firstParam = false; }
+			else { sBuil.append(", "); }
+			sBuil.append(param);
 		}
-		if(base.getTaskChars().length>1)
-			strRep += "}";	
 		
-		
-		if(this.getImplied() != null) {
-			strRep += ";";
-			
-			if(this.getImplied().getTaskChars().length>1)
-				strRep += "{";
-			tcIter = this.getImplied().getTaskCharsCollection().iterator();
-			while (tcIter.hasNext()) {
-				strRep += tcIter.next().taskClass;
-				if(tcIter.hasNext())
-					strRep += ",";
-			}
-			if(this.getImplied().getTaskChars().length>1)
-				strRep += "}";	
+		sBuil.append(")");
 
-		}
-		
-		strRep += ")";
-		
-		strRep += " support=" + support;
-		strRep += ", confidence=" + confidence;
-		
-        return this.getName();
+		return sBuil.toString();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Constraint other = (Constraint) obj;
-        if (this.base != other.base && (this.base == null || !this.base.equals(other.base))) {
-            return false;
-        }
-        return true;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((base == null) ? 0 : base.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Constraint other = (Constraint) obj;
+		if (base == null) {
+			if (other.base != null)
+				return false;
+		} else if (!base.equals(other.base))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
 
     @Override
     public int compareTo(Constraint t) {
-        int result = this.base.compareTo(t.base);
+        int result = this.compareParameters(t.getParameters());
         return result;
     }
     
-    public boolean isOfInterest(double minimumInterestFactor) {
+    protected int compareParameters(List<TaskCharSet> othersParameters) {
+    	int	result = new Integer(this.parameters.size()).compareTo(othersParameters.size());
+    	if (result == 0) {
+    		for (int i = 0; i < this.parameters.size() && result == 0; i++) {
+    			result = this.parameters.get(i).compareTo(othersParameters.get(i));
+    		}
+    	}
+		return result;
+	}
+
+	public boolean isOfInterest(double minimumInterestFactor) {
     	return interestFactor >= minimumInterestFactor;
     }
     
@@ -210,6 +222,10 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return this.base;
 	}
 	
+	public List<TaskCharSet> getParameters() {
+		return parameters;
+	}
+
 	public String getRegularExpression() {
 		return String.format(this.getRegularExpressionTemplate(), this.base.toPatternString(true));
 	}
@@ -251,10 +267,42 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public Constraint getConstraintWhichThisIsBasedUpon() {
 	    return constraintWhichThisIsBasedUpon;
 	}
+	
+	public boolean isChildOf(Constraint c) {
+		Constraint baCon = this.getConstraintWhichThisShouldBeBasedUpon();
+		if (baCon == null) {
+			return false;
+		}
+		return baCon.equals(c);
+	}
+
+	public boolean isDescendantAlongSameBranchOf(Constraint c) {
+		return	(
+					this.isTemplateDescendantAlongSameBranchOf(c)
+					&&	this.base.equals(c.base)
+					&&	(	this.getImplied() == null && c.getImplied() == null
+						||	this.getImplied().equals(c.getImplied())
+						)
+				);
+	}
+
+	public boolean isTemplateDescendantAlongSameBranchOf(Constraint c) {
+		return	(
+					this.getFamily() == c.getFamily()
+					&&	this.getSubFamily() == c.getSubFamily()
+					&&	this.getHierarchyLevel() > c.getHierarchyLevel()
+				);
+	}
+
+	public boolean isDescendantOf(Constraint c) {
+		return this.isChildOf(c) || isDescendantAlongSameBranchOf(c);
+	}
     
     public abstract ConstraintFamily getFamily();
-    
-    public abstract ConstraintSubFamily getSubFamily();
-    
+
+    public abstract <T extends ConstraintSubFamily> T getSubFamily();
+
     public abstract Constraint getConstraintWhichThisShouldBeBasedUpon();
+
+
 }

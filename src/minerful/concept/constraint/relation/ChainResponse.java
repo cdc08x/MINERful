@@ -14,17 +14,17 @@ public class ChainResponse extends AlternateResponse {
 		return "[^%1$s]*(%1$s%2$s[^%1$s]*)*[^%1$s]*";
 	}
 
-    public ChainResponse(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public ChainResponse(TaskChar param1, TaskChar 	param2) {
+        super(param1, param2);
     }
-    public ChainResponse(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public ChainResponse(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public ChainResponse(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public ChainResponse(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public ChainResponse(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public ChainResponse(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override

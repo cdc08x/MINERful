@@ -20,17 +20,17 @@ public class ChainSuccession extends AlternateSuccession {
     public ChainSuccession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint, double support) {
         super(forwardConstraint, backwardConstraint, support);
     }
-    public ChainSuccession(TaskChar base, TaskChar implied) {
-        super(base, implied);
+    public ChainSuccession(TaskChar param1, TaskChar param2) {
+        super(param1, param2);
     }
-    public ChainSuccession(TaskChar base, TaskChar implied, double support) {
-        super(base, implied, support);
+    public ChainSuccession(TaskChar param1, TaskChar param2, double support) {
+        super(param1, param2, support);
     }
-    public ChainSuccession(TaskCharSet base, TaskCharSet implied, double support) {
-		super(base, implied, support);
+    public ChainSuccession(TaskCharSet param1, TaskCharSet param2, double support) {
+		super(param1, param2, support);
 	}
-	public ChainSuccession(TaskCharSet base, TaskCharSet implied) {
-		super(base, implied);
+	public ChainSuccession(TaskCharSet param1, TaskCharSet param2) {
+		super(param1, param2);
 	}
 
 	@Override
@@ -44,12 +44,12 @@ public class ChainSuccession extends AlternateSuccession {
 	}
 
 	@Override
-	public Constraint getSupposedForwardConstraint() {
+	public ChainResponse getPlausibleForwardConstraint() {
 		return new ChainResponse(base, implied);
 	}
 
 	@Override
-	public Constraint getSupposedBackwardConstraint() {
+	public ChainPrecedence getPlausibleBackwardConstraint() {
 		return new ChainPrecedence(base, implied);
 	}
 }

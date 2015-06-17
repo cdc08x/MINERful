@@ -2,26 +2,24 @@ package minerful.concept.constraint.existence;
 
 import java.util.Collection;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 public abstract class ExistenceConstraint extends Constraint {
-    public ExistenceConstraint(TaskChar base, double support) {
-        super(base, support);
+    public ExistenceConstraint(TaskChar param1, double support) {
+        super(param1, support);
     }
-    public ExistenceConstraint(TaskChar base) {
-        super(base);
+    public ExistenceConstraint(TaskChar param1) {
+        super(param1);
     }
-    public ExistenceConstraint(TaskCharSet base, double support) {
-		super(base, support);
+    public ExistenceConstraint(TaskCharSet param1, double support) {
+		super(param1, support);
 	}
-	public ExistenceConstraint(TaskCharSet base) {
-		super(base);
+	public ExistenceConstraint(TaskCharSet param1) {
+		super(param1);
 	}
 
 	public static String toExistenceQuantifiersString(Participation least, AtMostOne atMost) {
@@ -47,12 +45,6 @@ public abstract class ExistenceConstraint extends Constraint {
     }
     
 
-    @Override
-    public String toString() {
-        return super.toString()
-                + "(" + base + ")";
-    }
-
 	@Override
 	public TaskCharSet getImplied() {
 		return null;
@@ -68,8 +60,10 @@ public abstract class ExistenceConstraint extends Constraint {
     public ConstraintFamily getFamily() {
         return ConstraintFamily.EXISTENCE;
     }
-    @Override
-    public ConstraintSubFamily getSubFamily() {
-        return ConstraintSubFamily.NONE;
+
+    @SuppressWarnings("unchecked")
+	@Override
+    public ExistenceConstraintSubFamily getSubFamily() {
+        return ExistenceConstraintSubFamily.NONE;
     }
 }

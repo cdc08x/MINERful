@@ -5,7 +5,7 @@ import java.util.TreeSet;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
@@ -29,14 +29,6 @@ public class DeclareModelConflictResolver {
 		TreeSet<Constraint> constraintsALaMinerFul = new TreeSet<Constraint>(DeclareEncoderDecoder.fromDeclareMinerOutputToMinerfulConstraints(xmlFileIn));
 		TreeSet<TaskChar> taskChars = new TreeSet<TaskChar>();
 		ProcessModel proMod = new ProcessModel(new TaskCharRelatedConstraintsBag(taskChars));
-		
-		for (Constraint constraint : constraintsALaMinerFul) {
-			if (!constraint.getSubFamily().equals(ConstraintSubFamily.PRECEDENCE)) {
-				proMod.bag.add(constraint.base, constraint);
-			} else {
-				proMod.bag.add(((RelationConstraint)constraint).implied, constraint);
-			}
-		}
 		
 		System.out.println(LinearConstraintsIndexFactory.getAllConstraints(proMod.bag));
 		

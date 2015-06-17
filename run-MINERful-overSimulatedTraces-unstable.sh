@@ -54,4 +54,4 @@ alphabetCharacters=("n" "p" "r" "c")
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-echo java -Xmx$MEMORY_MAX -cp $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -t $THRESHOLD -s $TESTBED_SIZE $* -r `End n` `Response r p` `AlternatePrecedence r c` `Participation n` `AtMostOne n` `Succession p n` `RespondedExistence c p` # '[db]c?ec?[db]a?c?e' # -r ${constraints[15]} ${constraints[5]} # -r "[^bc]*(a.*[bc])*[^bc]*" $* # ${constraints[7]} $* #'[^abc]*(a(b|c)[^abc]*)*[^abc]*' $*
+java -Xmx$MEMORY_MAX -cp $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -t $THRESHOLD -s $TESTBED_SIZE $* -r `End n` `Response r p` `AlternatePrecedence r c` `Participation n` `AtMostOne n` `Succession p n` `RespondedExistence c p` # '[db]c?ec?[db]a?c?e' # -r ${constraints[15]} ${constraints[5]} # -r "[^bc]*(a.*[bc])*[^bc]*" $* # ${constraints[7]} $* #'[^abc]*(a(b|c)[^abc]*)*[^abc]*' $*
