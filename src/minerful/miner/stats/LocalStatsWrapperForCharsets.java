@@ -38,4 +38,22 @@ public abstract class LocalStatsWrapperForCharsets extends LocalStatsWrapper {
 	public FixedTaskSetIncrementalCountersCollection getRepetitionsAfterCharactersAppearingBefore() {
 		return repetitionsAfterCharactersAppearingBefore;
 	}
+	
+	@Override
+	public void merge(LocalStatsWrapper other) {
+		if (!(other instanceof LocalStatsWrapperForCharsets)) {
+			// If you can read this, I am already far from you
+			throw new IllegalArgumentException("Unsummable pears with apples");
+		}
+		
+		super.merge(other);
+
+		LocalStatsWrapperForCharsets otro = (LocalStatsWrapperForCharsets) other;
+		
+		neverAppearedCharacterSets.merge(otro.neverAppearedCharacterSets);
+		neverMoreAppearedAfterCharacterSets.merge(otro.neverMoreAppearedAfterCharacterSets);
+		neverMoreAppearedBeforeCharacterSets.merge(otro.neverMoreAppearedBeforeCharacterSets);
+		repetitionsBeforeCharactersAppearingAfter.merge(otro.repetitionsBeforeCharactersAppearingAfter);
+		repetitionsAfterCharactersAppearingBefore.merge(otro.repetitionsAfterCharactersAppearingBefore);
+	}
 }

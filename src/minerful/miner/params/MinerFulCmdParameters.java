@@ -26,8 +26,8 @@ public class MinerFulCmdParameters extends ParamsManager {
 		POSITIVE, NEGATIVE
 	}
 	
-	public static final char AVOID_REDUNDANCY_PARAM = 'R';
-	public static final String DEEP_AVOID_REDUNDANCY_PARAM = "dR";
+	public static final char AVOID_REDUNDANCY_PARAM_NAME = 'R';
+	public static final String DEEP_AVOID_REDUNDANCY_PARAM_NAME = "dR";
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
 	public static final String STATS_OUT_PATH_PARAM_NAME = "oSF";
 	public static final String PROCESS_SCHEME_OUT_PATH_PARAM_NAME = "oPF";
@@ -35,40 +35,50 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static final String FORESEE_DISTANCES_PARAM_NAME = "fD";
 	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "sMS";
 	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "xF";
-	public static final char AVOID_CONFLICTS_PARAM = 'C';
-//	public static final String TIME_ANALYSIS_PARAM = "time";
+	public static final char AVOID_CONFLICTS_PARAM_NAME = 'C';
+	public static final char KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = 'p';
+	public static final String QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = "pQ";
+//	public static final String TIME_ANALYSIS_PARAM_NAME = "time";
 
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
+	public static final Integer MINIMUM_PARALLEL_EXECUTION_THREADS = 1;
             
-    public Boolean avoidRedundancy = null;
-    public Boolean deepAvoidRedundancy = null;
-    public Integer branchingLimit = MINIMUM_BRANCHING_LIMIT;
-    public File inputFile = null;
-    public File statsOutputFile = null;
-    public File processSchemeOutputFile = null;
-	public Boolean foreseeDistances = null;
-	public Boolean memSpaceShowingRequested = null;
-    public Collection<String> activitiesToExcludeFromResult = null;
-	public Boolean avoidConflicts = null;
+    public Boolean avoidRedundancy;
+    public Boolean deepAvoidRedundancy;
+    public Integer branchingLimit;
+    public File inputFile;
+    public File statsOutputFile;
+    public File processSchemeOutputFile;
+	public Boolean foreseeDistances;
+	public Boolean memSpaceShowingRequested;
+    public Collection<String> activitiesToExcludeFromResult;
+	public Boolean avoidConflicts;
+	public Integer kbParallelProcessingThreads;
+	public Integer queryParallelProcessingThreads;
 //	public Boolean takeTime = null;
 
     
     public MinerFulCmdParameters() {
 		super();
+		this.branchingLimit = MINIMUM_BRANCHING_LIMIT;
 		this.avoidRedundancy = false;
 		this.deepAvoidRedundancy = false;
 		this.avoidConflicts = false;
 		this.foreseeDistances = false;
 		this.memSpaceShowingRequested = false;
+		this.kbParallelProcessingThreads = MINIMUM_PARALLEL_EXECUTION_THREADS;
+		this.queryParallelProcessingThreads = MINIMUM_PARALLEL_EXECUTION_THREADS;
 //		this.takeTime = false;
 	}
     
     public MinerFulCmdParameters(Options options, String[] args) {
+    	this();
         // parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
 	public MinerFulCmdParameters(String[] args) {
+		this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
 	}
@@ -77,17 +87,37 @@ public class MinerFulCmdParameters extends ParamsManager {
 	protected void setup(CommandLine line) {
 		this.branchingLimit = Integer.valueOf(line.getOptionValue(
 				OUT_BRANCHING_LIMIT_PARAM_NAME,
-				MINIMUM_BRANCHING_LIMIT.toString()
+				this.branchingLimit.toString()
 			)
 		);
 		if (this.branchingLimit < MINIMUM_BRANCHING_LIMIT) {
 			throw new IllegalArgumentException(
-					"Invalid value for " + OUT_BRANCHING_LIMIT_PARAM_NAME +
+					"Invalid value for " + OUT_BRANCHING_LIMIT_PARAM_NAME + " option" +
 					" (must be equal to or greater than " + (MINIMUM_BRANCHING_LIMIT) + ")");
 		}
-        this.avoidRedundancy = line.hasOption(AVOID_REDUNDANCY_PARAM);
-        this.deepAvoidRedundancy = line.hasOption(DEEP_AVOID_REDUNDANCY_PARAM);
-        this.avoidConflicts = line.hasOption(AVOID_CONFLICTS_PARAM);
+		this.kbParallelProcessingThreads = Integer.valueOf(line.getOptionValue(
+				KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME,
+				kbParallelProcessingThreads.toString()
+			)
+		);
+		this.queryParallelProcessingThreads = Integer.valueOf(line.getOptionValue(
+				QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME,
+				queryParallelProcessingThreads.toString()
+			)
+		);
+		if (this.kbParallelProcessingThreads < MINIMUM_PARALLEL_EXECUTION_THREADS) {
+			throw new IllegalArgumentException(
+					"Invalid value for " + KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME + " option" +
+					" (must be equal to or greater than " + (MINIMUM_PARALLEL_EXECUTION_THREADS) + ")");
+		}
+		if (this.queryParallelProcessingThreads < MINIMUM_PARALLEL_EXECUTION_THREADS) {
+			throw new IllegalArgumentException(
+					"Invalid value for " + QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME + " option" +
+					" (must be equal to or greater than " + (MINIMUM_PARALLEL_EXECUTION_THREADS) + ")");
+		}
+        this.avoidRedundancy = line.hasOption(AVOID_REDUNDANCY_PARAM_NAME);
+        this.deepAvoidRedundancy = line.hasOption(DEEP_AVOID_REDUNDANCY_PARAM_NAME);
+        this.avoidConflicts = line.hasOption(AVOID_CONFLICTS_PARAM_NAME);
 
         this.foreseeDistances = line.hasOption(FORESEE_DISTANCES_PARAM_NAME);
         this.memSpaceShowingRequested = line.hasOption(SHOW_MEMSPACE_USED_PARAM_NAME);
@@ -185,7 +215,7 @@ public class MinerFulCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("number")
         		.withLongOpt("out-branch")
-        		.withDescription("out-branching maximum level (must be greater than or equal to"
+        		.withDescription("out-branching maximum level (must be greater than or equal to "
 						+ (MINIMUM_BRANCHING_LIMIT)
 						+ ", the default)")
         		.withType(new Integer(0))
@@ -193,21 +223,41 @@ public class MinerFulCmdParameters extends ParamsManager {
         		);
         options.addOption(
         		OptionBuilder
+        		.hasArg().withArgName("number")
+        		.withLongOpt("kb-ll-threads")
+        		.withDescription("threads for log-processing parallel execution (must be greater than or equal to "
+						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
+						+ ", the default)")
+        		.withType(new Integer(0))
+        		.create(KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.hasArg().withArgName("number")
+        		.withLongOpt("q-ll-threads")
+        		.withDescription("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
+						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
+						+ ", the default)")
+        		.withType(new Integer(0))
+        		.create(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+        		);
+        options.addOption(
+        		OptionBuilder
         		.withLongOpt("noredundancy")
         		.withDescription("avoid redundancy with hierarchy-subsumption checking")
-        		.create(AVOID_REDUNDANCY_PARAM)
+        		.create(AVOID_REDUNDANCY_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("deepnoredundancy")
         		.withDescription("avoid redundancy with automata-based checking")
-        		.create(DEEP_AVOID_REDUNDANCY_PARAM)
+        		.create(DEEP_AVOID_REDUNDANCY_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("noconflict")
         		.withDescription("avoid conflicts")
-        		.create(AVOID_CONFLICTS_PARAM)
+        		.create(AVOID_CONFLICTS_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder

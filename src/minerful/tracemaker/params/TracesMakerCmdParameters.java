@@ -58,7 +58,6 @@ public class TracesMakerCmdParameters extends ParamsManager {
     public static final Integer MAX_OCCURRENCES = Integer.MAX_VALUE;
             
     public String[] regexps;
-    public Integer numOfCases;
     public Character[] alphabet;
     public Integer minChrsPerString;
     public Integer maxChrsPerString;
@@ -68,7 +67,6 @@ public class TracesMakerCmdParameters extends ParamsManager {
     
     public TracesMakerCmdParameters() {
         regexps = new String[]{TEST_REGEXP};
-        numOfCases = null;
         alphabet = TEST_ALPHABET;
         minChrsPerString = MIN_OCCURRENCES;
         maxChrsPerString = MAX_OCCURRENCES;

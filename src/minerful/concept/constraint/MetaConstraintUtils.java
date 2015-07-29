@@ -188,17 +188,17 @@ public class MetaConstraintUtils {
 		return relConTemplates;
 	}
 	
-	public static int howManyPossibleExistenceConstraints(int alphabetSize) {
-		return NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * alphabetSize;
+	public static int howManyPossibleExistenceConstraints(int numOfTasksToQueryFor) {
+		return NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * numOfTasksToQueryFor;
 	}
 	
-	public static int howManyPossibleRelationConstraints(int alphabetSize) {
-		return NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES * alphabetSize * (alphabetSize -1);
+	public static int howManyPossibleRelationConstraints(int numOfTasksToQueryFor, int alphabetSize) {
+		return NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES * numOfTasksToQueryFor * (alphabetSize -1);
 	}
 
-	public static int howManyPossibleConstraints(int alphabetSize) {
-		return	howManyPossibleRelationConstraints(alphabetSize) +
-				howManyPossibleExistenceConstraints(alphabetSize);
+	public static int howManyPossibleConstraints(int numOfTasksToQueryFor, int alphabetSize) {
+		return	howManyPossibleRelationConstraints(numOfTasksToQueryFor, alphabetSize) +
+				howManyPossibleExistenceConstraints(numOfTasksToQueryFor);
 	}
 
 	/* The second coolest method I ever coded! */

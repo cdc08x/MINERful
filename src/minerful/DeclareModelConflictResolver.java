@@ -5,7 +5,7 @@ import java.util.TreeSet;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
+import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
@@ -21,12 +21,12 @@ public class DeclareModelConflictResolver {
 		}
 */
 		String xmlFileIn = args[0];
+		String xmlFileOut = args[1];
 //		String xmlFileIn = "/home/claudio/Downloads/DeclareMinerExperiments/A24_C255_NoHier.xml";
 //		String xmlFileOut = args[1];
 		
-		AbstractMinerFulStarter.configureLogging(DebugLevel.trace);
+		AbstractMinerFulStarter.configureLogging(DebugLevel.all);
 
-		TreeSet<Constraint> constraintsALaMinerFul = new TreeSet<Constraint>(DeclareEncoderDecoder.fromDeclareMinerOutputToMinerfulConstraints(xmlFileIn));
 		TreeSet<TaskChar> taskChars = new TreeSet<TaskChar>();
 		ProcessModel proMod = new ProcessModel(new TaskCharRelatedConstraintsBag(taskChars));
 		
@@ -40,8 +40,10 @@ public class DeclareModelConflictResolver {
 		
 		long timingAfterConflictResolution = System.currentTimeMillis();
 		
-		new MinerFulMinerStarter().printComputationStats(coRes, timingBeforeConflictResolution, timingAfterConflictResolution);
+		coRes.printComputationStats(timingBeforeConflictResolution, timingAfterConflictResolution);
 		
-		System.out.println(coRes.getSafeProcess().bag.createHierarchyUnredundantCopy());
+		System.out.println(coRes.getSafeProcess().bag);
+		
+		new DeclareEncoderDecoder(coRes.getSafeProcess()).marshal(xmlFileOut);
 	}
 }

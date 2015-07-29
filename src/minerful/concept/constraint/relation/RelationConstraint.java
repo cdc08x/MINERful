@@ -17,6 +17,11 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
 public abstract class RelationConstraint extends Constraint {
+	public static enum ImplicationVerse {
+		FORWARD,
+		BACKWARD,
+		BOTH
+	}
 	@XmlElement
     public final TaskCharSet implied;
 	

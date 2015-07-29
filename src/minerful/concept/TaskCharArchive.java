@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import minerful.logparser.StringTaskClass;
 
 public class TaskCharArchive {
 	private TreeSet<TaskChar> taskChars;
@@ -115,6 +119,10 @@ public class TaskCharArchive {
 		return this.taskCharsMapById.get(chr);
 	}
 
+	public TaskChar getTaskChar(String name) {
+		return this.taskCharsMapByClass.get(new StringTaskClass(name));
+	}
+
 	public TaskChar getTaskChar(TaskClass taskClass) {
 		return this.taskCharsMapByClass.get(taskClass);
 	}
@@ -135,5 +143,30 @@ public class TaskCharArchive {
 
 	public int size() {
 		return this.taskChars.size();
+	}
+
+	public Collection<Set<TaskChar>> splitTaskCharsIntoSubsets(Integer parts) {
+		if (parts <= 0)
+			throw new IllegalArgumentException("The log cannot be split in " + parts + " parts. Only positive integer values are allowed");
+		int taskCharsPerSubset = this.taskChars.size() / parts;
+		
+		Collection<Set<TaskChar>> taskCharsSubsets = new ArrayList<Set<TaskChar>>(parts);
+
+		Set<TaskChar> taskCharsSubset = null;
+		Iterator<TaskChar> taChaIte = this.taskChars.iterator();
+
+		for (int j = 0; j < parts; j++) {
+			taskCharsSubset = new TreeSet<TaskChar>();
+			taskCharsSubsets.add(taskCharsSubset);
+			for (int i = 0; i < taskCharsPerSubset; i++) {
+				taskCharsSubset.add(taChaIte.next());
+			}
+		}
+		// Flush remaining taskChars
+		while (taChaIte.hasNext()) {
+			taskCharsSubset.add(taChaIte.next());
+		}
+		
+		return taskCharsSubsets;
 	}
 }

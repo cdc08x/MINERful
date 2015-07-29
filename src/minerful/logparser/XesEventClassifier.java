@@ -7,7 +7,6 @@ import java.util.TreeSet;
 
 import minerful.concept.TaskClass;
 
-import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClasses;
 import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.classification.XEventNameClassifier;
@@ -57,6 +56,17 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 		return newClassifierConsidered;
 	}
 	
+	@Override
+	public Collection<TaskClass> getTaskClasses() {
+		if (this.xEvtClasses == null)
+			throw new IllegalStateException("No classes for events available, until at least an instance of XLog has been parsed");
+
+		Collection<TaskClass> taskClasses = new ArrayList<TaskClass>(this.xEvtClasses.size());
+		for ( int i = 0; i < this.xEvtClasses.size(); i++ ) {
+			taskClasses.add(new XesTaskClass(this.xEvtClasses.getByIndex(i)));
+		}
+		return taskClasses;
+	}
 
 	@Deprecated
 	public String getClassNameOf(XEvent xesNativeEvent) {
@@ -71,17 +81,6 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 			}
 		}
 		return classString;
-	}
-	
-	public Collection<TaskClass> getTaskClasses() {
-		if (this.xEvtClasses == null)
-			throw new IllegalStateException("No classes for events available, until at least an instance of XLog has been parsed");
-
-		Collection<TaskClass> taskClasses = new ArrayList<TaskClass>(this.xEvtClasses.size());
-		for ( int i = 0; i < this.xEvtClasses.size(); i++ ) {
-			taskClasses.add(new XesTaskClass(this.xEvtClasses.getByIndex(i)));
-		}
-		return taskClasses;
 	}
 
 	@Deprecated

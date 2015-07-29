@@ -1,6 +1,7 @@
 package minerful.logparser;
 
-public class AbstractLogEventClassifier implements LogEventClassifier {
+
+public abstract class AbstractLogEventClassifier implements LogEventClassifier {
 	protected final LogEventClassifier.ClassificationType eventClassificationType;
 
 	public AbstractLogEventClassifier(LogEventClassifier.ClassificationType eventClassificationType) {
@@ -11,5 +12,4 @@ public class AbstractLogEventClassifier implements LogEventClassifier {
 	public LogEventClassifier.ClassificationType getEventClassificationType() {
 		return eventClassificationType;
 	}
-
 }

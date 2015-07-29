@@ -90,7 +90,7 @@ public class LocalStatsWrapper {
 	@XmlTransient
 	protected TaskCharArchive archive;
 	@XmlTransient
-	protected Integer firstOccurrenceInStep;
+	protected Integer firstOccurrenceAtThisStep;
 	@XmlTransient
 	protected SortedSet<Integer> repetitionsAtThisStep;
 	@XmlElement
@@ -98,20 +98,17 @@ public class LocalStatsWrapper {
 	public Map<Integer, Integer> repetitions;
 	@XmlElement(name = "interplayStats")
 	@XmlJavaTypeAdapter(value = LocalStatsMapAdapter.class)
-	public Map<TaskChar, StatsCell> localStatsTable;
+	public Map<TaskChar, StatsCell> interplayStatsTable;
 	@XmlTransient
 	protected Map<TaskChar, Integer> neverMoreAppearancesAtThisStep;
 	@XmlTransient
 	protected Map<TaskChar, AlternatingCounterSwitcher> alternatingCntSwAtThisStep;
 	@XmlAttribute
-	public int appearancesAsFirst;
+	public int occurencesAsFirst;
 	@XmlAttribute
-	public int appearancesAsLast;
+	public int occurrencesAsLast;
 	@XmlAttribute
-	protected long totalAmountOfAppearances;
-	@XmlElement
-	@XmlJavaTypeAdapter(value = FirstOccurrencesMapAdapter.class)
-	public Map<Integer, Integer> firstOccurrences;
+	protected long totalAmountOfOccurrences;
 
 	protected LocalStatsWrapper() {
 	}
@@ -122,18 +119,17 @@ public class LocalStatsWrapper {
 		this.archive = archive;
 		this.initLocalStatsTable(archive.getTaskChars());
 		this.repetitions = new TreeMap<Integer, Integer>();
-		this.firstOccurrences = new TreeMap<Integer, Integer>();
-		this.totalAmountOfAppearances = 0;
-		this.appearancesAsFirst = 0;
-		this.appearancesAsLast = 0;
+		this.totalAmountOfOccurrences = 0;
+		this.occurencesAsFirst = 0;
+		this.occurrencesAsLast = 0;
 	}
 
 	protected void initLocalStatsTable(Set<TaskChar> alphabet) {
-		this.localStatsTable = new TreeMap<TaskChar, StatsCell>();
+		this.interplayStatsTable = new TreeMap<TaskChar, StatsCell>();
 		this.neverMoreAppearancesAtThisStep = new TreeMap<TaskChar, Integer>();
 		this.alternatingCntSwAtThisStep = new TreeMap<TaskChar, AlternatingCounterSwitcher>();
 		for (TaskChar task : alphabet) {
-			this.localStatsTable.put(task, new StatsCell());
+			this.interplayStatsTable.put(task, new StatsCell());
 			if (!task.equals(this.baseTask)) {
 				this.neverMoreAppearancesAtThisStep.put(task, 0);
 				this.alternatingCntSwAtThisStep.put(task,
@@ -152,12 +148,8 @@ public class LocalStatsWrapper {
 							this.neverMoreAppearancesAtThisStep.get(otherTCh) + 1);
 				}
 				/* if this is the first occurrence in the step, record it */
-				if (this.firstOccurrenceInStep == null) {
-					this.firstOccurrenceInStep = position;
-					if (this.firstOccurrences.containsKey(position))
-						this.firstOccurrences.put(position, this.firstOccurrences.get(position) + 1);
-					else
-						this.firstOccurrences.put(position, 1);
+				if (this.firstOccurrenceAtThisStep == null) {
+					this.firstOccurrenceAtThisStep = position;
 				} else {
 					/*
 					 * if this is not the first time this chr appears in the step,
@@ -181,7 +173,7 @@ public class LocalStatsWrapper {
 			/* if the appeared character is NOT equal to this */
 			else {
 				AlternatingCounterSwitcher myAltCountSwitcher = this.alternatingCntSwAtThisStep.get(tCh);
-				StatsCell statsCell = this.localStatsTable.get(tCh);
+				StatsCell statsCell = this.interplayStatsTable.get(tCh);
 				/* store the info that chr appears after the pivot */
 				this.neverMoreAppearancesAtThisStep.put(tCh, 0);
 				/* is this reading analysis onwards? */
@@ -223,29 +215,29 @@ public class LocalStatsWrapper {
 				 */
 				/* THIS IS THE VERY BIG TRICK TO AVOID ANY TRANSITIVE CLOSURE!! */
 				for (Integer occurredAlsoAt : repetitionsAtThisStep) {
-					this.localStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
+					this.interplayStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
 				}
 			}
 			/*
 			 * If this is not the first occurrence position, record the distance
 			 * equal to (chr.position - firstOccurrenceInStep.position)
 			 */
-			if (firstOccurrenceInStep != position) {
+			if (firstOccurrenceAtThisStep != position) {
 				/*
 				 * START OF: event-centred analysis modification Comment this line
 				 * to get back to previous version
 				 */
 				if (EVENT_CENTRIC) {
 					if (repetitionsAtThisStep == null || repetitionsAtThisStep.size() < 1) {
-						this.localStatsTable.get(tCh).newAtDistance(
-							position - firstOccurrenceInStep);
+						this.interplayStatsTable.get(tCh).newAtDistance(
+							position - firstOccurrenceAtThisStep);
 					}
 				} else {
 					/*
 					 * END OF: event-centred analysis modification
 					 */
-					this.localStatsTable.get(tCh).newAtDistance(
-							position - firstOccurrenceInStep);
+					this.interplayStatsTable.get(tCh).newAtDistance(
+							position - firstOccurrenceAtThisStep);
 				}
 			}
 			/*
@@ -276,7 +268,7 @@ public class LocalStatsWrapper {
 
 	protected void setAsNeverAppeared(TaskChar neverAppearedTask) {
 		if (!neverAppearedTask.equals(this.baseTask)) {
-			this.localStatsTable
+			this.interplayStatsTable
 					.get(neverAppearedTask)
 					.setAsNeverAppeared(
 							((this.repetitionsAtThisStep == null || this.repetitionsAtThisStep
@@ -299,11 +291,11 @@ public class LocalStatsWrapper {
 		if (!secondPass) {
 			this.updateAppearancesCounter();
 		}
-		if (this.firstOccurrenceInStep != null) {
+		if (this.firstOccurrenceAtThisStep != null) {
 			/* Record what did not appear in the step, afterwards or backwards */
 			this.recordCharactersThatNeverAppearedAnymoreInStep(onwards);
 			/* Does NOTHING, at this stage of the implementation */
-			for (StatsCell cell : this.localStatsTable.values()) {
+			for (StatsCell cell : this.interplayStatsTable.values()) {
 				cell.finalizeAnalysisStep(onwards, secondPass);
 			}
 			/* Resets the switchers for the alternations counter */
@@ -312,7 +304,7 @@ public class LocalStatsWrapper {
 				sw.reset();
 			}
 			/* Resets the local stats table counters */
-			this.firstOccurrenceInStep = null;
+			this.firstOccurrenceAtThisStep = null;
 			this.repetitionsAtThisStep = null;
 		}
 	}
@@ -324,17 +316,17 @@ public class LocalStatsWrapper {
 			/* If it appeared no more */
 			if (this.neverMoreAppearancesAtThisStep.get(tChNoMore) > 0) {
 				/* Set it appeared no more */
-				this.localStatsTable.get(tChNoMore).setAsNeverAppearedAnyMore(
+				this.interplayStatsTable.get(tChNoMore).setAsNeverAppearedAnyMore(
 						this.neverMoreAppearancesAtThisStep.get(tChNoMore),
 						onwards);
 				/* Reset the counter! */
 				this.neverMoreAppearancesAtThisStep.put(tChNoMore, 0);
 			}
 		}
-		if (this.firstOccurrenceInStep != null
+		if (this.firstOccurrenceAtThisStep != null
 				&& (this.repetitionsAtThisStep == null || this.repetitionsAtThisStep
 						.size() == 0)) {
-			this.localStatsTable.get(this.baseTask)
+			this.interplayStatsTable.get(this.baseTask)
 					.setAsNeverAppearedAnyMore(1, onwards);
 		}
 	}
@@ -346,7 +338,7 @@ public class LocalStatsWrapper {
 	 */
 	protected void updateAppearancesCounter() {
 		Integer numberOfRepetitions = 0;
-		if (this.firstOccurrenceInStep != null) {
+		if (this.firstOccurrenceAtThisStep != null) {
 			/* Record the amount of appearances at this step */
 			numberOfRepetitions = this.repetitionsAtThisStep == null ? 1
 					: this.repetitionsAtThisStep.size() + 1;
@@ -354,8 +346,8 @@ public class LocalStatsWrapper {
 			 * Increment (if needed) the appearances as this character as the
 			 * first
 			 */
-			if (this.firstOccurrenceInStep == FIRST_POSITION_IN_TRACE) {
-				this.appearancesAsFirst++;
+			if (this.firstOccurrenceAtThisStep == FIRST_POSITION_IN_TRACE) {
+				this.occurencesAsFirst++;
 			}
 		}
 		/*
@@ -368,32 +360,73 @@ public class LocalStatsWrapper {
 				oldNumberOfRepetitionsInFrequencyTable == null ? 1
 						: 1 + oldNumberOfRepetitionsInFrequencyTable);
 		/* Increment the total amount of appearances */
-		this.totalAmountOfAppearances += numberOfRepetitions;
+		this.totalAmountOfOccurrences += numberOfRepetitions;
 	}
 
-	public long getTotalAmountOfAppearances() {
-		return this.totalAmountOfAppearances;
+	public long getTotalAmountOfOccurrences() {
+		return this.totalAmountOfOccurrences;
 	}
 
 	public int getAppearancesAsFirst() {
-		return this.appearancesAsFirst;
+		return this.occurencesAsFirst;
 	}
 
 	public int getAppearancesAsLast() {
-		return this.appearancesAsLast;
+		return this.occurrencesAsLast;
 	}
 
 	@Override
 	public String toString() {
-		if (this.totalAmountOfAppearances == 0)
+		if (this.totalAmountOfOccurrences == 0)
 			return "";
 
 		StringBuilder sBuf = new StringBuilder();
-		for (TaskChar key : this.localStatsTable.keySet()) {
+		for (TaskChar key : this.interplayStatsTable.keySet()) {
 			sBuf.append("\t\t[" + key + "] => "
-					+ this.localStatsTable.get(key).toString());
+					+ this.interplayStatsTable.get(key).toString());
 		}
 		return sBuf.toString();
 	}
 
+	public void merge(LocalStatsWrapper other) {
+		this.occurencesAsFirst += other.occurencesAsFirst;
+		this.occurrencesAsLast += other.occurrencesAsLast;
+		this.totalAmountOfOccurrences += other.totalAmountOfOccurrences;
+		
+		for (Integer numOfReps : this.repetitions.keySet()) {
+			if (other.repetitions.containsKey(numOfReps)) {
+				this.repetitions.put(numOfReps, this.repetitions.get(numOfReps) + other.repetitions.get(numOfReps));
+			}
+		}
+		
+		for (Integer numOfReps : other.repetitions.keySet()) {
+			if (!this.repetitions.containsKey(numOfReps)) {
+				this.repetitions.put(numOfReps, other.repetitions.get(numOfReps));
+			}
+		}
+		
+		for (TaskChar key : this.interplayStatsTable.keySet()) {
+			if (other.interplayStatsTable.containsKey(key)) {
+				this.interplayStatsTable.get(key).merge(other.interplayStatsTable.get(key));
+			}
+		}
+		
+		for (TaskChar key : other.interplayStatsTable.keySet()) {
+			if (!this.interplayStatsTable.containsKey(key)) {
+				this.interplayStatsTable.put(key, other.interplayStatsTable.get(key));
+			}
+		}
+/*		
+		for (Integer firstOcc : this.firstOccurrences.keySet()) {
+			if (other.firstOccurrences.containsKey(firstOcc)) {
+				this.firstOccurrences.put(firstOcc, this.firstOccurrences.get(firstOcc) + other.firstOccurrences.get(firstOcc));
+			}
+		}
+		for (Integer firstOcc : other.firstOccurrences.keySet()) {
+			if (!this.firstOccurrences.containsKey(firstOcc)) {
+				this.firstOccurrences.put(firstOcc, other.firstOccurrences.get(firstOcc));
+			}
+		}
+ */
+	}
 }

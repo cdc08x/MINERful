@@ -32,17 +32,11 @@ public class StatsCell implements Cloneable {
     public int betweenOnwards;
     @XmlElement(name="repetitionsInBetweenBackwards")
     public int betweenBackwards;
-    @XmlElement(name="alternationsOnwards")
-    public int alternatedOnwards;
-    @XmlElement(name="alternationsBackwards")
-    public int alternatedBackwards;
 
     public StatsCell() {
         this.distances = new TreeMap<Integer, Integer>();
         this.betweenOnwards = 0;
         this.betweenBackwards = 0;
-        this.alternatedOnwards = 0;
-        this.alternatedBackwards = 0;
     }
 
     void newAtDistance(int distance) {
@@ -136,4 +130,21 @@ public class StatsCell implements Cloneable {
             return this.distances.get(NEVER_EVER);
         return 0;
     }
+
+	public void merge(StatsCell other) {
+		this.betweenBackwards += other.betweenBackwards;
+		this.betweenOnwards += other.betweenOnwards;
+		
+		for (Integer distance : this.distances.keySet()) {
+			if (other.distances.containsKey(distance)) {
+				this.distances.put(distance, this.distances.get(distance) + other.distances.get(distance));
+			}
+		}
+		
+		for (Integer distance : other.distances.keySet()) {
+			if (!this.distances.containsKey(distance)) {
+				this.distances.put(distance, other.distances.get(distance));
+			}
+		}
+	}
 }

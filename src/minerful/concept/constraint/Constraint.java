@@ -303,6 +303,4 @@ public abstract class Constraint implements Comparable<Constraint> {
     public abstract <T extends ConstraintSubFamily> T getSubFamily();
 
     public abstract Constraint getConstraintWhichThisShouldBeBasedUpon();
-
-
 }

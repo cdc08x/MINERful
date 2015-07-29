@@ -52,16 +52,16 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 	protected ProbabilisticRelationOutBranchedConstraintsMiningEngine ouBraDisco;
 
 	public ProbabilisticRelationBranchedConstraintsMiner(
-			GlobalStatsTable globalStats, TaskCharArchive taskCharArchive) {
-        super(globalStats, taskCharArchive);
+			GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
+        super(globalStats, taskCharArchive, tasksToQueryFor);
 		this.taskCharSetFactory = new TaskCharSetFactory(taskCharArchive);
 		this.inBraDisco = new ProbabilisticRelationInBranchedConstraintsMiningEngine(globalStats);
 		this.ouBraDisco = new ProbabilisticRelationOutBranchedConstraintsMiningEngine(globalStats);
 	}
 	
 	public ProbabilisticRelationBranchedConstraintsMiner(
-			GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, int branchingLimit) {
-		this(globalStats, taskCharArchive);
+			GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor, int branchingLimit) {
+		this(globalStats, taskCharArchive, tasksToQueryFor);
 		this.branchingLimit =
 				(		(branchingLimit < this.taskCharArchive.size())
 						?	branchingLimit
@@ -80,15 +80,15 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 	public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
         // Initialization
         if (constraintsBag == null) {
-            constraintsBag = new TaskCharRelatedConstraintsBag(taskCharArchive.getTaskChars());
+            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
         }
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxCons = super.makeTemporarySet();
 
-        for (TaskChar tChUnderAnalysis : this.taskCharArchive.getTaskChars()) {
+        for (TaskChar tChUnderAnalysis : this.tasksToQueryFor) {
             auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
-            if (auxLocalStats.getTotalAmountOfAppearances() > 0) {
+            if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
             	logger.info("Evaluating constraints for: " + tChUnderAnalysis + "... ");
             	
                 auxCons.addAll(this.discoverRelationConstraints(tChUnderAnalysis));
@@ -122,8 +122,8 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		LocalStatsWrapper tChUnderAnalysisLocalStats = globalStats.statsTable.get(taskChUnderAnalysis);
 		
 		// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
-		long tChUnderAnalysisAppearances = tChUnderAnalysisLocalStats.getTotalAmountOfAppearances();
-		if (tChUnderAnalysisAppearances <= 0)
+		long tChUnderAnalysisOccurrences = tChUnderAnalysisLocalStats.getTotalAmountOfOccurrences();
+		if (tChUnderAnalysisOccurrences <= 0)
 			return discoveredConstraints;
 /*
 		SortedSet<TaskCharSet> combosToAnalyze =
@@ -187,11 +187,11 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 /*******	Out-branched */
 			nuOBRespondedExistence = this.ouBraDisco
 					.discoverBranchedRespondedExistenceConstraints(
-							taskChUnderAnalysis, tChUnderAnalysisLocalStats, tChUnderAnalysisAppearances,
+							taskChUnderAnalysis, tChUnderAnalysisLocalStats, tChUnderAnalysisOccurrences,
 							comboToAnalyze);
 			nuOBResponse = this.ouBraDisco
 					.discoverBranchedResponseConstraints(
-							taskChUnderAnalysis, tChUnderAnalysisLocalStats, tChUnderAnalysisAppearances,
+							taskChUnderAnalysis, tChUnderAnalysisLocalStats, tChUnderAnalysisOccurrences,
 							comboToAnalyze);
 
 			if (INCLUDE_ALTERNATION) {
@@ -199,14 +199,14 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 				nuOBAlternateResponse = this.ouBraDisco
 						.discoverBranchedAlternateResponseConstraints(
 								taskChUnderAnalysis,
-							tChUnderAnalysisLocalStats, tChUnderAnalysisAppearances,
+							tChUnderAnalysisLocalStats, tChUnderAnalysisOccurrences,
 							comboToAnalyze);
 /**/
 			}
 			nuOBChainResponse = this.ouBraDisco
 					.discoverBranchedChainResponseConstraints(
 							taskChUnderAnalysis,
-							tChUnderAnalysisLocalStats, tChUnderAnalysisAppearances,
+							tChUnderAnalysisLocalStats, tChUnderAnalysisOccurrences,
 							comboToAnalyze);
 /*				nuOBPrecedence = this.ouBraDisco
 						.discoverBranchedPrecedenceConstraints(
@@ -288,7 +288,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 				.discoverBranchedPrecedenceConstraints(
 						taskChUnderAnalysis,
 						tChUnderAnalysisLocalStats,
-						tChUnderAnalysisAppearances,
+						tChUnderAnalysisOccurrences,
 						comboToAnalyze);
 /**/
 			if (INCLUDE_ALTERNATION) {
@@ -296,7 +296,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 					.discoverBranchedAlternatePrecedenceConstraints(
 						taskChUnderAnalysis,
 						tChUnderAnalysisLocalStats,
-						tChUnderAnalysisAppearances,
+						tChUnderAnalysisOccurrences,
 						comboToAnalyze);
 			}
 /**/
@@ -304,7 +304,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 				.discoverBranchedChainPrecedenceConstraints(
 						taskChUnderAnalysis,
 						tChUnderAnalysisLocalStats,
-						tChUnderAnalysisAppearances,
+						tChUnderAnalysisOccurrences,
 						comboToAnalyze);
 /*				
 				nuIBCoExistence = this.inBraDisco
@@ -468,7 +468,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 				(	MetaConstraintUtils.getAllPossibleOnwardsRelationConstraintTemplates().size() -1 + // out-branching
 					MetaConstraintUtils.getAllPossibleBackwardsRelationConstraintTemplates().size() -1 // in branching
 				)
-				* taskCharArchive.size()
+				* tasksToQueryFor.size()
 				* numberOfPossibleConstraintsPerActivity;
 	}
 }

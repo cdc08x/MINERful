@@ -8,6 +8,7 @@ import minerful.io.encdec.MxmlEncoder;
 import minerful.io.encdec.XesEncoder;
 import minerful.tracemaker.params.TracesMakerCmdParameters;
 import nl.flotsam.xeger.Xeger;
+import nl.flotsam.xeger.XegerUtils;
 
 import org.apache.log4j.Logger;
 

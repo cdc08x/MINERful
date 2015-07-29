@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import minerful.automaton.AutomatonFactory;
 import minerful.automaton.SubAutomaton;
+import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
@@ -36,7 +37,7 @@ public class ProcessModel {
 
 	public ProcessModel(TaskCharRelatedConstraintsBag bag, String name) {
 		this.bag = bag;
-		this.setupBasicAlphabet();
+		this.updateBasicAlphabet();
 		this.name = name;
 	}
 
@@ -44,7 +45,17 @@ public class ProcessModel {
 		return this.name;
 	}
 
-	private void setupBasicAlphabet() {
+	public boolean add(TaskChar tCh) {
+		if (this.bag.contains(tCh)) {
+			return false;
+		} else {
+			this.bag.add(tCh);
+			this.basicAlphabet.add(tCh.identifier);
+			return true;
+		}
+	}
+
+	public void updateBasicAlphabet() {
 		this.basicAlphabet = new ArrayList<Character>(bag.getTaskChars().size());
 		for (TaskChar taskChar : bag.getTaskChars()) {
 			this.basicAlphabet.add(taskChar.identifier);
@@ -69,7 +80,7 @@ public class ProcessModel {
 		Collection<Constraint> cns = null;
 //		Collection<TaskChar> involvedTaskChars = null;
 //		Collection<Character> involvedTaskCharIds = null;
-		String alphabetLimitingRegularExpression = AutomatonFactory.createRegExpLimitingTheAlphabet(basicAlphabet);
+		String alphabetLimitingRegularExpression = AutomatonUtils.createRegExpLimitingTheAlphabet(basicAlphabet);
 		
 		for (TaskChar tChr : this.bag.getTaskChars()) {
 //			involvedTaskChars = new TreeSet<TaskChar>();
@@ -212,6 +223,7 @@ public class ProcessModel {
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet);
 	}
 	
+	@Deprecated
 	public Automaton buildAutomatonByDimensionalityHeuristic() {
 		TreeMap<Character, Collection<String>> regExpsMap = new TreeMap<Character, Collection<String>>();
 		// FIXME This is just for testing purposes!!

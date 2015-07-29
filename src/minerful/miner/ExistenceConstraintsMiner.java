@@ -4,6 +4,8 @@
  */
 package minerful.miner;
 
+import java.util.Set;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
@@ -12,20 +14,20 @@ import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
-public abstract class ExistenceConstraintsMiner extends ConstraintsMiner {
-    public ExistenceConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive) {
-		super(globalStats, taskCharArchive);
+public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner {
+    public ExistenceConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
+		super(globalStats, taskCharArchive, tasksToQueryFor);
 	}
     
     @Override
     public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
         if (constraintsBag == null)
-            constraintsBag = new TaskCharRelatedConstraintsBag(taskCharArchive.getTaskChars());
-        for (TaskChar task: taskCharArchive.getTaskChars()) {
+            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
+        for (TaskChar task: tasksToQueryFor) {
             LocalStatsWrapper localStats = this.globalStats.statsTable.get(task);
             TaskChar base = task;
 
-            Constraint uniqueness = this.discoverUniquenessConstraint(base, localStats, this.globalStats.logSize);
+            Constraint uniqueness = this.discoverAtMostOnceConstraint(base, localStats, this.globalStats.logSize);
             if (uniqueness != null)
             	constraintsBag.add(base, uniqueness);
             Constraint participation = this.discoverParticipationConstraint(base, localStats, this.globalStats.logSize);
@@ -44,13 +46,13 @@ public abstract class ExistenceConstraintsMiner extends ConstraintsMiner {
 
 	@Override
 	public long howManyPossibleConstraints() {
-		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * taskCharArchive.size();
+		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * tasksToQueryFor.size();
 	}
 
 	protected abstract Constraint discoverParticipationConstraint(TaskChar base,
 			LocalStatsWrapper localStats, long testbedSize);
 
-	protected abstract Constraint discoverUniquenessConstraint(TaskChar base,
+	protected abstract Constraint discoverAtMostOnceConstraint(TaskChar base,
 			LocalStatsWrapper localStats, long testbedSize);
 
 	protected abstract Constraint discoverInitConstraint(TaskChar base,

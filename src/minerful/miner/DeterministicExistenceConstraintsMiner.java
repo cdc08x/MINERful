@@ -1,5 +1,7 @@
 package minerful.miner;
 
+import java.util.Set;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
@@ -12,8 +14,8 @@ import minerful.miner.stats.LocalStatsWrapper;
 
 public class DeterministicExistenceConstraintsMiner extends ExistenceConstraintsMiner {
 
-	public DeterministicExistenceConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive) {
-		super(globalStats, taskCharArchive);
+	public DeterministicExistenceConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
+		super(globalStats, taskCharArchive, tasksToQueryFor);
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	}
 
 	@Override
-	protected Constraint discoverUniquenessConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
+	protected Constraint discoverAtMostOnceConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
 		if (localStats.repetitions.containsKey(0))
 			return null;
 		return new AtMostOne(base);

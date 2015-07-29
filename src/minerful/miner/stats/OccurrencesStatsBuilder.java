@@ -113,7 +113,7 @@ public class OccurrencesStatsBuilder {
             if (!secondPass) {
                 /* Record the information about which the last task is! */
                 if (auxTaskChar != null)
-                    this.statsTable.statsTable.get(auxTaskChar).appearancesAsLast += 1;
+                    this.statsTable.statsTable.get(auxTaskChar).occurrencesAsLast += 1;
                 /* Record which character did not ever appear in the local stats tables! */
                 this.setNeverAppearedStuffAtThisStep(occurredEvents);
             }

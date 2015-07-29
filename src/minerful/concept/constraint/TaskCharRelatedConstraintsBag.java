@@ -1,10 +1,10 @@
 package minerful.concept.constraint;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,14 +35,15 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
 	@XmlTransient
 	private SortedSet<TaskChar> taskChars = new TreeSet<TaskChar>();
  
-	private TaskCharRelatedConstraintsBag() {}
+	public TaskCharRelatedConstraintsBag() {
+		this(new TreeSet<TaskChar>());
+	}
 	
     public TaskCharRelatedConstraintsBag(Set<TaskChar> taskChars) {
-    	this();
-        this.bag = new HashMap<TaskChar, Set<Constraint>>(taskChars.size(), (float) 1.0);
+        this.bag = new TreeMap<TaskChar, Set<Constraint>>();
         this.setAlphabet(taskChars);
     }
-    
+
     public boolean add(TaskChar tCh, Constraint c) {
     	if (!this.bag.containsKey(tCh)) {
             this.bag.put(tCh, new TreeSet<Constraint>());
@@ -69,13 +70,17 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
 	public void replaceConstraints(TaskChar taskChar, Collection<? extends Constraint> cs) {
 		this.bag.put(taskChar, new TreeSet<Constraint>());
 	}
-
-    public boolean addAll(TaskChar character, Collection<? extends Constraint> cs) {
-        if (!this.bag.containsKey(character)) {
-            this.bag.put(character, new TreeSet<Constraint>());
-            this.taskChars.add(character);
+	
+	public void add(TaskChar tCh) {
+        if (!this.bag.containsKey(tCh)) {
+            this.bag.put(tCh, new TreeSet<Constraint>());
+            this.taskChars.add(tCh);
         }
-        return this.bag.get(character).addAll(cs);
+	}
+
+    public boolean addAll(TaskChar tCh, Collection<? extends Constraint> cs) {
+        this.add(tCh);
+        return this.bag.get(tCh).addAll(cs);
     }
 
     public Set<TaskChar> getTaskChars() {
@@ -164,15 +169,17 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
                         			", which is the backward, because " +
                         			coExiCon +
                         			" is the Mutual Relation referring to them and more reliable");
-// BUGFIX: these two lines worked horribly, if, say, you have ChainSuccession(A, B), ChainResponse(A, B) and ChainPrecedence(A, B) sharing the same support, equal to 0.
-//                                nuBag = destroyGenealogy(coExiCon.getForwardConstraint(), key, nuBag);
-//                                nuBag = destroyGenealogy(coExiCon.getBackwardConstraint(), key, nuBag);
                         	nuBag.remove(key, coExiCon.getForwardConstraint());
                         	nuBag.remove(key, coExiCon.getBackwardConstraint());
-//                                nuBag.remove(key, coExiCon.getForwardConstraint());
-//                                nuBag.remove(key, coExiCon.getBackwardConstraint());
+//                        } else if (coExiCon.isMoreReliableThanAnyOfImplyingConstraints()){
+//                        	// Remove the weaker, if any
+//                        	if (coExiCon.isMoreReliableThanForwardConstraint()) {
+//                        		nuBag.remove(key, coExiCon.getForwardConstraint());
+//                        	} else {
+//                        		nuBag.remove(key, coExiCon.getBackwardConstraint());
+//                        	}
                         } else {
-//                                nuBag.remove(key, coExiCon);
+                        	nuBag.remove(key, coExiCon);
                         }
                     }
                 }
@@ -282,4 +289,14 @@ public class TaskCharRelatedConstraintsBag implements Cloneable {
 			}
 		}
     }
+
+	public boolean contains(TaskChar tCh) {
+		return this.taskChars.contains(tCh);
+	}
+
+	public void merge(TaskCharRelatedConstraintsBag other) {
+		for (TaskChar tCh : other.taskChars) {
+			this.addAll(tCh, other.getConstraintsOf(tCh));
+		}
+	}
 }

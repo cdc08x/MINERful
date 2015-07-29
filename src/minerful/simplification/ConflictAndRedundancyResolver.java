@@ -321,4 +321,71 @@ public class ConflictAndRedundancyResolver {
 	public int getRedundancyChecksPerformed() {
 		return redundancyChecksPerformed;
 	}
+
+	public void printComputationStats(long timingBeforeConflictResolution, long timingAfterConflictResolution) {
+        StringBuffer
+    	csvSummaryBuffer = new StringBuffer(),
+    	csvSummaryLegendBuffer = new StringBuffer(),
+    	csvSummaryComprehensiveBuffer = new StringBuffer();
+
+        csvSummaryBuffer.append("'CR'");
+        csvSummaryLegendBuffer.append("'Operation code'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+      // --------------------------------
+        csvSummaryBuffer.append(this.inputConstraints().size());
+        csvSummaryLegendBuffer.append("'Input constraints for conflict check'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.performedConflictChecks());
+        csvSummaryLegendBuffer.append("'Performed conflict checks'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.checkedConflictingConstraints().size());
+        csvSummaryLegendBuffer.append("'Checked conflicting constraints'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.conflictingConstraintsInOriginalModel().size());
+        csvSummaryLegendBuffer.append("'Conflicting constraints in original model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.conflictingConstraintsInOriginalUnredundantModel().size());
+        csvSummaryLegendBuffer.append("'Conflicting constraints in original hierarchy-unredundant model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.performedRedundancyChecks());
+        csvSummaryLegendBuffer.append("'Performed redundancy checks'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.checkedRedundantConstraints().size());
+        csvSummaryLegendBuffer.append("'Checked redundant constraints'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+        // --------------------------------
+        csvSummaryBuffer.append(this.redundantConstraintsInOriginalModel().size());
+        csvSummaryLegendBuffer.append("'Redundant constraints in original model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(this.redundantConstraintsInOriginalUnredundantModel().size());
+        csvSummaryLegendBuffer.append("'Redundant constraints in original hierarchy-unredundant model'");
+        csvSummaryBuffer.append(";");
+        csvSummaryLegendBuffer.append(";");
+     // --------------------------------
+        csvSummaryBuffer.append(timingAfterConflictResolution - timingBeforeConflictResolution);
+        csvSummaryLegendBuffer.append("'Time to resolve conflicts'");
+
+        csvSummaryComprehensiveBuffer.append("\n\nConflict resolution: \n");
+        csvSummaryComprehensiveBuffer.append(csvSummaryLegendBuffer.toString());
+        csvSummaryComprehensiveBuffer.append("\n");
+        csvSummaryComprehensiveBuffer.append(csvSummaryBuffer.toString());
+
+        logger.info(csvSummaryComprehensiveBuffer.toString());
+	}
 }

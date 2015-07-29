@@ -1,5 +1,8 @@
 package minerful.miner;
 
+import java.util.Collection;
+import java.util.Set;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
@@ -13,31 +16,31 @@ import minerful.miner.stats.LocalStatsWrapper;
 
 public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraintsMiner {
 
-    public ProbabilisticExistenceConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive) {
-        super(globalStats, taskCharArchive);
+    public ProbabilisticExistenceConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
+        super(globalStats, taskCharArchive, tasksToQueryFor);
     }
     
     @Override
     public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
         if (constraintsBag == null) {
-            constraintsBag = new TaskCharRelatedConstraintsBag(this.taskCharArchive.getTaskChars());
+            constraintsBag = new TaskCharRelatedConstraintsBag(this.tasksToQueryFor);
         }
         LocalStatsWrapper localStats = null;
         double baseParticipationFraction = 0.0;
 
-        for (TaskChar base: taskCharArchive.getTaskChars()) {
+        for (TaskChar base: tasksToQueryFor) {
         	localStats = this.globalStats.statsTable.get(base);
 
         	// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it.
         	// Thus, it is perfectly useless to indagate over it!
-        	if (localStats.getTotalAmountOfAppearances() > 0) {
+        	if (localStats.getTotalAmountOfOccurrences() > 0) {
 	        	Constraint participation = this.discoverParticipationConstraint(base, localStats, this.globalStats.logSize);
 	        	baseParticipationFraction = participation.support;
 
 	        	refineByComputingInterestLevels(participation, baseParticipationFraction);
 	    		constraintsBag.add(base, participation);
 
-	            Constraint uniqueness = this.discoverUniquenessConstraint(base, localStats, this.globalStats.logSize);
+	            Constraint uniqueness = this.discoverAtMostOnceConstraint(base, localStats, this.globalStats.logSize);
 	            refineByComputingInterestLevels(uniqueness, baseParticipationFraction);
 	        	constraintsBag.add(base, uniqueness);
 	            
@@ -73,7 +76,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     }
 
     @Override
-    protected Constraint discoverUniquenessConstraint(TaskChar base,
+    protected Constraint discoverAtMostOnceConstraint(TaskChar base,
             LocalStatsWrapper localStats, long testbedSize) {
         long appearancesAsUpToOne = 0;
         if (localStats.repetitions.containsKey(1)) {

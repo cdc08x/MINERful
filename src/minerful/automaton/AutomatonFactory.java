@@ -12,7 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import minerful.io.encdec.TaskCharEncoderDecoder;
+import minerful.automaton.utils.AutomatonUtils;
+import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.index.LinearConstraintsIndexFactory;
 
 import org.apache.log4j.Logger;
 
@@ -21,6 +24,7 @@ import dk.brics.automaton.RegExp;
 
 public class AutomatonFactory {
 	public static final int NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA = 0;
+	public static final int NO_TRACE_LENGTH_CONSTRAINT = 0;
 	private static Logger logger = Logger.getLogger(AutomatonFactory.class
 			.getCanonicalName());
 	public static final int THREAD_MAX = 8;
@@ -100,12 +104,26 @@ public class AutomatonFactory {
 	}
 
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
-			Collection<Character> alphabet) {
+			Collection<Character> alphabet, int minLen, int maxLen) {
+		boolean traceLengthLimitSet = (minLen != NO_TRACE_LENGTH_CONSTRAINT || maxLen != NO_TRACE_LENGTH_CONSTRAINT);
 		Collection<String> regularExpressions = new ArrayList<String>(
-				regExps.size() + 1);
-		regularExpressions.add(createRegExpLimitingTheAlphabet(alphabet));
+				regExps.size() +
+				(traceLengthLimitSet ? 2 : 1)
+		);
+		// limit the alphabet
+		regularExpressions.add(AutomatonUtils.createRegExpLimitingTheAlphabet(alphabet));
 		regularExpressions.addAll(regExps);
+		// limit the minimum and maximum length of runs, if needed 
+		if (traceLengthLimitSet) {
+			regularExpressions.add(AutomatonUtils.createRegExpLimitingTraceLength(minLen, maxLen));
+		}
+
 		return new CallableAutomataMaker(regularExpressions).makeAutomaton();
+	}
+
+	public static Automaton fromRegularExpressions(Collection<String> regExps,
+			Collection<Character> basicAlphabet) {
+		return fromRegularExpressions(regExps, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
 	}
 
 	@Deprecated
@@ -121,7 +139,7 @@ public class AutomatonFactory {
 			Iterator<String> regExpsIterator = regExps.iterator();
 			if (regExpsIterator.hasNext()) {
 				processAutomaton = new RegExp(
-						createRegExpLimitingTheAlphabet(alphabet))
+						AutomatonUtils.createRegExpLimitingTheAlphabet(alphabet))
 						.toAutomaton();
 				// DEBUGGING!
 				// processAutomaton = processAutomaton.intersection(new
@@ -158,22 +176,24 @@ public class AutomatonFactory {
 		return processAutomaton;
 	}
 
-	public static String createRegExpLimitingTheAlphabet(
-			Collection<Character> alphabet) {
-		return createRegExpLimitingTheAlphabet(alphabet, false);
-	}
 
-	public static String createRegExpLimitingTheAlphabet(
-			Collection<Character> alphabet, boolean withWildcard) {
-		if (alphabet.size() < 1)
-			return "";
-		// limiting the alphabet
-		String regexpLimitingTheAlphabet = "";
-		for (Character c : alphabet) {
-			regexpLimitingTheAlphabet += c;
+	public static Automaton buildAutomaton(TaskCharRelatedConstraintsBag bag, Collection<Character> basicAlphabet) {
+		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
+	}
+	
+	public static Automaton buildAutomaton(TaskCharRelatedConstraintsBag bag, Collection<Character> basicAlphabet,
+			int minLen, int maxLen) {
+		Collection<String> regularExpressions = null;
+		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(bag);
+
+		regularExpressions = new ArrayList<String>(constraints.size());
+		for (Constraint con : constraints) {
+			regularExpressions.add(con.getRegularExpression());
 		}
-		if (withWildcard)
-			regexpLimitingTheAlphabet += TaskCharEncoderDecoder.WILDCARD_CHAR;
-		return "[" + regexpLimitingTheAlphabet + "]*";
+
+		if (minLen != NO_TRACE_LENGTH_CONSTRAINT || maxLen != NO_TRACE_LENGTH_CONSTRAINT) {
+			return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet, minLen, maxLen);	
+		}
+		return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet);
 	}
 }

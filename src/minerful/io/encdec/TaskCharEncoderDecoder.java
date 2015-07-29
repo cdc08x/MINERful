@@ -191,7 +191,6 @@ public class TaskCharEncoderDecoder {
 
 	public Character[] encode(TaskClass[] taskClasses) {
 		Character[] encodedTasks = new Character[0];
-
 		while (tasksCursor < taskClasses.length && boundCursor < LOWER_BOUNDS.length
 				&& boundCursor < UPPER_BOUNDS.length) {
 			charCursor = LOWER_BOUNDS[boundCursor];

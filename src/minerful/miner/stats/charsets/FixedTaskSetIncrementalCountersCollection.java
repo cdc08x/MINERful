@@ -169,7 +169,7 @@ public class FixedTaskSetIncrementalCountersCollection extends TaskSetCountersCo
 				} else {
 					tmpShared = singleTaskIndexer.get(currTask);
 					shared.retainAll(tmpShared);
-					}
+				}
 			}
 		}
 

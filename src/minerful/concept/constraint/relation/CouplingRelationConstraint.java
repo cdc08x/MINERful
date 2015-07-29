@@ -74,6 +74,19 @@ public abstract class CouplingRelationConstraint extends RelationConstraint {
 	            this.support >= backwardConstraint.support;
 	}
 
+	public boolean isMoreReliableThanAnyOfImplyingConstraints() {
+	    return	this.support >= forwardConstraint.support ||
+	            this.support >= backwardConstraint.support;
+	}
+
+	public boolean isMoreReliableThanForwardConstraint() {
+	    return	this.support >= forwardConstraint.support;
+	}
+
+	public boolean isMoreReliableThanBackwardConstraints() {
+	    return	this.support >= backwardConstraint.support;
+	}
+
 	protected boolean ckeckConsistency(RelationConstraint forwardConstraint, RelationConstraint backwardConstraint) {
 	    return     forwardConstraint.getParameters().containsAll(backwardConstraint.getParameters())
 	    		&&	backwardConstraint.getParameters().containsAll(forwardConstraint.getParameters())

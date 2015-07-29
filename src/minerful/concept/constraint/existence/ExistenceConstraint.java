@@ -45,6 +45,11 @@ public abstract class ExistenceConstraint extends Constraint {
     }
     
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
 	@Override
 	public TaskCharSet getImplied() {
 		return null;
@@ -61,8 +66,7 @@ public abstract class ExistenceConstraint extends Constraint {
         return ConstraintFamily.EXISTENCE;
     }
 
-    @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public ExistenceConstraintSubFamily getSubFamily() {
         return ExistenceConstraintSubFamily.NONE;
     }

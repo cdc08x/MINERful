@@ -55,7 +55,7 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
     	super.initLocalStatsTable(alphabet);
 		this.missingAtThisStepBeforeNextRepetition = new TreeMap<TaskChar, Integer>();
 		for (TaskChar task : alphabet) {
-			this.localStatsTable.put(task, new StatsCell());
+			this.interplayStatsTable.put(task, new StatsCell());
 			if (!task.equals(this.baseTask)) {
 				this.missingAtThisStepBeforeNextRepetition.put(task, 0);
 			}
@@ -75,8 +75,8 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 	                );
 	            }
 	            /* if this is the first occurrence in the step, record it */
-	            if (this.firstOccurrenceInStep == null) {
-	                this.firstOccurrenceInStep = position;
+	            if (this.firstOccurrenceAtThisStep == null) {
+	                this.firstOccurrenceAtThisStep = position;
 	            } else {
 	                /* if this is not the first time this chr appears in the step, initialize the repetitions register */
 	                if (repetitionsAtThisStep == null) {
@@ -109,12 +109,12 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 	            /* for each repetition of the same character during the analysis, record not only the info of the appearance at a distance equal to (chr.position - firstOccurrenceInStep.position), but also at the (chr.position - otherOccurrenceInStep.position) for each other appearance of the pivot! */
 	            /* THIS IS THE VERY BIG TRICK TO AVOID ANY TRANSITIVE CLOSURE!! */
 	            for (Integer occurredAlsoAt : repetitionsAtThisStep) {
-	                this.localStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
+	                this.interplayStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
 	            }
 	        }
 	        /* If this is not the first occurrence position, record the distance equal to (chr.position - firstOccurrenceInStep.position) */
-	        if (firstOccurrenceInStep != position)
-	            this.localStatsTable.get(tCh).newAtDistance(position - firstOccurrenceInStep);
+	        if (firstOccurrenceAtThisStep != position)
+	            this.interplayStatsTable.get(tCh).newAtDistance(position - firstOccurrenceAtThisStep);
 	        /* If this is the repetition of the pivot, record it (it is needed for the computation of all the other distances!) */
 	        if (this.repetitionsAtThisStep != null && tCh.equals(this.baseTask)) {
 	            this.repetitionsAtThisStep.add(position);
@@ -181,12 +181,12 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
    
     @Override
     public String toString() {
-        if (this.totalAmountOfAppearances == 0)
+        if (this.totalAmountOfOccurrences == 0)
             return "";
 
         StringBuilder sBuf = new StringBuilder();
-        for (TaskChar key : this.localStatsTable.keySet()) {
-            sBuf.append("\t\t[" + key + "] => " + this.localStatsTable.get(key).toString());
+        for (TaskChar key : this.interplayStatsTable.keySet()) {
+            sBuf.append("\t\t[" + key + "] => " + this.interplayStatsTable.get(key).toString());
         }
         sBuf.append("\n\t\t\tnever's " + this.neverAppearedCharacterSets.toString().replace("\n", "\n\t\t\t\t"));
         sBuf.append("\n\t\t\tnever-after's " + this.neverMoreAppearedAfterCharacterSets.toString().replace("\n", "\n\t\t\t\t"));
@@ -197,5 +197,4 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 
         return sBuf.toString();
     }
-
 }

@@ -1,7 +1,5 @@
 package minerful.logparser;
 
-import java.text.StringCharacterIterator;
-
 public class StringTraceParser extends AbstractTraceParser implements LogTraceParser {
 	private String strTrace;
 	StringLogParser strLogParser;
@@ -31,7 +29,6 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 
 	@Override
 	public LogEventParser parseSubsequent() {
-		Character encodedEvent = null;
 		if (stepToSubsequent())
 			return strEventParser;
 		return null;
@@ -85,5 +82,4 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 	public int length() {
 		return strTrace.length();
 	}
-
 }

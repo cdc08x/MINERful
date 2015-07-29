@@ -32,22 +32,22 @@ import minerful.miner.stats.StatsCell;
 
 public class DeterministicRelationConstraintsMiner extends RelationConstraintsMiner {
     
-    public DeterministicRelationConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive) {
-		super(globalStats, taskCharArchive);
+    public DeterministicRelationConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
+		super(globalStats, taskCharArchive, tasksToQueryFor);
 	}
 
 	@Override
     public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
         /* Inizialization */
         if (constraintsBag == null)
-            constraintsBag = new TaskCharRelatedConstraintsBag(taskCharArchive.getTaskChars());
+            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxRelCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.size()));
-        for (TaskChar tCh: this.taskCharArchive.getTaskChars()) {
-            auxLocalStats = this.globalStats.statsTable.get(tCh);
+        		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
+        for (TaskChar tCh: tasksToQueryFor) {
+            auxLocalStats = this.globalStats.statsTable.get(tCh.identifier);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
-            if (auxLocalStats.getTotalAmountOfAppearances() > 0) {
+            if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
                 auxRelCons.addAll(
                         this.discoverRelationConstraints(tCh));
             }
@@ -69,8 +69,8 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                 alwaysNeverAlternatingAfter = false, alwaysNeverAlternatingBefore = false,
                 alwaysNever = false, alwaysNeverAfter = false, alwaysNeverOneStepAfter = false;
         Set<Constraint> relaCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.taskCharArchive.size()));
-        for (TaskChar other: localStats.localStatsTable.keySet()) {
+        		MetaConstraintUtils.howManyPossibleRelationConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
+        for (TaskChar other: localStats.interplayStatsTable.keySet()) {
             never = false;
             neverAfter = false;
             neverBefore = false;
@@ -80,7 +80,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             alwaysNeverAfter = false;
             alwaysNeverOneStepAfter = false;
             if (!other.equals(taskChUnderAnalysis)) {
-                auxStatsCell = localStats.localStatsTable.get(other);
+                auxStatsCell = localStats.interplayStatsTable.get(other);
                // Did it ever happen to the analyzed character NOT to appear WHENEVER the base character occurred?
                 never = (auxStatsCell.howManyTimesItNeverAppearedAtAll() > 0);
                 // If not, probably it's a RespondedExistence
@@ -97,7 +97,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                             // ... the ChainResponse holds if and only if the number of appearances of the analyzed character falling one step AFTER the base one is equal to or greater than the total amount of occurrences of the base character
                             alwaysOneStepAfter = (
                                     auxStatsCell.distances.get(1) != null
-                                    && localStats.getTotalAmountOfAppearances() <=
+                                    && localStats.getTotalAmountOfOccurrences() <=
                                     auxStatsCell.distances.get(1));
                         }
                     }
@@ -113,16 +113,16 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                             // ... the ChainPrecedence holds if and only if the number of appearances of the analyzed character falling one step BEFORE the base one is equal to or greater than the total amount of occurrences of the base character
                             alwaysOneStepBefore = (
                                     auxStatsCell.distances.get(-1) != null
-                                    && localStats.getTotalAmountOfAppearances() <=
+                                    && localStats.getTotalAmountOfOccurrences() <=
                                     auxStatsCell.distances.get(-1));
                         }
                     }
                 }
                 // NotCoExistence(a, b)
-                alwaysNever = (auxStatsCell.howManyTimesItNeverAppearedAtAll() == localStats.getTotalAmountOfAppearances());
+                alwaysNever = (auxStatsCell.howManyTimesItNeverAppearedAtAll() == localStats.getTotalAmountOfOccurrences());
                 if (!alwaysNever) {
                     // NotSuccession
-                    alwaysNeverAfter = auxStatsCell.howManyTimesItNeverAppearedOnwards() == localStats.getTotalAmountOfAppearances();
+                    alwaysNeverAfter = auxStatsCell.howManyTimesItNeverAppearedOnwards() == localStats.getTotalAmountOfOccurrences();
                     if (!alwaysNeverAfter) {
                         // NotChainSuccession
                         alwaysNeverOneStepAfter = auxStatsCell.distances.get(1) == null || auxStatsCell.distances.get(1) < 1;
@@ -178,7 +178,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
 	@Override
     protected Set<Constraint> refineRelationConstraints(Set<Constraint> setOfConstraints) {
         Set<Constraint> auxSet = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(this.taskCharArchive.size()));
+        		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
 
         RelationConstraint auxConstraint = null, testConstraint = null;
         RelationConstraint[] refinedConstraints = null;

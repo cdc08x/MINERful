@@ -88,9 +88,9 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).howManyTimesItNeverAppearedOnwards();
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).betweenOnwards;
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).betweenOnwards;
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		if (denominator > 0) {	// in case no pivot ever appeared, do not add this constraint!
@@ -126,9 +126,9 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).howManyTimesItNeverAppearedOnwards();
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).betweenOnwards;
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).betweenOnwards;
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		neverAppearedBeforeCharSets =
 				extSearchedLocalStats.getNeverMoreAppearedBeforeCharacterSets().selectCharSetCountersSharedAmong(comboToAnalyze.getTaskChars());
@@ -169,7 +169,7 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		Integer tmpPositiveOccurrencesAdder = null;
 			
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
-			tmpPositiveOccurrencesAdder = searchedLocalStats.localStatsTable.get(pivot).distances.get(-1);
+			tmpPositiveOccurrencesAdder = searchedLocalStats.interplayStatsTable.get(pivot).distances.get(-1);
 			if (tmpPositiveOccurrencesAdder != null)
 				positiveOccurrences += tmpPositiveOccurrencesAdder;
 		}				
@@ -194,10 +194,10 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			tmpPositiveOccurrencesAdder = pivotStatsWrapper.localStatsTable.get(searched).distances.get(1); 
+			tmpPositiveOccurrencesAdder = pivotStatsWrapper.interplayStatsTable.get(searched.identifier).distances.get(1); 
 			if (tmpPositiveOccurrencesAdder != null)
 				positiveOccurrences += tmpPositiveOccurrencesAdder;
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		if (denominator > 0) {	// in case no pivot ever appeared, do not add this constraint!
@@ -228,12 +228,12 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotLocalStats = globalStats.statsTable.get(pivot);
-			tmpPositiveOccurrencesAdder = pivotLocalStats.localStatsTable.get(searched).distances.get(1);
+			tmpPositiveOccurrencesAdder = pivotLocalStats.interplayStatsTable.get(searched.identifier).distances.get(1);
 			if (tmpPositiveOccurrencesAdder != null)
 				positiveOccurrences += tmpPositiveOccurrencesAdder;
-			denominator += pivotLocalStats.getTotalAmountOfAppearances();
+			denominator += pivotLocalStats.getTotalAmountOfOccurrences();
 	
-			tmpPositiveOccurrencesAdder = searchedLocalStats.localStatsTable.get(pivot).distances.get(-1);
+			tmpPositiveOccurrencesAdder = searchedLocalStats.interplayStatsTable.get(pivot).distances.get(-1);
 			if (tmpPositiveOccurrencesAdder != null)
 				positiveOccurrences += tmpPositiveOccurrencesAdder;
 		}
@@ -268,8 +268,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).howManyTimesItNeverAppearedAtAll();
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedAtAll();
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		neverAppearedCharSets =
 				extSearchedLocalStats.getNeverAppearedCharacterSets().selectCharSetCountersSharedAmong(comboToAnalyze.getTaskChars());
@@ -339,8 +339,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).howManyTimesItNeverAppearedAtAll();
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedAtAll();
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		if (denominator > 0) {	// in case no pivot ever appeared, do not add this constraint!
@@ -366,8 +366,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).howManyTimesItNeverAppearedOnwards();
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		if (denominator > 0) {	// in case no pivot ever appeared, do not add this constraint!
@@ -401,8 +401,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskChars()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.localStatsTable.get(searched).howManyTimesItNeverAppearedOnwards();
-			denominator += pivotStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
+			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		neverAppearedCharSets =
 				extSearchedLocalStats.getNeverMoreAppearedBeforeCharacterSets().selectCharSetCountersSharedAmong(comboToAnalyze.getTaskChars());

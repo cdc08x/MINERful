@@ -41,9 +41,9 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 	
 		for (TaskChar searched : comboToAnalyze.getTaskChars()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).howManyTimesItNeverAppearedBackwards();
-			negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).betweenBackwards;
-			denominator += searchedStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).betweenBackwards;
+			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 
 		support = 1.0 - (double) negativeOccurrences / (double) denominator;
@@ -61,7 +61,6 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			long pivotAppearances,
 			TaskCharSet comboToAnalyze) {
 		AlternateResponse nuConstraint = null;
-
 		if (pivotAppearances < 1)
 			return nuConstraint;
 
@@ -87,17 +86,18 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		for (TasksSetCounter neverAppearedAfterCharSet : neverAppearedCharSets) {
 			negativeOccurrences += neverAppearedAfterCharSet.getCounter();
 		}
-		//		if (alternationsCounter != null)
+//		if (alternationsCounter != null)
 //			negativeOccurrences += alternationsCounter.getCounter();
 		for (TasksSetCounter alternationAfterCharSet : alternationCharSets) {
 			negativeOccurrences += alternationAfterCharSet.getCounter();
 		}
+
 		support = 1.0 - (double)negativeOccurrences  / (double)pivotAppearances;
 		nuConstraint = new AlternateResponse(
 				new TaskCharSet(pivotTaskCh),
 				comboToAnalyze,
 				support);
-		
+	
 		return nuConstraint;
 	}
 
@@ -107,7 +107,7 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			TaskCharSet comboToAnalyze) {
 		AlternateSuccession nuConstraint = null;
 		
-		LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) (globalStats.statsTable.get(pivotTaskCh));
+		LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) (globalStats.statsTable.get(pivotTaskCh.identifier));
 		SortedSet<TasksSetCounter>
 			neverAppearedCharSets = null,
 			repetitionsBeforeAppearingAfterCharSets = null;
@@ -131,9 +131,9 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		denominator += pivotAppearances;
 		for (TaskChar searched : comboToAnalyze.getTaskChars()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).howManyTimesItNeverAppearedBackwards();
-			negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).betweenBackwards;
-			denominator += searchedStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).betweenBackwards;
+			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		support = 1.0 - (double) negativeOccurrences / (double) denominator;
@@ -159,10 +159,10 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		
 		for (TaskChar searched : comboToAnalyze.getTaskChars()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			tmpPositiveOccurrencesAdder = searchedStatsWrapper.localStatsTable.get(pivotTaskCh).distances.get(-1);
+			tmpPositiveOccurrencesAdder = searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).distances.get(-1);
 			if (tmpPositiveOccurrencesAdder != null)
 				positiveOccurrences += tmpPositiveOccurrencesAdder;
-			denominator += searchedStatsWrapper.getTotalAmountOfAppearances();
+			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		support = (double) positiveOccurrences / (double) denominator;
 		
@@ -187,7 +187,7 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		Integer tmpPositiveOccurrencesAdder = null;
 	
 		for (TaskChar searched : comboToAnalyze.getTaskChars()) {
-			tmpPositiveOccurrencesAdder = pivotLocalStats.localStatsTable.get(searched).distances.get(1);
+			tmpPositiveOccurrencesAdder = pivotLocalStats.interplayStatsTable.get(searched).distances.get(1);
 			if (tmpPositiveOccurrencesAdder != null)
 				positiveOccurrences += tmpPositiveOccurrencesAdder;
 		}				
@@ -211,21 +211,21 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			double support = 0;
 			Integer tmpPositiveOccurrencesAdder = null;
 			LocalStatsWrapper
-				pivotLocalStats = globalStats.statsTable.get(pivotTaskCh),
+				pivotLocalStats = globalStats.statsTable.get(pivotTaskCh.identifier),
 				searchedLocalStats = null;
 	
 			denominator = (int) pivotAppearances;
 			
 			for (TaskChar searched : comboToAnalyze.getTaskChars()) {
-				tmpPositiveOccurrencesAdder = pivotLocalStats.localStatsTable.get(searched).distances.get(1);
+				tmpPositiveOccurrencesAdder = pivotLocalStats.interplayStatsTable.get(searched).distances.get(1);
 				if (tmpPositiveOccurrencesAdder != null)
 					positiveOccurrences += tmpPositiveOccurrencesAdder;
 	
 				searchedLocalStats = globalStats.statsTable.get(searched);
-				tmpPositiveOccurrencesAdder = searchedLocalStats.localStatsTable.get(pivotTaskCh).distances.get(-1);
+				tmpPositiveOccurrencesAdder = searchedLocalStats.interplayStatsTable.get(pivotTaskCh.identifier).distances.get(-1);
 				if (tmpPositiveOccurrencesAdder != null)
 					positiveOccurrences += tmpPositiveOccurrencesAdder;
-				denominator += searchedLocalStats.getTotalAmountOfAppearances();
+				denominator += searchedLocalStats.getTotalAmountOfOccurrences();
 			}
 			support = (double) positiveOccurrences / (double) denominator;
 			
@@ -248,7 +248,7 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 				TaskCharSet comboToAnalyze) {
 			CouplingRelationConstraint nuConstraint = null;
 	
-			LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) (globalStats.statsTable.get(pivotTaskCh));
+			LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) (globalStats.statsTable.get(pivotTaskCh.identifier));
 			SortedSet<TasksSetCounter> neverAppearedCharSets = null;
 	
 			int	negativeOccurrences = 0,
@@ -265,8 +265,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			denominator += pivotAppearances;
 			for (TaskChar searched : comboToAnalyze.getTaskChars()) {
 				searchedStatsWrapper = globalStats.statsTable.get(searched);
-				negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).howManyTimesItNeverAppearedAtAll();
-				denominator += searchedStatsWrapper.getTotalAmountOfAppearances();
+				negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedAtAll();
+				denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 			}
 			
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
@@ -297,8 +297,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		
 		for (TaskChar searched : comboToAnalyze.getTaskChars()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).howManyTimesItNeverAppearedBackwards();
-			denominator += searchedStatsWrapper.getTotalAmountOfAppearances();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
+			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		support = 1.0 - (double) negativeOccurrences / (double) denominator;
@@ -390,7 +390,7 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 				TaskCharSet comboToAnalyze) {
 			Succession nuConstraint = null;
 	
-			LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) (globalStats.statsTable.get(pivotTaskCh));
+			LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) (globalStats.statsTable.get(pivotTaskCh.identifier));
 			SortedSet<TasksSetCounter> neverAppearedCharSets = null;
 	
 			int	negativeOccurrences = 0,
@@ -407,9 +407,9 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			denominator += pivotAppearances;
 			for (TaskChar searched : comboToAnalyze.getTaskChars()) {
 				searchedStatsWrapper = globalStats.statsTable.get(searched);
-				negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivotTaskCh).howManyTimesItNeverAppearedBackwards();
+				negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
 //				negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivot).betweenBackwards;
-				denominator += searchedStatsWrapper.getTotalAmountOfAppearances();
+				denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 			}
 			
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;

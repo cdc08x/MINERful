@@ -7,17 +7,26 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskClass;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public class StringLogParser extends AbstractLogParser implements LogParser {
     StringEventClassifier strEventClassifier;
+    
+	protected StringLogParser(TaskCharEncoderDecoder taChaEncoDeco,
+			TaskCharArchive taskCharArchive, List<LogTraceParser> traceParsers,
+			StringEventClassifier strEventClassifier) {
+		super(taChaEncoDeco, taskCharArchive, traceParsers);
+		this.strEventClassifier = strEventClassifier;
+	}
 
     public StringLogParser(String[] strings, LogEventClassifier.ClassificationType evtClassType) throws Exception {
-        init(evtClassType);
+        this.init(evtClassType);
         
         super.archiveTaskChars(this.parseLog(strings));
 	}
@@ -26,7 +35,7 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
         if (!stringsLogFile.canRead()) {
         	throw new IllegalArgumentException("Unparsable log file: " + stringsLogFile.getAbsolutePath());
         }
-        
+
         init(evtClassType);
         
         super.archiveTaskChars(this.parseLog(stringsLogFile));
@@ -39,25 +48,23 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 	}
 	
 	protected Collection<TaskClass> parseLog(String[] strings) {
-		Set<TaskClass> classes = new TreeSet<TaskClass>();
-		
 		for (String strLine : strings) {
         	strLine = strLine.trim();
-        	
-        	updateTraceMetrics(strLine);
-        	updateTraceParsers(strLine);
-            updateClasses(classes, strLine);
+
+        	this.updateTraceMetrics(strLine);
+        	this.updateTraceParsers(strLine);
+        	this.updateClasses(strLine);
 		}
-        return classes;
+        return this.strEventClassifier.getTaskClasses();
 	}
 
 	private void updateTraceParsers(String strLine) {
 		this.traceParsers.add(new StringTraceParser(strLine, this));
 	}
 
-	private void updateClasses(Set<TaskClass> classes, String strLine) {
+	private void updateClasses(String strLine) {
 		for (char chr : strLine.toCharArray()) {
-			classes.add(this.strEventClassifier.classify(chr));
+			this.strEventClassifier.classify(chr);
 		}
 	}
 
@@ -69,7 +76,6 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 
 	@Override
 	protected Collection<TaskClass> parseLog(File stringsLogFile) throws Exception {
-		Set<TaskClass> classes = new TreeSet<TaskClass>();
         FileInputStream fstream = new FileInputStream(stringsLogFile);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -80,16 +86,23 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
         	
         	updateTraceMetrics(strLine);
         	updateTraceParsers(strLine);
-            updateClasses(classes, strLine);
+            updateClasses(strLine);
 
             strLine = br.readLine();
         }
         in.close();
-        return classes;
+        return this.strEventClassifier.getTaskClasses();
 	}
 
 	@Override
 	public LogEventClassifier getEventClassifier() {
 		return this.strEventClassifier;
+	}
+
+	@Override
+	protected AbstractLogParser makeACopy(
+			TaskCharEncoderDecoder taChaEncoDeco,
+			TaskCharArchive taskCharArchive, List<LogTraceParser> traceParsers) {
+		return new StringLogParser(taChaEncoDeco, taskCharArchive, traceParsers, strEventClassifier);
 	}
 }

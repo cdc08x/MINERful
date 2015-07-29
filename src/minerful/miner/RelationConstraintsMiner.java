@@ -9,10 +9,10 @@ import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
-public abstract class RelationConstraintsMiner extends ConstraintsMiner {
+public abstract class RelationConstraintsMiner extends AbstractConstraintsMiner {
 
-    public RelationConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive) {
-        super(globalStats, taskCharArchive);
+    public RelationConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
+        super(globalStats, taskCharArchive, tasksToQueryFor);
     }
 
 	@Override

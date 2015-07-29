@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.log4j.Logger;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
@@ -23,6 +25,7 @@ import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalStatsTable {
+    protected static Logger logger = Logger.getLogger(GlobalStatsTable.class);
 
 	@XmlElement
 	@XmlJavaTypeAdapter(value=GlobalStatsMapAdapter.class)
@@ -91,14 +94,32 @@ public class GlobalStatsTable {
                     + "\t aggregate appearances = {"
                     + (aggregateAppearancesBuffer.length() > 0 ? aggregateAppearancesBuffer.substring(2) : "")
                     + "}, for a total amount of "
-                    + statsWrapper.getTotalAmountOfAppearances()
+                    + statsWrapper.getTotalAmountOfOccurrences()
                     + " time(/s)\n");
             sBuf.append("\t as the first for " + statsWrapper.getAppearancesAsFirst() + ",");   
-            sBuf.append(" as the last for " + statsWrapper.appearancesAsLast + " time(/s)");
+            sBuf.append(" as the last for " + statsWrapper.occurrencesAsLast + " time(/s)");
             sBuf.append("\t]\n");
             sBuf.append(statsWrapper.toString());
 
         }
         return sBuf.toString();
     }
+
+	public void merge(GlobalStatsTable other) {
+		this.logSize += other.logSize;
+		
+		for (TaskChar key : this.statsTable.keySet()) {
+			if (other.statsTable.containsKey(key)) {
+				logger.trace("Merging the statistics tables of " + key);
+				this.statsTable.get(key).merge(other.statsTable.get(key));
+			}
+		}
+		
+		for (TaskChar key : other.statsTable.keySet()) {
+			if (!this.statsTable.containsKey(key)) {
+				logger.trace("Merging the statistics tables of " + key);
+				this.statsTable.put(key, other.statsTable.get(key));
+			}
+		}
+	}
 }
