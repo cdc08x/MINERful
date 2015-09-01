@@ -64,6 +64,7 @@ public class WeightedAutomatonFactory {
 		while (traceParsersIterator.hasNext()) {
 			auXTraPar = traceParsersIterator.next();
 			auXTraPar.init();
+			trace = auXTraPar.encodeTrace();
 			
 			if (AutomatonUtils.accepts(automaton, trace)) {
 				nextState = initState;
@@ -71,12 +72,17 @@ public class WeightedAutomatonFactory {
 
 				logger.trace("Replaying legal trace #" + (i++) + "/" + logParser.length());
 				
-				while(!auXTraPar.isParsingOver()) {
+				boolean illegalTransitionRequested = false;
+				while(!auXTraPar.isParsingOver() && !illegalTransitionRequested) {
 					auxEvtIdentifier = auXTraPar.parseSubsequentAndEncode();
 					currentState = nextState;
 					
 					nextState = currentState.stepAndIncreaseTransitionWeight(auxEvtIdentifier);
-					nextState.increaseWeight();
+					if (nextState == null) {
+						illegalTransitionRequested = true;
+					} else {
+						nextState.increaseWeight();
+					}
 				}
 				
 			} else if (!ignoreIfNotCompliant) {

@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import minerful.MinerFulMinerStarter;
+import minerful.automaton.AutomatonFactory;
 import minerful.automaton.SubAutomaton;
 import minerful.automaton.concept.WeightedAutomaton;
 import minerful.automaton.encdec.AutomatonDotPrinter;
@@ -30,7 +31,8 @@ import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
 public class ConstraintsPrinter {
-	public static final int SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER = 3;
+	public static final int SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER = // 3;
+			AutomatonFactory.NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA;
 	public static final double MINIMUM_THRESHOLD = 0.0;
 	private static final int HALF_NUMBER_OF_BARS = 10;
 	// FIXME Make it user-customisable
@@ -312,10 +314,12 @@ public class ConstraintsPrinter {
 	public String printDotAutomaton() {
 		if (this.processAutomaton == null)
 			processAutomaton = this.process.buildAutomaton();
+		
 		NavigableMap<Character, String> stringMap = new TreeMap<Character, String>();
 		NavigableMap<Character, TaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(bag);
 		for (Character key : charToClassMap.keySet())
 			stringMap.put(key, charToClassMap.get(key).getName());
+
 		return new AutomatonDotPrinter(stringMap).printDot(processAutomaton);
 	}
 	

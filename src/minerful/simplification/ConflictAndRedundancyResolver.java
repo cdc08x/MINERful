@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import minerful.automaton.encdec.AutomatonDotPrinter;
 import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
@@ -101,6 +102,8 @@ public class ConflictAndRedundancyResolver {
 				logger.trace("Checking redundancy of " + candidateCon + " for the second time");
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
 				if (this.checkRedundancy(candidateAutomaton, candidateCon)) {
+//System.out.println("PRESENTATION -- The safe constraint: " + candidateCon + " supp: " + candidateCon.support + "; conf: " + candidateCon.confidence + "; inf.f: " + candidateCon.interestFactor);
+//System.out.println("PRESENTATION -- The safe constraint automaton: " + candidateCon + " \n" + candidateAutomaton.toDot());
 					this.safeAutomaton = this.intersect(this.safeAutomaton, candidateAutomaton);
 					safeProcess.bag.add(candidateCon.base, candidateCon);
 				}
@@ -109,10 +112,13 @@ public class ConflictAndRedundancyResolver {
 			this.safeProcess = new ProcessModel(safeBag.createHierarchyUnredundantCopy());
 			this.safeAutomaton = this.safeProcess.buildAutomaton();
 			for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(safeBag)) {
+//System.out.println("PRESENTATION -- The safe constraint: " + c + " supp: " + c.support + "; conf: " + c.confidence + "; inf.f: " + c.interestFactor + " rex: " + c.getRegularExpression());
+//System.out.println("PRESENTATION -- The safe constraint automaton: " + c + " \n" + safeProcess.buildAlphabetAcceptingAutomaton().intersection(new RegExp(c.getRegularExpression()).toAutomaton()).toDot());
 				blackboard.put(c, true);
 			}
 		}
 
+//System.out.println("PRESENTATION -- The safe automaton:\n" + safeAutomaton.toDot());
 		TaskCharRelatedConstraintsBag unsafeBag = process.bag
 				.createComplementOfCopyPrunedByThreshold(Constraint.MAX_SUPPORT);
 		for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(unsafeBag)) {
@@ -154,6 +160,8 @@ public class ConflictAndRedundancyResolver {
 		for (Constraint candidateCon : this.notSurelySafeProcessConstraints) {
 			logger.trace("Checking consistency of " + candidateCon);
 			if (!isConstraintAlreadyChecked(candidateCon)) {
+//System.out.println("PRESENTATION -- The unsafe constraint: " + candidateCon + " supp: " + candidateCon.support + "; conf: " + candidateCon.confidence + "; inf.f: " + candidateCon.interestFactor);
+//System.out.println("PRESENTATION -- The unsafe constraint automaton: " + candidateCon + " \n" + safeProcess.buildAlphabetAcceptingAutomaton().intersection(new RegExp(candidateCon.getRegularExpression()).toAutomaton()).toDot());
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
 				if (!this.avoidingRedundancy || this.checkRedundancy(candidateAutomaton, candidateCon))
 					resolveConflictsRecursively(candidateAutomaton, candidateCon);
@@ -180,6 +188,7 @@ public class ConflictAndRedundancyResolver {
 		if (isAutomatonEmpty(auxAutomaton)) {
 			logger.warn(candidateCon
 					+ " conflicts with the existing safe automaton!");
+			logger.warn("Current set of safe constraints: " + this.safeProcess.bag);
 			conflictingConstraints.add(candidateCon);
 
 			relaxedCon = candidateCon.getConstraintWhichThisIsBasedUpon();
@@ -197,21 +206,25 @@ public class ConflictAndRedundancyResolver {
 				Constraint
 					forwardCon = coCandidateCon.getForwardConstraint(),
 					backwardCon = coCandidateCon.getBackwardConstraint();
-
-				logger.trace("Splitting the coupling relation constraint "
-						+ coCandidateCon + " into "
-						+ coCandidateCon.getForwardConstraint() + " and "
-						+ coCandidateCon.getBackwardConstraint());
-				this.resolveConflictsRecursively(
-						new RegExp(forwardCon.getRegularExpression()).toAutomaton(),
-						forwardCon);
-				this.resolveConflictsRecursively(
-						new RegExp(backwardCon.getRegularExpression()).toAutomaton(),
-						backwardCon);
+				
+				if (forwardCon != null && backwardCon != null) {
+					logger.trace("Splitting the coupling relation constraint "
+							+ coCandidateCon + " into "
+							+ coCandidateCon.getForwardConstraint() + " and "
+							+ coCandidateCon.getBackwardConstraint());
+					this.resolveConflictsRecursively(
+							new RegExp(forwardCon.getRegularExpression()).toAutomaton(),
+							forwardCon);
+					this.resolveConflictsRecursively(
+							new RegExp(backwardCon.getRegularExpression()).toAutomaton(),
+							backwardCon);
+				}
 			}
 
 		} else {
 			safeAutomaton = auxAutomaton;
+//System.out.println("PRESENTATION -- Safe automaton so far: " + safeAutomaton.toDot());
+
 			safeProcess.bag.add(candidateCon.base, candidateCon);
 		}
 	}

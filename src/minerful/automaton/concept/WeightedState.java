@@ -150,9 +150,11 @@ public class WeightedState extends State implements AutomatonElementButter, Auto
 		try {
 			((WeightedTransition) this.transitionMap.get(chr)).increaseWeight();
 		} catch (NullPointerException nPEx) {
-			nPEx.printStackTrace();
+			System.err.println("Unallowed transition requested!");
+			// nPEx.printStackTrace();
 			System.err.println("Transition map: " + this.transitionMap);
 			System.err.println("Searched chr: " + chr);
+			return null;
 		}
 		
 		return (WeightedState) super.step(chr);

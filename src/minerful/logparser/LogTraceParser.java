@@ -20,4 +20,5 @@ public interface LogTraceParser {
 	boolean isParsingOver();
 	boolean stepToSubsequent();
 	void init();
+	String encodeTrace();
 }

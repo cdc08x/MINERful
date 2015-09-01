@@ -11,7 +11,8 @@ import minerful.concept.constraint.Constraint;
 public class AlternatePrecedence extends Precedence {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%2$s]*(%1$s[^%2$s]*%2$s[^%2$s]*)*[^%2$s]*";
+//		return "[^%2$s]*(%1$s[^%2$s]*%2$s[^%2$s]*)*[^%2$s]*";
+		return "[^%1$s]*(%2$s[^%1$s]*%1$s[^%1$s]*)*[^%1$s]*";
 	}
 
     public AlternatePrecedence(TaskChar param1, TaskChar param2) {

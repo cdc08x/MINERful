@@ -82,4 +82,9 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 	public int length() {
 		return strTrace.length();
 	}
+
+	@Override
+	public String encodeTrace() {
+		return strTrace;
+	}
 }

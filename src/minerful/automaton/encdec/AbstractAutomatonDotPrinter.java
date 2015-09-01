@@ -23,9 +23,10 @@ public abstract class AbstractAutomatonDotPrinter {
 		}
 	}
 	
-	protected static final String DOT_INIT = ResourceReader.readResource("it/uniroma1/dis/minerful/automaton/encdec/init_for_dot.txt");
-	protected static final String DOT_END = ResourceReader.readResource("it/uniroma1/dis/minerful/automaton/encdec/end_for_dot.txt");
+	protected static final String DOT_INIT = ResourceReader.readResource("minerful/automaton/encdec/init_for_dot.txt");
+	protected static final String DOT_END = ResourceReader.readResource("minerful/automaton/encdec/end_for_dot.txt");
 	protected static Properties DOT_TEMPLATES = null;
+
 	protected NavigableMap<Character, String> transMap;
 	
 	public AbstractAutomatonDotPrinter(NavigableMap<Character, String> translationMap) {
@@ -33,7 +34,7 @@ public abstract class AbstractAutomatonDotPrinter {
 		if (DOT_TEMPLATES == null) {
 			DOT_TEMPLATES = new Properties();
 			try {
-				DOT_TEMPLATES.load(ResourceReader.loadResource("it/uniroma1/dis/minerful/automaton/encdec/dot_templates.properties"));
+				DOT_TEMPLATES.load(ResourceReader.loadResource("minerful/automaton/encdec/dot_templates.properties"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

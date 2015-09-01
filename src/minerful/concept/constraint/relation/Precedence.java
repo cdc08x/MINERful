@@ -14,10 +14,18 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 public class Precedence extends RespondedExistence {  
     @Override
 	public String getRegularExpressionTemplate() {
-		return "[^%2$s]*(%1$s.*%2$s)*[^%2$s]*";
+		return "[^%1$s]*(%2$s.*%1$s)*[^%1$s]*";
     }
+    
+    @Override
+	public String getRegularExpression() {
+		// TODO Auto-generated method stub
+		return super.getRegularExpression();
+	}
 
-    public Precedence(TaskChar param1, TaskChar param2) {
+
+
+	public Precedence(TaskChar param1, TaskChar param2) {
         super(param2, param1);
         this.invertOrderOfParams();
     }

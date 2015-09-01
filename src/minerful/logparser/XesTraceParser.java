@@ -1,5 +1,6 @@
 package minerful.logparser;
 
+import java.util.Iterator;
 import java.util.ListIterator;
 
 import org.deckfour.xes.model.XEvent;
@@ -59,6 +60,18 @@ public class XesTraceParser extends AbstractTraceParser implements LogTraceParse
 			encodedEvent = xesEventParser.evtIdentifier();
 		}
 		return encodedEvent;
+	}
+	
+	@Override
+	public String encodeTrace() {
+		Iterator<XEvent> auxIterator = xesTrace.iterator();
+		StringBuilder sBuil = new StringBuilder();
+		
+		while (auxIterator.hasNext()) {
+			sBuil.append(new XesEventParser(this, auxIterator.next()).evtIdentifier());
+		}
+		
+		return sBuil.toString();
 	}
 
 	@Override

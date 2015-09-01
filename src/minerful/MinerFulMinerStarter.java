@@ -1,15 +1,10 @@
 package minerful;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,15 +12,12 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
-import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
@@ -37,16 +29,12 @@ import minerful.miner.core.MinerFulKBCore;
 import minerful.miner.core.MinerFulQueryingCore;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
-import minerful.miner.stats.OccurrencesStatsBuilder;
 import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.simplification.ConflictAndRedundancyResolver;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.LogMF;
 
 public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
