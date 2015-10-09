@@ -10,7 +10,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -30,6 +30,7 @@ import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 import minerful.miner.stats.StatsCell;
 
+@Deprecated
 public class DeterministicRelationConstraintsMiner extends RelationConstraintsMiner {
     
     public DeterministicRelationConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
@@ -37,10 +38,10 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
 	}
 
 	@Override
-    public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
+    public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
         /* Inizialization */
         if (constraintsBag == null)
-            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
+            constraintsBag = new ConstraintsBag(tasksToQueryFor);
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxRelCons = super.makeTemporarySet(
         		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
@@ -49,7 +50,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
             if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
                 auxRelCons.addAll(
-                        this.discoverRelationConstraints(tCh));
+                        this.discoverRelationConstraints(tCh, constraintsBag));
             }
         }
         auxRelCons = this.refineRelationConstraints(auxRelCons);
@@ -60,7 +61,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
 
     // Very very rough: a little statistical analysis on the trend would be better
 	@Override
-    protected Set<Constraint> discoverRelationConstraints(TaskChar taskChUnderAnalysis) {
+    protected Set<Constraint> discoverRelationConstraints(TaskChar taskChUnderAnalysis, ConstraintsBag constraintsBag) {
         LocalStatsWrapper localStats = globalStats.statsTable.get(taskChUnderAnalysis);
         // For each other character
         StatsCell auxStatsCell = null;

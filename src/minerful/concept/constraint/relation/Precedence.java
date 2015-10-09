@@ -65,6 +65,6 @@ public class Precedence extends RespondedExistence {
 
 	@Override
 	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
-		return new RespondedExistence(implied, base);
+		return new RespondedExistence(base, implied);
 	}
 }

@@ -51,9 +51,19 @@ public abstract class Constraint implements Comparable<Constraint> {
 	@XmlElement
 	public double interestFactor;
 	@XmlAttribute
+	public boolean evaluatedOnLog = false;
+	@XmlAttribute
 	public final String type = this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') +1);
 	@XmlAttribute
 	public boolean redundant = false;
+	@XmlAttribute
+	public boolean conflicting = false;
+	@XmlAttribute
+	public boolean belowSupportThreshold = false;
+	@XmlAttribute
+	public boolean belowConfidenceThreshold = false;
+	@XmlAttribute
+	public boolean belowInterestFactorThreshold = false;
 	@XmlTransient
     protected Constraint constraintWhichThisIsBasedUpon;
 	@XmlTransient
@@ -161,6 +171,14 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return result;
 	}
 
+	public boolean isRedundant() {
+		return this.redundant;
+	}
+	
+	private boolean isConflicting() {
+		return this.conflicting;
+	}
+
 	public boolean isOfInterest(double minimumInterestFactor) {
     	return interestFactor >= minimumInterestFactor;
     }
@@ -177,6 +195,9 @@ public abstract class Constraint implements Comparable<Constraint> {
     }
     public boolean hasSufficientInterestFactor(double threshold) {
     	return this.interestFactor >= threshold;
+    }
+    public boolean isAboveThresholds() {
+    	return !( this.belowSupportThreshold || this.belowConfidenceThreshold || this.belowInterestFactorThreshold);
     }
 
     public boolean hasReasonableSupport(double threshold) {
@@ -303,4 +324,8 @@ public abstract class Constraint implements Comparable<Constraint> {
     public abstract <T extends ConstraintSubFamily> T getSubFamily();
 
     public abstract Constraint getConstraintWhichThisShouldBeBasedUpon();
+
+	public boolean isMarkedForExclusion() {
+		return this.isRedundant() || !this.isAboveThresholds() || this.isConflicting();
+	}
 }

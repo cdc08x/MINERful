@@ -7,8 +7,8 @@ import minerful.errorinjector.ErrorInjector;
 import minerful.errorinjector.ErrorInjectorFactory;
 import minerful.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.params.SystemCmdParameters;
-import minerful.tracemaker.MinerFulTracesMaker;
-import minerful.tracemaker.params.TracesMakerCmdParameters;
+import minerful.stringsmaker.MinerFulStringTracesMaker;
+import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -23,7 +23,7 @@ public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulSta
     	Options cmdLineOptions = new Options();
     	
     	Options systemOptions = SystemCmdParameters.parseableOptions(),
-    			tracesMakOptions = TracesMakerCmdParameters.parseableOptions(),
+    			tracesMakOptions = StringTracesMakerCmdParameters.parseableOptions(),
     			errorInjectorOptions = ErrorInjectorCmdParameters.parseableOptions();
     	
     	for (Object opt: systemOptions.getOptions()) {
@@ -39,7 +39,7 @@ public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulSta
     	return cmdLineOptions;
 	}
 	
-	public static String[] injectErrors(String[] testBedArray, TracesMakerCmdParameters tracesMakParams, ErrorInjectorCmdParameters errorInjexParams) {
+	public static String[] injectErrors(String[] testBedArray, StringTracesMakerCmdParameters tracesMakParams, ErrorInjectorCmdParameters errorInjexParams) {
         ErrorInjectorFactory errorInjexFactory = new ErrorInjectorFactory();
         ErrorInjector errorInjex = errorInjexFactory.createErrorInjector(
         		errorInjexParams.getErrorInjectionSpreadingPolicy(),
@@ -92,8 +92,8 @@ public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulSta
     	MinerFulErrorInjectedTracesMakerStarter minErrTraMaker = new MinerFulErrorInjectedTracesMakerStarter();
     	Options cmdLineOptions = minErrTraMaker.setupOptions();
     	
-    	TracesMakerCmdParameters tracesMakParams =
-    			new TracesMakerCmdParameters(
+    	StringTracesMakerCmdParameters tracesMakParams =
+    			new StringTracesMakerCmdParameters(
     					cmdLineOptions,
     					args);
         ErrorInjectorCmdParameters errorInjexParams =
@@ -112,7 +112,7 @@ public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulSta
         
     	configureLogging(systemParams.debugLevel);
     	
-    	String[] testBedArray = new MinerFulTracesMaker().makeTraces(tracesMakParams);
+    	String[] testBedArray = new MinerFulStringTracesMaker().makeTraces(tracesMakParams);
     	testBedArray = injectErrors(testBedArray, tracesMakParams, errorInjexParams);
     	
     	logger.debug(

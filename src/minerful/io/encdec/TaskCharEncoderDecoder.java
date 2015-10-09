@@ -12,7 +12,7 @@ import java.util.TreeSet;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskClass;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.logparser.StringTaskClass;
 
 import org.apache.log4j.Logger;
@@ -171,7 +171,7 @@ public class TaskCharEncoderDecoder {
 		return new HashMap<Character, TaskClass>(this.inverseTasksDictionary);
 	}
 
-	public static NavigableMap<Character, TaskClass> getTranslationMap(TaskCharRelatedConstraintsBag bag) {
+	public static NavigableMap<Character, TaskClass> getTranslationMap(ConstraintsBag bag) {
 		NavigableMap<Character, TaskClass> transMap = new TreeMap<Character, TaskClass>();
 		for (TaskChar tChr : bag.getTaskChars()) {
 			transMap.put(tChr.identifier, tChr.taskClass);
@@ -189,6 +189,15 @@ public class TaskCharEncoderDecoder {
 		return encodedTasks;
 	}
 
+	public Character[] encode(Collection<TaskChar> taskChars) {
+		TaskClass[] taskClasses = new TaskClass[taskChars.size()];
+		int i = 0;
+		for (TaskChar tCh : taskChars) {
+			taskClasses[i++] = tCh.taskClass;
+		}
+		return encode(taskClasses);
+	}
+	
 	public Character[] encode(TaskClass[] taskClasses) {
 		Character[] encodedTasks = new Character[0];
 		while (tasksCursor < taskClasses.length && boundCursor < LOWER_BOUNDS.length

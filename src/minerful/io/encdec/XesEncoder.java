@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.deckfour.xes.classification.XEventNameClassifier;
 import org.deckfour.xes.extension.std.XConceptExtension;
@@ -46,11 +50,12 @@ public class XesEncoder implements IOutEncoder {
 		xLog.getExtensions().add(lifeExtension);
 		xLog.getExtensions().add(timeExtension);
 		xLog.getClassifiers().add(new XEventNameClassifier());
-		
+
 		concExtino.assignName(xLog, "Synthetic log");
 		lifeExtension.assignModel(xLog, XLifecycleExtension.VALUE_MODEL_STANDARD);
 		
 		int tracesCounter = 1;
+		Date currentDate = null;
 		for (String trace : traces) {
 			xTrace = xFactory.createTrace();
 			
@@ -67,7 +72,8 @@ public class XesEncoder implements IOutEncoder {
 					xEvent = xFactory.createEvent();
 					concExtino.assignName(xEvent, charTask.toString());
 					lifeExtension.assignStandardTransition(xEvent, XLifecycleExtension.StandardModel.COMPLETE);
-					timeExtension.assignTimestamp(xEvent, new Date());
+					currentDate = generateRandomDateTimeForLogEvent(currentDate);
+					timeExtension.assignTimestamp(xEvent, currentDate);
 					xTrace.add(xEvent);
 				}
 			}
@@ -77,10 +83,28 @@ public class XesEncoder implements IOutEncoder {
 		
 		return xLog;
 	}
+
+	private Date generateRandomDateTimeForLogEvent() {
+		return generateRandomDateTimeForLogEvent(null);
+	}
+
+	private Date generateRandomDateTimeForLogEvent(Date laterThan) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		
+		if (laterThan == null) {
+			cal.add(GregorianCalendar.YEAR, -1);
+			cal.add(GregorianCalendar.MONTH, (int) ( Math.ceil(Math.random() * 12 ) * -1 ) );
+			cal.add(GregorianCalendar.WEEK_OF_MONTH, (int) ( Math.ceil(Math.random() * 4 ) * -1 ) );
+			cal.add(GregorianCalendar.DAY_OF_WEEK, (int) ( Math.ceil(Math.random() * 7 ) * -1 ) );
+			laterThan = cal.getTime();
+		}
+		
+		long
+			randomAdditionalTime = (long) (Math.ceil(Math.random() * TimeUnit.DAYS.toMillis(1)));
+		cal.setTimeInMillis(laterThan.getTime() + randomAdditionalTime);
+		return cal.getTime();
+	}
 	
-	/* (non-Javadoc)
-	 * @see it.uniroma1.dis.mailofmine.utils.IOutEncoder#encodeToFile(java.io.File)
-	 */
 	@Override
 	public File encodeToFile(File outFile) throws IOException {
 		OutputStream outStream = new FileOutputStream(outFile);
@@ -88,9 +112,6 @@ public class XesEncoder implements IOutEncoder {
 		return outFile;
 	}
 	
-	/* (non-Javadoc)
-	 * @see it.uniroma1.dis.mailofmine.utils.IOutEncoder#encodeToString()
-	 */
 	@Override
 	public String encodeToString() throws IOException {
 		OutputStream outStream = new ByteArrayOutputStream();

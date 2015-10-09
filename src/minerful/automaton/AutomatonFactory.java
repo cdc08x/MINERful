@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 
 import org.apache.log4j.Logger;
@@ -115,7 +115,7 @@ public class AutomatonFactory {
 		regularExpressions.addAll(regExps);
 		// limit the minimum and maximum length of runs, if needed 
 		if (traceLengthLimitSet) {
-			regularExpressions.add(AutomatonUtils.createRegExpLimitingTraceLength(minLen, maxLen));
+			regularExpressions.add(AutomatonUtils.createRegExpLimitingRunLength(minLen, maxLen));
 		}
 
 		return new CallableAutomataMaker(regularExpressions).makeAutomaton();
@@ -177,11 +177,11 @@ public class AutomatonFactory {
 	}
 
 
-	public static Automaton buildAutomaton(TaskCharRelatedConstraintsBag bag, Collection<Character> basicAlphabet) {
+	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet) {
 		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
 	}
 	
-	public static Automaton buildAutomaton(TaskCharRelatedConstraintsBag bag, Collection<Character> basicAlphabet,
+	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet,
 			int minLen, int maxLen) {
 		Collection<String> regularExpressions = null;
 		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(bag);

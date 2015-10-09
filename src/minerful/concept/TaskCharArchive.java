@@ -10,11 +10,24 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import minerful.logparser.StringTaskClass;
 
+@XmlRootElement(name="processAlphabet")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class TaskCharArchive {
+	@XmlElementWrapper(name="tasks")
+	@XmlElement(name="task")
 	private TreeSet<TaskChar> taskChars;
+	@XmlTransient
 	private HashMap<Character, TaskChar> taskCharsMapById;
+	@XmlTransient
 	private HashMap<TaskClass, TaskChar> taskCharsMapByClass;
 
 	public TaskCharArchive() {
@@ -157,10 +170,10 @@ public class TaskCharArchive {
 
 		for (int j = 0; j < parts; j++) {
 			taskCharsSubset = new TreeSet<TaskChar>();
-			taskCharsSubsets.add(taskCharsSubset);
 			for (int i = 0; i < taskCharsPerSubset; i++) {
 				taskCharsSubset.add(taChaIte.next());
 			}
+			taskCharsSubsets.add(taskCharsSubset);
 		}
 		// Flush remaining taskChars
 		while (taChaIte.hasNext()) {

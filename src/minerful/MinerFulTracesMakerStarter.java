@@ -1,8 +1,8 @@
 package minerful;
 
 import minerful.params.SystemCmdParameters;
-import minerful.tracemaker.MinerFulTracesMaker;
-import minerful.tracemaker.params.TracesMakerCmdParameters;
+import minerful.stringsmaker.MinerFulStringTracesMaker;
+import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -13,7 +13,7 @@ public class MinerFulTracesMakerStarter extends AbstractMinerFulStarter {
     	Options cmdLineOptions = new Options();
     	
     	Options systemOptions = SystemCmdParameters.parseableOptions(),
-    			tracesMakOptions = TracesMakerCmdParameters.parseableOptions();
+    			tracesMakOptions = StringTracesMakerCmdParameters.parseableOptions();
     	
     	for (Object opt: systemOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
@@ -29,8 +29,8 @@ public class MinerFulTracesMakerStarter extends AbstractMinerFulStarter {
     	MinerFulTracesMakerStarter traMakeStarter = new MinerFulTracesMakerStarter();
     	Options cmdLineOptions = traMakeStarter.setupOptions();
     	
-    	TracesMakerCmdParameters tracesMakParams =
-    			new TracesMakerCmdParameters(
+    	StringTracesMakerCmdParameters tracesMakParams =
+    			new StringTracesMakerCmdParameters(
     					cmdLineOptions,
     					args);
         SystemCmdParameters systemParams =
@@ -45,7 +45,7 @@ public class MinerFulTracesMakerStarter extends AbstractMinerFulStarter {
         
     	configureLogging(systemParams.debugLevel);
     	
-    	MinerFulTracesMaker traMaker = new MinerFulTracesMaker();
+    	MinerFulStringTracesMaker traMaker = new MinerFulStringTracesMaker();
     	
     	String[] traces = traMaker.makeTraces(tracesMakParams);
     	traMaker.store(tracesMakParams, traces);

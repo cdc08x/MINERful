@@ -22,6 +22,7 @@ import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.Init;
@@ -59,8 +60,12 @@ import org.processmining.plugins.declareminer.visualizing.XMLBrokerFactory;
 
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
+import com.sun.media.sound.ModelAbstractChannelMixer;
 
 public class DeclareEncoderDecoder {
+	public static final String IF_EXTRACTION_REG_EXP = ".*IF;([0-9\\.]+).*";
+	public static final String CONFIDENCE_EXTRACTION_REG_EXP = ".*confidence;([0-9\\.]+).*";
+	public static final String SUPPORT_EXTRACTION_REG_EXP = ".*support;([0-9\\.]+).*";
 	public static final String TEMPLATE_TEMP_FILE_EXTENSION = ".xml";
 	public static final String TEMPLATE_TMP_FILE_BASENAME = "template";
 	public static final String DECLARE_XML_TEMPLATE = "resources/template.xml";
@@ -81,31 +86,38 @@ public class DeclareEncoderDecoder {
 				}
 			}
 		}
-		createModel();
+		createDeclareMap();
 	}
 	
-	public static ArrayList<Constraint> fromDeclareMinerOutputToMinerfulConstraints(String declareMinerOutputPath) {
-		return fromDeclareMinerOutputToMinerfulConstraints(declareMinerOutputPath, null);
+	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath) {
+		return fromDeclareMapToMinerfulProcessModel(declareMapFilePath, null);
+	}
+
+	public static ProcessModel fromDeclareMapToMinerfulProcessModel(AssignmentModel declareMapModel) {
+		return fromDeclareMapToMinerfulProcessModel(declareMapModel, null);
 	}
 	
-	public static ArrayList<Constraint> fromDeclareMinerOutputToMinerfulConstraints(String declareMinerOutputPath, TaskCharArchive taskCharArchive) {
-		File inputFile = new File(declareMinerOutputPath);
+	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath, TaskCharArchive taskCharArchive) {
+		File inputFile = new File(declareMapFilePath);
 		if (!inputFile.canRead() || !inputFile.isFile()) {
-			throw new IllegalArgumentException("Unreadable file: " + declareMinerOutputPath);
+			throw new IllegalArgumentException("Unreadable file: " + declareMapFilePath);
 		}
 		
-		ArrayList<Constraint> output = new ArrayList<Constraint>();
-		
-		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(declareMinerOutputPath);
+		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(declareMapFilePath);
 		AssignmentModel model = broker.readAssignment();
 		AssignmentModelView view = new AssignmentModelView(model);
 		broker.readAssignmentGraphical(model, view);
+		return fromDeclareMapToMinerfulProcessModel(model, taskCharArchive);
+	}
 
+	public static ProcessModel fromDeclareMapToMinerfulProcessModel(AssignmentModel declareMapModel, TaskCharArchive taskCharArchive) {
 		ArrayList<String> params = new ArrayList<String>();
+		ArrayList<Constraint> minerFulConstraints = new ArrayList<Constraint>();
+
 		if (taskCharArchive == null) {
 			TaskCharEncoderDecoder encdec = new TaskCharEncoderDecoder();
-			
-			for(ConstraintDefinition cd : model.getConstraintDefinitions()){
+
+			for(ConstraintDefinition cd : declareMapModel.getConstraintDefinitions()){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
 						encdec.encode(new StringTaskClass(ad.getName()));
@@ -114,15 +126,15 @@ public class DeclareEncoderDecoder {
 			}
 			taskCharArchive = new TaskCharArchive(encdec.getTranslationMap());
 		}
-		
-		for(ConstraintDefinition cd : model.getConstraintDefinitions()){
+
+		for(ConstraintDefinition cd : declareMapModel.getConstraintDefinitions()){
 			String template = cd.getName().replace("-", "").replace(" ", "").toLowerCase();
 			params = new ArrayList<String>();
-			
+
 			Pattern
-				supPattern = Pattern.compile(".*support;([0-9\\.]+).*"),
-				confiPattern = Pattern.compile(".*confidence;([0-9\\.]+).*"),
-				inteFaPattern = Pattern.compile(".*IF;([0-9\\.]+).*");
+				supPattern = Pattern.compile(DeclareEncoderDecoder.SUPPORT_EXTRACTION_REG_EXP),
+				confiPattern = Pattern.compile(DeclareEncoderDecoder.CONFIDENCE_EXTRACTION_REG_EXP),
+				inteFaPattern = Pattern.compile(DeclareEncoderDecoder.IF_EXTRACTION_REG_EXP);
 			Matcher
 				supMatcher = supPattern.matcher(cd.getText().trim()),
 				confiMatcher = confiPattern.matcher(cd.getText().trim()),
@@ -145,7 +157,7 @@ public class DeclareEncoderDecoder {
 				AlternatePrecedence minerConstr = new AlternatePrecedence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("alternateresponse")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -156,7 +168,7 @@ public class DeclareEncoderDecoder {
 
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("alternatesuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -166,7 +178,7 @@ public class DeclareEncoderDecoder {
 				AlternateSuccession minerConstr = new AlternateSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("chainprecedence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -176,7 +188,7 @@ public class DeclareEncoderDecoder {
 				ChainPrecedence minerConstr = new ChainPrecedence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("chainresponse")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -186,7 +198,7 @@ public class DeclareEncoderDecoder {
 				ChainResponse minerConstr = new ChainResponse(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("chainsuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -196,7 +208,7 @@ public class DeclareEncoderDecoder {
 				ChainSuccession minerConstr = new ChainSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("coexistence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -206,7 +218,7 @@ public class DeclareEncoderDecoder {
 				CoExistence minerConstr = new CoExistence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("notchainsuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -216,7 +228,7 @@ public class DeclareEncoderDecoder {
 				NotChainSuccession minerConstr = new NotChainSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("notcoexistence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -226,7 +238,7 @@ public class DeclareEncoderDecoder {
 				NotCoExistence minerConstr = new NotCoExistence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("notsuccession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -236,7 +248,7 @@ public class DeclareEncoderDecoder {
 				NotSuccession minerConstr = new NotSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("precedence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -246,7 +258,7 @@ public class DeclareEncoderDecoder {
 				Precedence minerConstr = new Precedence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("response")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -256,7 +268,7 @@ public class DeclareEncoderDecoder {
 				Response minerConstr = new Response(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("succession")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -266,7 +278,7 @@ public class DeclareEncoderDecoder {
 				Succession minerConstr = new Succession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("respondedexistence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -276,7 +288,7 @@ public class DeclareEncoderDecoder {
 				RespondedExistence minerConstr = new RespondedExistence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("init")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -286,17 +298,7 @@ public class DeclareEncoderDecoder {
 				Init minerConstr = new Init(taskCharArchive.getTaskChar(params.get(0)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
-			}else if(template.equals("init")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				Init minerConstr = new Init(taskCharArchive.getTaskChar(params.get(0)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("existence")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -306,7 +308,7 @@ public class DeclareEncoderDecoder {
 				Participation minerConstr = new Participation(taskCharArchive.getTaskChar(params.get(0)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}else if(template.equals("absence2")){
 				for(Parameter p : cd.getParameters()){
 					for(ActivityDefinition ad : cd.getBranches(p)){
@@ -316,11 +318,15 @@ public class DeclareEncoderDecoder {
 				AtMostOne minerConstr = new AtMostOne(taskCharArchive.getTaskChar(params.get(0)),support);
 				minerConstr.confidence = confidence;
 				minerConstr.interestFactor = interestFact;
-				output.add(minerConstr);
+				minerFulConstraints.add(minerConstr);
 			}
 		}
-		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(output));
-		return output;
+		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(minerFulConstraints));
+		
+		ConstraintsBag constraintsBag = new ConstraintsBag(taskCharArchive.getTaskChars(), minerFulConstraints);
+		String processModelName = declareMapModel.getName();
+		
+		return new ProcessModel(taskCharArchive, constraintsBag, processModelName);
 	}
 
 	public List<DeclareConstraintTransferObject> getConstraintTOs() {
@@ -331,7 +337,7 @@ public class DeclareEncoderDecoder {
 		return map;
 	}
 
-	public void createModel(){
+	public void createDeclareMap(){
 		Vector<String> activityDefinitions = new Vector<String>();
 		Map<String, DeclareTemplate> templateNameStringDeclareTemplateMap = new HashMap<String, DeclareTemplate>();
 		DeclareTemplate[] declareTemplates = DeclareTemplate.values();

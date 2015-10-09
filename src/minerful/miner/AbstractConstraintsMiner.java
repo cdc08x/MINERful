@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.miner.stats.GlobalStatsTable;
 
 import org.apache.log4j.Logger;
@@ -70,7 +70,7 @@ public abstract class AbstractConstraintsMiner implements ConstraintsMiner {
 	}
 
 	@Override
-	public TaskCharRelatedConstraintsBag discoverConstraints() {
+	public ConstraintsBag discoverConstraints() {
 		return this.discoverConstraints(null);
 	}
 

@@ -15,6 +15,9 @@ public class InputCmdParameters extends ParamsManager {
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
     public static final String INPUT_ENC_PARAM_NAME = "iE";
 	public static final String EVENT_CLASSIFICATION_PARAM_NAME = "eC";
+	public static final String INPUT_LOGFILE_PATH_LONG_PARAM_NAME = "in-log";
+    public static final String INPUT_ENC_PARAM_LONG_NAME = "in-enc";
+	public static final String EVENT_CLASSIFICATION_LONG_PARAM_NAME = "evt-class";
 
 	public enum InputEncoding {
 		xes, strings;
@@ -89,7 +92,7 @@ public class InputCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("language")
-                .withLongOpt("in-enc")
+                .withLongOpt(INPUT_ENC_PARAM_LONG_NAME)
                 .withDescription("input encoding language " + printValues(InputEncoding.values()))
                 .withType(new String())
                 .create(INPUT_ENC_PARAM_NAME)
@@ -97,7 +100,7 @@ public class InputCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("class")
-                .withLongOpt("evt-class")
+                .withLongOpt(EVENT_CLASSIFICATION_LONG_PARAM_NAME)
                 .withDescription("event classification (resp., by activity name, or according to the log-specified pattern) " + printValues(EventClassification.values()))
                 .withType(new String())
                 .create(EVENT_CLASSIFICATION_PARAM_NAME)
@@ -105,7 +108,7 @@ public class InputCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("path")
-                .withLongOpt("in-log")
+                .withLongOpt(INPUT_LOGFILE_PATH_LONG_PARAM_NAME)
                 .withDescription("path to read the log file from")
                 .withType(new String())
                 .create(INPUT_LOGFILE_PATH_PARAM_NAME)

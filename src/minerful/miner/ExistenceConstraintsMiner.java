@@ -10,7 +10,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
@@ -20,9 +20,9 @@ public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner
 	}
     
     @Override
-    public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
+    public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
         if (constraintsBag == null)
-            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
+            constraintsBag = new ConstraintsBag(tasksToQueryFor);
         for (TaskChar task: tasksToQueryFor) {
             LocalStatsWrapper localStats = this.globalStats.statsTable.get(task);
             TaskChar base = task;

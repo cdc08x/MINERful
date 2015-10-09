@@ -4,16 +4,17 @@
  */
 package minerful;
 
+import minerful.concept.ProcessModel;
 import minerful.concept.TaskCharArchive;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.tracemaker.MinerFulTracesMaker;
-import minerful.tracemaker.params.TracesMakerCmdParameters;
+import minerful.stringsmaker.MinerFulStringTracesMaker;
+import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -25,7 +26,7 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 		Options cmdLineOptions = new Options();
 		
 		Options minerfulOptions = MinerFulCmdParameters.parseableOptions(),
-				tracesMakerOptions = TracesMakerCmdParameters.parseableOptions(),
+				tracesMakerOptions = StringTracesMakerCmdParameters.parseableOptions(),
 				systemOptions = SystemCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions();
 		
@@ -61,8 +62,8 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
         		new ViewCmdParameters(
         				cmdLineOptions,
         				args);
-    	TracesMakerCmdParameters tracesMakParams =
-    			new TracesMakerCmdParameters(
+    	StringTracesMakerCmdParameters tracesMakParams =
+    			new StringTracesMakerCmdParameters(
     					cmdLineOptions,
     					args);
         MinerFulCmdParameters minerFulParams =
@@ -83,16 +84,16 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
         
         String[] testBedArray = new String[0];
         
-        testBedArray = new MinerFulTracesMaker().makeTraces(tracesMakParams);
+        testBedArray = new MinerFulStringTracesMaker().makeTraces(tracesMakParams);
 		try {
 			LogParser stringLogParser = new StringLogParser(testBedArray, ClassificationType.NAME);
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-	        TaskCharRelatedConstraintsBag bag = minerSimuStarter.mine(stringLogParser, minerFulParams, viewParams, systemParams, taskCharArchive);
+			ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, viewParams, systemParams, taskCharArchive);
 	        
 	        MinerFulProcessViewerStarter proViewStarter = new MinerFulProcessViewerStarter(); 
-	        proViewStarter.print(bag, viewParams, systemParams, stringLogParser);
+	        proViewStarter.print(processModel, viewParams, systemParams, stringLogParser);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

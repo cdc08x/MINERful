@@ -10,7 +10,7 @@ import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.CouplingRelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
 
@@ -20,6 +20,7 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 
 public class ConflictAndRedundancyResolver {
+	public static final int MAXIMUM_VISIBLE_CONSTRAINTS_FOR_REDUNDANCY_CHECK = 12;
 	public static final boolean DEFAULT_BEHAVIOUR_FOR_REDUNDANCY_CHECK = true;
 	private ProcessModel safeProcess;
 	private boolean checking;
@@ -33,7 +34,6 @@ public class ConflictAndRedundancyResolver {
 			.getCanonicalName());
 	
 	private Set<Constraint>
-		safeNonTotallySupportedConstraints,
 		originalNonRedundantConstraints,
 		notSurelySafeProcessConstraints,
 		conflictingConstraintsInOriginalNonRedundantModel,
@@ -56,19 +56,18 @@ public class ConflictAndRedundancyResolver {
 		this.conflictChecksPerformed = 0;
 		this.redundancyChecksPerformed = 0;
 		this.conflictingConstraints = new TreeSet<Constraint>();
-		this.safeNonTotallySupportedConstraints = new TreeSet<Constraint>();
 		this.redundantConstraints = new TreeSet<Constraint>();
 		this.originalNonRedundantConstraints =
-				LinearConstraintsIndexFactory.getAllConstraints(
-						process.bag.createHierarchyUnredundantCopy()
+				LinearConstraintsIndexFactory.getAllUnmarkedConstraints(
+						process.bag.markSubsumptionRedundantConstraints()
 				);
 		/*
 		 * The blackboard is meant to associate to all constraints a tick,
 		 * whenever the constraint has already been checked
 		 */
 		this.blackboard = new HashMap<Constraint, Boolean>(process.bag.howManyConstraints());
-		TaskCharRelatedConstraintsBag safeBag = process.bag
-				.createCopyPrunedByThreshold(Constraint.MAX_SUPPORT);
+		ConstraintsBag safeBag = process.bag
+				.markConstraintsBelowSupportThreshold(Constraint.MAX_SUPPORT);
 		
 		/*
 		 * Heuristic 1: Consider as safe those constraints that have a support
@@ -76,21 +75,21 @@ public class ConflictAndRedundancyResolver {
 		 * them: the log itself. So, their conjunction cannot be unsatisfiable.
 		 */
 		if (avoidingRedundancy) {
-			TaskCharRelatedConstraintsBag
+			ConstraintsBag
 				emptyBag = safeBag.createEmptyIndexedCopy();
-			this.safeProcess = new ProcessModel(emptyBag);
+			this.safeProcess = new ProcessModel(process.getTaskCharArchive(), emptyBag);
 			Automaton candidateAutomaton = null;
 			
 			this.safeAutomaton = this.safeProcess.buildAlphabetAcceptingAutomaton();
 			
 			Automaton safeAutomatonFirstPass = this.safeProcess.buildAlphabetAcceptingAutomaton();
-			TaskCharRelatedConstraintsBag safeBagFirstPass = safeBag.createEmptyIndexedCopy();
+			ConstraintsBag safeBagFirstPass = safeBag.createEmptyIndexedCopy();
 			
 			// First pass: order constraints by their number of connections (for the sake of computation), then their support, family, confidence interest factor
 			for (Constraint candidateCon : LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(safeBag)) {
 				logger.trace("Checking redundancy of " + candidateCon);
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
-				if (!this.isConstraintAlreadyChecked(candidateCon) && this.checkRedundancy(safeAutomatonFirstPass, safeBagFirstPass, candidateAutomaton, candidateCon)) {
+				if (!candidateCon.isRedundant() && !this.isConstraintAlreadyChecked(candidateCon) && this.checkRedundancy(safeAutomatonFirstPass, safeBagFirstPass, candidateAutomaton, candidateCon)) {
 					safeAutomatonFirstPass = this.intersect(safeAutomatonFirstPass, candidateAutomaton);
 					safeBagFirstPass.add(candidateCon.base, candidateCon);
 				}
@@ -109,7 +108,7 @@ public class ConflictAndRedundancyResolver {
 				}
 			}
 		} else {
-			this.safeProcess = new ProcessModel(safeBag.createHierarchyUnredundantCopy());
+			this.safeProcess = new ProcessModel(process.getTaskCharArchive(), safeBag.markSubsumptionRedundantConstraints());
 			this.safeAutomaton = this.safeProcess.buildAutomaton();
 			for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(safeBag)) {
 //System.out.println("PRESENTATION -- The safe constraint: " + c + " supp: " + c.support + "; conf: " + c.confidence + "; inf.f: " + c.interestFactor + " rex: " + c.getRegularExpression());
@@ -119,7 +118,7 @@ public class ConflictAndRedundancyResolver {
 		}
 
 //System.out.println("PRESENTATION -- The safe automaton:\n" + safeAutomaton.toDot());
-		TaskCharRelatedConstraintsBag unsafeBag = process.bag
+		ConstraintsBag unsafeBag = process.bag
 				.createComplementOfCopyPrunedByThreshold(Constraint.MAX_SUPPORT);
 		for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(unsafeBag)) {
 			blackboard.put(c, false);
@@ -141,20 +140,24 @@ public class ConflictAndRedundancyResolver {
 		return checkRedundancy(this.safeAutomaton, this.safeProcess.bag, candidateAutomaton, candidateCon);
 	}
 	
-	private boolean checkRedundancy(Automaton safeAutomaton, TaskCharRelatedConstraintsBag safeBag, Automaton candidateAutomaton, Constraint candidateCon) {
+	private boolean checkRedundancy(Automaton safeAutomaton, ConstraintsBag safeBag, Automaton candidateAutomaton, Constraint candidateCon) {
 		redundancyChecksPerformed++;
 		// If candidateCon is not redundant, i.e., if the language of safeAutomaton is not a subset of the language of automaton, then candidateCon can be included
 		if (!safeAutomaton.subsetOf(candidateAutomaton)) {
 			return true;
 		} else {
 			logger.trace("Ignoring " + candidateCon + " because it is already implied" +
-					(safeBag.howManyConstraints() < 25 ? " by " + LinearConstraintsIndexFactory.getAllConstraints(safeBag) : ""));
+					(	safeBag.howManyConstraints() < ConflictAndRedundancyResolver.MAXIMUM_VISIBLE_CONSTRAINTS_FOR_REDUNDANCY_CHECK
+						? " by " + LinearConstraintsIndexFactory.getAllConstraints(safeBag)
+						: ""
+					)
+			);
 			this.redundantConstraints.add(candidateCon);
 			return false;
 		}
 	}
 
-	public void resolveConflicts() {
+	public void resolveConflictsOrRedundancies() {
 		this.checking = true;
 		Automaton candidateAutomaton = null;
 		for (Constraint candidateCon : this.notSurelySafeProcessConstraints) {
@@ -168,7 +171,7 @@ public class ConflictAndRedundancyResolver {
 			}
 		}
 
-		safeProcess.bag = safeProcess.bag.createHierarchyUnredundantCopy();
+		safeProcess.bag = safeProcess.bag.markSubsumptionRedundantConstraints();
 		this.checking = false;
 	}
 

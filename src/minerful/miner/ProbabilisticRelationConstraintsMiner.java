@@ -11,11 +11,10 @@ import java.util.Set;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -23,8 +22,6 @@ import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
 import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.CouplingRelationConstraint;
-import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.concept.constraint.relation.NotCoExistence;
 import minerful.concept.constraint.relation.NotSuccession;
@@ -54,33 +51,40 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     }
     
     @Override
-    public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
+    public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
         // Inizialization
         if (constraintsBag == null) {
-            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
+            constraintsBag = new ConstraintsBag(tasksToQueryFor);
         }
         LocalStatsWrapper auxLocalStats = null;
-        Set<Constraint> auxRelCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), taskCharArchive.size()));
+//        Set<Constraint> auxRelCons = super.makeTemporarySet(
+//        		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), taskCharArchive.size()));
+//        for (TaskChar tChUnderAnalysis : tasksToQueryFor) {
+//            auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis);
+//            // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
+//            if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
+//                auxRelCons.addAll(
+//                 this.discoverRelationConstraints(tChUnderAnalysis));
+//            }
+//        }
+//        for (Constraint relCon : auxRelCons) {
+//            constraintsBag.add(relCon.base, relCon);
+//        }
+//        return constraintsBag;
         for (TaskChar tChUnderAnalysis : tasksToQueryFor) {
-            auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis);
-            // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
-            if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
-                auxRelCons.addAll(
-                 this.discoverRelationConstraints(tChUnderAnalysis));
-            }
-        }
-        for (Constraint relCon : auxRelCons) {
-            constraintsBag.add(relCon.base, relCon);
+        	auxLocalStats = this.globalStats.statsTable.get(tChUnderAnalysis);
+        	// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
+        	if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
+        		this.discoverRelationConstraints(tChUnderAnalysis, constraintsBag);
+        	}
         }
         return constraintsBag;
     }
 
     // Very very rough: a little statistical analysis on the trend would be better
     @Override
-    protected Set<? extends Constraint> discoverRelationConstraints(TaskChar pivotTask) {
+    public Set<? extends Constraint> discoverRelationConstraints(TaskChar pivotTask, ConstraintsBag constraintsBag) {
         double	supportForRespondedExistence = 0.0,
-                supportForReversedRespondedExistence = 0.0,
                 supportForResponse = 0.0,
                 supportForAlternateResponse = 0.0,
                 supportForChainResponse = 0.0,
@@ -100,8 +104,9 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
         StatsCell   interplayStats = null,
                     reversedInterplayStats = null;
         Set<Constraint>
-        	relaCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.tasksToQueryFor.size(), this.taskCharArchive.size())),
+        	relaCons = //super.makeTemporarySet(
+//        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.tasksToQueryFor.size(), this.taskCharArchive.size())),
+        		super.makeNavigableSet(),
         	nuRelaCons = super.makeNavigableSet();
         	
         LocalStatsWrapper
@@ -123,8 +128,6 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 searchedParticipationFraction = this.computeParticipationFraction(searchedTask, searchedLocalStats, globalStats.logSize);
                 supportForRespondedExistence =
                         computeSupportForRespondedExistence(interplayStats, pivotAppearances);
-                supportForReversedRespondedExistence =
-                        computeSupportForRespondedExistence(reversedInterplayStats, searchedAppearances);
                 supportForResponse =
                         computeSupportForResponse(interplayStats, pivotAppearances);
                 supportForAlternateResponse =
@@ -132,11 +135,11 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 supportForChainResponse =
                         computeSupportForChainResponse(interplayStats, pivotAppearances);
                 supportForPrecedence =
-                        computeSupportForPrecedence(reversedInterplayStats, searchedAppearances);
+                        computeSupportForPrecedence(interplayStats, pivotAppearances);
                 supportForAlternatePrecedence =
-                        computeSupportForAlternatePrecedence(reversedInterplayStats, searchedAppearances);
+                        computeSupportForAlternatePrecedence(interplayStats, pivotAppearances);
                 supportForChainPrecedence =
-                        computeSupportForChainPrecedence(reversedInterplayStats, searchedAppearances);
+                        computeSupportForChainPrecedence(interplayStats, pivotAppearances);
                 supportForCoExistence =
                         computeSupportForCoExistence(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
                 supportForSuccession =
@@ -151,85 +154,48 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                         computeSupportForNotSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
                 supportForNotChainSuccession =
                         computeSupportForNotChainSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                RespondedExistence responExi =
-                        new RespondedExistence(pivotTask, searchedTask, supportForRespondedExistence);
-                RespondedExistence revResponExi =
-                        new RespondedExistence(searchedTask, pivotTask, supportForReversedRespondedExistence);
-                nuRelaCons.add(responExi);
-                Response respo =
-                        new Response(pivotTask, searchedTask, supportForResponse);
-                nuRelaCons.add(respo);
-                AlternateResponse altRespo =
-                        new AlternateResponse(pivotTask, searchedTask, supportForAlternateResponse);
-                nuRelaCons.add(altRespo);
-                ChainResponse chainRespo =
-                        new ChainResponse(pivotTask, searchedTask, supportForChainResponse);
-                nuRelaCons.add(chainRespo);
-                Precedence precedo =
-                        new Precedence(pivotTask, searchedTask, supportForPrecedence);
-                nuRelaCons.add(precedo);
-                AlternatePrecedence altPrecedo =
-                        new AlternatePrecedence(pivotTask, searchedTask, supportForAlternatePrecedence);
-                nuRelaCons.add(altPrecedo);
-                ChainPrecedence chainPrecedo =
-                        new ChainPrecedence(pivotTask, searchedTask, supportForChainPrecedence);
-                nuRelaCons.add(chainPrecedo);
-                
-                CouplingRelationConstraint coExi = new CoExistence(
-                        responExi,
-                        revResponExi,
-                        supportForCoExistence);
-                nuRelaCons.add(coExi);
-                Succession successio = new Succession(
-                        respo,
-                        precedo,
-                        supportForSuccession);
-                nuRelaCons.add(successio);
-                AlternateSuccession altSuccessio = new AlternateSuccession(
-                        altRespo,
-                        altPrecedo,
-                        supportForAlternateSuccession);
-                nuRelaCons.add(altSuccessio);
-                ChainSuccession chainSuccessio = new ChainSuccession(
-                        chainRespo,
-                        chainPrecedo,
-                        supportForChainSuccession);
-                nuRelaCons.add(chainSuccessio);
-                
-                NotCoExistence notCoExi =
-                        new NotCoExistence(pivotTask, searchedTask, supportForNotCoExistence);
-                nuRelaCons.add(notCoExi);
-                NotSuccession notSuccessio =
-                        new NotSuccession(pivotTask, searchedTask, supportForNotSuccession);
-                nuRelaCons.add(notSuccessio);
-                NotChainSuccession notChainSuccessio =
-                        new NotChainSuccession(pivotTask, searchedTask, supportForNotChainSuccession);
-                nuRelaCons.add(notChainSuccessio);
-                
-                precedo.setConstraintWhichThisIsBasedUpon(revResponExi);
-                altPrecedo.setConstraintWhichThisIsBasedUpon(precedo);
-                chainPrecedo.setConstraintWhichThisIsBasedUpon(altPrecedo);
-                respo.setConstraintWhichThisIsBasedUpon(responExi);
-                altRespo.setConstraintWhichThisIsBasedUpon(respo);
-                chainRespo.setConstraintWhichThisIsBasedUpon(altRespo);
-                
-                successio.setConstraintWhichThisIsBasedUpon(coExi);
-                altSuccessio.setConstraintWhichThisIsBasedUpon(successio);
-                chainSuccessio.setConstraintWhichThisIsBasedUpon(altSuccessio);
-                
-                notSuccessio.setConstraintWhichThisIsBasedUpon(notChainSuccessio);
-                notCoExi.setConstraintWhichThisIsBasedUpon(notSuccessio);
-                
-                notCoExi.setOpposedTo(coExi);
-                notSuccessio.setOpposedTo(successio);
-                notChainSuccessio.setOpposedTo(chainSuccessio);
+
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new RespondedExistence(pivotTask, searchedTask), supportForRespondedExistence, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new Response(pivotTask, searchedTask), supportForResponse, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new AlternateResponse(pivotTask, searchedTask), supportForAlternateResponse, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new ChainResponse(pivotTask, searchedTask), supportForChainResponse, pivotParticipationFraction, searchedParticipationFraction));
+
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new Precedence(searchedTask, pivotTask), supportForPrecedence, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new AlternatePrecedence(searchedTask, pivotTask), supportForAlternatePrecedence, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new ChainPrecedence(searchedTask, pivotTask), supportForChainPrecedence, pivotParticipationFraction, searchedParticipationFraction));
+
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new CoExistence(pivotTask, searchedTask), supportForCoExistence, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new Succession(pivotTask, searchedTask), supportForSuccession, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new AlternateSuccession(pivotTask, searchedTask), supportForAlternateSuccession, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new ChainSuccession(pivotTask, searchedTask), supportForChainSuccession, pivotParticipationFraction, searchedParticipationFraction));
+
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new NotCoExistence(pivotTask, searchedTask), supportForNotCoExistence, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new NotSuccession(pivotTask, searchedTask), supportForNotSuccession, pivotParticipationFraction, searchedParticipationFraction));
+                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new NotChainSuccession(pivotTask, searchedTask), supportForNotChainSuccession, pivotParticipationFraction, searchedParticipationFraction));
+
+//                precedo.setConstraintWhichThisIsBasedUpon(responExi);
+//                altPrecedo.setConstraintWhichThisIsBasedUpon(precedo);
+//                chainPrecedo.setConstraintWhichThisIsBasedUpon(altPrecedo);
+//                respo.setConstraintWhichThisIsBasedUpon(responExi);
+//                altRespo.setConstraintWhichThisIsBasedUpon(respo);
+//                chainRespo.setConstraintWhichThisIsBasedUpon(altRespo);
+//                
+//                successio.setConstraintWhichThisIsBasedUpon(coExi);
+//                altSuccessio.setConstraintWhichThisIsBasedUpon(successio);
+//                chainSuccessio.setConstraintWhichThisIsBasedUpon(altSuccessio);
+//                
+//                notSuccessio.setConstraintWhichThisIsBasedUpon(notChainSuccessio);
+//                notCoExi.setConstraintWhichThisIsBasedUpon(notSuccessio);
+//                
+//                notCoExi.setOpposedTo(coExi);
+//                notSuccessio.setOpposedTo(successio);
+//                notChainSuccessio.setOpposedTo(chainSuccessio);
             }
 
             Iterator<Constraint> constraintsIterator = nuRelaCons.iterator();
             RelationConstraint currentConstraint = null;
             while (constraintsIterator.hasNext()) {
             	currentConstraint = (RelationConstraint) constraintsIterator.next();
-            	refineByComputingRelevanceMetrics(currentConstraint, pivotParticipationFraction, searchedParticipationFraction);
             	if (this.isForeseeingDistances()) {
             		if (currentConstraint.getImplicationVerse() == ConstraintImplicationVerse.BACKWARD)
             			refineByComputingDistances(currentConstraint, searchedLocalStats, pivotTask);
@@ -244,6 +210,16 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
         }
         return relaCons;
     }
+
+	protected Constraint updateConstraint(ConstraintsBag constraintsBag,
+			TaskChar indexingParam, Constraint searchedCon,
+			double support, double pivotParticipationFraction, double searchedParticipationFraction) {
+		Constraint con = constraintsBag.get(indexingParam, searchedCon);
+		con.support = support;
+		con.evaluatedOnLog = true;
+		refineByComputingRelevanceMetrics(con, pivotParticipationFraction, searchedParticipationFraction);
+		return con;
+	}
 
 	private double computeSupportForNotChainSuccession(
             StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
@@ -305,10 +281,10 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     }
 
     private double computeSupportForChainPrecedence(
-            StatsCell reversedInterplayStats, long searchedAppearances) {
-        if (reversedInterplayStats.distances.get(-1) != null) {
-            double support = reversedInterplayStats.distances.get(-1);
-            support /= searchedAppearances;
+            StatsCell interplayStats, long appearances) {
+        if (interplayStats.distances.get(-1) != null) {
+            double support = interplayStats.distances.get(-1);
+            support /= appearances;
             return support;
         } else {
             return 0;
@@ -316,25 +292,25 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     }
 
     private double computeSupportForAlternatePrecedence(
-            StatsCell reversedInterplayStats, long searchedAppearances) {
-        double antiSupport = reversedInterplayStats.betweenBackwards;
-        antiSupport += reversedInterplayStats.howManyTimesItNeverAppearedBackwards();
-        antiSupport /= searchedAppearances;
+            StatsCell interplayStats, long appearances) {
+        double antiSupport = interplayStats.betweenBackwards;
+        antiSupport += interplayStats.howManyTimesItNeverAppearedBackwards();
+        antiSupport /= appearances;
         return Constraint.complementSupport(antiSupport);
     }
 
     private double computeSupportForPrecedence(
-            StatsCell reversedInterplayStats, long searchedAppearances) {
-        double antiSupport = reversedInterplayStats.howManyTimesItNeverAppearedBackwards();
-        antiSupport /= searchedAppearances;
+            StatsCell interplayStats, long appearances) {
+        double antiSupport = interplayStats.howManyTimesItNeverAppearedBackwards();
+        antiSupport /= appearances;
         return Constraint.complementSupport(antiSupport);
     }
 
     private double computeSupportForChainResponse(
-            StatsCell interplayStats, long pivotAppearances) {
+            StatsCell interplayStats, long appearances) {
         if (interplayStats.distances.get(1) != null) {
             double support = interplayStats.distances.get(1);
-            support /= pivotAppearances;
+            support /= appearances;
             return support;
         } else {
             return 0;
@@ -342,24 +318,24 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     }
 
     private double computeSupportForAlternateResponse(
-            StatsCell interplayStats, long pivotAppearances) {
+            StatsCell interplayStats, long appearances) {
         double antiSupport = interplayStats.betweenOnwards;
         antiSupport += interplayStats.howManyTimesItNeverAppearedOnwards();
-        antiSupport /= pivotAppearances;
+        antiSupport /= appearances;
         return Constraint.complementSupport(antiSupport);
     }
 
     private double computeSupportForResponse(
-            StatsCell interplayStats, long pivotAppearances) {
+            StatsCell interplayStats, long appearances) {
         double antiSupport = interplayStats.howManyTimesItNeverAppearedOnwards();
-        antiSupport /= pivotAppearances;
+        antiSupport /= appearances;
         return Constraint.complementSupport(antiSupport);
     }
 
     private double computeSupportForRespondedExistence(
-            StatsCell interplayStats, long pivotAppearances) {
+            StatsCell interplayStats, long appearances) {
         double antiSupport = interplayStats.howManyTimesItNeverAppearedAtAll();
-        antiSupport /= pivotAppearances;
+        antiSupport /= appearances;
         return Constraint.complementSupport(antiSupport);
     }
 
@@ -379,7 +355,8 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 		return relCon;
     }
     
-    public static RelationConstraint refineByComputingRelevanceMetrics(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
+    public static RelationConstraint refineByComputingRelevanceMetrics(Constraint con, double pivotParticipationFraction, double searchedParticipationFraction) {
+    	RelationConstraint relCon = (RelationConstraint) con;
     	relCon = refineByComputingConfidenceLevel(relCon, pivotParticipationFraction, searchedParticipationFraction);
     	if (relCon.getSubFamily() != RelationConstraintSubFamily.NEGATIVE || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
     		relCon.interestFactor =

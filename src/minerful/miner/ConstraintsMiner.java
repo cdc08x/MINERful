@@ -4,13 +4,13 @@ import java.util.Set;
 
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 
 public interface ConstraintsMiner {
-	TaskCharRelatedConstraintsBag discoverConstraints();
+	ConstraintsBag discoverConstraints();
 
-	TaskCharRelatedConstraintsBag discoverConstraints(
-			TaskCharRelatedConstraintsBag constraintsBag);
+	ConstraintsBag discoverConstraints(
+			ConstraintsBag constraintsBag);
 
 	long howManyPossibleConstraints();
 

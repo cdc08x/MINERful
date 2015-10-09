@@ -5,7 +5,7 @@ import org.deckfour.xes.model.XLog;
 import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
 import minerful.concept.ProcessModel;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.io.encdec.declare.DeclareEncoderDecoder;
 import minerful.logparser.XesLogParser;
 import minerful.logparser.LogEventClassifier.ClassificationType;
@@ -16,7 +16,6 @@ import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 
 public class MinerFulLauncher {
-//	public static final String TEST_OUTPUT = "~/test.declare-xml";
 	private InputCmdParameters inputParams;
 	private MinerFulCmdParameters minerFulParams;
 	private ViewCmdParameters viewParams;
@@ -82,9 +81,9 @@ public class MinerFulLauncher {
 	public DeclareMap mine(XLog xLog) {
 		ClassificationType classiType = fromInputParamToXesLogClassificationType(this.inputParams.eventClassification);
 		XesLogParser logParser = new XesLogParser(xLog, classiType);
-		TaskCharRelatedConstraintsBag bag = minerFulStarter.mine(logParser, minerFulParams, viewParams, systemParams, logParser.getTaskCharArchive());
+		ProcessModel processModel = minerFulStarter.mine(logParser, minerFulParams, viewParams, systemParams, logParser.getTaskCharArchive());
 
-		return new DeclareEncoderDecoder(new ProcessModel(bag)).getMap();
+		return new DeclareEncoderDecoder(processModel).getMap();
 	}
 	
 	public static ClassificationType fromInputParamToXesLogClassificationType(EventClassification evtClassInputParam) {

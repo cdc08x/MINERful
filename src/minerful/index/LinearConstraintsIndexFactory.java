@@ -16,7 +16,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.RelationConstraint;
 
 public class LinearConstraintsIndexFactory {
@@ -114,8 +114,8 @@ public class LinearConstraintsIndexFactory {
 		}
 	}
 	
-	public static TaskCharRelatedConstraintsBag indexByTaskCharAndSupport(TaskCharRelatedConstraintsBag bag) {
-		TaskCharRelatedConstraintsBag bagCopy = (TaskCharRelatedConstraintsBag) bag.clone();
+	public static ConstraintsBag createConstraintsBagCloneIndexedByTaskCharAndSupport(ConstraintsBag bag) {
+		ConstraintsBag bagCopy = (ConstraintsBag) bag.clone();
 		TreeSet<Constraint> reindexed = null;
         for (TaskChar key : bagCopy.getTaskChars()) {
         	reindexed = new TreeSet<Constraint>(new SupportBasedComparator());
@@ -125,8 +125,8 @@ public class LinearConstraintsIndexFactory {
 		return bagCopy;
 	}
 	
-	public static TaskCharRelatedConstraintsBag indexByImpliedTaskChar(TaskCharRelatedConstraintsBag bag) {
-		TaskCharRelatedConstraintsBag bagCopy = new TaskCharRelatedConstraintsBag(bag.getTaskChars());
+	public static ConstraintsBag indexByImpliedTaskChar(ConstraintsBag bag) {
+		ConstraintsBag bagCopy = new ConstraintsBag(bag.getTaskChars());
         for (TaskChar key : bag.getTaskChars()) {
         	for (Constraint c : bag.getConstraintsOf(key)) {
         		if (c instanceof RelationConstraint) {
@@ -138,8 +138,8 @@ public class LinearConstraintsIndexFactory {
         return bagCopy;
 	}
 	
-	public static TaskCharRelatedConstraintsBag indexByTaskCharAndInterest(TaskCharRelatedConstraintsBag bag) {
-		TaskCharRelatedConstraintsBag bagCopy = (TaskCharRelatedConstraintsBag) bag.clone();
+	public static ConstraintsBag createConstraintsBagCloneIndexedByTaskCharAndInterest(ConstraintsBag bag) {
+		ConstraintsBag bagCopy = (ConstraintsBag) bag.clone();
 		TreeSet<Constraint> reindexed = null;
 		for (TaskChar key : bagCopy.getTaskChars()) {
 			reindexed = new TreeSet<Constraint>(new InterestBasedComparator());
@@ -154,7 +154,7 @@ public class LinearConstraintsIndexFactory {
 	 * @param bag
 	 * @return
 	 */
-	public static Map<TaskChar, Map<Class<? extends Constraint>, SortedSet<Constraint>>> indexByTaskCharConstraintTypeAndSupport(TaskCharRelatedConstraintsBag bag) {
+	public static Map<TaskChar, Map<Class<? extends Constraint>, SortedSet<Constraint>>> indexByTaskCharConstraintTypeAndSupport(ConstraintsBag bag) {
 		Map<TaskChar, Map<Class<? extends Constraint>, SortedSet<Constraint>>> index =
 				new HashMap<TaskChar,
 				Map<Class<? extends Constraint>, SortedSet<Constraint>>>(bag.getTaskChars().size());
@@ -186,7 +186,7 @@ public class LinearConstraintsIndexFactory {
 		return localIndex;
 	}
 	
-	public static Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> indexByImplyingAndImplied(TaskCharRelatedConstraintsBag bag) {
+	public static Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> indexByImplyingAndImplied(ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map = new TreeMap<TaskChar, Map<TaskChar,NavigableSet<Constraint>>>();
 		Map<TaskChar, NavigableSet<Constraint>> subMap = null;
 		TaskCharSet impliedSet = null;
@@ -212,7 +212,7 @@ public class LinearConstraintsIndexFactory {
 		return map;
 	}
 
-	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(TaskCharRelatedConstraintsBag bag) {
+	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
@@ -249,7 +249,7 @@ public class LinearConstraintsIndexFactory {
 		return constraints;
 	}
 	
-	public static Map<TaskChar, Set<TaskChar>> createMapOfConnections(TaskCharRelatedConstraintsBag bag) {
+	public static Map<TaskChar, Set<TaskChar>> createMapOfConnections(ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
 		
@@ -285,7 +285,7 @@ public class LinearConstraintsIndexFactory {
 		return mapOfConnections;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraints(TaskCharRelatedConstraintsBag bag) {
+	public static SortedSet<Constraint> getAllConstraints(ConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>();
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
@@ -295,7 +295,19 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedBySupport(TaskCharRelatedConstraintsBag bag) {
+	public static SortedSet<Constraint> getAllUnmarkedConstraints(ConstraintsBag bag) {
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>();
+		for (TaskChar tChr : bag.getTaskChars()) {
+			for (Constraint con : bag.getConstraintsOf(tChr)) {
+				if (!con.isMarkedForExclusion()) {
+					allConstraints.add(con);
+				}
+			}
+		}
+		return allConstraints;
+	}
+	
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupport(ConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
@@ -305,7 +317,7 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedBySupportConfidenceInterestFactor(TaskCharRelatedConstraintsBag bag) {
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportConfidenceInterestFactor(ConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportConfidenceInterestFactorBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
@@ -315,7 +327,7 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceInterestFactorHierarchyLevel(TaskCharRelatedConstraintsBag bag) {
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
@@ -325,7 +337,7 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedByInterest(TaskCharRelatedConstraintsBag bag) {
+	public static SortedSet<Constraint> getAllConstraintsSortedByInterest(ConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new InterestBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
@@ -335,7 +347,7 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedByStrictness(TaskCharRelatedConstraintsBag bag) {
+	public static SortedSet<Constraint> getAllConstraintsSortedByStrictness(ConstraintsBag bag) {
 		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new HierarchyBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {

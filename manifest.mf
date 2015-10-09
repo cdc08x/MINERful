@@ -8,7 +8,7 @@ Class-Path: lib/automaton.jar
  lib/DeclareVisualizer.jar 
  lib/dom4j-1.6.1.jar 
  lib/gson-1.4.jar 
- lib/guava-11.0.2.jar 
+ lib/guava-16.0.1.jar 
  lib/javassist-3.12.1.GA.jar 
  lib/jfreechart-1.0.14.jar 
  lib/jgraph.jar 
@@ -18,7 +18,7 @@ Class-Path: lib/automaton.jar
  lib/OpenXES-XStream.jar 
  lib/reflections-0.9.5.jar 
  lib/reflections-0.9.8.jar 
- lib/reflections-0.9.8-uberjar 
+ lib/reflections-0.9.8-uberjar.jar 
  lib/resources.jar 
  lib/slf4j-api-1.6.1.jar 
  lib/slf4j-simple-1.6.1.jar 

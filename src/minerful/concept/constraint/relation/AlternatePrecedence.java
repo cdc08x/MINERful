@@ -36,6 +36,6 @@ public class AlternatePrecedence extends Precedence {
 	
 	@Override
 	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
-		return new Precedence(base, implied);
+		return new Precedence(implied, base);
 	}
 }

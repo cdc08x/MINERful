@@ -6,11 +6,15 @@ import java.util.Set;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
+import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
 import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.relation.NotChainSuccession;
+import minerful.concept.constraint.relation.NotSuccession;
+import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
@@ -21,46 +25,56 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     }
     
     @Override
-    public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
+    public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
         if (constraintsBag == null) {
-            constraintsBag = new TaskCharRelatedConstraintsBag(this.tasksToQueryFor);
+            constraintsBag = new ConstraintsBag(this.tasksToQueryFor);
         }
         LocalStatsWrapper localStats = null;
-        double baseParticipationFraction = 0.0;
+        double pivotParticipationFraction = 0.0;
 
-        for (TaskChar base: tasksToQueryFor) {
-        	localStats = this.globalStats.statsTable.get(base);
+        for (TaskChar pivot: tasksToQueryFor) {
+        	localStats = this.globalStats.statsTable.get(pivot);
 
         	// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it.
         	// Thus, it is perfectly useless to indagate over it!
         	if (localStats.getTotalAmountOfOccurrences() > 0) {
-	        	Constraint participation = this.discoverParticipationConstraint(base, localStats, this.globalStats.logSize);
-	        	baseParticipationFraction = participation.support;
+	        	Constraint participation = this.discoverParticipationConstraint(pivot, localStats, this.globalStats.logSize);
+	        	pivotParticipationFraction = participation.support;
 
-	        	refineByComputingInterestLevels(participation, baseParticipationFraction);
-	    		constraintsBag.add(base, participation);
+	        	updateConstraint(constraintsBag, pivot, participation, participation.support, pivotParticipationFraction);
 
-	            Constraint uniqueness = this.discoverAtMostOnceConstraint(base, localStats, this.globalStats.logSize);
-	            refineByComputingInterestLevels(uniqueness, baseParticipationFraction);
-	        	constraintsBag.add(base, uniqueness);
+	        	Constraint atMostOne = this.discoverAtMostOnceConstraint(pivot, localStats, this.globalStats.logSize);
+	        	updateConstraint(constraintsBag, pivot, atMostOne, atMostOne.support, pivotParticipationFraction);
 	            
-	            Constraint init = this.discoverInitConstraint(base, localStats, this.globalStats.logSize);
-	            refineByComputingInterestLevels(init, baseParticipationFraction);
-	            init.setConstraintWhichThisIsBasedUpon(participation);
-	            constraintsBag.add(base, init);
+	        	Constraint init = this.discoverInitConstraint(pivot, localStats, this.globalStats.logSize);
+	        	updateConstraint(constraintsBag, pivot, init, init.support, pivotParticipationFraction);
 	            
-	            Constraint end = this.discoverEndConstraint(base, localStats, this.globalStats.logSize);
-	            refineByComputingInterestLevels(end, baseParticipationFraction);
-	            end.setConstraintWhichThisIsBasedUpon(participation);
-	            constraintsBag.add(base, end);
+	            Constraint end = this.discoverEndConstraint(pivot, localStats, this.globalStats.logSize);
+	        	updateConstraint(constraintsBag, pivot, end, end.support, pivotParticipationFraction);
 	            
 	            if (hasValuesAboveThresholds(participation)) this.computedConstraintsAboveThresholds++;
-	            if (hasValuesAboveThresholds(uniqueness)) this.computedConstraintsAboveThresholds++;
+	            if (hasValuesAboveThresholds(atMostOne)) this.computedConstraintsAboveThresholds++;
 	            if (hasValuesAboveThresholds(init)) this.computedConstraintsAboveThresholds++;
 	            if (hasValuesAboveThresholds(end)) this.computedConstraintsAboveThresholds++;
         	}
         }
         return constraintsBag;
+    }
+
+	protected Constraint updateConstraint(ConstraintsBag constraintsBag,
+			TaskChar indexingParam, Constraint searchedCon,
+			double support, double pivotParticipationFraction) {
+		Constraint con = constraintsBag.get(indexingParam, searchedCon);
+		con.support = support;
+		con.evaluatedOnLog = true;
+		refineByComputingRelevanceMetrics(con, pivotParticipationFraction);
+		return con;
+	}
+
+    public static Constraint refineByComputingRelevanceMetrics(Constraint con, double pivotParticipationFraction) {
+    	con.confidence = con.support * pivotParticipationFraction;
+    	con.interestFactor = con.support * pivotParticipationFraction * pivotParticipationFraction;
+    	return con;
     }
 
     @Override
@@ -114,16 +128,5 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             }
 //        }
 //        return new End(base, 0);
-    }
-
-    public static Constraint refineByComputingConfidenceLevel(Constraint con, double baseParticipationFraction) {
-    	con.confidence = con.support * baseParticipationFraction;
-    	return con;
-    }
-    
-    public static Constraint refineByComputingInterestLevels(Constraint con, double baseParticipationFraction) {
-    	refineByComputingConfidenceLevel(con, baseParticipationFraction);
-    	con.interestFactor = con.support * baseParticipationFraction * baseParticipationFraction;
-    	return con;
     }
 }

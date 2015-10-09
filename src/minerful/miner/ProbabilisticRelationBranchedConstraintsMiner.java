@@ -12,7 +12,7 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.TaskCharSetFactory;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.ChainPrecedence;
@@ -77,10 +77,10 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 	}
 
 	@Override
-	public TaskCharRelatedConstraintsBag discoverConstraints(TaskCharRelatedConstraintsBag constraintsBag) {
+	public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
         // Initialization
         if (constraintsBag == null) {
-            constraintsBag = new TaskCharRelatedConstraintsBag(tasksToQueryFor);
+            constraintsBag = new ConstraintsBag(tasksToQueryFor);
         }
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxCons = super.makeTemporarySet();
@@ -91,7 +91,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
             if (auxLocalStats.getTotalAmountOfOccurrences() > 0) {
             	logger.info("Evaluating constraints for: " + tChUnderAnalysis + "... ");
             	
-                auxCons.addAll(this.discoverRelationConstraints(tChUnderAnalysis));
+                auxCons.addAll(this.discoverRelationConstraints(tChUnderAnalysis, constraintsBag));
                 
                 logger.info("Done.");
             }
@@ -107,7 +107,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 	}
 	
 	@Override
-	protected Set<Constraint> discoverRelationConstraints(TaskChar taskChUnderAnalysis) {
+	protected Set<Constraint> discoverRelationConstraints(TaskChar taskChUnderAnalysis, ConstraintsBag constraintsBag) {
 		ConstraintIndexHasseMaker
 			hasseOutMaker = new ConstraintIndexHasseMaker(this.taskCharArchive, this.branchingLimit, taskChUnderAnalysis),
 			hasseInMaker = new ConstraintIndexHasseMaker(this.taskCharArchive, this.branchingLimit, taskChUnderAnalysis);

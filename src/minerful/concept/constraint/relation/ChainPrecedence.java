@@ -36,6 +36,6 @@ public class ChainPrecedence extends AlternatePrecedence {
 	
 	@Override
 	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
-		return new AlternatePrecedence(base, implied);
+		return new AlternatePrecedence(implied, base);
 	}
 }

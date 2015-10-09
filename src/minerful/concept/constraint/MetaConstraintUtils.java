@@ -41,14 +41,14 @@ public class MetaConstraintUtils {
 	public static int NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES = ALL_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES.size();
 	public static int NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES = ALL_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES.size();
 
-	public static Set<Constraint> createHierarchicalLinks(Set<Constraint> constraints) {
+	public static Collection<Constraint> createHierarchicalLinks(Collection<Constraint> constraints) {
 		TreeSet<Constraint> treeConSet = new TreeSet<Constraint>(constraints);
 		for (Constraint con : constraints) {
 			Constraint constraintWhichThisShouldBeBasedUpon = con.getConstraintWhichThisShouldBeBasedUpon();
 			if (		constraintWhichThisShouldBeBasedUpon != null
 					&&	treeConSet.contains(constraintWhichThisShouldBeBasedUpon)
 				) {
-				con.setConstraintWhichThisIsBasedUpon(constraintWhichThisShouldBeBasedUpon);
+				con.setConstraintWhichThisIsBasedUpon(treeConSet.tailSet(constraintWhichThisShouldBeBasedUpon).first());
 			}
 			if (con.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
 				CouplingRelationConstraint coReCon = (CouplingRelationConstraint) con;
@@ -200,9 +200,14 @@ public class MetaConstraintUtils {
 		return	howManyPossibleRelationConstraints(numOfTasksToQueryFor, alphabetSize) +
 				howManyPossibleExistenceConstraints(numOfTasksToQueryFor);
 	}
+	
+	public static int howManyPossibleConstraints(int alphabetSize) {
+		return	howManyPossibleRelationConstraints(alphabetSize, alphabetSize) +
+				howManyPossibleExistenceConstraints(alphabetSize);
+	}
 
 	/* The second coolest method I ever coded! */
-	public Collection<? extends Constraint> getAllRelationConstraints(TaskChar implying, TaskChar implied) {
+	public static Collection<Constraint> getAllRelationConstraints(TaskChar param1, TaskChar param2) {
 		Collection<Constraint> relCons = new ArrayList<Constraint>();
 
 		Collection<Class<? extends Constraint>> relationConstraintTemplates = ALL_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES;
@@ -212,7 +217,7 @@ public class MetaConstraintUtils {
 			try {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class, Double.TYPE);
-				relCons.add(tmpConstructor.newInstance(implying, implied, 0.0));
+				relCons.add(tmpConstructor.newInstance(param1, param2, 0.0));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -224,7 +229,7 @@ public class MetaConstraintUtils {
 	}
 	
 	/* The third coolest method I ever coded! */
-	public Collection<Constraint> getAllExistenceConstraints(TaskChar base) {
+	public static Collection<Constraint> getAllExistenceConstraints(TaskChar base) {
 		Collection<Constraint> exiCons = new ArrayList<Constraint>();
 
 		Collection<Class<? extends Constraint>> existenceConstraintTypeClasses = ALL_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES;

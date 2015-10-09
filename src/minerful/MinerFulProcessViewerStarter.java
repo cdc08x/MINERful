@@ -9,8 +9,9 @@ import java.util.NavigableMap;
 
 import javax.xml.bind.JAXBException;
 
+import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.ConstraintsPrinter;
 import minerful.logparser.LogParser;
@@ -58,8 +59,8 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 
 	}
 	
-	public void print(TaskCharRelatedConstraintsBag bag, NavigableMap<Constraint, String> additionalCnsIndexedInfo, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
-		ConstraintsPrinter printer = new ConstraintsPrinter(bag, viewParams.supportThreshold, viewParams.interestThreshold, additionalCnsIndexedInfo);
+	public void print(ProcessModel processModel, NavigableMap<Constraint, String> additionalCnsIndexedInfo, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
+		ConstraintsPrinter printer = new ConstraintsPrinter(processModel, viewParams.supportThreshold, viewParams.interestThreshold, additionalCnsIndexedInfo);
 		PrintWriter outWriter = null;
 
 		if (viewParams.machineReadableResults) {
@@ -91,12 +92,13 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 			}
         }
 
+        ConstraintsBag bagClone = null;
         switch (viewParams.constraintsSorting) {
 		case support:
-			bag = LinearConstraintsIndexFactory.indexByTaskCharAndSupport(bag);
+			bagClone = LinearConstraintsIndexFactory.createConstraintsBagCloneIndexedByTaskCharAndSupport(processModel.bag);
 			break;
 		case interest:
-			bag = LinearConstraintsIndexFactory.indexByTaskCharAndInterest(bag);
+			bagClone = LinearConstraintsIndexFactory.createConstraintsBagCloneIndexedByTaskCharAndInterest(processModel.bag);
 		case type:
 		default:
 			break;
@@ -225,9 +227,9 @@ public class MinerFulProcessViewerStarter extends AbstractMinerFulStarter {
 		}
 	}
 
-	public void print(TaskCharRelatedConstraintsBag bag,
+	public void print(ProcessModel processModel,
 			ViewCmdParameters viewParams, SystemCmdParameters systemParams,
 			LogParser logParser) {
-		this.print(bag, null, viewParams, systemParams, logParser);
+		this.print(processModel, null, viewParams, systemParams, logParser);
 	}
 }

@@ -18,14 +18,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
+import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
-import minerful.concept.constraint.TaskCharRelatedConstraintsBag;
+import minerful.concept.constraint.ConstraintsBag;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
 import minerful.miner.core.MinerFulKBCore;
+import minerful.miner.core.MinerFulPruningCore;
 import minerful.miner.core.MinerFulQueryingCore;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
@@ -37,8 +39,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulMinerStarter extends AbstractMinerFulStarter {
-
-	public static final String MINERFUL_XMLNS = "https://github.com/cdc08x/MINERful/";
 
 	@Override
 	public Options setupOptions() {
@@ -103,16 +103,16 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		TaskCharRelatedConstraintsBag bag = minerMinaStarter.mine(logParser,
+		ProcessModel processModel = minerMinaStarter.mine(logParser,
 				minerFulParams, viewParams, systemParams, taskCharArchive);
 
-		new MinerFulProcessViewerStarter().print(bag, viewParams, systemParams,
+		new MinerFulProcessViewerStarter().print(processModel, viewParams, systemParams,
 				logParser);
 
 		if (minerFulParams.processSchemeOutputFile != null) {
 			File procSchmOutFile = minerFulParams.processSchemeOutputFile;
 			try {
-				marshalMinedProcessScheme(bag, procSchmOutFile);
+				marshalMinedProcessScheme(processModel, procSchmOutFile);
 			} catch (PropertyException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -165,16 +165,16 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 	}
 
 	public static void marshalMinedProcessScheme(
-			TaskCharRelatedConstraintsBag bag, File procSchmOutFile)
+			ProcessModel processModel, File procSchmOutFile)
 			throws JAXBException, PropertyException, FileNotFoundException,
 			IOException {
-		String pkgName = bag.getClass().getCanonicalName().toString();
+		String pkgName = processModel.getClass().getCanonicalName().toString();
 		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
 		JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
 		Marshaller marsh = jaxbCtx.createMarshaller();
 		marsh.setProperty("jaxb.formatted.output", true);
 		StringWriter strixWriter = new StringWriter();
-		marsh.marshal(bag, strixWriter);
+		marsh.marshal(processModel, strixWriter);
 		strixWriter.flush();
 		StringBuffer strixBuffer = strixWriter.getBuffer();
 
@@ -182,21 +182,21 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		strixBuffer.replace(
 				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
 				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-				" xmlns=\"" + MinerFulMinerStarter.MINERFUL_XMLNS + "\"");
+				" xmlns=\"" + ProcessModel.MINERFUL_XMLNS + "\"");
 		FileWriter strixFileWriter = new FileWriter(procSchmOutFile);
 		strixFileWriter.write(strixBuffer.toString());
 		strixFileWriter.flush();
 		strixFileWriter.close();
 	}
 
-	public TaskCharRelatedConstraintsBag mine(LogParser logParser,
+	public ProcessModel mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams,
 			SystemCmdParameters systemParams, Character[] alphabet) {
 		TaskCharArchive taskCharArchive = new TaskCharArchive(alphabet);
 		return this.mine(logParser, minerFulParams, viewParams, systemParams, taskCharArchive);
 	}
 
-	public TaskCharRelatedConstraintsBag mine(LogParser logParser,
+	public ProcessModel mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams,
 			SystemCmdParameters systemParams, TaskCharArchive taskCharArchive) {
 		GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
@@ -205,8 +205,14 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		System.gc();
 
-		return queryForConstraints(logParser, minerFulParams, viewParams,
-				taskCharArchive, globalStatsTable);
+		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
+
+		queryForConstraints(logParser, minerFulParams, viewParams,
+				taskCharArchive, globalStatsTable, proMod.bag);
+
+		System.gc();
+		
+		return pruneConstraints(proMod, minerFulParams, viewParams);
 	}
 
 	private GlobalStatsTable computeKB(LogParser logParser,
@@ -259,12 +265,11 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		return globalStatsTable;
 	}
 
-	private TaskCharRelatedConstraintsBag queryForConstraints(
+	private ConstraintsBag queryForConstraints(
 			LogParser logParser, MinerFulCmdParameters minerFulParams,
 			ViewCmdParameters viewParams, TaskCharArchive taskCharArchive,
-			GlobalStatsTable globalStatsTable) {
+			GlobalStatsTable globalStatsTable, ConstraintsBag bag) {
 		int coreNum = 0;
-		TaskCharRelatedConstraintsBag bag = new TaskCharRelatedConstraintsBag();
 		long before = 0, after = 0;
 		if (minerFulParams.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
 			Collection<Set<TaskChar>> taskCharSubSets =
@@ -278,7 +283,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				listOfMinerFulCores.add(
 						new MinerFulQueryingCore(coreNum++,
 								logParser, minerFulParams, viewParams,
-								taskCharArchive, globalStatsTable, taskCharSubset));
+								taskCharArchive, globalStatsTable, taskCharSubset, bag));
 			}
 			
 //			ExecutorService executor = Executors
@@ -287,9 +292,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			
 			try {
 				before = System.currentTimeMillis();
-				for (Future<TaskCharRelatedConstraintsBag> subBag : executor
+				for (Future<ConstraintsBag> subBag : executor
 						.invokeAll(listOfMinerFulCores)) {
-					bag.merge(subBag.get());
+					subBag.get();
 				}
 				after = System.currentTimeMillis();
 			} catch (InterruptedException | ExecutionException e) {
@@ -300,12 +305,26 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		} else {
 			MinerFulQueryingCore minerFulQueryingCore = new MinerFulQueryingCore(coreNum++,
 					logParser, minerFulParams, viewParams, taskCharArchive,
-					globalStatsTable);
+					globalStatsTable, bag);
 			before = System.currentTimeMillis();
-			bag = minerFulQueryingCore.discover();
+			minerFulQueryingCore.discover();
 			after = System.currentTimeMillis();
 		}
 		logger.info("Total KB querying time: " + (after - before));
 		return bag;
+	}
+
+	private ProcessModel pruneConstraints(
+			ProcessModel processModel,
+			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams) {
+//		int coreNum = 0;
+//		if (minerFulParams.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
+//			// TODO
+//		} else {
+		MinerFulPruningCore pruniCore = new MinerFulPruningCore(processModel, processModel.bag.getTaskChars(), minerFulParams, viewParams);
+			
+		pruniCore.massageConstraints();
+//		}
+		return processModel;
 	}
 }

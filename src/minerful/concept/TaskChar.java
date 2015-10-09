@@ -7,20 +7,20 @@ package minerful.concept;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.xmlenc.CharAdapter;
 import minerful.logparser.CharTaskClass;
 
-@XmlRootElement
+@XmlRootElement(name="task")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaskChar implements Comparable<TaskChar> {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value=CharAdapter.class)
-    public final Character identifier;
-	@XmlTransient
+    public Character identifier;
+	@XmlElement
     public final TaskClass taskClass;
     
 	protected TaskChar() {
