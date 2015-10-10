@@ -8,6 +8,7 @@ import java.io.OutputStream;
 
 import org.deckfour.xes.out.XMxmlSerializer;
 
+@Deprecated
 public class MxmlEncoder extends XesEncoder {
 
 	public MxmlEncoder(String[] traces) {

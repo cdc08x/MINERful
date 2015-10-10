@@ -60,7 +60,6 @@ import org.processmining.plugins.declareminer.visualizing.XMLBrokerFactory;
 
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
-import com.sun.media.sound.ModelAbstractChannelMixer;
 
 public class DeclareEncoderDecoder {
 	public static final String IF_EXTRACTION_REG_EXP = ".*IF;([0-9\\.]+).*";
@@ -97,7 +96,7 @@ public class DeclareEncoderDecoder {
 		return fromDeclareMapToMinerfulProcessModel(declareMapModel, null);
 	}
 	
-	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath, TaskCharArchive taskCharArchive) {
+	private static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath, TaskCharArchive taskCharArchive) {
 		File inputFile = new File(declareMapFilePath);
 		if (!inputFile.canRead() || !inputFile.isFile()) {
 			throw new IllegalArgumentException("Unreadable file: " + declareMapFilePath);
@@ -110,7 +109,7 @@ public class DeclareEncoderDecoder {
 		return fromDeclareMapToMinerfulProcessModel(model, taskCharArchive);
 	}
 
-	public static ProcessModel fromDeclareMapToMinerfulProcessModel(AssignmentModel declareMapModel, TaskCharArchive taskCharArchive) {
+	private static ProcessModel fromDeclareMapToMinerfulProcessModel(AssignmentModel declareMapModel, TaskCharArchive taskCharArchive) {
 		ArrayList<String> params = new ArrayList<String>();
 		ArrayList<Constraint> minerFulConstraints = new ArrayList<Constraint>();
 
@@ -123,6 +122,9 @@ public class DeclareEncoderDecoder {
 						encdec.encode(new StringTaskClass(ad.getName()));
 					}
 				}
+			}
+			for(ActivityDefinition ad : declareMapModel.getActivityDefinitions()){
+				encdec.encode(new StringTaskClass(ad.getName()));
 			}
 			taskCharArchive = new TaskCharArchive(encdec.getTranslationMap());
 		}

@@ -22,6 +22,7 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 import org.deckfour.xes.out.XesXmlSerializer;
 
+@Deprecated
 public class XesEncoder implements IOutEncoder {
 	protected XLog xLog = null;
 	

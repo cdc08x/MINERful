@@ -3,6 +3,7 @@ package minerful.io.encdec;
 import java.io.File;
 import java.io.IOException;
 
+@Deprecated
 public interface IOutEncoder {
 
 	public abstract void setTraces(String[] traces);
