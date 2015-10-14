@@ -147,7 +147,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         relaConTime = 0;
         ConstraintsMiner relaConMiner = null;
         
-        if (minerFulParams.branchingLimit.equals(MinerFulCmdParameters.MINIMUM_BRANCHING_LIMIT)) {
+        if (!minerFulParams.isBranchingRequired()) {
         	relaConMiner = new ProbabilisticRelationConstraintsMiner(statsTable, taskCharArchive, tasksToQueryFor, minerFulParams.foreseeDistances);
         } else {
         	relaConMiner = new ProbabilisticRelationBranchedConstraintsMiner(statsTable, taskCharArchive, tasksToQueryFor, minerFulParams.branchingLimit);
@@ -169,7 +169,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         }
         */
         // Let us try to free memory from the unused statsTable!
-        System.gc();
+//        System.gc();
         
         logger.info("Done!");
 

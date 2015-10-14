@@ -1,5 +1,6 @@
 package minerful.miner.stats;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -125,9 +126,9 @@ public class LocalStatsWrapper {
 	}
 
 	protected void initLocalStatsTable(Set<TaskChar> alphabet) {
-		this.interplayStatsTable = new TreeMap<TaskChar, StatsCell>();
-		this.neverMoreAppearancesAtThisStep = new TreeMap<TaskChar, Integer>();
-		this.alternatingCntSwAtThisStep = new TreeMap<TaskChar, AlternatingCounterSwitcher>();
+		this.interplayStatsTable = new HashMap<TaskChar, StatsCell>(alphabet.size(), (float)1.0);
+		this.neverMoreAppearancesAtThisStep = new HashMap<TaskChar, Integer>(alphabet.size(), (float)1.0);
+		this.alternatingCntSwAtThisStep = new HashMap<TaskChar, AlternatingCounterSwitcher>(alphabet.size(), (float)1.0);
 		for (TaskChar task : alphabet) {
 			this.interplayStatsTable.put(task, new StatsCell());
 			if (!task.equals(this.baseTask)) {

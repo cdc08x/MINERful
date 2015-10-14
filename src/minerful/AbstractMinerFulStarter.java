@@ -7,6 +7,7 @@ import minerful.params.SystemCmdParameters;
 import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.spi.LoggerFactory;
 
 
 public abstract class AbstractMinerFulStarter {
@@ -38,7 +39,7 @@ public abstract class AbstractMinerFulStarter {
     	}
 
         Properties debugProperties = new Properties();
-        debugProperties.setProperty("log4j.rootLogger", "ALL, A1");
+        debugProperties.setProperty("log4j.rootLogger", threshold + ", A1");
         debugProperties.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
         debugProperties.setProperty("log4j.appender.A1.Threshold", threshold);
         debugProperties.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");

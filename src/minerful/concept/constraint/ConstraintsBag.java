@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -21,6 +20,7 @@ import minerful.concept.constraint.relation.CouplingRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.xmlenc.ConstraintsBagMapAdapter;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 @XmlRootElement(name="processModelConstraints")
@@ -33,24 +33,28 @@ public class ConstraintsBag implements Cloneable {
     private Map<TaskChar, TreeSet<Constraint>> bag;
 	
 	@XmlTransient
-	private SortedSet<TaskChar> taskChars = new TreeSet<TaskChar>();
+	private Set<TaskChar> taskChars = new TreeSet<TaskChar>();
  
-	public ConstraintsBag() {
+	private ConstraintsBag() {
 		this(new TreeSet<TaskChar>());
 	}
 	
-    public ConstraintsBag(Set<TaskChar> taskChars) {
-        this.bag = new TreeMap<TaskChar, TreeSet<Constraint>>();
+    public ConstraintsBag(Collection<TaskChar> taskChars) {
+    	this.initBag();
         this.setAlphabet(taskChars);
     }
-	
+
     public ConstraintsBag(Set<TaskChar> taskChars, Collection<Constraint> constraints) {
-        this.bag = new TreeMap<TaskChar, TreeSet<Constraint>>();
+    	this.initBag();
         this.setAlphabet(taskChars);
         for (Constraint con : constraints) {
         	this.add(con.base, con);
         }
     }
+    
+	private void initBag() {
+		this.bag = new TreeMap<TaskChar, TreeSet<Constraint>>();
+	}
 
     public boolean add(TaskChar tCh, Constraint c) {
     	if (!this.bag.containsKey(tCh)) {
@@ -79,19 +83,19 @@ public class ConstraintsBag implements Cloneable {
         return this.bag.get(c.base).remove(c);
     }
 
-	public void replace(TaskChar tCh, Constraint uniqueness) {
+	public void replace(TaskChar tCh, Constraint constraint) {
         if (!this.bag.containsKey(tCh)) {
             this.bag.put(tCh, new TreeSet<Constraint>());
             this.taskChars.add(tCh);
         }
-        this.bag.get(tCh).remove(uniqueness);
-        this.bag.get(tCh).add(uniqueness);
+        this.bag.get(tCh).remove(constraint);
+        this.bag.get(tCh).add(constraint);
 	}
 
-	public void replaceConstraints(TaskChar taskChar, Collection<? extends Constraint> cs) {
+	public void eraseConstraints(TaskChar taskChar, Collection<? extends Constraint> cs) {
 		this.bag.put(taskChar, new TreeSet<Constraint>());
 	}
-	
+
 	public void add(TaskChar tCh) {
         if (!this.bag.containsKey(tCh)) {
             this.bag.put(tCh, new TreeSet<Constraint>());
@@ -178,18 +182,17 @@ public class ConstraintsBag implements Cloneable {
             	if (!currCon.isRedundant()) {
 	                if (currCon.hasConstraintToBaseUpon()) {
 	                    if (currCon.isMoreReliableThanGeneric()) {
-	                    	logger.trace("Removing the genealogy of " +
-	                    			currCon.getConstraintWhichThisIsBasedUpon() +
-	                    			" because " +
-	                    			currCon +
-	                    			" is subsuming and more reliable");
+	                    	LogMF.trace(logger,
+	                    			"Removing the genealogy of %s because %s is subsuming and more reliable",
+	                    			currCon.getConstraintWhichThisIsBasedUpon(),
+	                    			currCon);
 	                        destroyGenealogy(currCon.getConstraintWhichThisIsBasedUpon(), currCon, key, constraintsBag);
 	                    } else {
-	                    	logger.trace("Removing " +
-	                    			currCon +
-	                    			" because " +
-	                    			currCon.getConstraintWhichThisIsBasedUpon() +
-	                    			" is more reliable and this is based upon it");
+	                    	LogMF.trace(logger,
+	                    			"Removing %s because %s is more reliable and this is based upon it and %s is based upon it",
+	                    			currCon,
+	                    			currCon.getConstraintWhichThisIsBasedUpon(),
+	                    			currCon);
 //	                        constraintsBag.remove(key, currCon);
 	                        currCon.redundant = true;
 	                    }
@@ -198,13 +201,13 @@ public class ConstraintsBag implements Cloneable {
 	                    coExiCon = (CouplingRelationConstraint) currCon;
 	                    if (coExiCon.hasImplyingConstraints()) {
 	                        if (coExiCon.isMoreReliableThanTheImplyingConstraints()) {
-	                        	logger.trace("Removing " +
-	                        			coExiCon.getForwardConstraint() +
-	                        			", which is the forward, and " +
-	                        			coExiCon.getBackwardConstraint() +
-	                        			", which is the backward, because " +
-	                        			coExiCon +
-	                        			" is the Mutual Relation referring to them and more reliable");
+	                        	LogMF.trace(logger, "Removing %s" +
+	                        			", which is the forward, and %s" +
+	                        			", which is the backward, because %s" +
+	                        			" is the Mutual Relation referring to them and more reliable",
+	                        			coExiCon.getForwardConstraint(),
+	                        			coExiCon.getBackwardConstraint(),
+	                        			coExiCon);
 	                        	// constraintsBag.remove(key, coExiCon.getForwardConstraint());
 	                        	coExiCon.getForwardConstraint().redundant = true;
 	                        	// constraintsBag.remove(key, coExiCon.getBackwardConstraint());
@@ -226,19 +229,21 @@ public class ConstraintsBag implements Cloneable {
 	                    noRelCon = (NegativeRelationConstraint) currCon;
 	                    if (noRelCon.hasOpponent()) {
 	                        if (noRelCon.isMoreReliableThanTheOpponent()) {
-	                        	logger.trace("Removing " +
-	                        			noRelCon.getOpponent() +
-	                        			" because it is the opponent of " +
-	                        			noRelCon +
-	                        			" but less reliable");
+	                        	LogMF.trace(logger, "Removing %s" +
+	                        			" because %s is the opponent of %s" +
+	                        			" but less reliable",
+	                        			noRelCon.getOpponent(),
+	                        			noRelCon,
+	                        			noRelCon);
 //	                            constraintsBag.remove(key, noRelCon.getOpponent());
 	                            noRelCon.getOpponent().redundant = true;
 	                        } else {
-	                        	logger.trace("Removing " +
-	                        			noRelCon +
-	                        			" because it is the opponent of " +
-	                        			noRelCon.getOpponent() +
-	                        			" but less reliable");
+	                        	LogMF.trace(logger, "Removing %s" +
+	                        			" because %s is the opponent of %s" +
+	                        			" but less reliable",
+	                        			noRelCon,
+	                        			noRelCon,
+	                        			noRelCon.getOpponent());
 //	                            constraintsBag.remove(key, noRelCon);
 	                            noRelCon.redundant = true;
 	                        }
@@ -328,7 +333,7 @@ public class ConstraintsBag implements Cloneable {
 		return i;
 	}
 
-	public void setAlphabet(Set<TaskChar> alphabet) {
+	public void setAlphabet(Collection<TaskChar> alphabet) {
 		for (TaskChar taskChr : alphabet) {
 			if (!this.bag.containsKey(taskChr)) {
 				this.bag.put(taskChr, new TreeSet<Constraint>());
@@ -343,8 +348,22 @@ public class ConstraintsBag implements Cloneable {
 
 	public void merge(ConstraintsBag other) {
 		for (TaskChar tCh : other.taskChars) {
-			this.addAll(tCh, other.getConstraintsOf(tCh));
+			this.shallowReplace(tCh, other.bag.get(tCh));
 		}
+	}
+
+	public void shallowMerge(ConstraintsBag other) {
+		for (TaskChar tCh : other.taskChars) {
+			if (this.contains(tCh)) {
+				this.addAll(tCh, other.getConstraintsOf(tCh));
+			} else {
+				this.shallowReplace(tCh, other.bag.get(tCh));
+			}
+		}
+	}
+
+	public void shallowReplace(TaskChar taskChar, TreeSet<Constraint> cs) {
+		this.bag.put(taskChar, cs);
 	}
 
 	public void removeMarkedConstraints() {
@@ -360,5 +379,25 @@ public class ConstraintsBag implements Cloneable {
 				}
 			}
 		}
+	}
+	
+	public ConstraintsBag slice(Set<TaskChar> indexingTaskCharGroup) {
+		ConstraintsBag slicedBag = new ConstraintsBag(indexingTaskCharGroup);
+		
+		for (TaskChar indexingTaskChar : indexingTaskCharGroup) {
+			slicedBag.bag.put(indexingTaskChar, this.bag.get(indexingTaskChar));
+		}
+		
+		return slicedBag;
+	}
+
+	public int getNumberOfConstraints() {
+		int numberOfConstraints = 0;
+		
+		for (TaskChar taskChar : this.taskChars) {
+			numberOfConstraints += this.bag.get(taskChar).size();
+		}
+		
+		return numberOfConstraints;
 	}
 }

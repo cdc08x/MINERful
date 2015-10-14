@@ -10,6 +10,8 @@ import minerful.miner.stats.OccurrencesStatsBuilder;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+import org.apache.log4j.PropertyConfigurator;
 
 public class MinerFulKBCore implements Callable<GlobalStatsTable> {
 	protected static Logger logger;
@@ -59,7 +61,7 @@ public class MinerFulKBCore implements Callable<GlobalStatsTable> {
 
         this.printComputationStats(occuTabTime);
         // By using LogMF from the extras companion write, you will not incur the cost of parameter construction if debugging is disabled for logger
-        LogMF.trace(logger, "\nStats:\n{0}", statsTable);
+      	LogMF.trace(logger, "\nStats:\n{0}", statsTable);
         
         return statsTable;
 	}

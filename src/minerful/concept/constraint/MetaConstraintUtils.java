@@ -94,9 +94,9 @@ public class MetaConstraintUtils {
 		// Existence
 		constraintTemplates.addAll(getAllPossibleExistenceConstraintTemplates());
 		// Relation onwards
-		constraintTemplates.addAll(getAllPossibleOnwardsRelationConstraintTemplates());
+		constraintTemplates.addAll(getAllPossibleForwardRelationConstraintTemplates());
 		// Relation backwards
-		constraintTemplates.addAll(getAllPossibleBackwardsRelationConstraintTemplates());
+		constraintTemplates.addAll(getAllPossibleBackwardRelationConstraintTemplates());
 		// Mutual relation
 		constraintTemplates.addAll(getAllPossibleMutualRelationConstraintTemplates());
 		// Negation relation
@@ -117,7 +117,7 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleOnwardsRelationConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllPossibleForwardRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(4);
 		// Relation onwards
 		constraintTemplates.add(RespondedExistence.class);
@@ -128,7 +128,7 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleBackwardsRelationConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllPossibleBackwardRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(3);
 		// Relation backwards
 		constraintTemplates.add(Precedence.class);
@@ -207,23 +207,36 @@ public class MetaConstraintUtils {
 	}
 
 	/* The second coolest method I ever coded! */
-	public static Collection<Constraint> getAllRelationConstraints(TaskChar param1, TaskChar param2) {
+	public static Collection<Constraint> getAllRelationConstraints(TaskChar base, TaskChar implied) {
 		Collection<Constraint> relCons = new ArrayList<Constraint>();
-
-		Collection<Class<? extends Constraint>> relationConstraintTemplates = ALL_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES;
 		Constructor<? extends Constraint> tmpConstructor = null;
 
-		for (Class<? extends Constraint> relationConstraintTypeClass : relationConstraintTemplates) {
-			try {
+		try {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleForwardRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class, Double.TYPE);
-				relCons.add(tmpConstructor.newInstance(param1, param2, 0.0));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-
-				System.exit(1);
+				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
 			}
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleBackwardRelationConstraintTemplates()) {
+				tmpConstructor = relationConstraintTypeClass.getConstructor(
+						TaskChar.class, TaskChar.class, Double.TYPE);
+				relCons.add(tmpConstructor.newInstance(implied, base, 0.0));
+			}
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleNegativeRelationConstraintTemplates()) {
+				tmpConstructor = relationConstraintTypeClass.getConstructor(
+						TaskChar.class, TaskChar.class, Double.TYPE);
+				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
+			}
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleMutualRelationConstraintTemplates()) {
+				tmpConstructor = relationConstraintTypeClass.getConstructor(
+						TaskChar.class, TaskChar.class, Double.TYPE);
+				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			System.exit(1);
 		}
 		return relCons;
 	}

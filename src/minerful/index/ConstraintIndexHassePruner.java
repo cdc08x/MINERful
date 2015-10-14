@@ -50,7 +50,7 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			 *  E.g.,
 			 *  support ( Response(a, {b, c}) ) <= support ( Response(a, {b, c, d}) )
 			 */
-			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllPossibleOnwardsRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllPossibleForwardRelationConstraintTemplates()) {
 				for (ConstraintIndexHasseNode sinkChild : this.hasseDiagram.getSinkNodes()) {
 					this.labelRedundancyWrtSetContainment(
 							sinkChild,
@@ -88,7 +88,7 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			 *  E.g.,
 			 *  support ( Precedence({a, b}, d) ) <= support ( Precedence({a, b, c}, d}) )
 			 */
-			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllPossibleBackwardsRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllPossibleBackwardRelationConstraintTemplates()) {
 				for (ConstraintIndexHasseNode sinkChild : this.hasseDiagram.getSinkNodes()) {
 					this.labelRedundancyWrtSetContainment(
 							sinkChild,

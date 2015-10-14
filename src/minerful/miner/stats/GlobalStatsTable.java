@@ -4,6 +4,7 @@
 */
 package minerful.miner.stats;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -57,7 +58,7 @@ public class GlobalStatsTable {
     }
 
     private void initGlobalStatsTable() {
-        this.statsTable = new TreeMap<TaskChar, LocalStatsWrapper>();
+        this.statsTable = new HashMap<TaskChar, LocalStatsWrapper>(this.taskCharArchive.getTaskChars().size(), (float)1.0);
         Set<TaskChar> alphabet = this.taskCharArchive.getTaskChars();
         if (this.isForBranchedConstraints()) {
         	for (TaskChar task: this.taskCharArchive.getTaskChars()) {

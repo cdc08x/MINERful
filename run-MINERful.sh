@@ -13,7 +13,7 @@ clear
 MAINCLASS="it.uniroma1.dis.minerful.MinerFulMinerStarter"
 
 DEBUGLEVEL="none"
-MEMORY_MAX="4056m"
+MEMORY_MAX="8096m"
 THRESHOLD=0.0
 
 ## Run!

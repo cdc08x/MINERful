@@ -17,6 +17,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import dk.brics.automaton.Automaton;

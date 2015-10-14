@@ -283,4 +283,16 @@ public class MinerFulCmdParameters extends ParamsManager {
         		);
         return options;
 	}
+
+	public boolean isBranchingRequired() {
+		return this.branchingLimit > MINIMUM_BRANCHING_LIMIT;
+	}
+	
+	public boolean isParallelQueryProcessingRequired() {
+		return this.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS;
+	}
+	
+	public boolean isParallelKbComputationRequired() {
+		return this.kbParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS;
+	}
 }

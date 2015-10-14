@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
@@ -207,7 +210,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
 
-		queryForConstraints(logParser, minerFulParams, viewParams,
+		proMod.bag = queryForConstraints(logParser, minerFulParams, viewParams,
 				taskCharArchive, globalStatsTable, proMod.bag);
 
 		System.gc();
@@ -220,7 +223,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			TaskCharArchive taskCharArchive, GlobalStatsTable globalStatsTable) {
 		int coreNum = 0;
 		long before = 0, after = 0;
-		if (minerFulParams.kbParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
+		if (minerFulParams.isParallelKbComputationRequired()) {
 			// Slice the log
 			List<LogParser> listOfLogParsers = logParser
 					.split(minerFulParams.kbParallelProcessingThreads);
@@ -235,11 +238,11 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 						minerFulParams, taskCharArchive));
 			}
 
-//			ExecutorService executor = Executors
-//					.newFixedThreadPool(minerFulParams.parallelProcessingThreads);
-			
-			ForkJoinPool executor = new ForkJoinPool(minerFulParams.kbParallelProcessingThreads);
-			
+			ExecutorService executor = Executors
+					.newFixedThreadPool(minerFulParams.kbParallelProcessingThreads);
+
+//			ForkJoinPool executor = new ForkJoinPool(minerFulParams.kbParallelProcessingThreads);
+
 			try {
 				before = System.currentTimeMillis();
 				for (Future<GlobalStatsTable> statsTab : executor
@@ -271,31 +274,40 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			GlobalStatsTable globalStatsTable, ConstraintsBag bag) {
 		int coreNum = 0;
 		long before = 0, after = 0;
-		if (minerFulParams.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
+		if (minerFulParams.isParallelQueryProcessingRequired() && minerFulParams.isBranchingRequired()) {
+			logger.warn("Parallel querying of branched constraints not yet implemented. Proceeding with the single-core operations...");
+		}
+		if (minerFulParams.isParallelQueryProcessingRequired() && !minerFulParams.isBranchingRequired()) {
 			Collection<Set<TaskChar>> taskCharSubSets =
 					taskCharArchive.splitTaskCharsIntoSubsets(
 							minerFulParams.queryParallelProcessingThreads);
 			List<MinerFulQueryingCore> listOfMinerFulCores =
 					new ArrayList<MinerFulQueryingCore>(
 							minerFulParams.queryParallelProcessingThreads);
+			ConstraintsBag subBag = null;
 			// Associate a dedicated query-computing core to each taskChar-subset
 			for (Set<TaskChar> taskCharSubset : taskCharSubSets) {
+				subBag = bag.slice(taskCharSubset);
 				listOfMinerFulCores.add(
 						new MinerFulQueryingCore(coreNum++,
 								logParser, minerFulParams, viewParams,
-								taskCharArchive, globalStatsTable, taskCharSubset, bag));
+								taskCharArchive, globalStatsTable, taskCharSubset, subBag));
 			}
-			
-//			ExecutorService executor = Executors
-//					.newFixedThreadPool(minerFulParams.parallelProcessingThreads);
-			ForkJoinPool executor = new ForkJoinPool(minerFulParams.queryParallelProcessingThreads);
-			
+
+			ExecutorService executor = Executors
+					.newFixedThreadPool(minerFulParams.queryParallelProcessingThreads);
+//					.newCachedThreadPool();
+//			ForkJoinPool executor = new ForkJoinPool(minerFulParams.queryParallelProcessingThreads);
+
 			try {
 				before = System.currentTimeMillis();
-				for (Future<ConstraintsBag> subBag : executor
-						.invokeAll(listOfMinerFulCores)) {
-					subBag.get();
+				for (Callable<ConstraintsBag> core : listOfMinerFulCores) {
+ 					bag.shallowMerge(executor.submit(core).get());
 				}
+//				for (Future<ConstraintsBag> processedSubBag : executor
+//						.invokeAll(listOfMinerFulCores)) {
+//					bag.shallowMerge(processedSubBag.get());
+//				}
 				after = System.currentTimeMillis();
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();

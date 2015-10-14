@@ -465,8 +465,8 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		}
 		
 		return
-				(	MetaConstraintUtils.getAllPossibleOnwardsRelationConstraintTemplates().size() -1 + // out-branching
-					MetaConstraintUtils.getAllPossibleBackwardsRelationConstraintTemplates().size() -1 // in branching
+				(	MetaConstraintUtils.getAllPossibleForwardRelationConstraintTemplates().size() -1 + // out-branching
+					MetaConstraintUtils.getAllPossibleBackwardRelationConstraintTemplates().size() -1 // in branching
 				)
 				* tasksToQueryFor.size()
 				* numberOfPossibleConstraintsPerActivity;
