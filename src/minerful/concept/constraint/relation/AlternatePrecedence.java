@@ -4,15 +4,22 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
+@XmlRootElement
 public class AlternatePrecedence extends Precedence {
 	@Override
 	public String getRegularExpressionTemplate() {
 //		return "[^%2$s]*(%1$s[^%2$s]*%2$s[^%2$s]*)*[^%2$s]*";
 		return "[^%1$s]*(%2$s[^%1$s]*%1$s[^%1$s]*)*[^%1$s]*";
+	}
+	
+	protected AlternatePrecedence() {
+		super();
 	}
 
     public AlternatePrecedence(TaskChar param1, TaskChar param2) {
@@ -35,7 +42,7 @@ public class AlternatePrecedence extends Precedence {
     }
 	
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new Precedence(implied, base);
 	}
 }

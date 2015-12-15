@@ -4,17 +4,24 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
+@XmlRootElement
 public class Response extends RespondedExistence {
 
     @Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*(%1$s.*%2$s)*[^%1$s]*";
 		// [^a]*(a.*b)*[^a]*
+    }
+    
+    protected Response() {
+    	super();
     }
 
     public Response(TaskChar param1, TaskChar param2) {
@@ -48,7 +55,7 @@ public class Response extends RespondedExistence {
     }
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new RespondedExistence(base, implied);
 	}
 }

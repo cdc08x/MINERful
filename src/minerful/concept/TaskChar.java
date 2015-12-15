@@ -7,12 +7,13 @@ package minerful.concept;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.xmlenc.CharAdapter;
 import minerful.logparser.CharTaskClass;
+
+import minerful.concept.xmlenc.TaskClassAdapter;
 
 @XmlRootElement(name="task")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -20,8 +21,9 @@ public class TaskChar implements Comparable<TaskChar> {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value=CharAdapter.class)
     public Character identifier;
-	@XmlElement
-    public final TaskClass taskClass;
+	@XmlAttribute
+	@XmlJavaTypeAdapter(value=TaskClassAdapter.class)
+    public final AbstractTaskClass taskClass;
     
 	protected TaskChar() {
 		this.identifier = null;
@@ -32,7 +34,7 @@ public class TaskChar implements Comparable<TaskChar> {
         this(identifier, new CharTaskClass(identifier));
     }
 
-    public TaskChar(Character identifier, TaskClass taskClass) {
+    public TaskChar(Character identifier, AbstractTaskClass taskClass) {
     	this.identifier = identifier;
     	this.taskClass = taskClass;
 	}
@@ -67,8 +69,8 @@ public class TaskChar implements Comparable<TaskChar> {
         return this.identifier.compareTo(t.identifier);
     }
 
-    @XmlAttribute(name="name")
     public String getName() {
     	return this.taskClass.toString();
     }
+
 }

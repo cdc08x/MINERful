@@ -1,16 +1,23 @@
 package minerful.concept.constraint.existence;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
+@XmlRootElement
 public class Participation extends ExistenceConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*(%1$s[^%1$s]*){1,}[^%1$s]*";
 	}
 
+    protected Participation() {
+    	super();
+    }
+	
 	public Participation(TaskChar param1, double support) {
 		super(param1, support);
 	}
@@ -25,7 +32,7 @@ public class Participation extends ExistenceConstraint {
 	}
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return null;
 	}
 

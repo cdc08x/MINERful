@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import minerful.concept.TaskCharArchive;
-import minerful.concept.TaskClass;
+import minerful.concept.AbstractTaskClass;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 import org.deckfour.xes.classification.XEventClassifier;
@@ -57,7 +57,7 @@ public class XesLogParser extends AbstractLogParser implements LogParser {
     }
 	
     @Override
-	protected Collection<TaskClass> parseLog(File xesFile) throws Exception {
+	protected Collection<AbstractTaskClass> parseLog(File xesFile) throws Exception {
         this.xLogs = parser.parse(xesFile);
 
         XesTraceParser auXTraPar = null;
@@ -79,7 +79,7 @@ public class XesLogParser extends AbstractLogParser implements LogParser {
         return this.xesEventClassifier.getTaskClasses();
 	}
     
-    protected Collection<TaskClass> parseLog(XLog xLog) {
+    protected Collection<AbstractTaskClass> parseLog(XLog xLog) {
     	List<XEventClassifier> logSpecifiedEventClassifiers = xLog.getClassifiers();
         XesTraceParser auXTraPar = null;
 

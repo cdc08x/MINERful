@@ -2,6 +2,7 @@ package minerful.logparser;
 
 import java.util.Collection;
 
+import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
 
 public interface LogEventClassifier {
@@ -18,5 +19,5 @@ public interface LogEventClassifier {
 
 	ClassificationType getEventClassificationType();
 
-	Collection<TaskClass> getTaskClasses();
+	Collection<AbstractTaskClass> getTaskClasses();
 }

@@ -18,7 +18,7 @@ import minerful.automaton.AutomatonRandomWalker;
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
-import minerful.io.encdec.declare.DeclareEncoderDecoder;
+import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logmaker.params.LogMakerCmdParameters;
 
 import org.deckfour.xes.classification.XEventNameClassifier;
@@ -55,7 +55,7 @@ public class MinerFulLogMaker {
 	}
 
 	public XLog createLog(AssignmentModel declareMapModel) {
-		this.log = createLog(DeclareEncoderDecoder.fromDeclareMapToMinerfulProcessModel(declareMapModel));
+		this.log = createLog(DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(declareMapModel));
 		return this.log;
 	}
 

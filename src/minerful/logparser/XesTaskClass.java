@@ -1,15 +1,23 @@
 package minerful.logparser;
 
-import org.deckfour.xes.classification.XEventClass;
+import javax.xml.bind.annotation.XmlTransient;
 
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
 
+import org.deckfour.xes.classification.XEventClass;
+
 public class XesTaskClass extends AbstractTaskClass implements TaskClass {
-	public final XEventClass xEventClass;
+	@XmlTransient
+	public XEventClass xEventClass;
+
+	protected XesTaskClass() {
+		super();
+	}
 
 	public XesTaskClass(XEventClass xEventClass) {
 		this.xEventClass = xEventClass;
+		super.setName(xEventClass.getId());
 	}
 	
 	@Override
@@ -22,11 +30,6 @@ public class XesTaskClass extends AbstractTaskClass implements TaskClass {
 		}
 	}
 	
-	@Override
-	public String getName() {
-		return xEventClass.getId();
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

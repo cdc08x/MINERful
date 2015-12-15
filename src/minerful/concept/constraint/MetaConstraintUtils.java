@@ -21,7 +21,7 @@ import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
 import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.CouplingRelationConstraint;
+import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.concept.constraint.relation.NotCoExistence;
@@ -44,14 +44,14 @@ public class MetaConstraintUtils {
 	public static Collection<Constraint> createHierarchicalLinks(Collection<Constraint> constraints) {
 		TreeSet<Constraint> treeConSet = new TreeSet<Constraint>(constraints);
 		for (Constraint con : constraints) {
-			Constraint constraintWhichThisShouldBeBasedUpon = con.getConstraintWhichThisShouldBeBasedUpon();
+			Constraint constraintWhichThisShouldBeBasedUpon = con.suggestConstraintWhichThisShouldBeBasedUpon();
 			if (		constraintWhichThisShouldBeBasedUpon != null
 					&&	treeConSet.contains(constraintWhichThisShouldBeBasedUpon)
 				) {
 				con.setConstraintWhichThisIsBasedUpon(treeConSet.tailSet(constraintWhichThisShouldBeBasedUpon).first());
 			}
 			if (con.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
-				CouplingRelationConstraint coReCon = (CouplingRelationConstraint) con;
+				MutualRelationConstraint coReCon = (MutualRelationConstraint) con;
 				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getPlausibleForwardConstraint())) {
 					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getPlausibleForwardConstraint()).first());
 				}

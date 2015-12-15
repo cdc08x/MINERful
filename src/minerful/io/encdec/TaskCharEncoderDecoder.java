@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskChar;
-import minerful.concept.TaskClass;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.logparser.StringTaskClass;
 
@@ -121,7 +121,7 @@ public class TaskCharEncoderDecoder {
 		return total;
 	}
 
-	public static final TaskClass[] TEST_TASK_CLASSES = { new StringTaskClass("deliverable"), new StringTaskClass("package"), new StringTaskClass("wp"),
+	public static final AbstractTaskClass[] TEST_TASK_CLASSES = { new StringTaskClass("deliverable"), new StringTaskClass("package"), new StringTaskClass("wp"),
 			new StringTaskClass("meeting"), new StringTaskClass("deadline"), new StringTaskClass("task force"), new StringTaskClass("submission"), new StringTaskClass("report"),
 			new StringTaskClass("demo"), new StringTaskClass("contribution"), new StringTaskClass("project"), new StringTaskClass("timeline"), new StringTaskClass("presentation"),
 			new StringTaskClass("agenda"), new StringTaskClass("timetable"), new StringTaskClass("slide"), new StringTaskClass("integration"), new StringTaskClass("iteration"),
@@ -148,8 +148,8 @@ public class TaskCharEncoderDecoder {
 
 	public static final String WILDCARD_CHAR = " ";
 
-	private TreeMap<TaskClass, Character> tasksDictionary;
-	private TreeMap<Character, TaskClass> inverseTasksDictionary;
+	private TreeMap<AbstractTaskClass, Character> tasksDictionary;
+	private TreeMap<Character, AbstractTaskClass> inverseTasksDictionary;
 	private int charCursor, tasksCursor, boundCursor;
 
 	private static Logger logger;
@@ -159,20 +159,20 @@ public class TaskCharEncoderDecoder {
 		this.tasksCursor = 0;
 		this.boundCursor = 0;
 
-		this.tasksDictionary = new TreeMap<TaskClass, Character>();
-		this.inverseTasksDictionary = new TreeMap<Character, TaskClass>();
+		this.tasksDictionary = new TreeMap<AbstractTaskClass, Character>();
+		this.inverseTasksDictionary = new TreeMap<Character, AbstractTaskClass>();
 
 		if (logger == null) {
 			logger = Logger.getLogger(this.getClass().getCanonicalName());
 		}
 	}
 	
-	public Map<Character, TaskClass> getTranslationMap() {
-		return new HashMap<Character, TaskClass>(this.inverseTasksDictionary);
+	public Map<Character, AbstractTaskClass> getTranslationMap() {
+		return new HashMap<Character, AbstractTaskClass>(this.inverseTasksDictionary);
 	}
 
-	public static NavigableMap<Character, TaskClass> getTranslationMap(ConstraintsBag bag) {
-		NavigableMap<Character, TaskClass> transMap = new TreeMap<Character, TaskClass>();
+	public static NavigableMap<Character, AbstractTaskClass> getTranslationMap(ConstraintsBag bag) {
+		NavigableMap<Character, AbstractTaskClass> transMap = new TreeMap<Character, AbstractTaskClass>();
 		for (TaskChar tChr : bag.getTaskChars()) {
 			transMap.put(tChr.identifier, tChr.taskClass);
 		}
@@ -190,7 +190,7 @@ public class TaskCharEncoderDecoder {
 	}
 
 	public Character[] encode(Collection<TaskChar> taskChars) {
-		TaskClass[] taskClasses = new TaskClass[taskChars.size()];
+		AbstractTaskClass[] taskClasses = new AbstractTaskClass[taskChars.size()];
 		int i = 0;
 		for (TaskChar tCh : taskChars) {
 			taskClasses[i++] = tCh.taskClass;
@@ -198,7 +198,7 @@ public class TaskCharEncoderDecoder {
 		return encode(taskClasses);
 	}
 	
-	public Character[] encode(TaskClass[] taskClasses) {
+	public Character[] encode(AbstractTaskClass[] taskClasses) {
 		Character[] encodedTasks = new Character[0];
 		while (tasksCursor < taskClasses.length && boundCursor < LOWER_BOUNDS.length
 				&& boundCursor < UPPER_BOUNDS.length) {
@@ -225,7 +225,7 @@ public class TaskCharEncoderDecoder {
 		return inverseTasksDictionary.keySet().toArray(encodedTasks);
 	}
 
-	public Character encode(TaskClass taskClass) {
+	public Character encode(AbstractTaskClass taskClass) {
 		if (taskClass == null) {
 			logger.error("A task is identified by a NULL value: skipping this task");
 			return null;
@@ -265,15 +265,15 @@ public class TaskCharEncoderDecoder {
 		return this.tasksDictionary.get(taskClass);
 	}
 	
-	public String[] encode(List<List<TaskClass>> tasksTraces) {
+	public String[] encode(List<List<AbstractTaskClass>> tasksTraces) {
 		String[] stringsTracesArray = new String[0];
 		List<String> stringTraces = new ArrayList<String>(tasksTraces.size());
 		StringBuilder striTraBuilder = new StringBuilder();
 		Character c = null;
 		
-		for (List<TaskClass> tasksTrace : tasksTraces) {
+		for (List<AbstractTaskClass> tasksTrace : tasksTraces) {
 			striTraBuilder.delete(0, striTraBuilder.length());
-			for (TaskClass task : tasksTrace) {
+			for (AbstractTaskClass task : tasksTrace) {
 				c = this.encode(task);
 				striTraBuilder.append(c);
 			}
@@ -284,7 +284,7 @@ public class TaskCharEncoderDecoder {
 		return stringsTracesArray;
 	}
 
-	public TaskClass decode(Character encodedTask) {
+	public AbstractTaskClass decode(Character encodedTask) {
 		return this.inverseTasksDictionary.get(encodedTask);
 	}
 	
@@ -295,14 +295,14 @@ public class TaskCharEncoderDecoder {
 				:	encodedCharString.charAt(0);
 	}
 
-	public Set<TaskClass> getTaskClasses() {
+	public Set<AbstractTaskClass> getTaskClasses() {
 		return this.tasksDictionary.keySet();
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer sBuf = new StringBuffer();
-		for (TaskClass taskClass : tasksDictionary.keySet()) {
+		for (AbstractTaskClass taskClass : tasksDictionary.keySet()) {
 			sBuf.append(tasksDictionary.get(taskClass));
 			sBuf.append(" <= ");
 			sBuf.append(taskClass);

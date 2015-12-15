@@ -2,9 +2,7 @@ package minerful;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,30 +11,30 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.core.MinerFulKBCore;
+import minerful.core.MinerFulPruningCore;
+import minerful.core.MinerFulQueryingCore;
+import minerful.io.encdec.ProcessModelEncoderDecoder;
+import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
-import minerful.miner.core.MinerFulKBCore;
-import minerful.miner.core.MinerFulPruningCore;
-import minerful.miner.core.MinerFulQueryingCore;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
+import minerful.postprocessing.params.PostProcessingCmdParams;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -50,8 +48,13 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		Options minerfulOptions = MinerFulCmdParameters.parseableOptions(),
 				inputOptions = InputCmdParameters.parseableOptions(),
 				systemOptions = SystemCmdParameters.parseableOptions(),
-				viewOptions = ViewCmdParameters.parseableOptions();
+				viewOptions = ViewCmdParameters.parseableOptions(),
+				outputOptions = OutputModelParameters.parseableOptions(),
+				postProptions = PostProcessingCmdParams.parseableOptions();
 		
+    	for (Object opt: postProptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
     	for (Object opt: minerfulOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
@@ -59,6 +62,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: viewOptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
+    	for (Object opt: outputOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: systemOptions.getOptions()) {
@@ -78,21 +84,37 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		MinerFulMinerStarter minerMinaStarter = new MinerFulMinerStarter();
 		Options cmdLineOptions = minerMinaStarter.setupOptions();
 
-		InputCmdParameters inputParams = new InputCmdParameters(cmdLineOptions,
-				args);
-		MinerFulCmdParameters minerFulParams = new MinerFulCmdParameters(
-				cmdLineOptions, args);
-		ViewCmdParameters viewParams = new ViewCmdParameters(cmdLineOptions,
-				args);
-		SystemCmdParameters systemParams = new SystemCmdParameters(
-				cmdLineOptions, args);
+		InputCmdParameters inputParams =
+				new InputCmdParameters(
+						cmdLineOptions,
+						args);
+		MinerFulCmdParameters minerFulParams =
+				new MinerFulCmdParameters(
+						cmdLineOptions,
+						args);
+		ViewCmdParameters viewParams =
+				new ViewCmdParameters(
+						cmdLineOptions,
+						args);
+		OutputModelParameters outParams =
+				new OutputModelParameters(
+						cmdLineOptions,
+						args);
+		SystemCmdParameters systemParams =
+				new SystemCmdParameters(
+						cmdLineOptions,
+						args);
+		PostProcessingCmdParams postParams =
+				new PostProcessingCmdParams(
+						cmdLineOptions,
+						args);
 
 		if (systemParams.help) {
 			systemParams.printHelp(cmdLineOptions);
 			System.exit(0);
 		}
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input file missing!",
+			systemParams.printHelpForWrongUsage("Input log file missing!",
 					cmdLineOptions);
 			System.exit(1);
 		}
@@ -106,30 +128,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessModel processModel = minerMinaStarter.mine(logParser,
-				minerFulParams, viewParams, systemParams, taskCharArchive);
+		ProcessModel processModel = minerMinaStarter.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
 
-		new MinerFulProcessViewerStarter().print(processModel, viewParams, systemParams,
-				logParser);
-
-		if (minerFulParams.processSchemeOutputFile != null) {
-			File procSchmOutFile = minerFulParams.processSchemeOutputFile;
-			try {
-				marshalMinedProcessScheme(processModel, procSchmOutFile);
-			} catch (PropertyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		new MinerFulProcessOutputMgtStarter().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 	}
 
 	private static LogParser deriveLogParserFromLogFile(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
@@ -167,41 +168,16 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		return logParser;
 	}
 
-	public static void marshalMinedProcessScheme(
-			ProcessModel processModel, File procSchmOutFile)
-			throws JAXBException, PropertyException, FileNotFoundException,
-			IOException {
-		String pkgName = processModel.getClass().getCanonicalName().toString();
-		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
-		JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
-		Marshaller marsh = jaxbCtx.createMarshaller();
-		marsh.setProperty("jaxb.formatted.output", true);
-		StringWriter strixWriter = new StringWriter();
-		marsh.marshal(processModel, strixWriter);
-		strixWriter.flush();
-		StringBuffer strixBuffer = strixWriter.getBuffer();
-
-		// OINK
-		strixBuffer.replace(
-				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-				" xmlns=\"" + ProcessModel.MINERFUL_XMLNS + "\"");
-		FileWriter strixFileWriter = new FileWriter(procSchmOutFile);
-		strixFileWriter.write(strixBuffer.toString());
-		strixFileWriter.flush();
-		strixFileWriter.close();
-	}
-
 	public ProcessModel mine(LogParser logParser,
-			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams,
-			SystemCmdParameters systemParams, Character[] alphabet) {
+			MinerFulCmdParameters minerFulParams,
+			SystemCmdParameters systemParams, PostProcessingCmdParams postParams, Character[] alphabet) {
 		TaskCharArchive taskCharArchive = new TaskCharArchive(alphabet);
-		return this.mine(logParser, minerFulParams, viewParams, systemParams, taskCharArchive);
+		return this.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
 	}
 
 	public ProcessModel mine(LogParser logParser,
-			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams,
-			SystemCmdParameters systemParams, TaskCharArchive taskCharArchive) {
+			MinerFulCmdParameters minerFulParams, 
+			SystemCmdParameters systemParams, PostProcessingCmdParams postPrarams, TaskCharArchive taskCharArchive) {
 		GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
 		globalStatsTable = computeKB(logParser, minerFulParams,
 				taskCharArchive, globalStatsTable);
@@ -210,12 +186,12 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
 
-		proMod.bag = queryForConstraints(logParser, minerFulParams, viewParams,
+		proMod.bag = queryForConstraints(logParser, minerFulParams, postPrarams,
 				taskCharArchive, globalStatsTable, proMod.bag);
 
 		System.gc();
 		
-		return pruneConstraints(proMod, minerFulParams, viewParams);
+		return pruneConstraints(proMod, minerFulParams, postPrarams);
 	}
 
 	private GlobalStatsTable computeKB(LogParser logParser,
@@ -270,7 +246,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 	private ConstraintsBag queryForConstraints(
 			LogParser logParser, MinerFulCmdParameters minerFulParams,
-			ViewCmdParameters viewParams, TaskCharArchive taskCharArchive,
+			PostProcessingCmdParams postPrarams, TaskCharArchive taskCharArchive,
 			GlobalStatsTable globalStatsTable, ConstraintsBag bag) {
 		int coreNum = 0;
 		long before = 0, after = 0;
@@ -290,7 +266,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				subBag = bag.slice(taskCharSubset);
 				listOfMinerFulCores.add(
 						new MinerFulQueryingCore(coreNum++,
-								logParser, minerFulParams, viewParams,
+								logParser, minerFulParams, postPrarams, 
 								taskCharArchive, globalStatsTable, taskCharSubset, subBag));
 			}
 
@@ -316,7 +292,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			executor.shutdown();
 		} else {
 			MinerFulQueryingCore minerFulQueryingCore = new MinerFulQueryingCore(coreNum++,
-					logParser, minerFulParams, viewParams, taskCharArchive,
+					logParser, minerFulParams, postPrarams, taskCharArchive,
 					globalStatsTable, bag);
 			before = System.currentTimeMillis();
 			minerFulQueryingCore.discover();
@@ -328,14 +304,15 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 	private ProcessModel pruneConstraints(
 			ProcessModel processModel,
-			MinerFulCmdParameters minerFulParams, ViewCmdParameters viewParams) {
+			MinerFulCmdParameters minerFulParams,
+			PostProcessingCmdParams postPrarams) {
 //		int coreNum = 0;
 //		if (minerFulParams.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
 //			// TODO
 //		} else {
-		MinerFulPruningCore pruniCore = new MinerFulPruningCore(processModel, processModel.bag.getTaskChars(), minerFulParams, viewParams);
+		MinerFulPruningCore pruniCore = new MinerFulPruningCore(processModel, processModel.bag.getTaskChars(), postPrarams);
 			
-		pruniCore.massageConstraints();
+		processModel.bag = pruniCore.massageConstraints();
 //		}
 		return processModel;
 	}

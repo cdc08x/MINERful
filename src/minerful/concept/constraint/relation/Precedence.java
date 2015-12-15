@@ -6,24 +6,25 @@ package minerful.concept.constraint.relation;
 
 import java.util.Collections;
 
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
+@XmlRootElement
 public class Precedence extends RespondedExistence {  
     @Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*(%2$s.*%1$s)*[^%1$s]*";
     }
-    
-    @Override
-	public String getRegularExpression() {
-		// TODO Auto-generated method stub
-		return super.getRegularExpression();
-	}
 
-
+    protected Precedence() {
+    	super();
+    }
 
 	public Precedence(TaskChar param1, TaskChar param2) {
         super(param2, param1);
@@ -64,7 +65,15 @@ public class Precedence extends RespondedExistence {
     }
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new RespondedExistence(base, implied);
+	}
+	
+	@Override
+	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		if (this.getFamily().equals(ConstraintFamily.RELATION)) {
+				this.base = this.getParameters().get(1);
+				this.implied = this.getParameters().get(0);
+		}
 	}
 }

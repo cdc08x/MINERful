@@ -9,7 +9,7 @@ import minerful.automaton.concept.WeightedAutomatonStats;
 import minerful.automaton.concept.WeightedState;
 import minerful.automaton.concept.WeightedTransition;
 import minerful.automaton.utils.AutomatonUtils;
-import minerful.concept.TaskClass;
+import minerful.concept.AbstractTaskClass;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
 
@@ -20,7 +20,7 @@ import dk.brics.automaton.Automaton;
 public class WeightedAutomatonFactory {
 	private static Logger logger = Logger.getLogger(AutomatonFactory.class
 			.getCanonicalName());
-	private NavigableMap<Character, TaskClass> translationMap;
+	private NavigableMap<Character, AbstractTaskClass> translationMap;
 
 	public static class IllegalTransitionException extends IllegalStateException {
 		private static final long serialVersionUID = -562295596335012451L;
@@ -35,7 +35,7 @@ public class WeightedAutomatonFactory {
 		}
 	}
 	
-	public WeightedAutomatonFactory(NavigableMap<Character, TaskClass> navigableMap) {
+	public WeightedAutomatonFactory(NavigableMap<Character, AbstractTaskClass> navigableMap) {
 		this.translationMap = navigableMap;
 	}
 

@@ -7,8 +7,6 @@ import minerful.params.SystemCmdParameters;
 import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.spi.LoggerFactory;
-
 
 public abstract class AbstractMinerFulStarter {
 

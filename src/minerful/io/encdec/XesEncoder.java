@@ -30,9 +30,6 @@ public class XesEncoder implements IOutEncoder {
 		this.xLog = this.encode(traces);
 	}
 	
-	/* (non-Javadoc)
-	 * @see it.uniroma1.dis.mailofmine.utils.IOutEncoder#setTraces(java.lang.String[])
-	 */
 	@Override
 	public void setTraces(String[] traces) {
 		this.encode(traces);

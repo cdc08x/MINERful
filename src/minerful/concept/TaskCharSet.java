@@ -9,20 +9,26 @@ import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import minerful.concept.xmlenc.CharAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaskCharSet implements Comparable<TaskCharSet> {
-	@XmlElementWrapper(name="taskCharacters")
+	@XmlElement(name="task")
 	private final TaskChar[] taskChars;
-	@XmlTransient
+	@XmlAttribute
+	@XmlID
 	private final String joinedStringOfIdentifiers;
-	@XmlTransient
+	@XmlAttribute
+	@XmlJavaTypeAdapter(value=CharAdapter.class)
 	private final Collection<Character> listOfIdentifiers;
 	public static final TaskCharSet VOID_TASK_CHAR_SET =
 			new TaskCharSet(new TaskChar[0]);

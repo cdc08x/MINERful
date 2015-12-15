@@ -4,22 +4,31 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
+@XmlRootElement
 public class RespondedExistence extends RelationConstraint {
     public static final String DISTANCE_PRINT_TEMPLATE = " <%+d \u00F7 %+d> ";
 
+    @XmlTransient
     public Double expectedDistance;
+    @XmlTransient
     public Double confidenceIntervalMargin;
     
     @Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*((%1$s.*%2$s.*)|(%2$s.*%1$s.*))*[^%1$s]*";
+    }
+    
+    protected RespondedExistence() {
+    	super();
     }
 
     public RespondedExistence(TaskChar param1, TaskChar param2) {
@@ -82,7 +91,7 @@ public class RespondedExistence extends RelationConstraint {
     }
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return null;
 	}
 }

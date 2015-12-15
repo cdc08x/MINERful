@@ -1,7 +1,7 @@
 package minerful.logparser;
 
 import minerful.concept.Event;
-import minerful.concept.TaskClass;
+import minerful.concept.AbstractTaskClass;
 
 import org.deckfour.xes.model.XEvent;
 
@@ -16,7 +16,7 @@ public class XesEventParser implements LogEventParser {
 
 	@Override
 	public Character evtIdentifier() {
-		TaskClass logEventClass = this.xesTraceParser.xesLogParser.xesEventClassifier.classify(xesEvent);
+		AbstractTaskClass logEventClass = this.xesTraceParser.xesLogParser.xesEventClassifier.classify(xesEvent);
 		return this.xesTraceParser.xesLogParser.taChaEncoDeco.encode(logEventClass);
 	}
 	
@@ -26,7 +26,7 @@ public class XesEventParser implements LogEventParser {
 
 	@Override
 	public Event getEvent() {
-		TaskClass logEventClass = this.xesTraceParser.xesLogParser.xesEventClassifier.classify(xesEvent);
+		AbstractTaskClass logEventClass = this.xesTraceParser.xesLogParser.xesEventClassifier.classify(xesEvent);
 		return new Event(logEventClass);
 	}
 }

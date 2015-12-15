@@ -4,14 +4,21 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
+@XmlRootElement
 public class Succession extends CoExistence {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s^%2$s]*(%1$s.*%2$s)*[^%1$s^%2$s]*";
+	}
+	
+	protected Succession() {
+		super();
 	}
 
     public Succession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
@@ -47,7 +54,7 @@ public class Succession extends CoExistence {
     }
 	
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new CoExistence(base, implied);
 	}
 

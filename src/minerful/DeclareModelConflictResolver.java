@@ -5,15 +5,13 @@ import java.util.TreeSet;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
-import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
-import minerful.io.encdec.declare.DeclareEncoderDecoder;
+import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.params.SystemCmdParameters.DebugLevel;
-import minerful.simplification.ConflictAndRedundancyResolver;
+import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.pruning.ConflictAndRedundancyResolver;
 
 public class DeclareModelConflictResolver {
 	public static void main(String[] args) throws Exception {
@@ -39,16 +37,17 @@ public class DeclareModelConflictResolver {
 		
 		long timingBeforeConflictResolution = System.currentTimeMillis();
 
-		ConflictAndRedundancyResolver coRes = new ConflictAndRedundancyResolver(proMod);
+		ConflictAndRedundancyResolver coRes = new ConflictAndRedundancyResolver(proMod, new PostProcessingCmdParams());
 		
-		coRes.resolveConflictsOrRedundancies();
+		proMod = coRes.resolveConflictsOrRedundancies();
 		
 		long timingAfterConflictResolution = System.currentTimeMillis();
 		
 		coRes.printComputationStats(timingBeforeConflictResolution, timingAfterConflictResolution);
+
+		proMod.bag.removeMarkedConstraints();
+		System.out.println(proMod.bag);
 		
-		System.out.println(coRes.getSafeProcess().bag);
-		
-		new DeclareEncoderDecoder(coRes.getSafeProcess()).marshal(xmlFileOut);
+		new DeclareMapEncoderDecoder(coRes.getSafeProcess()).marshal(xmlFileOut);
 	}
 }

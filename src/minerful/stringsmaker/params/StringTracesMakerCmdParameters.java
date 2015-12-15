@@ -60,7 +60,8 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
     public LogMakerCmdParameters.Encoding outputEncoding;
     
     public StringTracesMakerCmdParameters() {
-        regexps = new String[]{TEST_REGEXP};
+    	super();
+    	regexps = new String[]{TEST_REGEXP};
         alphabet = TEST_ALPHABET;
         minChrsPerString = MIN_OCCURRENCES;
         maxChrsPerString = MAX_OCCURRENCES;

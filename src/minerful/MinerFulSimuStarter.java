@@ -7,12 +7,14 @@ package minerful;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
+import minerful.postprocessing.params.PostProcessingCmdParams;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 
@@ -28,8 +30,13 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 		Options minerfulOptions = MinerFulCmdParameters.parseableOptions(),
 				tracesMakerOptions = StringTracesMakerCmdParameters.parseableOptions(),
 				systemOptions = SystemCmdParameters.parseableOptions(),
-				viewOptions = ViewCmdParameters.parseableOptions();
+				viewOptions = ViewCmdParameters.parseableOptions(),
+				outputOptions = OutputModelParameters.parseableOptions(),
+				postProptions = PostProcessingCmdParams.parseableOptions();
 		
+    	for (Object opt: postProptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
     	for (Object opt: minerfulOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
@@ -37,6 +44,9 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: viewOptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
+    	for (Object opt: outputOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: systemOptions.getOptions()) {
@@ -70,10 +80,18 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
         		new MinerFulCmdParameters(
         				cmdLineOptions,
     					args);
+		OutputModelParameters outParams =
+				new OutputModelParameters(
+						cmdLineOptions,
+						args);
         SystemCmdParameters systemParams =
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
+		PostProcessingCmdParams postParams =
+				new PostProcessingCmdParams(
+						cmdLineOptions,
+						args);
         
         if (systemParams.help) {
         	systemParams.printHelp(cmdLineOptions);
@@ -90,10 +108,10 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-			ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, viewParams, systemParams, taskCharArchive);
+			ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, systemParams, postParams, taskCharArchive);
 	        
-	        MinerFulProcessViewerStarter proViewStarter = new MinerFulProcessViewerStarter(); 
-	        proViewStarter.print(processModel, viewParams, systemParams, stringLogParser);
+	        MinerFulProcessOutputMgtStarter proViewStarter = new MinerFulProcessOutputMgtStarter(); 
+	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
 
 
@@ -12,15 +13,15 @@ public class StringEventClassifier extends AbstractLogEventClassifier implements
 		super(eventClassificationType);
 	}
 	
-	private Set<TaskClass> classes = new TreeSet<TaskClass>();
+	private Set<AbstractTaskClass> classes = new TreeSet<AbstractTaskClass>();
 
-	public TaskClass classify(Character chr) {
+	public AbstractTaskClass classify(Character chr) {
 		CharTaskClass chaTaCla = new CharTaskClass(chr);
 		this.classes.add(chaTaCla);
 		return chaTaCla;
 	}
 	
-	public Collection<TaskClass> classify(String trace) {
+	public Collection<AbstractTaskClass> classify(String trace) {
 		for (Character chr : trace.toCharArray()) {
 			this.classes.add(new CharTaskClass(chr));
 		}
@@ -28,7 +29,7 @@ public class StringEventClassifier extends AbstractLogEventClassifier implements
 	}
 
 	@Override
-	public Collection<TaskClass> getTaskClasses() {
+	public Collection<AbstractTaskClass> getTaskClasses() {
 		return this.classes;
 	}
 }

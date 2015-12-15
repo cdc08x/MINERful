@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.automaton.AutomatonFactory;
 import minerful.automaton.SubAutomaton;
@@ -26,8 +27,10 @@ import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
+import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
 import minerful.index.LinearConstraintsIndexFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import dk.brics.automaton.Automaton;
@@ -40,7 +43,8 @@ public class ProcessModel {
 	@XmlTransient
 	public static String DEFAULT_NAME = "Discovered model";
 
-	@XmlElement
+	@XmlElement(name="declarative-model", required=true)
+	@XmlJavaTypeAdapter(type=TreeSet.class, value=ConstraintsBagAdapter.class)
 	public ConstraintsBag bag;
 	@XmlAttribute
 	private String name;
@@ -49,6 +53,8 @@ public class ProcessModel {
 	@XmlTransient
 	public static final String MINERFUL_XMLNS = "https://github.com/cdc08x/MINERful/";
 
+	protected ProcessModel() {}
+	
 	public ProcessModel(TaskCharArchive taskCharArchive, ConstraintsBag bag) {
 		this(taskCharArchive, bag, DEFAULT_NAME);
 	}
@@ -68,11 +74,11 @@ public class ProcessModel {
 	}
 
 	public Automaton buildAutomaton() {
-		return buildAutomatonByBoundHeuristic();
+		return buildAutomatonByBondHeuristic();
 	}
 
 	public Automaton buildAlphabetAcceptingAutomaton() {
-		return AutomatonFactory.fromRegularExpressions(new ArrayList<String>(0), this.taskCharArchive.getAlphabet());
+		return AutomatonFactory.fromRegularExpressions(new ArrayList<String>(0), this.taskCharArchive.getIdentifiersAlphabet());
 	}
 	
 	public Collection<SubAutomaton> buildSubAutomata() {
@@ -85,7 +91,7 @@ public class ProcessModel {
 		Collection<Constraint> cns = null;
 //		Collection<TaskChar> involvedTaskChars = null;
 //		Collection<Character> involvedTaskCharIds = null;
-		String alphabetLimitingRegularExpression = AutomatonUtils.createRegExpLimitingTheAlphabet(this.taskCharArchive.getAlphabet());
+		String alphabetLimitingRegularExpression = AutomatonUtils.createRegExpLimitingTheAlphabet(this.taskCharArchive.getIdentifiersAlphabet());
 		
 		for (TaskChar tChr : this.bag.getTaskChars()) {
 //			involvedTaskChars = new TreeSet<TaskChar>();
@@ -107,22 +113,22 @@ public class ProcessModel {
 		}
 		
 		if (maxActions > AutomatonFactory.NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA)
-			return AutomatonFactory.subAutomataFromRegularExpressionsInMultiThreading(regExpsMap, this.taskCharArchive.getAlphabet(), maxActions);
+			return AutomatonFactory.subAutomataFromRegularExpressionsInMultiThreading(regExpsMap, this.taskCharArchive.getIdentifiersAlphabet(), maxActions);
 		else
-			return AutomatonFactory.subAutomataFromRegularExpressionsInMultiThreading(regExpsMap, this.taskCharArchive.getAlphabet());
+			return AutomatonFactory.subAutomataFromRegularExpressionsInMultiThreading(regExpsMap, this.taskCharArchive.getIdentifiersAlphabet());
 	}
 
 	/*
 	 * This turned out to be the best heuristic for computing the automaton!
 	 */
-	public Automaton buildAutomatonByBoundHeuristic() {
+	public Automaton buildAutomatonByBondHeuristic() {
 		Collection<String> regularExpressions = null;
 		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(this.bag);
 		regularExpressions = new ArrayList<String>(constraints.size());
 		for (Constraint con : constraints) {
 			regularExpressions.add(con.getRegularExpression());
 		}
-		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getAlphabet());
+		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
 	}
 	
 	public Automaton buildAutomatonByBoundHeuristicAppliedTwiceInMultiThreading() {
@@ -163,7 +169,7 @@ public class ProcessModel {
 			for (Constraint con : constraints) {
 				regularExpressions.add(con.getRegularExpression());
 			}
-			subAutomata.put(tCh, AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getAlphabet()));
+			subAutomata.put(tCh, AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet()));
 		}
 		
 		for (TaskChar tCh : taskCharsSortedByNumberOfConnections) {
@@ -214,7 +220,7 @@ public class ProcessModel {
 			}
 			indexedRegExps.put(tCh.identifier, regularExpressions);
 		}
-		return AutomatonFactory.fromRegularExpressionsByDimensionalityHeuristicInMultiThreading(indexedRegExps, this.taskCharArchive.getAlphabet());
+		return AutomatonFactory.fromRegularExpressionsByDimensionalityHeuristicInMultiThreading(indexedRegExps, this.taskCharArchive.getIdentifiersAlphabet());
 	}
 
 	public Automaton buildAutomatonByStrictnessHeuristic() {
@@ -223,7 +229,7 @@ public class ProcessModel {
 		for (Constraint con : constraintsSortedByStrictness) {
 			regularExpressions.add(con.getRegularExpression());
 		}
-		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getAlphabet());
+		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
 	}
 	
 	public static ProcessModel generateNonEvaluatedBinaryModel(TaskCharArchive taskCharArchive) {
@@ -291,7 +297,7 @@ for (Constraint con : impliedIndexedBag.getConstraintsOf(new TaskChar('a'))) {
 			regExpsMap.put(tChr.identifier, regExps);
 		}
 		
-		return AutomatonFactory.fromRegularExpressionsByDimensionalityHeuristicInMultiThreading(regExpsMap, this.taskCharArchive.getAlphabet());
+		return AutomatonFactory.fromRegularExpressionsByDimensionalityHeuristicInMultiThreading(regExpsMap, this.taskCharArchive.getIdentifiersAlphabet());
 	}
 
 	public TaskCharArchive getTaskCharArchive() {
@@ -309,5 +315,9 @@ for (Constraint con : impliedIndexedBag.getConstraintsOf(new TaskChar('a'))) {
 		builder.append(taskCharArchive);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public SortedSet<Constraint> getAllConstraints() {
+		return LinearConstraintsIndexFactory.getAllConstraints(bag);
 	}
 }

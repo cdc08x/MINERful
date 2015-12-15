@@ -19,13 +19,15 @@ import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
 import minerful.index.LinearConstraintsIndexFactory;
+import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.simplification.SubsumptionChecker;
+import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.pruning.SubsumptionCheckSummaryMaker;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 
@@ -52,6 +54,14 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
+		OutputModelParameters outParams =
+				new OutputModelParameters(
+						cmdLineOptions,
+						args);
+		PostProcessingCmdParams postParams =
+				new PostProcessingCmdParams(
+						cmdLineOptions,
+						args);
         
         if (systemParams.help) {
         	systemParams.printHelp(cmdLineOptions);
@@ -67,9 +77,9 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
 			LogParser stringLogParser = new StringLogParser(testBedArray, ClassificationType.NAME);
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
-	        ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, viewParams, systemParams, taskCharArchive);
-	        MinerFulProcessViewerStarter proViewStarter = new MinerFulProcessViewerStarter(); 
-	        proViewStarter.print(processModel, viewParams, systemParams, stringLogParser);
+	        ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, systemParams, postParams, taskCharArchive);
+	        MinerFulProcessOutputMgtStarter proViewStarter = new MinerFulProcessOutputMgtStarter(); 
+	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
 	        /*
 				AlternateResponse(a, {b,c})
 	        	ChainPrecedence({a,b}, c)
@@ -95,7 +105,7 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
 	        		new ChainPrecedence(new TaskCharSet(Arrays.asList(new TaskChar[]{a,b,d})), new TaskCharSet(c)),
 	        };
 	        
-	        SubsumptionChecker suChe = new SubsumptionChecker(model);
+	        SubsumptionCheckSummaryMaker suChe = new SubsumptionCheckSummaryMaker(model);
 	        Collection<Constraint> cns = LinearConstraintsIndexFactory.getAllConstraints(processModel.bag);
 	        // Leave out all non-relation constraints
 	        Iterator<Constraint> cnsIt = cns.iterator();

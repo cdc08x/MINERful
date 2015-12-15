@@ -26,6 +26,7 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
 	public File logFile;
 
 	public ErrorInjectorCmdParameters() {
+		super();
 		this.errorInjectionSpreadingPolicy = ErrorInjector.SpreadingPolicy.getDefault();
 		this.errorType = ErrorInjector.ErrorType.getDefault();
 		this.errorsInjectionPercentage = ERROR_INJECTION_PERCENTAGE_DEFAULT;

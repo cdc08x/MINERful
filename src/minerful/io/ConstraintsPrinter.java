@@ -18,14 +18,14 @@ import minerful.automaton.concept.WeightedAutomaton;
 import minerful.automaton.encdec.AutomatonDotPrinter;
 import minerful.automaton.encdec.TsmlEncoder;
 import minerful.automaton.encdec.WeightedAutomatonFactory;
+import minerful.concept.AbstractTaskClass;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
-import minerful.concept.TaskClass;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
-import minerful.io.encdec.declare.DeclareEncoderDecoder;
+import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
@@ -33,30 +33,20 @@ public class ConstraintsPrinter {
 	public static final int SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER = // 3;
 			AutomatonFactory.NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA;
 	public static final double MINIMUM_THRESHOLD = 0.0;
-	private static final int HALF_NUMBER_OF_BARS = 10;
+//	private static final int HALF_NUMBER_OF_BARS = 10;
 	// FIXME Make it user-customisable
 	private static final boolean PRINT_ONLY_IF_ADDITIONAL_INFO_IS_GIVEN = false;
-	private double supportThreshold;
-	private double interestThreshold;
 	private ProcessModel processModel;
 	private Automaton processAutomaton;
 	private NavigableMap<Constraint, String> additionalCnsIndexedInfo;
 
 	public ConstraintsPrinter(ProcessModel processModel) {
-		this(processModel, Constraint.MIN_SUPPORT, Constraint.MIN_INTEREST_FACTOR);
-	}
-
-	public ConstraintsPrinter(ProcessModel processModel,
-			double threshold, double interest) {
-		this(processModel, threshold, interest, null);
+		this(processModel, null);
 	}
 	
 	public ConstraintsPrinter(ProcessModel processModel,
-			Double supportThreshold, Double interestThreshold,
 			NavigableMap<Constraint, String> additionalCnsIndexedInfo) {
 		this.processModel = processModel;
-		this.supportThreshold = supportThreshold;
-		this.interestThreshold = interestThreshold;
 		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
 	}
 
@@ -73,7 +63,7 @@ public class ConstraintsPrinter {
             sBld.append("] => {\n"
                     + "\t\t");
             for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
-        		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding, HALF_NUMBER_OF_BARS));
+        		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
                 sBld.append("\n\t\t");
             }
             sBld.append("\n\t}\n");
@@ -129,10 +119,15 @@ public class ConstraintsPrinter {
         StringBuilder
         	superSbuf = new StringBuilder();
 
-        superSbuf.append("'Constraint template';'Implying activity';'Implied activity';'Support';'Confidence level';'Interest factor'\n");
+        superSbuf.append("'Name';'Constraint template';'Implying activity';'Implied activity';'Support';'Confidence level';'Interest factor'\n");
 
         for (TaskChar key : this.processModel.bag.getTaskChars()) {
         	for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
+        		superSbuf.append('\'');
+//        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
+        		superSbuf.append(c.toString());
+        		superSbuf.append('\'');
+        		superSbuf.append(';');
         		superSbuf.append('\'');
 //        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
         		superSbuf.append(c.getName());
@@ -170,7 +165,7 @@ public class ConstraintsPrinter {
         for (Constraint c : constraintsCollection) {
         	i++;
         	sBld.append("\n\t");
-    		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding, HALF_NUMBER_OF_BARS));
+    		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
         }
         sBld.append("\n\n");
         sBld.append("Constraints shown: " + i + "\n");
@@ -209,7 +204,7 @@ public class ConstraintsPrinter {
         return maxPadding;
 	}
 
-    public String printConstraintsData(Constraint constraint, String additionalInfo, int maxPadding, int halfNumberOfBars) {
+    public String printConstraintsData(Constraint constraint, String additionalInfo, int maxPadding) {//, int halfNumberOfBars) {
     	if (PRINT_ONLY_IF_ADDITIONAL_INFO_IS_GIVEN) {
     		if (additionalInfo == null || additionalInfo.isEmpty()) {
     			return "";
@@ -217,25 +212,25 @@ public class ConstraintsPrinter {
     	}
     	
     	StringBuilder sBld = new StringBuilder();
-    	int barsCounter = -halfNumberOfBars;
-        double relativeSupport = constraint.getRelativeSupport(supportThreshold);
+//    	int barsCounter = -halfNumberOfBars;
+//        double relativeSupport = constraint.getRelativeSupport(supportThreshold);
 
         sBld.append(String.format(Locale.ENGLISH, "%7.3f%% ", constraint.support * 100));
         sBld.append(String.format("%-" + maxPadding + "s", constraint.toString()));
-        sBld.append(String.format(Locale.ENGLISH, "%8.3f%% ", relativeSupport * 100));
+//        sBld.append(String.format(Locale.ENGLISH, "%8.3f%% ", relativeSupport * 100));
 
-        if (relativeSupport != 0) {
-            for (; (barsCounter < relativeSupport * halfNumberOfBars && barsCounter <= 0); barsCounter++) {
-                sBld.append(' ');
-            }
-            for (; (barsCounter >= relativeSupport * halfNumberOfBars && barsCounter <= 0) || (barsCounter < relativeSupport * halfNumberOfBars && barsCounter >= 0); barsCounter++) {
-                sBld.append('|');
-            }
-        }
-
-        for (; barsCounter <= halfNumberOfBars; barsCounter++) {
-        	sBld.append(' ');
-        }
+//        if (relativeSupport != 0) {
+//            for (; (barsCounter < relativeSupport * halfNumberOfBars && barsCounter <= 0); barsCounter++) {
+//                sBld.append(' ');
+//            }
+//            for (; (barsCounter >= relativeSupport * halfNumberOfBars && barsCounter <= 0) || (barsCounter < relativeSupport * halfNumberOfBars && barsCounter >= 0); barsCounter++) {
+//                sBld.append('|');
+//            }
+//        }
+//
+//        for (; barsCounter <= halfNumberOfBars; barsCounter++) {
+//        	sBld.append(' ');
+//        }
         sBld.append(String.format(Locale.ENGLISH, " conf.: %7.3f; ", constraint.confidence));
         sBld.append(String.format(Locale.ENGLISH, " int'f: %7.3f; ", constraint.interestFactor));
         
@@ -246,7 +241,7 @@ public class ConstraintsPrinter {
     }
     
     public void printConDecModel(File outFile) throws IOException {
-		new DeclareEncoderDecoder(processModel).marshal(outFile.getCanonicalPath());
+		new DeclareMapEncoderDecoder(processModel).marshal(outFile.getCanonicalPath());
     }
     
     public String printWeightedXmlAutomaton(LogParser logParser) throws JAXBException {
@@ -279,7 +274,7 @@ public class ConstraintsPrinter {
 //				this.process.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
 				this.processModel.buildSubAutomata();
 		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag));
-		NavigableMap<Character, TaskClass> idsNamesMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> idsNamesMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
 
 		NavigableMap<String, String> partialAutomataXmls = new TreeMap<String, String>();
 		
@@ -313,7 +308,7 @@ public class ConstraintsPrinter {
 			processAutomaton = this.processModel.buildAutomaton();
 		
 		NavigableMap<Character, String> stringMap = new TreeMap<Character, String>();
-		NavigableMap<Character, TaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
 		for (Character key : charToClassMap.keySet())
 			stringMap.put(key, charToClassMap.get(key).getName());
 
@@ -324,7 +319,7 @@ public class ConstraintsPrinter {
 		if (this.processAutomaton == null)
 			processAutomaton = this.processModel.buildAutomaton();
 		NavigableMap<Character, String> idsNamesMap = new TreeMap<Character, String>();
-		NavigableMap<Character, TaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
 		for (Character key : charToClassMap.keySet())
 			idsNamesMap.put(key, charToClassMap.get(key).getName());
 		return new TsmlEncoder(idsNamesMap).automatonToTSML(processAutomaton, this.processModel.getName());
@@ -335,7 +330,7 @@ public class ConstraintsPrinter {
 		Collection<SubAutomaton> partialAutomata =
 				this.processModel.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
 		String dotFormattedAutomaton = null;
-		NavigableMap<Character, TaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
 		NavigableMap<Character, String> idsNamesMap = new TreeMap<Character, String>();
 		for (Character key : charToClassMap.keySet())
 			idsNamesMap.put(key, charToClassMap.get(key).getName());
@@ -349,15 +344,8 @@ public class ConstraintsPrinter {
 		}
 		return partialAutomataDots;
 	}
-	
 
 	public ConstraintsBag getBag() {
 		return this.processModel.bag;
-	}
-	public double getSupportThreshold() {
-		return supportThreshold;
-	}
-	public double getInterestThreshold() {
-		return interestThreshold;
 	}
 }

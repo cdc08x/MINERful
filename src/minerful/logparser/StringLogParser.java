@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskCharArchive;
-import minerful.concept.TaskClass;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public class StringLogParser extends AbstractLogParser implements LogParser {
@@ -47,7 +47,7 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
         this.strEventClassifier = new StringEventClassifier(evtClassType);
 	}
 	
-	protected Collection<TaskClass> parseLog(String[] strings) {
+	protected Collection<AbstractTaskClass> parseLog(String[] strings) {
 		for (String strLine : strings) {
         	strLine = strLine.trim();
 
@@ -75,7 +75,7 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 	}
 
 	@Override
-	protected Collection<TaskClass> parseLog(File stringsLogFile) throws Exception {
+	protected Collection<AbstractTaskClass> parseLog(File stringsLogFile) throws Exception {
         FileInputStream fstream = new FileInputStream(stringsLogFile);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));

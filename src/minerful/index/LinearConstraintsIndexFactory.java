@@ -2,7 +2,6 @@ package minerful.index;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,102 +17,13 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.RelationConstraint;
+import minerful.index.comparator.allinone.HierarchyBasedComparator;
+import minerful.index.comparator.allinone.InterestConfidenceBasedComparator;
+import minerful.index.comparator.allinone.SupportBasedComparator;
+import minerful.index.comparator.allinone.SupportConfidenceInterestFactorBasedComparator;
+import minerful.index.comparator.allinone.SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator;
 
 public class LinearConstraintsIndexFactory {
-	public static class HierarchyBasedComparator implements Comparator<Constraint> {
-		@Override
-		public int compare(Constraint o1, Constraint o2) {
-			int result = Integer.valueOf(o1.getHierarchyLevel()).compareTo(Integer.valueOf(o1.getHierarchyLevel()));
-			return (
-					(result == 0)
-					?	o1.compareTo(o2)
-							:	result * (-1)
-					);
-		}
-	}
-	public static class SupportBasedComparator implements Comparator<Constraint> {
-		@Override
-		public int compare(Constraint o1, Constraint o2) {
-			int result = Double.valueOf(o1.support).compareTo(Double.valueOf(o2.support));
-			return (
-				(result == 0)
-				?	o1.compareTo(o2)
-				:	result * (-1)
-			);
-		}
-	}
-	public static class InterestBasedComparator implements Comparator<Constraint> {
-		@Override
-		public int compare(Constraint o1, Constraint o2) {
-			Double 	interestOfO1 = null,
-					interestOfO2 = null;
-			int		result = 0;
-			
-			if (o1 instanceof RelationConstraint) {
-				interestOfO1 = ((RelationConstraint)o1).interestFactor;
-			} else {
-				interestOfO1 = o1.confidence;
-			}
-			if (o2 instanceof RelationConstraint) {
-				interestOfO2 = ((RelationConstraint)o2).interestFactor;
-			} else {
-				interestOfO2 = o2.confidence;
-			}
-			
-			result = interestOfO1.compareTo(interestOfO2);
-			
-			if (result == 0 && (o1 instanceof RelationConstraint || o2 instanceof RelationConstraint)) {
-				interestOfO1 = o1.confidence;
-				interestOfO2 = o2.confidence;
-				result = interestOfO1.compareTo(interestOfO2);
-			}
-			
-			return (
-				(result == 0)
-				?	o1.compareTo(o2)
-				:	result * (-1)
-			);
-		}
-	}
-	public static class SupportConfidenceInterestFactorBasedComparator implements Comparator<Constraint> {
-		@Override
-		public int compare(Constraint o1, Constraint o2) {
-			int result = Double.valueOf(o1.support).compareTo(o2.support);
-			if (result == 0) {
-				result = Double.valueOf(o1.confidence).compareTo(o2.confidence);
-				if (result == 0) {
-					result = Double.valueOf(o1.interestFactor).compareTo(o2.interestFactor);
-					if (result == 0) {
-						result = o1.compareTo(o2);
-					}
-				}
-			}
-			return result * (-1);
-		}
-	}
-	public static class SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator implements Comparator<Constraint> {
-		@Override
-		public int compare(Constraint o1, Constraint o2) {
-			int result = Double.valueOf(o1.support).compareTo(o2.support);
-			if (result == 0) {
-				result = o1.getFamily().compareTo(o2.getFamily()) * (-1);
-				if (result == 0) {
-					result = Double.valueOf(o1.confidence).compareTo(o2.confidence);
-					if (result == 0) {
-						result = Double.valueOf(o1.interestFactor).compareTo(o2.interestFactor);
-						if (result == 0) {
-							result = Integer.valueOf(o1.getHierarchyLevel()).compareTo(Integer.valueOf(o2.getHierarchyLevel()));
-							if (result == 0) {
-								result = o1.compareTo(o2);
-							}
-						}
-					}
-				}
-			}
-			return result * (-1);
-		}
-	}
-	
 	public static ConstraintsBag createConstraintsBagCloneIndexedByTaskCharAndSupport(ConstraintsBag bag) {
 		ConstraintsBag bagCopy = (ConstraintsBag) bag.clone();
 		TreeSet<Constraint> reindexed = null;
@@ -142,7 +52,7 @@ public class LinearConstraintsIndexFactory {
 		ConstraintsBag bagCopy = (ConstraintsBag) bag.clone();
 		TreeSet<Constraint> reindexed = null;
 		for (TaskChar key : bagCopy.getTaskChars()) {
-			reindexed = new TreeSet<Constraint>(new InterestBasedComparator());
+			reindexed = new TreeSet<Constraint>(new InterestConfidenceBasedComparator());
 			reindexed.addAll(bagCopy.getConstraintsOf(key));
 			bagCopy.eraseConstraints(key, reindexed);
 		}
@@ -213,21 +123,24 @@ public class LinearConstraintsIndexFactory {
 	}
 
 	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
-		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
+		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOFConstraintsIndexedByImplyingAndImplied =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
-				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(map));
+				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(mapOFConstraintsIndexedByImplyingAndImplied));
 		Collection<Constraint> constraints = new ArrayList<Constraint>();
 		Map<TaskChar, NavigableSet<Constraint>>
 			subMap = null,
 			subMapReverse = null;
 		
 		Set<TaskChar>
-			taskCharsReverse = new TreeSet<TaskChar>(map.keySet());
+			taskCharsReverse = new TreeSet<TaskChar>(mapOFConstraintsIndexedByImplyingAndImplied.keySet());
 		SortedSet<Constraint> tmpReorderingSet = null;
 		
+		// Starting from the activity having the highest number of constraints-based connections with other activities...
 		for (TaskChar tCh : taskCharsSortedByNumberOfConnections) {
-			subMap = map.get(tCh);
+			// Get all constraints pertaining to tCh, indexed by the implied (target) activity
+			subMap = mapOFConstraintsIndexedByImplyingAndImplied.get(tCh);
+			// For every target activity
 			for (TaskChar tChRev : taskCharsReverse) {
 				if (subMap.containsKey(tChRev) && subMap.get(tChRev) != null && subMap.get(tChRev).size() > 0) {
 					tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
@@ -235,8 +148,8 @@ public class LinearConstraintsIndexFactory {
 					constraints.addAll(tmpReorderingSet);
 					subMap.put(tChRev, null);
 				}
-				if (map.containsKey(tChRev)) {
-					subMapReverse = map.get(tChRev);
+				if (mapOFConstraintsIndexedByImplyingAndImplied.containsKey(tChRev)) {
+					subMapReverse = mapOFConstraintsIndexedByImplyingAndImplied.get(tChRev);
 					if (subMapReverse.containsKey(tCh) && subMapReverse.get(tCh) != null && subMapReverse.get(tCh).size() > 0) {
 						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
 						tmpReorderingSet.addAll(subMapReverse.get(tCh));
@@ -338,7 +251,7 @@ public class LinearConstraintsIndexFactory {
 	}
 	
 	public static SortedSet<Constraint> getAllConstraintsSortedByInterest(ConstraintsBag bag) {
-		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new InterestBasedComparator());
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new InterestConfidenceBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);

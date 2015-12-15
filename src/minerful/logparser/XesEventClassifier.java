@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
-import minerful.concept.TaskClass;
+import minerful.concept.AbstractTaskClass;
 
 import org.deckfour.xes.classification.XEventClasses;
 import org.deckfour.xes.classification.XEventClassifier;
@@ -57,11 +57,11 @@ public class XesEventClassifier extends AbstractLogEventClassifier implements Lo
 	}
 	
 	@Override
-	public Collection<TaskClass> getTaskClasses() {
+	public Collection<AbstractTaskClass> getTaskClasses() {
 		if (this.xEvtClasses == null)
 			throw new IllegalStateException("No classes for events available, until at least an instance of XLog has been parsed");
 
-		Collection<TaskClass> taskClasses = new ArrayList<TaskClass>(this.xEvtClasses.size());
+		Collection<AbstractTaskClass> taskClasses = new ArrayList<AbstractTaskClass>(this.xEvtClasses.size());
 		for ( int i = 0; i < this.xEvtClasses.size(); i++ ) {
 			taskClasses.add(new XesTaskClass(this.xEvtClasses.getByIndex(i)));
 		}

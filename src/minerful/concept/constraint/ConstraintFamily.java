@@ -1,25 +1,24 @@
 package minerful.concept.constraint;
 
-public enum ConstraintFamily {
+public enum ConstraintFamily implements Comparable<ConstraintFamily> {
 	// The natural order implemented by this method is the order in which the constants are declared.
 	EXISTENCE,
 	RELATION;
 	
 	public static interface ConstraintSubFamily {
-		
 	}
 	
     public static enum RelationConstraintSubFamily implements ConstraintSubFamily {
-    	NONE,
-    	SINGLE_ACTIVATION,
     	COUPLING,
-    	NEGATIVE
+    	SINGLE_ACTIVATION,
+    	NEGATIVE,
+    	NONE,
     }
 
     public static enum ExistenceConstraintSubFamily implements ConstraintSubFamily {
-    	NONE,
+    	POSITION,
     	NUMEROSITY,
-    	POSITION
+    	NONE,
     }
 
     public static enum ConstraintImplicationVerse {

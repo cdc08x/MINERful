@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
@@ -26,7 +25,6 @@ public class ConstraintsBagMapAdapter extends XmlAdapter<ConstraintsBagMapAdapte
 		public static class Item {			
 			@XmlElement(name="at")
 			public TaskChar key;
-			@XmlJavaTypeAdapter(value=ConstraintsSetAdapter.class)
 			public Set<Constraint> value;
 
 			public Item(TaskChar key, Set<Constraint> value) {
@@ -34,6 +32,16 @@ public class ConstraintsBagMapAdapter extends XmlAdapter<ConstraintsBagMapAdapte
 				this.value = value;
 			}
 			public Item() {
+			}
+			@Override
+			public String toString() {
+				StringBuilder builder = new StringBuilder();
+				builder.append("Item [key=");
+				builder.append(key);
+				builder.append(", value=");
+				builder.append(value);
+				builder.append("]");
+				return builder.toString();
 			}
 		}
 
@@ -47,6 +55,14 @@ public class ConstraintsBagMapAdapter extends XmlAdapter<ConstraintsBagMapAdapte
 		}
 		public KeyValueList(List<Item> list) {
 			this.list = list;
+		}
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("KeyValueList [list=");
+			builder.append(list);
+			builder.append("]");
+			return builder.toString();
 		}
 	}
 

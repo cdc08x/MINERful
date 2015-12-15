@@ -4,6 +4,7 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import minerful.concept.TaskChar;
@@ -12,6 +13,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
+@XmlSeeAlso({NotChainSuccession.class,NotSuccession.class,NotCoExistence.class})
 public abstract class NegativeRelationConstraint extends RelationConstraint {
     @XmlTransient
     protected RelationConstraint opponent;

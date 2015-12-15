@@ -7,7 +7,11 @@ package minerful.concept.constraint.relation;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
@@ -16,18 +20,21 @@ import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
+@XmlType
+@XmlSeeAlso({MutualRelationConstraint.class,NegativeRelationConstraint.class,UnidirectionalRelationConstraint.class})
 public abstract class RelationConstraint extends Constraint {
 	public static enum ImplicationVerse {
 		FORWARD,
 		BACKWARD,
 		BOTH
 	}
-	@XmlElement
-    public final TaskCharSet implied;
+	@XmlIDREF
+//	@XmlTransient
+	public TaskCharSet implied;
 	
 	protected RelationConstraint() {
 		super();
-		this.implied = null;
+//		implied = null;
 	}
 
     public RelationConstraint(TaskCharSet param1, TaskCharSet param2, double support) {
@@ -207,5 +214,13 @@ public abstract class RelationConstraint extends Constraint {
 				this.getImplicationVerse() == relaCon.getImplicationVerse()
 			// FIXME This is a trick which could be inconsistent with possible model extensions
 			||	relaCon.getClass().equals(RespondedExistence.class);
+	}
+	
+	@Override
+	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		if (this.getFamily().equals(ConstraintFamily.RELATION)) {
+				this.base = this.getParameters().get(0);
+				this.implied = this.getParameters().get(1);
+		}
 	}
 }

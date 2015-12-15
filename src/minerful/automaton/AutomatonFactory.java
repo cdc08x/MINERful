@@ -3,6 +3,7 @@ package minerful.automaton;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NavigableMap;
 import java.util.SortedSet;
@@ -16,7 +17,10 @@ import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
+import minerful.index.ModularConstraintsSorter;
+import minerful.index.comparator.modular.CnsSortModularDefaultPolicy;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
@@ -179,19 +183,42 @@ public class AutomatonFactory {
 
 
 	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet) {
-		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
+		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT, new Constraint[0]);
 	}
-	
+
+	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet, Constraint... excludedConstraints) {
+		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT, excludedConstraints);
+	}
+
 	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet,
 			int minLen, int maxLen) {
-		Collection<String> regularExpressions = null;
-		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(bag);
+		return buildAutomaton(bag, basicAlphabet, minLen, maxLen, new Constraint[0]);
+	}
 
+	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet,
+			int minLen, int maxLen, Constraint... excludedConstraints) {
+		Collection<String> regularExpressions = null;
+		Collection<Constraint> constraints = bag.getAllConstraints();
+		
+		for (Constraint excluCon : excludedConstraints) {
+			constraints.remove(excluCon);
+		}
+		
+		constraints = new ModularConstraintsSorter(constraints).sort(CnsSortModularDefaultPolicy.ACTIVATIONTARGETBONDS,CnsSortModularDefaultPolicy.FAMILYHIERARCHY);
+		
+//		HashSet<Constraint> excludedConstraintsSet = null;
+//		if (excludedConstraints.length > 0)
+//			excludedConstraintsSet = new HashSet<Constraint>(excludedConstraints.length, (float)1.0);
+//		for (Constraint excludedConstraint : excludedConstraints) {
+//			excludedConstraintsSet.add(excludedConstraint);
+//		}
+		
 		regularExpressions = new ArrayList<String>(constraints.size());
 		for (Constraint con : constraints) {
+//			if (excludedConstraintsSet != null && !excludedConstraintsSet.contains(con)) {
 			regularExpressions.add(con.getRegularExpression());
+//			}
 		}
-
 		if (minLen != NO_TRACE_LENGTH_CONSTRAINT || maxLen != NO_TRACE_LENGTH_CONSTRAINT) {
 			return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet, minLen, maxLen);	
 		}

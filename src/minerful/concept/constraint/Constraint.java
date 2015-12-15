@@ -8,18 +8,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.existence.ExistenceConstraint;
+import minerful.concept.constraint.relation.Precedence;
+import minerful.concept.constraint.relation.RelationConstraint;
 
-@XmlRootElement
+@XmlRootElement(name="constraint")
+@XmlSeeAlso({RelationConstraint.class,ExistenceConstraint.class})
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Constraint implements Comparable<Constraint> {
 	@XmlTransient
@@ -42,8 +50,9 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public static final double DEFAULT_CONFIDENCE = MIN_CONFIDENCE;
 	@XmlTransient
     public static final double RANGE_FOR_SUPPORT = (MAX_SUPPORT - MIN_SUPPORT);
-	@XmlTransient
-    public final TaskCharSet base;
+	@XmlIDREF
+//	@XmlTransient
+    public TaskCharSet base;
 	@XmlElement
     public double support;
 	@XmlElement
@@ -52,26 +61,27 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public double interestFactor;
 	@XmlAttribute
 	public boolean evaluatedOnLog = false;
-	@XmlAttribute
+	@XmlTransient
 	public final String type = this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') +1);
-	@XmlAttribute
+	@XmlTransient
 	public boolean redundant = false;
-	@XmlAttribute
+	@XmlTransient
 	public boolean conflicting = false;
-	@XmlAttribute
+	@XmlTransient
 	public boolean belowSupportThreshold = false;
-	@XmlAttribute
+	@XmlTransient
 	public boolean belowConfidenceThreshold = false;
-	@XmlAttribute
+	@XmlTransient
 	public boolean belowInterestFactorThreshold = false;
 	@XmlTransient
     protected Constraint constraintWhichThisIsBasedUpon;
-	@XmlTransient
+	@XmlElementWrapper(name="parameters")
+	@XmlElement(name="parameter")
 	protected List<TaskCharSet> parameters;
 	
 	protected Constraint() {
-		this.base = null;
-		this.parameters = null;
+//		this.base = null;
+		this.parameters = new ArrayList<TaskCharSet>();
 	}
 
 	public Constraint(TaskChar base) {
@@ -174,7 +184,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public boolean isRedundant() {
 		return this.redundant;
 	}
-	
+
 	private boolean isConflicting() {
 		return this.conflicting;
 	}
@@ -242,9 +252,17 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public TaskCharSet getBase() {
 		return this.base;
 	}
+
+//	public void setBase(TaskCharSet base) {
+//		this.parameters.set(0, base);
+//	}
 	
 	public List<TaskCharSet> getParameters() {
 		return parameters;
+	}
+
+	public void setParameters(List<TaskCharSet> parameters) {
+		this.parameters = parameters;
 	}
 
 	public String getRegularExpression() {
@@ -260,12 +278,12 @@ public abstract class Constraint implements Comparable<Constraint> {
 	}
 
     
-    public boolean isMoreReliableThanGeneric() {
+    public boolean isMoreInformativeThanGeneric() {
         if (!this.hasConstraintToBaseUpon())
             return true;
         Integer moreReliableThanGeneric = new Double(this.support).compareTo(constraintWhichThisIsBasedUpon.support);
         if (moreReliableThanGeneric == 0)
-        	return constraintWhichThisIsBasedUpon.isMoreReliableThanGeneric();
+        	return constraintWhichThisIsBasedUpon.isMoreInformativeThanGeneric();
         return (moreReliableThanGeneric > 0);
     }
 
@@ -290,7 +308,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 	}
 	
 	public boolean isChildOf(Constraint c) {
-		Constraint baCon = this.getConstraintWhichThisShouldBeBasedUpon();
+		Constraint baCon = this.suggestConstraintWhichThisShouldBeBasedUpon();
 		if (baCon == null) {
 			return false;
 		}
@@ -323,9 +341,25 @@ public abstract class Constraint implements Comparable<Constraint> {
 
     public abstract <T extends ConstraintSubFamily> T getSubFamily();
 
-    public abstract Constraint getConstraintWhichThisShouldBeBasedUpon();
+    public abstract Constraint suggestConstraintWhichThisShouldBeBasedUpon();
+    
+    public Constraint createConstraintWhichThisShouldBeBasedUpon() {
+    	Constraint cns = suggestConstraintWhichThisShouldBeBasedUpon();
+    	if (cns != null) {
+	    	cns.support = this.support;
+	    	cns.confidence = this.confidence;
+	    	cns.interestFactor = this.interestFactor;
+    	}
+    	return cns;
+    }
 
 	public boolean isMarkedForExclusion() {
 		return this.isRedundant() || !this.isAboveThresholds() || this.isConflicting();
+	}
+
+	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
+			this.base = this.getParameters().get(0);
+		}
 	}
 }

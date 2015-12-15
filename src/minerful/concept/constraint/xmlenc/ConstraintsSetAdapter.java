@@ -10,16 +10,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.relation.NegativeRelationConstraint;
-import minerful.concept.constraint.relation.RelationConstraint;
 
 @XmlRootElement
 public class ConstraintsSetAdapter extends XmlAdapter<ConstraintsSetAdapter.SetList, Set<Constraint>>{
 	public static class SetList {
 		@XmlElements({
-			@XmlElement(type=Constraint.class, name="existenceConstraint"),
-			@XmlElement(type=RelationConstraint.class, name="relationConstraint"),
-			@XmlElement(type=NegativeRelationConstraint.class, name="negativeRelationConstraint"),
+			@XmlElement(type=Constraint.class, name="constraint"),
 		})
 		public ArrayList<Constraint> list = null;
 
@@ -31,6 +27,14 @@ public class ConstraintsSetAdapter extends XmlAdapter<ConstraintsSetAdapter.SetL
 		
 		public Set<Constraint> getSetList() {
 			return new TreeSet<Constraint>(this.list);
+		}
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("SetList [list=");
+			builder.append(list);
+			builder.append("]");
+			return builder.toString();
 		}
 	}
 	

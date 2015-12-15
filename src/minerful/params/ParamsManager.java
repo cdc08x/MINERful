@@ -11,13 +11,19 @@ import org.apache.commons.cli.PosixParser;
 public abstract class ParamsManager {
     public static final String EXPERIMENTAL_DEVELOPMENT_STAGE_MESSAGE = 
 			"*** WARNING: experimental development stage of implementation!";
+	private static final int DEFAULT_PROMPT_WIDTH = 120;
+    protected HelpFormatter helpFormatter = new HelpFormatter();
 
-    public void printHelp() {
+    public ParamsManager() {
+    	helpFormatter.setWidth(DEFAULT_PROMPT_WIDTH);
+	}
+
+	public void printHelp() {
     	this.printHelp(this.listParseableOptions());
     }
 
     public void printHelp(Options options) {
-    	new HelpFormatter().printHelp("cmd_name", options, true);
+    	helpFormatter.printHelp("cmd_name", options, true);
     }
     
     public void printHelpForWrongUsage(String errorMessage, Options options) {
@@ -62,14 +68,24 @@ public abstract class ParamsManager {
 
 	protected abstract void setup(CommandLine line);
                 
-    public static String printValues(Object[] values) {
+    protected static String fromStringToEnumValue(String token) {
+    	if (token != null)
+    		return token.trim().toUpperCase().replace("-", "_");
+    	return null;
+	}
+
+    protected static String fromEnumValueToString(String token) {
+		return token.trim().toLowerCase().replace("_", "-");
+	}
+
+	public static String printValues(Object[] values) {
         StringBuilder valuesStringBuilder = new StringBuilder();
 
         valuesStringBuilder.append("{");
 
         for (int i = 0; i < values.length; i++) {
             valuesStringBuilder.append("'");
-            valuesStringBuilder.append(values[i].toString());
+            valuesStringBuilder.append(fromEnumValueToString(values[i].toString()));
             valuesStringBuilder.append("'");
             if (i < values.length -1) {
                 valuesStringBuilder.append(",");

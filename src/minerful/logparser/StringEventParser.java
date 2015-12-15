@@ -1,7 +1,7 @@
 package minerful.logparser;
 
+import minerful.concept.AbstractTaskClass;
 import minerful.concept.Event;
-import minerful.concept.TaskClass;
 
 public class StringEventParser implements LogEventParser {
 	private StringTraceParser strTraceParser;
@@ -14,13 +14,13 @@ public class StringEventParser implements LogEventParser {
 
 	@Override
 	public Character evtIdentifier() {
-		TaskClass logEventClass = this.strTraceParser.strLogParser.strEventClassifier.classify(strEvent);
+		AbstractTaskClass logEventClass = this.strTraceParser.strLogParser.strEventClassifier.classify(strEvent);
 		return this.strTraceParser.strLogParser.taChaEncoDeco.encode(logEventClass);
 	}
 
 	@Override
 	public Event getEvent() {
-		TaskClass logEventClass = this.strTraceParser.strLogParser.strEventClassifier.classify(strEvent);
+		AbstractTaskClass logEventClass = this.strTraceParser.strLogParser.strEventClassifier.classify(strEvent);
 		return new Event(logEventClass);
 	}
 

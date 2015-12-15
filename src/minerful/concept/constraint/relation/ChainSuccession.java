@@ -4,14 +4,21 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
+@XmlRootElement
 public class ChainSuccession extends AlternateSuccession {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s^%2$s]*(%1$s%2$s[^%1$s^%2$s]*)*[^%1$s^%2$s]*";
+	}
+	
+	protected ChainSuccession() {
+		super();
 	}
 
     public ChainSuccession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
@@ -39,7 +46,7 @@ public class ChainSuccession extends AlternateSuccession {
     }
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new AlternateSuccession(base, implied);
 	}
 

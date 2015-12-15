@@ -21,6 +21,7 @@ public class SystemCmdParameters extends ParamsManager {
 	public Boolean help;
 
 	public SystemCmdParameters() {
+		super();
 		debugLevel = DebugLevel.info;
 		help = false;
 	}

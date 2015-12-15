@@ -4,14 +4,21 @@
  */
 package minerful.concept.constraint.relation;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
+@XmlRootElement
 public class NotCoExistence extends NotSuccession {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s^%2$s]*((%1$s[^%2$s]*)|(%2$s[^%1$s]*))?";
+	}
+	
+	protected NotCoExistence() {
+		super();
 	}
 
     public NotCoExistence(TaskChar param1, TaskChar param2, double support) {
@@ -38,7 +45,7 @@ public class NotCoExistence extends NotSuccession {
     }
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new NotSuccession(base, implied);
 	}
 

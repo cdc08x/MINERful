@@ -4,16 +4,23 @@
  */
 package minerful.concept.constraint.existence;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
+@XmlRootElement
 public class End extends Participation {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return ".*%1$s";
 	}
+
+	protected End() {
+    	super();
+    }
 
 	public End(TaskChar param1) {
         super(param1);
@@ -34,7 +41,7 @@ public class End extends Participation {
     }
 
 	@Override
-	public Constraint getConstraintWhichThisShouldBeBasedUpon() {
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new Participation(this.base);
 	}
 

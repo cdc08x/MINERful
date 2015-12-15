@@ -32,13 +32,12 @@ public class CallableAutomataMaker implements Callable<Automaton> {
 		if (regularExpressions.size() > 0) {
 			Iterator<String> regExpsIterator = regularExpressions.iterator();
 
-			int i = 1;
+//			int i = 1;
 			while (regExpsIterator.hasNext()) {
 				nuRegExp = regExpsIterator.next();
-
-				logger.trace("Intersecting the automaton with the accepting for: "
-						+ nuRegExp + " (" + i + " / " + this.regularExpressions.size() + ")");
-				i++;
+//				logger.trace("Intersecting the automaton with the accepting for: "
+//						+ nuRegExp + " (" + i + " / " + this.regularExpressions.size() + ")");
+//				i++;
 
 				nuConstraintAutomaton = new RegExp(nuRegExp).toAutomaton();
 				if (processAutomaton != null) {
@@ -48,11 +47,10 @@ public class CallableAutomataMaker implements Callable<Automaton> {
 					processAutomaton = nuConstraintAutomaton;
 				}
 				processAutomaton.minimize();
-
-				logger.trace("Automaton states: "
-						+ processAutomaton.getNumberOfStates()
-						+ "; automaton transitions: "
-						+ processAutomaton.getNumberOfTransitions());
+//				logger.trace("Automaton states: "
+//						+ processAutomaton.getNumberOfStates()
+//						+ "; automaton transitions: "
+//						+ processAutomaton.getNumberOfTransitions());
 			}
 		}
 		return processAutomaton;

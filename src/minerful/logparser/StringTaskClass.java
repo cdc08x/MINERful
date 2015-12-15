@@ -4,23 +4,25 @@ import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
 
 public class StringTaskClass extends AbstractTaskClass implements TaskClass {
-	public final String classString;
+	protected StringTaskClass() {
+		super();
+	}
 
 	public StringTaskClass(String classString) {
-		this.classString = classString;
+		this.className = classString;
 	}
 
 	@Override
 	public int compareTo(TaskClass o) {
 		if (o instanceof StringTaskClass)
-			return this.classString.compareTo(((StringTaskClass) o).classString);
+			return this.className.compareTo(((StringTaskClass) o).className);
 		else
 			return super.compareTo(o);
 	}
 
 	@Override
 	public String getName() {
-		return classString;
+		return className;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class StringTaskClass extends AbstractTaskClass implements TaskClass {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((classString == null) ? 0 : classString.hashCode());
+				+ ((className == null) ? 0 : className.hashCode());
 		return result;
 	}
 
@@ -41,10 +43,10 @@ public class StringTaskClass extends AbstractTaskClass implements TaskClass {
 		if (getClass() != obj.getClass())
 			return false;
 		StringTaskClass other = (StringTaskClass) obj;
-		if (classString == null) {
-			if (other.classString != null)
+		if (className == null) {
+			if (other.className != null)
 				return false;
-		} else if (!classString.equals(other.classString))
+		} else if (!className.equals(other.className))
 			return false;
 		return true;
 	}

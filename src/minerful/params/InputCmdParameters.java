@@ -32,6 +32,7 @@ public class InputCmdParameters extends ParamsManager {
     public File inputFile;
 
     public InputCmdParameters() {
+    	super();
     	inputLanguage = InputEncoding.xes;
     	eventClassification = EventClassification.name;
     	inputFile = null;
