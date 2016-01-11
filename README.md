@@ -1,4 +1,4 @@
-MINERful RC2 (2015/06/15)
+MINERful RC3 (2016/01/11)
 =========================
 
 
@@ -6,17 +6,7 @@ What is it?
 -----------
 
 MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic. MINERful can also create logs on the fly and inject errors inside them, too.
-Please notice that this is the command-line version of MINERful. For the GUI-equipped release, please download the [ProM Nightly Build](http://www.promtools.org/prom6/nightly/) and install DeclareMinerFul package.
-
-
-The Latest Version
-------------------
-		RC1.       	It is the first public release of MINERful.
-		Beta 1.01		Some bugs fixed and experimental features added (still not stable).
-		Beta 1.02		Improved CSV export.
-		Beta 1.03		ConDec export facility included.
-		Beta 1.04		Confidence level filtering (-c param).
-		RC2.				It is the second public release of MINERful. Introduces the discovery of Target-branched Declare constraints (-b param).
+Please notice that this is the command-line version of MINERful. A GUI-equipped release exists, although in beta version: please download the [ProM Nightly Build](http://www.promtools.org/prom6/nightly/) and install DeclareMinerFul package.
 
 Installation
 ------------
@@ -44,13 +34,13 @@ Usage (with .sh files)
       it launches the miner over a synthetic log, which is created on the fly and then altered with a controlled jection of errors in the traces
 
   		- run-MINERfulTracesMaker.sh
-        it launches the builder of synthetic logs
+      it launches the builder of synthetic logs
 
   		- run-MINERfulErrorInjectedTracesMaker.sh
-        it launches the builder of synthetic error-injected logs
+      it launches the builder of synthetic error-injected logs
 
   		- test-launchers/*.sh
-        these files make the miner execute several runs, over synthetic logs - for testing purposes.
+      these files make the miner execute several runs, over synthetic logs - for testing purposes.
 
   Each of those launchers can be invoked with the
       -h
@@ -62,28 +52,33 @@ Usage (with .sh files)
 Example usage (with .sh files)
 --------
     
-  	- Mining a XES log file located in /home/user/file.xes
+  	- Mine a XES log file located in /home/user/file.xes
 
       	run-MINERful.sh -iLF '/home/user/file.xes' 
   
-  	- Mining a XES log file located in /home/user/file.xes, with comprehensive debug lines
+  	- Mine a XES log file located in /home/user/file.xes and export the discovered model in a XML file located in /home/user/model-condec.xml, formatted as Declare/ConDec. Set a support threshold of 0.95, a confidence level threshold of 0.75, and an interest factor threshold of 0.5
+
+      	run-MINERful.sh -iLF '/home/user/file.xes' -condec '/home/user/model-condec.xml' -s 0.95 -c 0.75 -i 0.5
+  
+  	- Mine a XES log file located in /home/user/file.xes, with comprehensive debug lines
+
        	run-MINERful.sh -d all -iLF '/home/user/file.xes' 
   
-  	- Mining a XES log file located in /home/user/file.xes, with comprehensive debug lines. Let results be exported in a CSV file located in /home/user/output.csv
+  	- Mine a XES log file located in /home/user/file.xes, with comprehensive debug lines. Let results be exported in a CSV file located in /home/user/output.csv
 
      		run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv'
     
-  	- Mining a XES log file located in /home/user/file.xes, with comprehensive debug lines. Prune out those which are below. Let results be exported in a CSV file located in /home/user/output.csv
+  	- Mine a XES log file located in /home/user/file.xes, with comprehensive debug lines. Set a support threshold of 0.95, a confidence level threshold of 0.75, and an interest factor threshold of 0.5. Let results be exported in a CSV file located in /home/user/output.csv
 
-      	run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv'
+      	run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv' -s 0.95 -c 0.75 -i 0.5
 
 
-Example usage (with the .class files)
+Usage (with the .class files)
 ---------
 
-    This is a little bit more trickier, but necessary, in case you have a Microsoft Windows system.
+    This is a little bit trickier, but necessary, in case you have a Microsoft Windows system.
     From your prompt, type:
-        java -jar MINERful.jar it.uniroma1.dis.minerful.<LAUNCHER_CLASS> -h
+        java -jar MINERful.jar minerful.<LAUNCHER_CLASS> -h
     where <LAUNCHER_CLASS> can be either
 
   	- MinerFulMinerStarter

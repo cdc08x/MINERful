@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Author:       Claudio Di Ciccio
-# Version:      0.8
 # Date:         2013/09/20
 # Description:  This script launches the MinerFulErrorInjectedSimuStarter to test what happens to the mined constraints when the testbed is affected by controlled errors: the (main) input is a set of regular expressions (declarative process model constraints) determining the language (the process model) that generate strings (traces). Parameters for setting up the error injection are requested as well.
 #               Run this launcher with "-h" to understand the meaning of options you can pass.

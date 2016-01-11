@@ -1,19 +1,21 @@
 #!/bin/bash
 
 # Author:       Claudio Di Ciccio
-# Version:      0.8
-# Date:         2013/09/20
-# Description:  This script launches the MinerFulMinerStarter, in order to discover the declarative process model out of a log, provided as input.
+# Date:         2016/01/11
+# Description:  This script launches the MinerFulSimplifier, in order to simplify a declarative process model, provided as input.
 #               Run this launcher with "-h" to understand the meaning of options you can pass.
+
+## Import the libraries and store it into $LIBS
+. ./libs.cfg
 
 ## Clean up the screen
 clear
 
 ## Runtime environment constants
-MAINCLASS="minerful.MinerFulMinerStarter"
+MAINCLASS="minerful.MinerFulSimplifier"
 
 DEBUGLEVEL="none"
-MEMORY_MAX="8096m"
+MEMORY_MAX="16G"
 THRESHOLD=1.0
 
 ## Run!

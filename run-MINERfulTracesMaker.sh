@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Author:       Claudio Di Ciccio
-# Version:      0.8
 # Date:         2013/09/20
 # Description:  This script launches the MinerFulTracesMakerStarter to create synthetic collections of strings (which can be seen as logs): the (main) input is a set of regular expressions (declarative process model constraints) determining the language (the process model) that generate strings (traces).
 #               Run this launcher with "-h" to understand the meaning of options you can pass.
