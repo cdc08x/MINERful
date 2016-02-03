@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.logparser.CharTaskClass;
 import minerful.logparser.StringTaskClass;
 
 import org.apache.log4j.Logger;
@@ -200,28 +201,50 @@ public class TaskCharEncoderDecoder {
 	
 	public Character[] encode(AbstractTaskClass[] taskClasses) {
 		Character[] encodedTasks = new Character[0];
-		while (tasksCursor < taskClasses.length && boundCursor < LOWER_BOUNDS.length
-				&& boundCursor < UPPER_BOUNDS.length) {
-			charCursor = LOWER_BOUNDS[boundCursor];
-
-			for (; tasksCursor < taskClasses.length
-					&& charCursor < UPPER_BOUNDS[boundCursor]; charCursor++, tasksCursor++) {
-				tasksDictionary.put(taskClasses[tasksCursor],
-						Character.valueOf((char) charCursor));
-				inverseTasksDictionary.put(
-						Character.valueOf((char) charCursor),
-						taskClasses[tasksCursor]);
-			}
-
-			if (tasksCursor < taskClasses.length) {
-				boundCursor++;
+		
+		Class<? extends AbstractTaskClass> taskClassType = null;
+		
+		for (AbstractTaskClass tkC : taskClasses) {
+			if (taskClassType == null)
+				taskClassType = tkC.getClass();
+			else if (!taskClassType.equals(tkC.getClass())) {
+				throw new IllegalArgumentException("All tasks must be classified by the same criterion");
 			}
 		}
-
-		if (tasksCursor < taskClasses.length)
-			throw new UnsupportedOperationException("The method was not able"
-					+ " to encode the whole collection of tasks");
-
+		
+		if (taskClassType.equals(CharTaskClass.class)) {
+			CharTaskClass chTkClass = null;
+			// Encoding is not really needed
+			while (tasksCursor < taskClasses.length) {
+				chTkClass = ((CharTaskClass)taskClasses[tasksCursor]);
+				tasksDictionary.put(taskClasses[tasksCursor], chTkClass.charClass);
+				inverseTasksDictionary.put(chTkClass.charClass, taskClasses[tasksCursor]);
+				tasksCursor++;
+			}
+		} else {
+			while (tasksCursor < taskClasses.length && boundCursor < LOWER_BOUNDS.length
+					&& boundCursor < UPPER_BOUNDS.length) {
+				charCursor = LOWER_BOUNDS[boundCursor];
+	
+				for (; tasksCursor < taskClasses.length
+						&& charCursor < UPPER_BOUNDS[boundCursor]; charCursor++, tasksCursor++) {
+					tasksDictionary.put(taskClasses[tasksCursor],
+							Character.valueOf((char) charCursor));
+					inverseTasksDictionary.put(
+							Character.valueOf((char) charCursor),
+							taskClasses[tasksCursor]);
+				}
+	
+				if (tasksCursor < taskClasses.length) {
+					boundCursor++;
+				}
+			}
+	
+			if (tasksCursor < taskClasses.length)
+				throw new UnsupportedOperationException("The method was not able"
+						+ " to encode the whole collection of tasks");
+		}
+		
 		return inverseTasksDictionary.keySet().toArray(encodedTasks);
 	}
 

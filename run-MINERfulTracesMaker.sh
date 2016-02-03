@@ -50,4 +50,4 @@ alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 ## Run!
 # java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -r ${constraints[2]} $*
 . ./libs.cfg
-java -Xmx$MEMORY_MAX -jar MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r `End d` `Response a b` `AlternatePrecedence c d`
+java -Xmx$MEMORY_MAX -jar MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r `End d` `Response a b` `AlternatePrecedence c d`

@@ -43,4 +43,4 @@ testre[5]="${testre[ 4 ]} $alternateprecedencerc"
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-java -Xmx$MEMORY_MAX -classpath $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r ${testre[5]}
+java -Xmx$MEMORY_MAX -classpath $LIBS $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r ${testre[5]}

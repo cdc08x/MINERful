@@ -187,7 +187,7 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		if (this.size() == 1)
 			return this.taskChars[0].identifier.toString();
 		if (positive) {
-			return StringUtils.join(this.joinedStringOfIdentifiers, "|");
+			return StringUtils.join(this.joinedStringOfIdentifiers, "");
 		} else {
 			return "[^" + this.joinedStringOfIdentifiers + "]";
 		}

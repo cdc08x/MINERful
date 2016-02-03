@@ -49,4 +49,4 @@ alphabetCharacters=("a" "b" "c" "d")
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE $* -r ${constraints[15]} ${constraints[05]} ${constraints[02]} # -r "[^bc]*(a.*[bc])*[^bc]*" $* # ${constraints[7]} $* #'[^abc]*(a(b|c)[^abc]*)*[^abc]*' $*
+java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE $* -r ${constraints[15]} ${constraints[05]} ${constraints[02]} # -r "[^bc]*(a.*[bc])*[^bc]*" $* # ${constraints[7]} $* #'[^abc]*(a(b|c)[^abc]*)*[^abc]*' $*

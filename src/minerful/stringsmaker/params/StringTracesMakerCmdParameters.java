@@ -18,7 +18,7 @@ import org.apache.commons.cli.Options;
 public class StringTracesMakerCmdParameters extends ParamsManager {
 	public static final String OUTPUT_FILE_PARAM_NAME = "oLF";
     public static final String OUT_ENC_PARAM_NAME = "oE";
-	public static final char SIZE_PARAM_NAME = 's';
+	public static final char SIZE_PARAM_NAME = 'L';
 	public static final char MAX_LEN_PARAM_NAME = 'M';
 	public static final char MIN_LEN_PARAM_NAME = 'm';
 	public static final char ALPHABET_PARAM_NAME = 'a';
@@ -174,7 +174,7 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("encoding")
                 .withLongOpt("out-enc")
-                .withDescription("encoding language for output" + printValues(LogMakerCmdParameters.Encoding.values()))
+                .withDescription("encoding language for output log " + printValues(LogMakerCmdParameters.Encoding.values()))
                 .withType(new String())
                 .create(StringTracesMakerCmdParameters.OUT_ENC_PARAM_NAME)
     	);

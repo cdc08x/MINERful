@@ -8,11 +8,15 @@
 ## Import the shell functions to create Regular Expressions expressing constraints
 . ./constraintsFunctions.cfg
 
+## Import the libraries and store it into $LIBS
+. ./libs.cfg
+
 ## Clean up the screen
 clear
 
 ## Runtime environment constants
 MAINCLASS="minerful.MinerFulErrorInjectedSimuStarter"
+OUTPUT_DIR="MINERful-errorTests-out"
 
 DEBUGLEVEL='debug'
 THRESHOLD=0.95
@@ -53,4 +57,4 @@ targetChar="c"
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-java -Xmx$MEMORY_MAX -jar MINERful.jar $MAINCLASS -d $DEBUGLEVEL -s $THRESHOLD -a $alphabet -mR -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -eS ${errorSpreadTypeParams[1]} -eT ${errorTypeParams[2]} -eP ${errorPercentages[1]} -eC $targetChar -r ${constraints[7]} $*
+java -Xmx$MEMORY_MAX -cp $LIBS $MAINCLASS -d $DEBUGLEVEL -s $THRESHOLD -a $alphabet -mR -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -eS ${errorSpreadTypeParams[1]} -eT ${errorTypeParams[2]} -eP ${errorPercentages[1]} -eC $targetChar -CSV "$OUTPUT_DIR/allright3.csv" -ppAT 'none' -r ${constraints[7]} $*

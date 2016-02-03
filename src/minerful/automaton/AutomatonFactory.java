@@ -122,7 +122,7 @@ public class AutomatonFactory {
 		if (traceLengthLimitSet) {
 			regularExpressions.add(AutomatonUtils.createRegExpLimitingRunLength(minLen, maxLen));
 		}
-
+System.out.println("Lurido merdone: " + regularExpressions);
 		return new CallableAutomataMaker(regularExpressions).makeAutomaton();
 	}
 
