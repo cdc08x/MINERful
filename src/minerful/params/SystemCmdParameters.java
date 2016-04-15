@@ -17,7 +17,9 @@ public class SystemCmdParameters extends ParamsManager {
     public static final char DEBUG_PARAM_NAME = 'd';
 	public static final char HELP_PARAM_NAME = 'h';
 
+	/** Desired level of debugging (see enum {@link minerful.params.SystemCmdParameters.DebugLevel DebugLevel}) */
     public DebugLevel debugLevel;
+	/** Set this variable to <code>true</code> to print out a help screen */
 	public Boolean help;
 
 	public SystemCmdParameters() {

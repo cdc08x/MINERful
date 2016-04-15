@@ -1,8 +1,5 @@
 package minerful;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,9 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.PropertyException;
-
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
@@ -23,7 +17,6 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.core.MinerFulKBCore;
 import minerful.core.MinerFulPruningCore;
 import minerful.core.MinerFulQueryingCore;
-import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
@@ -133,7 +126,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		new MinerFulProcessOutputMgtStarter().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 	}
 
-	private static LogParser deriveLogParserFromLogFile(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
+	public static LogParser deriveLogParserFromLogFile(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
 		LogParser logParser = null;
 		switch (inputParams.inputLanguage) {
 		case xes:

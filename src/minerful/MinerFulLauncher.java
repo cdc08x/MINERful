@@ -1,20 +1,23 @@
 package minerful;
 
-import org.apache.commons.cli.Options;
-import org.deckfour.xes.model.XLog;
-import org.processmining.plugins.declareminer.visualizing.DeclareMap;
-
 import minerful.concept.ProcessModel;
-import minerful.concept.constraint.ConstraintsBag;
+import minerful.concept.TaskCharArchive;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
-import minerful.logparser.XesLogParser;
+import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
+import minerful.logparser.LogParser;
+import minerful.logparser.XesLogParser;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputCmdParameters;
 import minerful.params.InputCmdParameters.EventClassification;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.utils.MessagePrinter;
+
+import org.apache.commons.cli.Options;
+import org.deckfour.xes.model.XLog;
+import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
 public class MinerFulLauncher {
 	private InputCmdParameters inputParams;
@@ -22,6 +25,9 @@ public class MinerFulLauncher {
 	private SystemCmdParameters systemParams;
 	private PostProcessingCmdParams postParams;
 	private MinerFulMinerStarter minerFulStarter;
+	private LogParser logParser;
+	private ViewCmdParameters viewParams;
+	private OutputModelParameters outParams;
 	
 	/**
 	 * For dummy testing only.
@@ -70,11 +76,40 @@ public class MinerFulLauncher {
 	public MinerFulLauncher(InputCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
 			PostProcessingCmdParams postParams, SystemCmdParameters systemParams) {
+		this(inputParams, minerFulParams, postParams, systemParams, null, null);
+	}
+
+	public MinerFulLauncher(InputCmdParameters inputParams,
+			MinerFulCmdParameters minerFulParams, 
+			PostProcessingCmdParams postParams, SystemCmdParameters systemParams,
+			ViewCmdParameters viewParams, OutputModelParameters outParams) {
 		this.inputParams = inputParams;
 		this.minerFulParams = minerFulParams;
 		this.systemParams = systemParams;
 		this.postParams = postParams;
+		this.viewParams = viewParams;
+		this.outParams = outParams;
+		
 		this.minerFulStarter = new MinerFulMinerStarter();
+        MinerFulMinerStarter.configureLogging(systemParams.debugLevel);
+	}
+	
+	public ProcessModel mine() {
+    	if (inputParams.inputFile == null) {
+    		MessagePrinter.printlnError("Missing input file");
+    		System.exit(1);
+    	}
+    	
+        MinerFulMinerStarter.logger.info("Loading log...");
+        
+        logParser = MinerFulMinerStarter.deriveLogParserFromLogFile(inputParams, minerFulParams);
+		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
+		return minerFulStarter.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
+	}
+	
+	public ProcessModel manageOutput(ProcessModel processModel) {
+		new MinerFulProcessOutputMgtStarter().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
+		return processModel;
 	}
 
 	public DeclareMap mine(XLog xLog) {

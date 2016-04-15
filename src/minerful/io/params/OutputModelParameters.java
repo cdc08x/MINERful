@@ -23,13 +23,21 @@ public class OutputModelParameters extends ParamsManager {
 	public static final String PRINT_CSV_PARAM_NAME = "CSV";
 	public static final String PROCESS_SCHEME_OUT_PATH_PARAM_NAME = "oMF";
 
+	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveConstraintsCsv;
+	/** Directory in which the discovered constraints are printed as automata, in separate GraphViz DOT files. Keep it equal to <code>null</code> for avoiding such print-outs. */
 	public File folderToSaveDotFilesForPartialAutomata;
+	/** File in which the discovered process model is printed as a TSML representation of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveTsmlFileForAutomaton;
+	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveDotFileForAutomaton;
+	/** File in which the discovered process model is saved as a Declare XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveConDecDefinition;
+	/** File in which the discovered process model is printed as an XML representation of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveXmlFileForAutomaton;
+	/** Directory in which the discovered constraints are printed as automata, in separate XML files. Keep it equal to <code>null</code> for avoiding such print-outs. */
 	public File folderToSaveXmlFilesForPartialAutomata;
+	/** File in which the discovered process model is saved as an XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
     public File processModelOutputFile;
     
     public OutputModelParameters() {

@@ -27,8 +27,11 @@ public class InputCmdParameters extends ParamsManager {
 		name, logspec
 	}
 
+	/** Encoding language for the input event log (see enum {@link minerful.params.InputCmdParameters.InputEncoding InputEncoding}). Default is: {@link minerful.params.InputCmdParameters.InputEncoding#xes InputEncoding.xes}.*/
 	public InputEncoding inputLanguage;
+	/** Classification policy to relate events to event classes, that is the task names (see enum {@link minerful.params.InputCmdParameters.EventClassification EventClassification}). Default is: {@link minerful.params.InputCmdParameters.EventClassification#name EventClassification.name}.*/
 	public EventClassification eventClassification;
+	/** Input event log file. It must not be <code>null</code>. */
     public File inputFile;
 
     public InputCmdParameters() {

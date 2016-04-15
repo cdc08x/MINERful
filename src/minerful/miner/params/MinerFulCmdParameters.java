@@ -38,16 +38,23 @@ public class MinerFulCmdParameters extends ParamsManager {
 
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
 	public static final Integer MINIMUM_PARALLEL_EXECUTION_THREADS = 1;
-            
-    public Integer branchingLimit;
+
+    /** Out-branching maximum level for discovered constraints (must be greater than or equal to {@link #MINIMUM_BRANCHING_LIMIT MINIMUM_BRANCHING_LIMIT}, the default) */ 
+	public Integer branchingLimit;
+    /** Input log file */ 
     public File inputFile;
+    /** Output file where log statistics are printed out */ 
     public File statsOutputFile;
+    /** Ignore this */
 	public Boolean foreseeDistances;
+    /** Ignore this */
 	public Boolean memSpaceShowingRequested;
+    /** Collection of task names to exclude from the discovery */
     public Collection<String> activitiesToExcludeFromResult;
+    /** Number of parallel threads to use while running the knowledge-base discovery phase of the algorithm (must be greater than or equal to {@link #MINIMUM_PARALLEL_EXECUTION_THREADS MINIMUM_PARALLEL_EXECUTION_THREADS}, the default) */ 
 	public Integer kbParallelProcessingThreads;
+    /** Number of parallel threads to use while running the knowledge-base discovery phase of the algorithm (must be greater than or equal to {@link #MINIMUM_PARALLEL_EXECUTION_THREADS MINIMUM_PARALLEL_EXECUTION_THREADS}, the default) */ 
 	public Integer queryParallelProcessingThreads;
-//	public Boolean takeTime = null;
 
     
     public MinerFulCmdParameters() {
@@ -189,7 +196,7 @@ public class MinerFulCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("number")
         		.withLongOpt("out-branch")
-        		.withDescription("out-branching maximum level (must be greater than or equal to "
+        		.withDescription("out-branching maximum level for discovered constraints (must be greater than or equal to "
 						+ (MINIMUM_BRANCHING_LIMIT)
 						+ ", the default)")
         		.withType(new Integer(0))

@@ -7,4 +7,7 @@ public class MessagePrinter {
 	public static void printOut(String s) {
 		System.out.print(s);
 	}
+	public static void printlnError(String s) {
+		System.err.println(s);
+	}
 }

@@ -41,10 +41,15 @@ public class PostProcessingCmdParams extends ParamsManager {
 	}
 
 	public static enum AnalysisType {
+		/** No post-processing analysis. */
 		NONE,
+		/** Hierarchical subsumption pruning of constraints. */
 		HIERARCHY,	// default
+		/** Hierarchical subsumption pruning of constraints and conflicts check. */
 		HIERARCHYCONFLICT,
+		/** Hierarchical subsumption pruning of constraints, conflicts check, and single-pass automata-based redundancy elimination. */
 		HIERARCHYCONFLICTREDUNDANCY,
+		/** Hierarchical subsumption pruning of constraints, conflicts check, and double-pass automata-based redundancy elimination. */
 		HIERARCHYCONFLICTREDUNDANCYDOUBLE;
 		
 		public boolean isRedundancyCheckRequested() {
@@ -90,11 +95,17 @@ public class PostProcessingCmdParams extends ParamsManager {
 	public static final AnalysisType DEFAULT_ANALYSIS_TYPE = AnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
 
+	/** Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
 	public CnsSortModularDefaultPolicy[] rankingPolicies;	// mandatory assignment
+	/** Type of post-processing analysis required. Default value is {@link #DEFAULT_ANALYSIS_TYPE DEFAULT_ANALYSIS_TYPE}. */
 	public AnalysisType analysisType;
+	/** Ignore this: it is still unused -- Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_HIERARCHY_POLICY DEFAULT_HIERARCHY_POLICY}. */
 	public HierarchySubsumptionPruningPolicy hierarchyPolicy;
+	/** Minimum support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
     public Double supportThreshold;
+	/** Minimum confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
     public Double confidenceThreshold;
+	/** Minimum interest factor threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_INTEREST_FACTOR_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
 	public Double interestFactorThreshold;
 
 	public static final CnsSortModularDefaultPolicy[] DEFAULT_PRIORITY_POLICIES = new CnsSortModularDefaultPolicy[] {

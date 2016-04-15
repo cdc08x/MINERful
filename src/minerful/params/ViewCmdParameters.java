@@ -13,8 +13,11 @@ public class ViewCmdParameters extends ParamsManager {
 	public static final String CONSTRAINTS_SORTING_TYPE_NAME = "cS";
 	public static final String CONSTRAINTS_NO_FOLDING_NAME = "noCF";
 
+	/** Set this field to <code>true</code> to print a machine-readable list of supports, for each constraint template and constrained activities. */
     public Boolean machineReadableResults;
+    /** How to sort constraints in the print-out of results (see enum {@link minerful.params.ConstraintsSorting ConstraintsSorting}). Default is: {@link minerful.params.ConstraintsSorting#type ConstraintsSorting.type}. */
     public ConstraintsSorting constraintsSorting;
+	/** Set this field to <code>true</code> to avoid the discovered constraints to be folded under activation tasks in the print-out. */
     public Boolean noFoldingRequired;
 
 
@@ -68,13 +71,13 @@ public class ViewCmdParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.withLongOpt("nofolding")
-        		.withDescription("avoid the discovered constraints to be folded within implying activities")
+        		.withDescription("avoid the discovered constraints to be folded under activation tasks")
         		.create(CONSTRAINTS_NO_FOLDING_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("machine-readable")
-        		.withDescription("print a machine readable list of supports, for each constraint")
+        		.withDescription("print a machine-eadable list of supports, for each constraint template and constrained activities in the print-out")
         		.create(MACHINE_READABLE_RESULTS_PARAM_NAME)
         		);
        return options;
