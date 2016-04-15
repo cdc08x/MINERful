@@ -1,12 +1,10 @@
 package minerful.logparser;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
+import minerful.io.encdec.TaskCharEncoderDecoder;
 
 @XmlType
 public class CharTaskClass extends AbstractTaskClass implements TaskClass {

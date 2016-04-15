@@ -54,4 +54,16 @@ public class NotChainSuccession extends NegativeRelationConstraint {
 	public Constraint getSupposedOpponentConstraint() {
 		return new ChainSuccession(base, implied);
 	}
+	
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new NotChainSuccession(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new NotChainSuccession(taskCharSets[0], taskCharSets[1]);
+	}
 }

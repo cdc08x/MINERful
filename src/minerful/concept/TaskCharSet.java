@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -56,8 +57,7 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	public TaskCharSet(List<TaskChar> taskChars) {
 		this(new TreeSet<TaskChar>(taskChars));
 	}
-	public TaskCharSet(
-			Collection<TaskChar> taskChars) {
+	public TaskCharSet(Collection<TaskChar> taskChars) {
 		this(new TreeSet<TaskChar>(taskChars));
 	}
 	public TaskCharSet(TaskChar taskChar) {
@@ -73,8 +73,12 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		this.listOfIdentifiers = listOfIdentifiers;
 	}
 
-	public TaskChar[] getTaskChars() {
+	public TaskChar[] getTaskCharsArray() {
 		return taskChars;
+	}
+
+	public List<TaskChar> getTaskCharsList() {
+		return Arrays.asList(taskChars);
 	}
 	
 	public TaskChar getTaskChar(int number) {
@@ -128,15 +132,15 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	
 	private String toJoinedStringOfIdentifiers() {
 		StringBuilder sB = new StringBuilder();
-		for (TaskChar taskChar : this.getTaskChars()) {
+		for (TaskChar taskChar : this.getTaskCharsArray()) {
 			sB.append(taskChar.identifier);
 		}
 		return sB.toString();
 	}
 	
 	private Collection<Character> toListOfIdentifiers() {
-		ArrayList<Character> listOfIdentifiers = new ArrayList<Character>(this.getTaskChars().length);
-		for (TaskChar taskChar : this.getTaskChars()) {
+		ArrayList<Character> listOfIdentifiers = new ArrayList<Character>(this.getTaskCharsArray().length);
+		for (TaskChar taskChar : this.getTaskCharsArray()) {
 			listOfIdentifiers.add(taskChar.identifier);
 		}
 		return listOfIdentifiers;
@@ -173,8 +177,8 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	public TaskChar getFirstTaskChar() {
 		return this.taskChars[0];
 	}
-	public Collection<TaskChar> getTaskCharsCollection() {
-		return Arrays.asList(this.taskChars);
+	public Set<TaskChar> getSetOfTaskChars() {
+		return new TreeSet<TaskChar>(Arrays.asList(this.taskChars));
 	}
 	
 	public TaskCharSet pushAtLast(TaskChar taskChar) {

@@ -2,8 +2,11 @@ package minerful.logparser;
 
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
+import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public class StringTaskClass extends AbstractTaskClass implements TaskClass {
+	public static StringTaskClass WILD_CARD = new StringTaskClass(TaskCharEncoderDecoder.WILDCARD_STRING);
+
 	protected StringTaskClass() {
 		super();
 	}

@@ -109,7 +109,7 @@ public class LinearConstraintsIndexFactory {
 					?	new TaskCharSet(tCh)
 					:	con.getImplied()
 				);
-				for (TaskChar implied : impliedSet.getTaskChars()) {
+				for (TaskChar implied : impliedSet.getTaskCharsArray()) {
 					if (!subMap.containsKey(implied)) {
 						subMap.put(implied, new TreeSet<Constraint>());
 					}

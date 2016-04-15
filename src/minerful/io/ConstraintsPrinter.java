@@ -14,7 +14,7 @@ import javax.xml.bind.Marshaller;
 
 import minerful.automaton.AutomatonFactory;
 import minerful.automaton.SubAutomaton;
-import minerful.automaton.concept.WeightedAutomaton;
+import minerful.automaton.concept.weight.WeightedAutomaton;
 import minerful.automaton.encdec.AutomatonDotPrinter;
 import minerful.automaton.encdec.TsmlEncoder;
 import minerful.automaton.encdec.WeightedAutomatonFactory;

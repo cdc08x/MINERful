@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.NavigableMap;
 
 import minerful.automaton.AutomatonFactory;
-import minerful.automaton.concept.WeightedAutomaton;
-import minerful.automaton.concept.WeightedAutomatonStats;
-import minerful.automaton.concept.WeightedState;
-import minerful.automaton.concept.WeightedTransition;
+import minerful.automaton.concept.weight.WeightedAutomaton;
+import minerful.automaton.concept.weight.WeightedAutomatonStats;
+import minerful.automaton.concept.weight.WeightedState;
+import minerful.automaton.concept.weight.WeightedTransition;
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.AbstractTaskClass;
 import minerful.logparser.LogParser;

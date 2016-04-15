@@ -145,9 +145,8 @@ public class TaskCharEncoderDecoder {
 			new StringTaskClass("steal"), new StringTaskClass("driving"), new StringTaskClass("license"), new StringTaskClass("avis"), new StringTaskClass("trouble"), new StringTaskClass("avignon"),
 			new StringTaskClass("birthday"), new StringTaskClass("princess"), new StringTaskClass("castle") };
 
-	public static final String SPACE_REPLACER = "_";
-
-	public static final String WILDCARD_CHAR = " ";
+	public static final Character WILDCARD_CHAR = '_';
+	public static final String WILDCARD_STRING = "*";
 
 	private TreeMap<AbstractTaskClass, Character> tasksDictionary;
 	private TreeMap<Character, AbstractTaskClass> inverseTasksDictionary;
@@ -170,6 +169,30 @@ public class TaskCharEncoderDecoder {
 	
 	public Map<Character, AbstractTaskClass> getTranslationMap() {
 		return new HashMap<Character, AbstractTaskClass>(this.inverseTasksDictionary);
+	}
+	
+	public static final Map<Character, AbstractTaskClass> getTranslationMap(TaskChar... tasks) {
+		HashMap<Character, AbstractTaskClass> transMap = new HashMap<Character, AbstractTaskClass>(tasks.length, (float)1.0);
+		
+		for (TaskChar task : tasks) {
+			transMap.put(task.identifier, task.taskClass);
+		}
+		
+		return transMap;
+	}
+	
+	public static final Map<Character, AbstractTaskClass> getTranslationMap(Set<TaskChar> tasks) {
+		HashMap<Character, AbstractTaskClass> transMap = new HashMap<Character, AbstractTaskClass>(tasks.size(), (float)1.0);
+		
+		for (TaskChar task : tasks) {
+			transMap.put(task.identifier, task.taskClass);
+		}
+		
+		return transMap;
+	}
+	
+	public Map<AbstractTaskClass, Character> getInverseTranslationMap() {
+		return new HashMap<AbstractTaskClass, Character>(this.tasksDictionary);
 	}
 
 	public static NavigableMap<Character, AbstractTaskClass> getTranslationMap(ConstraintsBag bag) {

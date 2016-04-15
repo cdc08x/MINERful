@@ -19,6 +19,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.index.ModularConstraintsSorter;
 import minerful.index.comparator.modular.CnsSortModularDefaultPolicy;
+import minerful.io.encdec.TaskCharEncoderDecoder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
@@ -33,6 +34,7 @@ public class AutomatonFactory {
 	private static Logger logger = Logger.getLogger(AutomatonFactory.class
 			.getCanonicalName());
 	public static final int THREAD_MAX = 8;
+	public static final Character WILD_CARD = TaskCharEncoderDecoder.WILDCARD_CHAR;
 
 	public static Collection<SubAutomaton> subAutomataFromRegularExpressionsInMultiThreading(
 			NavigableMap<Character, Collection<String>> regExpsMap,
@@ -107,28 +109,37 @@ public class AutomatonFactory {
 
 		return processAutomaton;
 	}
-
+	
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
-			Collection<Character> alphabet, int minLen, int maxLen) {
+			Collection<Character> basicAlphabet, boolean withWildCard, int minLen, int maxLen) {
 		boolean traceLengthLimitSet = (minLen != NO_TRACE_LENGTH_CONSTRAINT || maxLen != NO_TRACE_LENGTH_CONSTRAINT);
 		Collection<String> regularExpressions = new ArrayList<String>(
 				regExps.size() +
 				(traceLengthLimitSet ? 2 : 1)
 		);
 		// limit the alphabet
-		regularExpressions.add(AutomatonUtils.createRegExpLimitingTheAlphabet(alphabet));
+		regularExpressions.add(AutomatonUtils.createRegExpLimitingTheAlphabet(basicAlphabet, withWildCard));
 		regularExpressions.addAll(regExps);
 		// limit the minimum and maximum length of runs, if needed 
 		if (traceLengthLimitSet) {
 			regularExpressions.add(AutomatonUtils.createRegExpLimitingRunLength(minLen, maxLen));
 		}
-System.out.println("Lurido merdone: " + regularExpressions);
 		return new CallableAutomataMaker(regularExpressions).makeAutomaton();
+	}
+	
+	public static Automaton fromRegularExpressions(Collection<String> regExps,
+			Collection<Character> basicAlphabet, int minLen, int maxLen) {
+		return fromRegularExpressions(regExps, basicAlphabet, false, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
 	}
 
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
 			Collection<Character> basicAlphabet) {
 		return fromRegularExpressions(regExps, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
+	}
+
+	public static Automaton fromRegularExpressions(Collection<String> regExps,
+			Collection<Character> basicAlphabet, boolean withWildCard) {
+		return fromRegularExpressions(regExps, basicAlphabet, withWildCard, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
 	}
 
 	@Deprecated

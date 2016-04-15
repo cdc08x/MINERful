@@ -169,7 +169,7 @@ public class SubsumptionHierarchyMarker {
         Constraint genealogyDestroyer = lastSon;
 //      ConstraintImplicationVerse destructionGeneratorsFamily = lastSurvivor.getSubFamily();
         while (genealogyDestroyer != null) {
-    		key = genealogyDestroyer.base.getFirstTaskChar();
+    		key = genealogyDestroyer.getBase().getFirstTaskChar();
     		this.markAsRedundant(genealogyDestroyer);
             genealogyDestroyer = genealogyDestroyer.getConstraintWhichThisIsBasedUpon();
         }

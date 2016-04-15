@@ -55,7 +55,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
         }
         auxRelCons = this.refineRelationConstraints(auxRelCons);
         for (Constraint relCon: auxRelCons)
-            constraintsBag.add(relCon.base, relCon);
+            constraintsBag.add(relCon.getBase(), relCon);
         return constraintsBag;
     }
 
@@ -187,67 +187,67 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             auxConstraint = (RelationConstraint)c;
             // ChainSuccession(a, b) == ChainResponse(a, b) && ChainPrecedence(a, b)
             if (auxConstraint instanceof ChainPrecedence) {
-                testConstraint = new ChainResponse(auxConstraint.base, auxConstraint.implied);
+                testConstraint = new ChainResponse(auxConstraint.getBase(), auxConstraint.getImplied());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new ChainSuccession(
-                                    auxConstraint.base, auxConstraint.implied)
+                                    auxConstraint.getBase(), auxConstraint.getImplied())
                     };
                 }
             } else if (auxConstraint instanceof ChainResponse) {
-                testConstraint = new ChainPrecedence(auxConstraint.base, auxConstraint.implied);
+                testConstraint = new ChainPrecedence(auxConstraint.getBase(), auxConstraint.getImplied());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new ChainSuccession(
-                                    auxConstraint.base, auxConstraint.implied)
+                                    auxConstraint.getBase(), auxConstraint.getImplied())
                     };
                 }
             }
             // AlternateSuccession(a, b) == AlternateResponse(a, b) && AlternatePrecedence(a, b)
             else if (auxConstraint instanceof AlternatePrecedence) {
-                testConstraint = new AlternateResponse(auxConstraint.base, auxConstraint.implied);
+                testConstraint = new AlternateResponse(auxConstraint.getBase(), auxConstraint.getImplied());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new AlternateSuccession(
-                                    auxConstraint.base, auxConstraint.implied)
+                                    auxConstraint.getBase(), auxConstraint.getImplied())
                     };
                 }
             } else if (auxConstraint instanceof AlternateResponse) {
-                testConstraint = new AlternatePrecedence(auxConstraint.base, auxConstraint.implied);
+                testConstraint = new AlternatePrecedence(auxConstraint.getBase(), auxConstraint.getImplied());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new AlternateSuccession(
-                                    auxConstraint.base, auxConstraint.implied)
+                                    auxConstraint.getBase(), auxConstraint.getImplied())
                     };
                 }
             }
             // Succession(a, b) == Response(a, b) && Precedence(a, b)
             else if (auxConstraint instanceof Precedence) {
-                testConstraint = new Response(auxConstraint.base, auxConstraint.implied);
+                testConstraint = new Response(auxConstraint.getBase(), auxConstraint.getImplied());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new Succession(
-                                    auxConstraint.base, auxConstraint.implied)
+                                    auxConstraint.getBase(), auxConstraint.getImplied())
                     };
                 }
             } else if (auxConstraint instanceof Response) {
-                testConstraint = new Precedence(auxConstraint.base, auxConstraint.implied);
+                testConstraint = new Precedence(auxConstraint.getBase(), auxConstraint.getImplied());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new Succession(
-                                    auxConstraint.base, auxConstraint.implied)
+                                    auxConstraint.getBase(), auxConstraint.getImplied())
                     };
                 }
             }
             // CoExistence(a, b) == RespondedExistence(a, b) && RespondedExistence(b, a)
             else if (auxConstraint instanceof RespondedExistence) {
-                testConstraint = new RespondedExistence(auxConstraint.implied, auxConstraint.base);
+                testConstraint = new RespondedExistence(auxConstraint.getImplied(), auxConstraint.getBase());
                 if (setOfConstraints.contains(testConstraint)) {
                     refinedConstraints = new RelationConstraint[] {
                             new CoExistence(
-                                    auxConstraint.base, auxConstraint.implied),
+                                    auxConstraint.getBase(), auxConstraint.getImplied()),
                             new CoExistence(
-                                    auxConstraint.implied, auxConstraint.base),
+                                    auxConstraint.getImplied(), auxConstraint.getBase()),
                     };
                 }
             }

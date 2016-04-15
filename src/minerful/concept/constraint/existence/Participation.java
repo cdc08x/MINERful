@@ -40,4 +40,16 @@ public class Participation extends ExistenceConstraint {
 	public ExistenceConstraintSubFamily getSubFamily() {
 		return ExistenceConstraintSubFamily.NUMEROSITY;
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);	// check that parameters are OK
+		return new Participation(taskChars[0]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);	// check that parameters are OK
+		return new Participation(taskCharSets[0]);
+	}
 }

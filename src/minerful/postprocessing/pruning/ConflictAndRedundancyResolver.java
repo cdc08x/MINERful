@@ -117,7 +117,7 @@ public class ConflictAndRedundancyResolver {
 					// and the check of redundancy has a negative response (namely, it is not redundant)
 				) {
 					this.safeAutomaton = this.intersect(this.safeAutomaton, candidateAutomaton);
-					this.safeProcess.bag.add(candidateCon.base, candidateCon);
+					this.safeProcess.bag.add(candidateCon.getBase(), candidateCon);
 				}
 				blackboard.add(candidateCon);
 			}
@@ -275,7 +275,7 @@ public class ConflictAndRedundancyResolver {
 		} else {
 			safeAutomaton = auxAutomaton;
 //System.out.println("PRESENTATION -- Safe automaton so far: " + safeAutomaton.toDot());
-			safeProcess.bag.add(candidateCon.base, candidateCon);
+			safeProcess.bag.add(candidateCon.getBase(), candidateCon);
 		}
 	}
 

@@ -1,8 +1,7 @@
 package minerful.concept.constraint.existence;
 
-import java.util.Collection;
+import java.util.Set;
 
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import minerful.concept.TaskChar;
@@ -65,8 +64,8 @@ public abstract class ExistenceConstraint extends Constraint {
 	
 
 	@Override
-	public Collection<TaskChar> getInvolvedTaskChars() {
-		return this.base.getTaskCharsCollection();
+	public Set<TaskChar> getInvolvedTaskChars() {
+		return this.base.getSetOfTaskChars();
 	}
     
     @Override
@@ -78,4 +77,30 @@ public abstract class ExistenceConstraint extends Constraint {
     public ExistenceConstraintSubFamily getSubFamily() {
         return ExistenceConstraintSubFamily.NONE;
     }
+
+	@Override
+	public String getRegularExpressionTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkParams(TaskChar... taskChars) throws IllegalArgumentException {
+		if (taskChars.length > 1)
+			throw new IllegalArgumentException("Too many parameters");
+		return true;
+	}
+
+	@Override
+	public boolean checkParams(TaskCharSet... taskCharSets) throws IllegalArgumentException {
+		if (taskCharSets.length > 1)
+			throw new IllegalArgumentException("Too many parameters");
+		return true;
+	}
 }

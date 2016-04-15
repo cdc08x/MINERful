@@ -5,8 +5,8 @@
 package minerful.concept.constraint;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -19,12 +19,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
+import minerful.automaton.concept.relevance.VacuityAwareWildcardAutomaton;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.existence.ExistenceConstraint;
-import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RelationConstraint;
+import minerful.io.encdec.TaskCharEncoderDecoder;
 
 @XmlRootElement(name="constraint")
 @XmlSeeAlso({RelationConstraint.class,ExistenceConstraint.class})
@@ -52,7 +53,7 @@ public abstract class Constraint implements Comparable<Constraint> {
     public static final double RANGE_FOR_SUPPORT = (MAX_SUPPORT - MIN_SUPPORT);
 	@XmlIDREF
 //	@XmlTransient
-    public TaskCharSet base;
+    protected TaskCharSet base;
 	@XmlElement
     public double support;
 	@XmlElement
@@ -84,11 +85,11 @@ public abstract class Constraint implements Comparable<Constraint> {
 		this.parameters = new ArrayList<TaskCharSet>();
 	}
 
-	public Constraint(TaskChar base) {
-		this(base, DEFAULT_SUPPORT);
+	public Constraint(TaskChar param) {
+		this(param, DEFAULT_SUPPORT);
 	}
-	public Constraint(TaskCharSet base) {
-		this(base, DEFAULT_SUPPORT);
+	public Constraint(TaskCharSet param) {
+		this(param, DEFAULT_SUPPORT);
 	}
     
     private void checkSupport() {
@@ -99,16 +100,17 @@ public abstract class Constraint implements Comparable<Constraint> {
         return;
     }
 
-	public Constraint(TaskChar param1, double support) {
+	public Constraint(TaskChar param, double support) {
 		this.checkSupport();
-		this.base = new TaskCharSet(param1);
+		this.base = new TaskCharSet(param);
 		this.support = support;
 		this.parameters = new ArrayList<TaskCharSet>(1);
 		this.parameters.add(this.base);
 	}
-    public Constraint(TaskCharSet param1, double support) {
+
+    public Constraint(TaskCharSet param, double support) {
     	this.checkSupport();
-        this.base = param1;
+        this.base = param;
         this.support = support;
 		this.parameters = new ArrayList<TaskCharSet>(1);
 		this.parameters.add(this.base);
@@ -152,6 +154,9 @@ public abstract class Constraint implements Comparable<Constraint> {
 		if (getClass() != obj.getClass())
 			return false;
 		Constraint other = (Constraint) obj;
+		int paramsComparison = this.compareParameters(other.getParameters());
+		if (paramsComparison != 0)
+			return false;
 		if (base == null) {
 			if (other.base != null)
 				return false;
@@ -287,7 +292,7 @@ public abstract class Constraint implements Comparable<Constraint> {
         return (moreReliableThanGeneric > 0);
     }
 
-	public abstract Collection<TaskChar> getInvolvedTaskChars();
+	public abstract Set<TaskChar> getInvolvedTaskChars();
 
 	
 	public void setConstraintWhichThisIsBasedUpon(Constraint constraintWhichThisIsBasedUpon) {
@@ -356,7 +361,18 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public boolean isMarkedForExclusion() {
 		return this.isRedundant() || !this.isAboveThresholds() || this.isConflicting();
 	}
+	
+	public abstract Constraint copy(TaskChar... taskChars);
+	public abstract Constraint copy(TaskCharSet... taskCharSets);
+	public abstract boolean checkParams(TaskChar... taskChars) throws IllegalArgumentException;
+	public abstract boolean checkParams(TaskCharSet... taskCharSets) throws IllegalArgumentException;
 
+	public VacuityAwareWildcardAutomaton getCheckAutomaton() {
+		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(
+				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
+		return autom;
+	}
+	
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
 		if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
 			this.base = this.getParameters().get(0);

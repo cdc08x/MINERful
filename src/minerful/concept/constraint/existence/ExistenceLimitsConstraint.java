@@ -61,7 +61,7 @@ public abstract class ExistenceLimitsConstraint extends Constraint {
 
     @Override
     public int compareTo(Constraint t) {
-        int result = this.base.compareTo(t.base);
+        int result = this.base.compareTo(t.getBase());
         if (result == 0) {
             if (!this.getClass().getCanonicalName().equals(t.getClass().getCanonicalName())) {
                 return 1;

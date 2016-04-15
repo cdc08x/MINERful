@@ -22,7 +22,7 @@ public class CoExistence extends MutualRelationConstraint {
     }
     
     public CoExistence(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint, double support) {
-        this(forwardConstraint.base, forwardConstraint.implied, support);
+        this(forwardConstraint.getBase(), forwardConstraint.getImplied(), support);
         if (!this.ckeckConsistency(forwardConstraint, backwardConstraint)) {
             throw new IllegalArgumentException("Illegal constraints combination: provided " + forwardConstraint + " and " + backwardConstraint + " resp. as forward and backward constraints of " + this);
         }
@@ -31,7 +31,7 @@ public class CoExistence extends MutualRelationConstraint {
     }
     
     public CoExistence(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
-        this(forwardConstraint.base, forwardConstraint.implied);
+        this(forwardConstraint.getBase(), forwardConstraint.getImplied());
         this.forwardConstraint = forwardConstraint;
         this.backwardConstraint = backwardConstraint;
     }
@@ -63,5 +63,17 @@ public class CoExistence extends MutualRelationConstraint {
 	@Override
 	public RespondedExistence getPlausibleBackwardConstraint() {
 		return new RespondedExistence(implied, base);
+	}
+	
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new CoExistence(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new CoExistence(taskCharSets[0], taskCharSets[1]);
 	}
 }

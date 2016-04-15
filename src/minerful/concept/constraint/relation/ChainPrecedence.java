@@ -45,4 +45,16 @@ public class ChainPrecedence extends AlternatePrecedence {
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new AlternatePrecedence(implied, base);
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new ChainPrecedence(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new ChainPrecedence(taskCharSets[0], taskCharSets[1]);
+	}
 }

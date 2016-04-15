@@ -40,4 +40,16 @@ public class AtMostOne extends ExistenceConstraint {
 	public ExistenceConstraintSubFamily getSubFamily() {
 		return ExistenceConstraintSubFamily.NUMEROSITY;
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new AtMostOne(taskChars[0]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new AtMostOne(taskCharSets[0]);
+	}
 }

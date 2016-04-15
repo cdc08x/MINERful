@@ -76,4 +76,16 @@ public class Precedence extends RespondedExistence {
 				this.implied = this.getParameters().get(0);
 		}
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new Precedence(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new Precedence(taskCharSets[0], taskCharSets[1]);
+	}
 }

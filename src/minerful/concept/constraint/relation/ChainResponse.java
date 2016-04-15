@@ -43,4 +43,16 @@ public class ChainResponse extends AlternateResponse {
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new AlternateResponse(base, implied);
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new ChainResponse(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new ChainResponse(taskCharSets[0], taskCharSets[1]);
+	}
 }

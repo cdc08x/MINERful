@@ -15,7 +15,7 @@ public class AlternatePrecedence extends Precedence {
 	@Override
 	public String getRegularExpressionTemplate() {
 //		return "[^%2$s]*(%1$s[^%2$s]*%2$s[^%2$s]*)*[^%2$s]*";
-		return "[^%1$s]*([%2$s][^%1$s]*[%1$s][^%1$s]*)*[^%1$s]*";
+		return "[^%1$s]*([%2$s][^%1$s]*[%1$s])*[^%1$s]*";
 	}
 	
 	protected AlternatePrecedence() {
@@ -44,5 +44,17 @@ public class AlternatePrecedence extends Precedence {
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new Precedence(implied, base);
+	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new AlternatePrecedence(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new AlternatePrecedence(taskCharSets[0], taskCharSets[1]);
 	}
 }

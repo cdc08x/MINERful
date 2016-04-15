@@ -85,7 +85,7 @@ public class DeclareMapEncoderDecoder {
 				}
 			}
 		}
-		createDeclareMap();
+		this.createDeclareMap();
 	}
 
 	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath) {

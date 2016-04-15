@@ -99,9 +99,9 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
         for (Constraint con : auxCons) {
         	RelationConstraint relCon = (RelationConstraint)con;// come on, I know it can only be a Relation Constraint!
         	if (relCon.isActivationBranched())
-        		constraintsBag.add(relCon.implied, relCon);
+        		constraintsBag.add(relCon.getImplied(), relCon);
         	else
-        		constraintsBag.add(relCon.base, relCon);
+        		constraintsBag.add(relCon.getBase(), relCon);
         }
         return constraintsBag;
 	}
@@ -333,13 +333,13 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 							comboToAnalyze);
 	
 				nuIBNotCoExistence = new NotCoExistence(
-					nuIBCoExistence.base, nuIBCoExistence.implied,
+					nuIBCoExistence.getBase(), nuIBCoExistence.getImplied(),
 						Constraint.complementSupport(nuIBCoExistence.support));
 				nuIBNotSuccession = new NotSuccession(
-					nuIBSuccession.base, nuIBSuccession.implied,
+					nuIBSuccession.getBase(), nuIBSuccession.getImplied(),
 						Constraint.complementSupport(nuIBSuccession.support));
 				nuIBNotChainSuccession = new NotChainSuccession(
-					nuIBChainSuccession.base, nuIBChainSuccession.implied,
+					nuIBChainSuccession.getBase(), nuIBChainSuccession.getImplied(),
 						Constraint.complementSupport(nuIBChainSuccession.support));
 *//*
 				hasseMaker.addConstraint(comboToAnalyze, nuIBResponse);

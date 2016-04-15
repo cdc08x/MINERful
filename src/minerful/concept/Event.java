@@ -1,10 +1,14 @@
 package minerful.concept;
 
 public class Event {
-	public final TaskClass taskClass;
+	public final AbstractTaskClass taskClass;
 
-	public Event(TaskClass taskClass) {
+	public Event(AbstractTaskClass taskClass) {
 		this.taskClass = taskClass;
+	}
+	
+	public AbstractTaskClass getTaskClass() {
+		return taskClass;
 	}
 
 	@Override

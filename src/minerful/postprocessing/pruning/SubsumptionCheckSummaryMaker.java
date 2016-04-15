@@ -191,7 +191,7 @@ public class SubsumptionCheckSummaryMaker {
 					RelationConstraint reModelCon = ((RelationConstraint)modelCon);
 					RelationConstraint reC = ((RelationConstraint)c);
 					
-					if (reModelCon.base.equals(reC.base)) {
+					if (reModelCon.getBase().equals(reC.getBase())) {
 						if (reModelCon.type.equals(reC.type)) {
 							if (reModelCon.hasTargetSetStrictlyIncludingTheOneOf(reC)) {
 								subsumption = new Subsumption(modelCon, Restriction.SAME_TEMPLATE_SAME_ACTIVATION_TARGET_INCLUDED_IN);

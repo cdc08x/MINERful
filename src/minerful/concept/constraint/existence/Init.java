@@ -49,4 +49,16 @@ public class Init extends Participation {
 	public ExistenceConstraintSubFamily getSubFamily() {
 		return ExistenceConstraintSubFamily.POSITION;
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);	// check that parameters are OK
+		return new Init(taskChars[0]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);	// check that parameters are OK
+		return new Init(taskCharSets[0]);
+	}
 }

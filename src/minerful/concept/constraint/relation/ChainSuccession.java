@@ -59,4 +59,16 @@ public class ChainSuccession extends AlternateSuccession {
 	public ChainPrecedence getPlausibleBackwardConstraint() {
 		return new ChainPrecedence(base, implied);
 	}
+	
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new ChainSuccession(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new ChainSuccession(taskCharSets[0], taskCharSets[1]);
+	}
 }

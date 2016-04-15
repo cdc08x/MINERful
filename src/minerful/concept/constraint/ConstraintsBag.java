@@ -71,7 +71,7 @@ public class ConstraintsBag implements Cloneable {
 
     public boolean add(TaskCharSet taskCharSet, Constraint c) {
     	boolean added = false;
-    	for (TaskChar tCh : taskCharSet.getTaskChars()) {
+    	for (TaskChar tCh : taskCharSet.getTaskCharsArray()) {
     		added = added || this.add(tCh, c);
     	}
     	return added;
@@ -89,7 +89,7 @@ public class ConstraintsBag implements Cloneable {
 
     public boolean remove(Constraint c) {
     	boolean removed = false;
-    	for(TaskChar tCh : c.base.getTaskChars()) {
+    	for(TaskChar tCh : c.base.getTaskCharsArray()) {
 	        if (this.bag.get(tCh).remove(c)) {
 	        	removed = removed || true;
 	        }

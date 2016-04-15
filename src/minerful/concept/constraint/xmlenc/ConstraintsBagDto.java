@@ -30,7 +30,7 @@ public class ConstraintsBagDto {
 		ConstraintsBag bag = new ConstraintsBag();
 		for (Constraint cns : constraints) {
 			cns.setParameters(cns.getParameters());
-			bag.add(cns.base, cns);
+			bag.add(cns.getBase(), cns);
 		}
 		return bag;
 	}

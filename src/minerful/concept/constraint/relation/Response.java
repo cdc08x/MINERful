@@ -58,4 +58,16 @@ public class Response extends RespondedExistence {
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return new RespondedExistence(base, implied);
 	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new Response(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new Response(taskCharSets[0], taskCharSets[1]);
+	}
 }

@@ -120,13 +120,13 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 		SortedMap<TaskChar, Set<TaskChar>> auxRelatedActivitiesPerActivity = new TreeMap<TaskChar, Set<TaskChar>>();
 
 		for (Constraint con : constraints) {
-			for (TaskChar base : con.getBase().getTaskChars()) {
+			for (TaskChar base : con.getBase().getTaskCharsArray()) {
 				if (!auxRelatedActivitiesPerActivity.keySet().contains(base)) {
 					auxRelatedActivitiesPerActivity.put(base, new TreeSet<TaskChar>());
 				}
 				relatedActivities = auxRelatedActivitiesPerActivity.get(base);
 				if (con.getImplied() != null) {
-					for (TaskChar implied : con.getImplied().getTaskChars()) {
+					for (TaskChar implied : con.getImplied().getTaskCharsArray()) {
 						relatedActivities.add(implied);
 					}
 				} // in the case of existence constraints, add the base itself!
@@ -137,12 +137,12 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 			if (con.getFamily() == ConstraintFamily.RELATION) {
 				relaCon = (RelationConstraint) con;
 				if (relaCon.getImplicationVerse() == ConstraintImplicationVerse.BOTH) {
-					for (TaskChar revBase : con.getImplied().getTaskChars()) {
+					for (TaskChar revBase : con.getImplied().getTaskCharsArray()) {
 						if (!auxRelatedActivitiesPerActivity.keySet().contains(revBase)) {
 							auxRelatedActivitiesPerActivity.put(revBase, new TreeSet<TaskChar>());
 						}
 						relatedActivities = auxRelatedActivitiesPerActivity.get(revBase);
-						for (TaskChar revImplied : con.getBase().getTaskChars()) {
+						for (TaskChar revImplied : con.getBase().getTaskCharsArray()) {
 							relatedActivities.add(revImplied);
 						}
 					}
@@ -158,7 +158,7 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 			index = Integer.MAX_VALUE,
 			comparison = Integer.MAX_VALUE;
 		
-		for (TaskChar tCh : con.getBase().getTaskChars()) {
+		for (TaskChar tCh : con.getBase().getTaskCharsArray()) {
 			comparison = this.activationTargetBondsIndex.get(tCh);
 			index = (index < comparison ? index : comparison);
 		}
@@ -167,7 +167,7 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 		if (con.getFamily() == ConstraintFamily.RELATION 
 				&& ((RelationConstraint) con).getImplicationVerse() == ConstraintImplicationVerse.BOTH) {
 //System.err.println("Lurido merdone: merdonazzo: ah, ma quisht est un bottimplichescionvers!");
-			for (TaskChar tCh : con.getImplied().getTaskChars()) {
+			for (TaskChar tCh : con.getImplied().getTaskCharsArray()) {
 				comparison = this.activationTargetBondsIndex.get(tCh);
 				index = (index < comparison ? index : comparison);
 				}

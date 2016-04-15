@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskCharArchive;

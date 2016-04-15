@@ -27,7 +27,6 @@ import minerful.miner.ProbabilisticRelationBranchedConstraintsMiner;
 import minerful.miner.ProbabilisticRelationConstraintsMiner;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
-import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParams;
 
 import org.apache.commons.lang3.StringEscapeUtils;

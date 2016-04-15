@@ -53,4 +53,16 @@ public class NotCoExistence extends NotSuccession {
 	public Constraint getSupposedOpponentConstraint() {
 		return new CoExistence(base, implied);
 	}
+	
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new NotCoExistence(taskChars[0], taskChars[1]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new NotCoExistence(taskCharSets[0], taskCharSets[1]);
+	}
 }

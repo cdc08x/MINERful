@@ -202,9 +202,9 @@ public class OldConDecEncoder {
 					sBuil.append(TEMPLATE_DEF_END_STRING);
 					sBuil.append(ACTUAL_PARAMETERS_GROUP_BEGIN_STRING);
 					
-					sBuil.append(String.format(ACTUAL_PARAMETER_DEF_TEMPLATE, k++, this.makeItACompleteEvent(c.base.getTaskChars()[0])));
+					sBuil.append(String.format(ACTUAL_PARAMETER_DEF_TEMPLATE, k++, this.makeItACompleteEvent(c.getBase().getTaskCharsArray()[0])));
 					if (c instanceof RelationConstraint) {
-						sBuil.append(String.format(ACTUAL_PARAMETER_DEF_TEMPLATE, k++, this.makeItACompleteEvent(((RelationConstraint) c).implied.getTaskChars()[0])));
+						sBuil.append(String.format(ACTUAL_PARAMETER_DEF_TEMPLATE, k++, this.makeItACompleteEvent(((RelationConstraint) c).getImplied().getTaskCharsArray()[0])));
 					}
 					sBuil.append(ACTUAL_PARAMETERS_GROUP_END_STRING);
 					sBuil.append(CONSTRAINT_DEF_END_STRING);

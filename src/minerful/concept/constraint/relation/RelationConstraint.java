@@ -4,13 +4,12 @@
  */
 package minerful.concept.constraint.relation;
 
-import java.util.Collection;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import minerful.concept.TaskChar;
@@ -30,7 +29,7 @@ public abstract class RelationConstraint extends Constraint {
 	}
 	@XmlIDREF
 //	@XmlTransient
-	public TaskCharSet implied;
+	protected TaskCharSet implied;
 	
 	protected RelationConstraint() {
 		super();
@@ -148,10 +147,10 @@ public abstract class RelationConstraint extends Constraint {
 	}
 	
 	@Override
-	public Collection<TaskChar> getInvolvedTaskChars() {
+	public Set<TaskChar> getInvolvedTaskChars() {
 		TreeSet<TaskChar> involvedChars = new TreeSet<TaskChar>();
-		involvedChars.addAll(this.base.getTaskCharsCollection());
-		involvedChars.addAll(this.implied.getTaskCharsCollection());
+		involvedChars.addAll(this.base.getSetOfTaskChars());
+		involvedChars.addAll(this.implied.getSetOfTaskChars());
 		return involvedChars;
 	}
 	
@@ -177,7 +176,7 @@ public abstract class RelationConstraint extends Constraint {
 	public boolean hasActivationSetStrictlyIncludingTheOneOf(Constraint c) {
 		return
 				this.isActivationBranched()
-			&&	this.base.strictlyIncludes(c.base);
+			&&	this.base.strictlyIncludes(c.getBase());
 	}
 	
 	public boolean hasTargetSetStrictlyIncludingTheOneOf(Constraint c) {
@@ -223,4 +222,33 @@ public abstract class RelationConstraint extends Constraint {
 				this.implied = this.getParameters().get(1);
 		}
 	}
+
+	@Override
+	public String getRegularExpressionTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkParams(TaskChar... taskChars)
+			throws IllegalArgumentException {
+		if (taskChars.length != 2)
+			throw new IllegalArgumentException("Too many parameters");
+		return true;
+	}
+
+	@Override
+	public boolean checkParams(TaskCharSet... taskCharSets)
+			throws IllegalArgumentException {
+		if (taskCharSets.length != 2)
+			throw new IllegalArgumentException("Too many parameters");
+		return true;
+	}
+	
 }

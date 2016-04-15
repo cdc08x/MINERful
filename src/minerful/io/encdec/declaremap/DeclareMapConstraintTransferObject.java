@@ -21,13 +21,13 @@ public class DeclareMapConstraintTransferObject {
 			firstParamSet = new TreeSet<String>(),
 			secondParamSet = new TreeSet<String>();
 		
-		for (TaskChar tChars : con.base.getTaskChars()) {
+		for (TaskChar tChars : con.getBase().getTaskCharsArray()) {
 			firstParamSet.add(tChars.taskClass.getName());
 		}
 		
 		if (con instanceof RelationConstraint) {
 			RelationConstraint relaCon = (RelationConstraint) con;
-			for (TaskChar tChars : relaCon.implied.getTaskChars()) {
+			for (TaskChar tChars : relaCon.getImplied().getTaskCharsArray()) {
 				secondParamSet.add(tChars.taskClass.getName());
 			}
 		}
