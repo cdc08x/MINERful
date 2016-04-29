@@ -27,7 +27,7 @@ import minerful.miner.stats.GlobalStatsTable;
 import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -43,7 +43,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				systemOptions = SystemCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				outputOptions = OutputModelParameters.parseableOptions(),
-				postProptions = PostProcessingCmdParams.parseableOptions();
+				postProptions = PostProcessingCmdParameters.parseableOptions();
 		
     	for (Object opt: postProptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
@@ -97,8 +97,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				new SystemCmdParameters(
 						cmdLineOptions,
 						args);
-		PostProcessingCmdParams postParams =
-				new PostProcessingCmdParams(
+		PostProcessingCmdParameters postParams =
+				new PostProcessingCmdParameters(
 						cmdLineOptions,
 						args);
 
@@ -163,14 +163,14 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 	public ProcessModel mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams,
-			SystemCmdParameters systemParams, PostProcessingCmdParams postParams, Character[] alphabet) {
+			SystemCmdParameters systemParams, PostProcessingCmdParameters postParams, Character[] alphabet) {
 		TaskCharArchive taskCharArchive = new TaskCharArchive(alphabet);
 		return this.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
 	}
 
 	public ProcessModel mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams, 
-			SystemCmdParameters systemParams, PostProcessingCmdParams postPrarams, TaskCharArchive taskCharArchive) {
+			SystemCmdParameters systemParams, PostProcessingCmdParameters postPrarams, TaskCharArchive taskCharArchive) {
 		GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
 		globalStatsTable = computeKB(logParser, minerFulParams,
 				taskCharArchive, globalStatsTable);
@@ -239,7 +239,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 	private ConstraintsBag queryForConstraints(
 			LogParser logParser, MinerFulCmdParameters minerFulParams,
-			PostProcessingCmdParams postPrarams, TaskCharArchive taskCharArchive,
+			PostProcessingCmdParameters postPrarams, TaskCharArchive taskCharArchive,
 			GlobalStatsTable globalStatsTable, ConstraintsBag bag) {
 		int coreNum = 0;
 		long before = 0, after = 0;
@@ -298,7 +298,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 	private ProcessModel pruneConstraints(
 			ProcessModel processModel,
 			MinerFulCmdParameters minerFulParams,
-			PostProcessingCmdParams postPrarams) {
+			PostProcessingCmdParameters postPrarams) {
 //		int coreNum = 0;
 //		if (minerFulParams.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
 //			// TODO

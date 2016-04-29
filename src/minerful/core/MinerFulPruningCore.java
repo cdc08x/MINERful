@@ -5,7 +5,7 @@ import java.util.Collection;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.pruning.ConflictAndRedundancyResolver;
 import minerful.postprocessing.pruning.SubsumptionHierarchyMarkingPolicy;
 import minerful.postprocessing.pruning.ThresholdsMarker;
@@ -17,7 +17,7 @@ public class MinerFulPruningCore {
 	protected static Logger logger;
 	protected ProcessModel processModel;
 	protected Collection<TaskChar> tasksToQueryFor; 
-	protected PostProcessingCmdParams postProcParams;
+	protected PostProcessingCmdParameters postProcParams;
 	protected SubsumptionHierarchyMarker subMarker;
 	protected ThresholdsMarker threshMarker;
 
@@ -28,13 +28,13 @@ public class MinerFulPruningCore {
 	}
 	
 	public MinerFulPruningCore(ProcessModel processModel,
-			PostProcessingCmdParams postProcParams) {
+			PostProcessingCmdParameters postProcParams) {
 		this(processModel, processModel.getProcessAlphabet(), postProcParams);
 	}
 	
 	public MinerFulPruningCore(ProcessModel processModel,
 			Collection<TaskChar> tasksToQueryFor,
-			PostProcessingCmdParams postProcParams) {
+			PostProcessingCmdParameters postProcParams) {
 		this.processModel = processModel;
 		this.tasksToQueryFor = tasksToQueryFor;
 		this.postProcParams = postProcParams;

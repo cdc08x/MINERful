@@ -15,7 +15,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class PostProcessingCmdParams extends ParamsManager {
+public class PostProcessingCmdParameters extends ParamsManager {
 	public static enum RankingPolicy {
 		SUPPORTCONFIDENCEINTERESTFACTOR,
 		FAMILYHIERARCHY,
@@ -114,7 +114,7 @@ public class PostProcessingCmdParams extends ParamsManager {
 		CnsSortModularDefaultPolicy.SUPPORTCONFIDENCEINTERESTFACTOR,
 	};
 	
-	public PostProcessingCmdParams() {
+	public PostProcessingCmdParameters() {
 		super();
 		this.rankingPolicies = DEFAULT_PRIORITY_POLICIES;
 		this.analysisType = DEFAULT_ANALYSIS_TYPE;
@@ -124,13 +124,13 @@ public class PostProcessingCmdParams extends ParamsManager {
 	    this.interestFactorThreshold = DEFAULT_INTEREST_FACTOR_THRESHOLD;
 	}
     
-    public PostProcessingCmdParams(Options options, String[] args) {
+    public PostProcessingCmdParameters(Options options, String[] args) {
     	this();
         // parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
-	public PostProcessingCmdParams(String[] args) {
+	public PostProcessingCmdParameters(String[] args) {
 		this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);

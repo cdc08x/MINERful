@@ -26,7 +26,7 @@ import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.pruning.SubsumptionCheckSummaryMaker;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
@@ -58,8 +58,8 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
 				new OutputModelParameters(
 						cmdLineOptions,
 						args);
-		PostProcessingCmdParams postParams =
-				new PostProcessingCmdParams(
+		PostProcessingCmdParameters postParams =
+				new PostProcessingCmdParameters(
 						cmdLineOptions,
 						args);
         

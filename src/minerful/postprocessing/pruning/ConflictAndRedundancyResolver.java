@@ -15,7 +15,7 @@ import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.index.ModularConstraintsSorter;
 import minerful.index.comparator.modular.CnsSortModularDefaultPolicy;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -58,7 +58,7 @@ public class ConflictAndRedundancyResolver {
 		redundancyChecksPerformed;
 	private CnsSortModularDefaultPolicy[] rankingPolicies;
 	
-	public ConflictAndRedundancyResolver(ProcessModel process, PostProcessingCmdParams params) {
+	public ConflictAndRedundancyResolver(ProcessModel process, PostProcessingCmdParameters params) {
 		this.avoidingRedundancyWithDoubleCheck = params.analysisType.isRedundancyDoubleCheckRequested();
 		this.avoidingRedundancy = this.avoidingRedundancyWithDoubleCheck || params.analysisType.isRedundancyCheckRequested();
 		this.originalProcess = process;

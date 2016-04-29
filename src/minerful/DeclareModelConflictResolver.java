@@ -10,7 +10,7 @@ import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.params.SystemCmdParameters.DebugLevel;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.pruning.ConflictAndRedundancyResolver;
 
 public class DeclareModelConflictResolver {
@@ -37,7 +37,7 @@ public class DeclareModelConflictResolver {
 		
 		long timingBeforeConflictResolution = System.currentTimeMillis();
 
-		ConflictAndRedundancyResolver coRes = new ConflictAndRedundancyResolver(proMod, new PostProcessingCmdParams());
+		ConflictAndRedundancyResolver coRes = new ConflictAndRedundancyResolver(proMod, new PostProcessingCmdParameters());
 		
 		proMod = coRes.resolveConflictsOrRedundancies();
 		

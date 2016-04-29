@@ -27,7 +27,7 @@ import minerful.miner.ProbabilisticRelationBranchedConstraintsMiner;
 import minerful.miner.ProbabilisticRelationConstraintsMiner;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -37,7 +37,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 	protected static Logger logger;
 	protected LogParser logParser;
 	protected MinerFulCmdParameters minerFulParams;
-	protected PostProcessingCmdParams postPrarams;
+	protected PostProcessingCmdParameters postPrarams;
 	protected TaskCharArchive taskCharArchive;
 	protected GlobalStatsTable statsTable;
 	private Set<TaskChar> tasksToQueryFor;
@@ -51,7 +51,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 	}
 
     public MinerFulQueryingCore(int coreNum, LogParser logParser,
-			MinerFulCmdParameters minerFulParams, PostProcessingCmdParams postPrarams,
+			MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postPrarams,
 			TaskCharArchive taskCharArchive,
 			GlobalStatsTable globalStatsTable) {
     	this(coreNum,logParser,minerFulParams,postPrarams,taskCharArchive,globalStatsTable,null,null);
@@ -59,7 +59,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 
 	public MinerFulQueryingCore(int coreNum,
 			LogParser logParser,
-			MinerFulCmdParameters minerFulParams, PostProcessingCmdParams postPrarams,
+			MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postPrarams,
 			TaskCharArchive taskCharArchive,
 			GlobalStatsTable globalStatsTable, Set<TaskChar> tasksToQueryFor) {
 		this(coreNum,logParser,minerFulParams,postPrarams,taskCharArchive,globalStatsTable,tasksToQueryFor,null);
@@ -67,7 +67,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 
 	public MinerFulQueryingCore(int coreNum,
 			LogParser logParser,
-			MinerFulCmdParameters minerFulParams, PostProcessingCmdParams postPrarams,
+			MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postPrarams,
 			TaskCharArchive taskCharArchive,
 			GlobalStatsTable globalStatsTable,
 			ConstraintsBag bag) {
@@ -76,7 +76,7 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 
 	public MinerFulQueryingCore(int coreNum,
 			LogParser logParser,
-			MinerFulCmdParameters minerFulParams, PostProcessingCmdParams postPrarams,
+			MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postPrarams,
 			TaskCharArchive taskCharArchive,
 			GlobalStatsTable globalStatsTable, Set<TaskChar> tasksToQueryFor,
 			ConstraintsBag bag) {

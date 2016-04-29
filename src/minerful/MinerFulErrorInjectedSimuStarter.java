@@ -9,7 +9,7 @@ import minerful.logparser.StringLogParser;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 
@@ -28,7 +28,7 @@ public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
     			errorInjectorOptions = ErrorInjectorCmdParameters.parseableOptions(),
     			viewOptions = ViewCmdParameters.parseableOptions(),
     			outputOptions = OutputModelParameters.parseableOptions(),
-    			postProptions = PostProcessingCmdParams.parseableOptions();
+    			postProptions = PostProcessingCmdParameters.parseableOptions();
     	
     	for (Object opt: postProptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
@@ -91,7 +91,7 @@ public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
-		PostProcessingCmdParams postParams = new PostProcessingCmdParams(cmdLineOptions, args);
+		PostProcessingCmdParameters postParams = new PostProcessingCmdParameters(cmdLineOptions, args);
        
         if (systemParams.help) {
         	systemParams.printHelp(cmdLineOptions);

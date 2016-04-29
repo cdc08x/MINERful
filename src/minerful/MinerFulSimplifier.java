@@ -16,7 +16,7 @@ import minerful.io.params.InputModelParameters;
 import minerful.io.params.OutputModelParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.pruning.ConflictAndRedundancyResolver;
 
 import org.apache.commons.cli.Option;
@@ -29,7 +29,7 @@ public class MinerFulSimplifier extends MinerFulMinerStarter {
 		Options cmdLineOptions = new Options();
 		
 		Options systemOptions = SystemCmdParameters.parseableOptions(),
-				postProptions = PostProcessingCmdParams.parseableOptions(),
+				postProptions = PostProcessingCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				outputOptions = OutputModelParameters.parseableOptions(),
 				inputOptions = InputModelParameters.parseableOptions();
@@ -61,8 +61,8 @@ public class MinerFulSimplifier extends MinerFulMinerStarter {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
-		PostProcessingCmdParams postPrarams =
-				new PostProcessingCmdParams(
+		PostProcessingCmdParameters postPrarams =
+				new PostProcessingCmdParameters(
 						cmdLineOptions,
 						args);
 		OutputModelParameters outParams =

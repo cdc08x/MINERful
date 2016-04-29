@@ -3,7 +3,6 @@ package minerful.relevance;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,22 +17,12 @@ import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.existence.AtMostOne;
-import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
 import minerful.concept.constraint.relation.AlternatePrecedence;
-import minerful.concept.constraint.relation.AlternateResponse;
-import minerful.concept.constraint.relation.AlternateSuccession;
 import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
-import minerful.concept.constraint.relation.ChainSuccession;
 import minerful.concept.constraint.relation.CoExistence;
 import minerful.concept.constraint.relation.NotChainSuccession;
-import minerful.concept.constraint.relation.NotCoExistence;
-import minerful.concept.constraint.relation.NotSuccession;
-import minerful.concept.constraint.relation.Precedence;
-import minerful.concept.constraint.relation.RespondedExistence;
-import minerful.concept.constraint.relation.Response;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logparser.LogEventClassifier.ClassificationType;
@@ -42,15 +31,9 @@ import minerful.logparser.LogTraceParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
 import minerful.params.SystemCmdParameters.DebugLevel;
-import minerful.relevance.test.SequenceResponse21;
-import minerful.relevance.test.SequenceResponse22;
-import minerful.relevance.test.SequenceResponse32;
 import minerful.utils.MessagePrinter;
 
 import org.apache.log4j.Logger;
-
-import dk.brics.automaton.Automaton;
-import dk.brics.automaton.RegExp;
 
 public class ConstraintsRelevanceEvaluator {
 	public static final double DEFAULT_SATISFACTION_THRESHOLD = 0.5;
@@ -74,16 +57,16 @@ public class ConstraintsRelevanceEvaluator {
 	public ConstraintsRelevanceEvaluator(LogParser logParser, Constraint[] parametricConstraints, double satisfactionThreshold) {
 		AbstractMinerFulStarter.configureLogging(DebugLevel.all);
         if (logger == null)
-    		logger = Logger.getLogger(ConstraintsRelevanceEvaluator.class.getCanonicalName());
+        	logger = Logger.getLogger(ConstraintsRelevanceEvaluator.class.getCanonicalName());
 
         long from = 0, to = 0;
         
         logger.debug("Preparing the data structures...");
 
         from = System.currentTimeMillis();
-        
+
         this.satisfactionThreshold = satisfactionThreshold;
-        
+
         this.logParser = logParser;
         this.taChaEncoDeco = logParser.getEventEncoderDecoder();
 		this.tChArchive = logParser.getTaskCharArchive();
@@ -95,11 +78,11 @@ public class ConstraintsRelevanceEvaluator {
 		this.texasRangers = new RelevanceAutomatonMultiWalker[parametricConstraints.length];
 		this.evaluationsOnLog = new TreeMap<Constraint, RelevanceEvaluationOnLog>();//(numOfGeneratedConstraints, (float)1.0);
 		this.nuConstraints = new ArrayList<Constraint>();
-		
+
 		logger.debug("Preparing the automata walkers...");
 
 		int numOfGeneratedConstraints = setupAutomataWalkers(parametricConstraints);
-		
+
 		to = System.currentTimeMillis();
 
 		logger.debug("Data structures prepared. Time in msec: " + (to - from));

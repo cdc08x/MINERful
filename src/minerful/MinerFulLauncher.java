@@ -12,7 +12,7 @@ import minerful.params.InputCmdParameters;
 import minerful.params.InputCmdParameters.EventClassification;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
-import minerful.postprocessing.params.PostProcessingCmdParams;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Options;
@@ -23,7 +23,7 @@ public class MinerFulLauncher {
 	private InputCmdParameters inputParams;
 	private MinerFulCmdParameters minerFulParams;
 	private SystemCmdParameters systemParams;
-	private PostProcessingCmdParams postParams;
+	private PostProcessingCmdParameters postParams;
 	private MinerFulMinerStarter minerFulStarter;
 	private LogParser logParser;
 	private ViewCmdParameters viewParams;
@@ -50,8 +50,8 @@ public class MinerFulLauncher {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
-        PostProcessingCmdParams postParams =
-        		new PostProcessingCmdParams(cmdLineOptions, args);
+        PostProcessingCmdParameters postParams =
+        		new PostProcessingCmdParameters(cmdLineOptions, args);
         
         if (systemParams.help) {
         	systemParams.printHelp(cmdLineOptions);
@@ -75,13 +75,13 @@ public class MinerFulLauncher {
 
 	public MinerFulLauncher(InputCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
-			PostProcessingCmdParams postParams, SystemCmdParameters systemParams) {
+			PostProcessingCmdParameters postParams, SystemCmdParameters systemParams) {
 		this(inputParams, minerFulParams, postParams, systemParams, null, null);
 	}
 
 	public MinerFulLauncher(InputCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
-			PostProcessingCmdParams postParams, SystemCmdParameters systemParams,
+			PostProcessingCmdParameters postParams, SystemCmdParameters systemParams,
 			ViewCmdParameters viewParams, OutputModelParameters outParams) {
 		this.inputParams = inputParams;
 		this.minerFulParams = minerFulParams;
