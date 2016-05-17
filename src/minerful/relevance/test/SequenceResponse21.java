@@ -32,9 +32,9 @@ public class SequenceResponse21 extends Constraint {
 	@Override
 	public String getRegularExpression() {
 		return String.format(this.getRegularExpressionTemplate(),
-				this.parameters.get(0).toPatternString(true),
-				this.parameters.get(1).toPatternString(true),
-				this.parameters.get(2).toPatternString(true)
+				this.parameters.get(0).toPatternString(),
+				this.parameters.get(1).toPatternString(),
+				this.parameters.get(2).toPatternString()
 		);
 	}
 

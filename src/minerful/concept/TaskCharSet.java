@@ -187,13 +187,18 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		return new TaskCharSet(arrayOfTaskChars);
 	}
 
+
+	public String toPatternString() {
+		return this.toPatternString(true);
+	}
+
 	public String toPatternString(boolean positive) {
 		if (this.size() == 1)
 			return this.taskChars[0].identifier.toString();
 		if (positive) {
 			return StringUtils.join(this.joinedStringOfIdentifiers, "");
-		} else {
-			return "[^" + this.joinedStringOfIdentifiers + "]";
+		} else { // FIXME Cannot work, really
+			return "^" + this.joinedStringOfIdentifiers;
 		}
 	}
 

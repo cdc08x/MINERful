@@ -14,7 +14,7 @@ import minerful.concept.constraint.Constraint;
 public class NotCoExistence extends NotSuccession {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s^%2$s]*((%1$s[^%2$s]*)|(%2$s[^%1$s]*))?";
+		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?";
 	}
 	
 	protected NotCoExistence() {

@@ -16,7 +16,7 @@ public class Response extends RespondedExistence {
 
     @Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*(%1$s.*%2$s)*[^%1$s]*";
+		return "[^%1$s]*([%1$s].*[%2$s])*[^%1$s]*";
 		// [^a]*(a.*b)*[^a]*
     }
     

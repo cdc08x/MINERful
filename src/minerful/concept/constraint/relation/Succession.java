@@ -14,7 +14,7 @@ import minerful.concept.constraint.Constraint;
 public class Succession extends CoExistence {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s^%2$s]*(%1$s.*%2$s)*[^%1$s^%2$s]*";
+		return "[^%1$s%2$s]*([%1$s].*[%2$s])*[^%1$s%2$s]*";
 	}
 	
 	protected Succession() {

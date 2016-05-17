@@ -19,7 +19,7 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 public class Precedence extends RespondedExistence {  
     @Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*(%2$s.*%1$s)*[^%1$s]*";
+		return "[^%1$s]*([%2$s].*[%1$s])*[^%1$s]*";
     }
 
     protected Precedence() {

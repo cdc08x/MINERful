@@ -21,7 +21,7 @@ MIN_STRLEN=12
 MAX_STRLEN=128
 TESTBED_SIZE=250
 MEMORY_MAX="2048m"
-OUTPUT_FILE="/home/claudio/Dropbox/Research-and-programming-stuff/MailOfMine-SW/Test-Logs/simple-synth-log.xes"
+OUTPUT_FILE="tmp/simple-synth-log.xes"
 
 ## Global variables
 alphabetCharacters=("n" "p" "r" "c" "e" "f" "g" "h")
