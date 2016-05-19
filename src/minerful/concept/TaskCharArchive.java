@@ -110,6 +110,15 @@ public class TaskCharArchive {
 		return taskChars;
 	}
 	
+	public void removeAllByClass(Collection<AbstractTaskClass> taskClassesToExclude) {
+		Collection<TaskChar> taskCharsToExclude = new ArrayList<TaskChar>(taskClassesToExclude.size()); 
+		for (AbstractTaskClass taskClassToExclude : taskClassesToExclude) {
+			taskCharsToExclude.add(this.getTaskChar(taskClassToExclude));
+		}
+		this.taskChars.removeAll(taskCharsToExclude);
+		this.computeIndices();
+	}
+	
 	public static Collection<TaskChar> toTaskChars(Collection<Character> characters) {
 		Collection<TaskChar> taskChars = new ArrayList<TaskChar>(characters.size());
 		for (Character chr: characters) {

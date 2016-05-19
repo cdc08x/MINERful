@@ -377,33 +377,33 @@ public class TaskCharEncoderDecoder {
 		return originalString.replaceAll("\\W", "_");
 	}
 
-	public void excludeThese(Collection<String> activitiesToExcludeFromResult) {
+	public Collection<AbstractTaskClass> excludeThese(Collection<String> activitiesToExcludeFromResult) {
+		AbstractTaskClass excludedTask = null;
+		Collection<AbstractTaskClass> excludedTasks = new ArrayList<AbstractTaskClass>(activitiesToExcludeFromResult.size());
+		
 		if (activitiesToExcludeFromResult != null) {
 			for (String activityToExclude : activitiesToExcludeFromResult) {
-				this.removeFromTranslationMap(activityToExclude);
+				excludedTask = this.removeFromTranslationMap(activityToExclude);
+				if (excludedTask != null) {
+					excludedTasks.add(excludedTask);
+				} else {
+					logger.warn("A non-existing activity was requested to be removed from the alphabet: " + excludedTask);
+				}
 			}
 		}
+		return excludedTasks;
 	}
 
-	private void removeFromTranslationMap(String activityToExclude) {
+	private AbstractTaskClass removeFromTranslationMap(String activityToExclude) {
 		Character charToRemove = null;
-		activityToExclude = XesDecoder.cleanEvtIdentifierTransitionStatus(activityToExclude);
-		for (String key : this.tasksDictionary.keySet().toArray(new String[0])) {
-			if (XesDecoder.matchesEvtIdentifierWithTransitionStatus(key, activityToExclude)) {
+		for (AbstractTaskClass key : this.tasksDictionary.keySet()) {
+			if (key.toString().equals(activityToExclude)) {
 				charToRemove = tasksDictionary.remove(key);
 				inverseTasksDictionary.remove(charToRemove);
+
+				return key;
 			}
 		}
-
-
-/*
-		if (this.tasksDictionary.containsKey(activityToExclude)) {
-			charToRemove = tasksDictionary.remove(activityToExclude);
-			inverseTasksDictionary.remove(charToRemove);
-		} else {
-			logger.warn("A non-existing activity was requested to be removed from the alphabet: " + activityToExclude);
-System.err.println("A non-existing activity was requested to be removed from the alphabet: " + activityToExclude);
-		}
- */	
+		return null;
 	}
 }

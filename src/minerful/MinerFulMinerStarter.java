@@ -140,7 +140,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 			// Remove from the analysed alphabet those activities that are
 			// specified in a user-defined list
-			logParser.getEventEncoderDecoder().excludeThese(minerFulParams.activitiesToExcludeFromResult);
+			logParser.excludeTasksByName(minerFulParams.activitiesToExcludeFromResult);
 
 			// Let us try to free memory from the unused XesDecoder!
 			System.gc();

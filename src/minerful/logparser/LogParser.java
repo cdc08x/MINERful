@@ -1,5 +1,6 @@
 package minerful.logparser;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,4 +22,5 @@ public interface LogParser {
 	TaskCharArchive getTaskCharArchive();
 	
 	List<LogParser> split(Integer parts);
+	void excludeTasksByName(Collection<String> activitiesToExcludeFromResult);
 }

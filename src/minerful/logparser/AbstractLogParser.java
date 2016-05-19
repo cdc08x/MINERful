@@ -17,7 +17,8 @@ public abstract class AbstractLogParser implements LogParser {
 	private int numberOfEvents = UNDEFINED_MAXIMUM_LENGTH;
 	protected TaskCharEncoderDecoder taChaEncoDeco;
 	protected TaskCharArchive taskCharArchive;
-    protected List<LogTraceParser> traceParsers;
+
+	protected List<LogTraceParser> traceParsers;
 	
 
 	protected AbstractLogParser(TaskCharEncoderDecoder taChaEncoDeco,
@@ -134,5 +135,11 @@ public abstract class AbstractLogParser implements LogParser {
 			);
 		}
 		return logParsers;
+	}
+	
+    @Override
+	public void excludeTasksByName(Collection<String> tasksToExcludeFromResult) {
+		Collection<AbstractTaskClass> taskClassesToExclude = getEventEncoderDecoder().excludeThese(tasksToExcludeFromResult);
+		this.taskCharArchive.removeAllByClass(taskClassesToExclude);
 	}
 }
