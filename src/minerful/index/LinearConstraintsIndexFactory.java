@@ -30,7 +30,7 @@ public class LinearConstraintsIndexFactory {
         for (TaskChar key : bagCopy.getTaskChars()) {
         	reindexed = new TreeSet<Constraint>(new SupportBasedComparator());
         	reindexed.addAll(bagCopy.getConstraintsOf(key));
-        	bagCopy.eraseConstraints(key, reindexed);
+        	bagCopy.eraseConstraintsOf(key);
         }
 		return bagCopy;
 	}
@@ -54,7 +54,7 @@ public class LinearConstraintsIndexFactory {
 		for (TaskChar key : bagCopy.getTaskChars()) {
 			reindexed = new TreeSet<Constraint>(new InterestConfidenceBasedComparator());
 			reindexed.addAll(bagCopy.getConstraintsOf(key));
-			bagCopy.eraseConstraints(key, reindexed);
+			bagCopy.eraseConstraintsOf(key);
 		}
 		return bagCopy;
 	}

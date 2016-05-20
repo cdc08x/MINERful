@@ -7,21 +7,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 @XmlRootElement
@@ -56,6 +49,10 @@ public class ConstraintsBag implements Cloneable {
     
 	private void initBag() {
 		this.bag = new TreeMap<TaskChar, TreeSet<Constraint>>();
+	}
+	
+	public boolean add(Constraint c) {
+		return this.add(c.base, c);
 	}
 
     public boolean add(TaskChar tCh, Constraint c) {
@@ -106,7 +103,7 @@ public class ConstraintsBag implements Cloneable {
         this.bag.get(tCh).add(constraint);
 	}
 
-	public int eraseConstraints(TaskChar taskChar, Collection<? extends Constraint> cs) {
+	public int eraseConstraintsOf(TaskChar taskChar) {
 		int constraintsRemoved = 0;
 		if (this.bag.containsKey(taskChar)) {
 			constraintsRemoved = this.bag.get(taskChar).size();
