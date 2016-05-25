@@ -16,7 +16,7 @@ public class ChainResponse extends AlternateResponse {
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*([%1$s][%2$s][^%1$s]*)*[^%1$s]*";
 	}
-	
+
 	protected ChainResponse() {
 		super();
 	}

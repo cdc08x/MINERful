@@ -194,20 +194,27 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return this.conflicting;
 	}
 
-	public boolean isOfInterest(double minimumInterestFactor) {
-    	return interestFactor >= minimumInterestFactor;
-    }
-    
-	public boolean isConfident(double minimumConfidenceLevel) {
-		return confidence >= minimumConfidenceLevel;
-	}
-    
+	/**
+     * Returns <code>true</code> if and only if the {@link #support support} of this constraint is equal to or higher than the given threshold.
+	 * @param threshold The threshold to which the {@link #support support} of this constraint is compared
+     * @return <code>true</code> if the {@link #support support} of this constraint is equal to or higher than the given threshold, <code>false</code> otherwise.
+	 */
     public boolean hasSufficientSupport(double threshold) {
     	return this.support >= threshold;
     }
+	/**
+     * Returns <code>true</code> if and only if the {@link #confidence confidence} of this constraint is equal to or higher than the given threshold.
+	 * @param threshold The threshold to which the {@link #confidence confidence} of this constraint is compared
+     * @return <code>true</code> if the {@link #confidence confidence} of this constraint is equal to or higher than the given threshold, <code>false</code> otherwise.
+	 */
     public boolean hasSufficientConfidence(double threshold) {
     	return this.confidence >= threshold;
     }
+	/**
+     * Returns <code>true</code> if and only if the {@link #interestFactor interest factor} of this constraint is equal to or higher than the given threshold.
+	 * @param threshold The threshold to which the {@link #interestFactor interest factor} of this constraint is compared
+     * @return <code>true</code> if the {@link #interestFactor interestFactor} of this constraint is equal to or higher than the given threshold, <code>false</code> otherwise.
+	 */
     public boolean hasSufficientInterestFactor(double threshold) {
     	return this.interestFactor >= threshold;
     }
@@ -235,6 +242,11 @@ public abstract class Constraint implements Comparable<Constraint> {
         return ((support - threshold) / (MAX_SUPPORT - threshold));
     }
 
+    /**
+     * Returns the difference between {@link #MAX_SUPPORT MAX_SUPPORT} and the given support. 
+     * @param support The support to complement
+     * @return The difference between {@link #MAX_SUPPORT MAX_SUPPORT} and the given support.
+     */
     public static double complementSupport(double support) {
         return MAX_SUPPORT - support;
     }
@@ -243,16 +255,24 @@ public abstract class Constraint implements Comparable<Constraint> {
         return 0;
     }
     
+    /**
+     * Returns <code>true</code> if and only if the {@link #support support} of this constraint is equal to {@link #MAX_SUPPORT MAX_SUPPORT}.
+     * @return <code>true</code> if the support of this constraint is equal to {@link #MAX_SUPPORT MAX_SUPPORT}, <code>false</code> otherwise.
+     */
     public boolean hasMaximumSupport() {
     	return this.support == MAX_SUPPORT;
     }
+    /**
+     * Returns <code>true</code> if and only if the {@link #support support} of this constraint is equal to {@link #MIN_SUPPORT MIN_SUPPORT}.
+     * @return <code>true</code> if the support of this constraint is equal to {@link #MIN_SUPPORT MIN_SUPPORT}, <code>false</code> otherwise.
+     */
+	public boolean hasLeastSupport() {
+		return this.support == MIN_SUPPORT;
+	}
     
     public String getName() {
     	return this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') + 1);
     }
-	public boolean hasLeastSupport() {
-		return this.support == MIN_SUPPORT;
-	}
 	
 	public TaskCharSet getBase() {
 		return this.base;
@@ -270,6 +290,11 @@ public abstract class Constraint implements Comparable<Constraint> {
 		this.parameters = parameters;
 	}
 
+	/**
+	 * Returns the regular expression representing the semantics of this constraint.
+	 * @return The regular expression representing the semantics of this constraint.
+	 * @see Constraint#getRegularExpressionTemplate() getRegularExpressionTemplate()
+	 */
 	public String getRegularExpression() {
 		return String.format(this.getRegularExpressionTemplate(), this.base.toPatternString(true));
 	}

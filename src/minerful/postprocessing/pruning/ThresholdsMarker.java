@@ -39,8 +39,8 @@ public class ThresholdsMarker {
         for (TaskChar key : constraintsBag.getTaskChars()) {
             for (Constraint con : constraintsBag.getConstraintsOf(key)) {
             	con.belowSupportThreshold = !con.hasSufficientSupport(supportThreshold);
-            	con.belowConfidenceThreshold = !con.isConfident(confidence);
-            	con.belowInterestFactorThreshold = !con.isOfInterest(interest);
+            	con.belowConfidenceThreshold = !con.hasSufficientConfidence(confidence);
+            	con.belowInterestFactorThreshold = !con.hasSufficientInterestFactor(interest);
 //            	if (!(con.hasSufficientSupport(supportThreshold) && con.isConfident(confidence) && con.isOfInterest(interest))) {
 //					nuBag.getConstraintsOf(key).remove(con);
 //				}

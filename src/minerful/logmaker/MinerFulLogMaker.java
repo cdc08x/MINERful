@@ -98,6 +98,7 @@ public class MinerFulLogMaker {
 
 			pickedTransitionChar = walker.walkOn();
 			while (pickedTransitionChar != null) {
+//System.out.print(pickedTransitionChar + ",");
 				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 				
 				currentDate = generateRandomDateTimeForLogEvent(currentDate);
@@ -106,6 +107,7 @@ public class MinerFulLogMaker {
 				pickedTransitionChar = walker.walkOn();
 			}
 			this.log.add(xTrace);
+//System.out.println();
 		}
 		
 		return this.log;

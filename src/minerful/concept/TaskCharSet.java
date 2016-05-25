@@ -40,7 +40,7 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		this.listOfIdentifiers = null;
 	}
 	
-	private TaskCharSet(TaskChar[] taskChars) {
+	public TaskCharSet(TaskChar... taskChars) {
 		if (taskChars.length < 1) {
 			this.taskChars = taskChars;
 			this.listOfIdentifiers = new ArrayList<Character>(0);
