@@ -18,10 +18,15 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.logparser.StringTaskClass;
 
 @XmlRootElement(name="processAlphabet")
 @XmlAccessorType(XmlAccessType.FIELD)
+/**
+ * An archive of the tasks of a process. For each task, an identifying character is given, as per {@link minerful.concept.TaskChar TaskChar}
+ * @author Claudio Di Ciccio
+ */
 public class TaskCharArchive {
 	@XmlElementWrapper(name="tasks")
 	@XmlElement(name="task")
@@ -53,6 +58,11 @@ public class TaskCharArchive {
 	public TaskCharArchive(Character[] alphabet) {
 		Collection<TaskChar> taskCharsCollection = toTaskChars(Arrays.asList(alphabet));
 		this.taskChars = new TreeSet<TaskChar>(taskCharsCollection);
+		this.computeIndices();
+	}
+
+	public TaskCharArchive(TaskChar... taskChars) {
+		this.taskChars = new TreeSet<TaskChar>(Arrays.asList(taskChars));
 		this.computeIndices();
 	}
 
