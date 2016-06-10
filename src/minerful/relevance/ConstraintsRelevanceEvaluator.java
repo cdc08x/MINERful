@@ -35,7 +35,12 @@ import minerful.utils.MessagePrinter;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Return the relevant constraints out of the log. Please beware, that the discrimination is solely based on the support.
+ * @author Claudio Di Ciccio
+ */
 public class ConstraintsRelevanceEvaluator {
+	public static final String CSV_PRE_HEADER = "Template;Constraint;Support;VacuousSupport;";
 	public static final double DEFAULT_SATISFACTION_THRESHOLD = 0.5;
 	public static final double NO_SATISFACTION_THRESHOLD = 0;
 	
@@ -50,10 +55,21 @@ public class ConstraintsRelevanceEvaluator {
 	
 	protected static Logger logger;
 
+	/**
+	 * Constructor of this class.
+	 * @param logParser A parser of the log
+	 * @param parametricConstraints Constraints for which constrained tasks will be used as place-holders for the event classes in the log
+	 */
 	public ConstraintsRelevanceEvaluator(LogParser logParser, Constraint[] parametricConstraints) {
 		this(logParser, parametricConstraints, DEFAULT_SATISFACTION_THRESHOLD);
 	}
 
+	/**
+	 * Constructor of this class.
+	 * @param logParser A parser of the log
+	 * @param parametricConstraints Constraints for which constrained tasks will be used as place-holders for the event classes in the log
+	 * @param satisfactionThreshold Threshold below which the constraint will not be considered as satisfied
+	 */
 	public ConstraintsRelevanceEvaluator(LogParser logParser, Constraint[] parametricConstraints, double satisfactionThreshold) {
 		AbstractMinerFulStarter.configureLogging(DebugLevel.all);
         if (logger == null)
@@ -244,11 +260,11 @@ public class ConstraintsRelevanceEvaluator {
 	public ConstraintsRelevanceEvaluator(LogParser logParser, Constraint parametricConstraint) {
 		this(logParser, new Constraint[]{parametricConstraint});
 	}
-	
+
 	public String printEvaluationsCSV() {
 		StringBuilder sBuil = new StringBuilder();
 		
-		sBuil.append("Template;Constraint;Support;VacuousSupport;");
+		sBuil.append(ConstraintsRelevanceEvaluator.CSV_PRE_HEADER);
 		sBuil.append(RelevanceEvaluationOnLog.CSV_HEADER);
 		sBuil.append(";\n");
 		
@@ -273,82 +289,5 @@ public class ConstraintsRelevanceEvaluator {
 	
 	public List<Constraint> getNuConstraints() {
 		return nuConstraints;
-	}
-
-	public static void main(String[] args) throws Exception {
-		TaskChar a = new TaskChar('A');
-		TaskChar b = new TaskChar('B');
-		TaskChar c = new TaskChar('C');
-		TaskChar x = new TaskChar('X');
-		TaskChar y = new TaskChar('Y');
-		Constraint[] parametricConstraints =
-			new Constraint[] {
-//				new Response(a,b),
-//				new SequenceResponse21(a,b,x),
-//				new SequenceResponse22(a,b,x,y),
-//				new SequenceResponse32(a,b,c,x,y),
-//				new RespondedExistence(a,b),
-//				new AlternateResponse(a,b),
-//				new Precedence(a,b),
-				new Participation(a),
-				new AlternatePrecedence(a,b),
-				new CoExistence(a,b),
-				new ChainPrecedence(a,b),
-				new NotChainSuccession(a, b),
-				new ChainResponse(a, b)
-		};
-//
-//		
-//		for (Constraint paraCon : parametricConstraints) {
-//			System.out.println(paraCon);
-//			System.out.println(paraCon.getRegularExpression());
-//			System.out.println(paraCon.getCheckAutomaton().toDot());
-//		}
-
-//		System.out.println("MERDACCIA " + parametricConstraints[1].getRegularExpression());
-//		System.out.println("MERDACCIA " + parametricConstraints[1].getCheckAutomaton().toDot());
-//		System.out.println("MERDACCIA " + parametricConstraints[2].getRegularExpression());
-//		System.out.println("MERDACCIA " + parametricConstraints[2].getCheckAutomaton().toDot());
-//		System.exit(0);
-		
-		LogParser loPar = null;
-		try {
-			loPar = new XesLogParser(new File(args[0]), ClassificationType.LOG_SPECIFIED);
-		} catch (Exception e) {
-			MessagePrinter.printlnOut(args[0] + " is not an XES file");
-			loPar = new StringLogParser(new File(args[0]), ClassificationType.NAME);
-		}
-		
-		ConstraintsRelevanceEvaluator evalon = null;
-		
-		if (args.length > 1) {
-			evalon = new ConstraintsRelevanceEvaluator(loPar, parametricConstraints, Double.valueOf(args[1]));
-		} else {
-			evalon = new ConstraintsRelevanceEvaluator(loPar, parametricConstraints);
-		}
-		evalon.runOnTheLog();
-		
-//		ConstraintsRelevanceEvaluator evalon = new ConstraintsRelevanceEvaluator(loPar, new Constraint[]{con});
-		
-		System.out.println(evalon.printEvaluationsCSV());
-		
-		if (args.length > 2) {
-			logger.debug("Storing fully-supported default-Declare constraints as a Declare map on " + args[2]);
-			
-			Collection<Constraint> nuStandardConstraints = new ArrayList<Constraint>();
-			Double supportThreshold = Double.valueOf(args[1]);
-
-			for (Constraint con : evalon.getNuConstraints()) {
-				if (con.getFamily() != null && con.support >= supportThreshold) {
-					nuStandardConstraints.add(con);
-				}
-			}
-			
-			ConstraintsBag coBag = new ConstraintsBag(loPar.getTaskCharArchive().getTaskChars(), nuStandardConstraints);
-			ProcessModel model = new ProcessModel(loPar.getTaskCharArchive(), coBag);
-			new DeclareMapEncoderDecoder(model).marshal(args[2]);
-			
-			logger.debug("Done.");
-		}
 	}
 }

@@ -1,4 +1,4 @@
-package minerful.relevance.test;
+package minerful.relevance.test.constraint;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,20 +15,20 @@ import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
-public class SequenceResponse32 extends Constraint {
-	public SequenceResponse32(TaskChar param1, TaskChar param2, TaskChar param3, TaskChar param4, TaskChar param5) {
+public class SequenceResponse22 extends Constraint {
+	public SequenceResponse22(TaskChar param1, TaskChar param2, TaskChar param3, TaskChar param4) {
 		super();
 		this.parameters.add(new TaskCharSet(param1));
 		this.parameters.add(new TaskCharSet(param2));
 		this.parameters.add(new TaskCharSet(param3));
 		this.parameters.add(new TaskCharSet(param4));
-		this.parameters.add(new TaskCharSet(param5));
 	}
 
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "([^%1$s]*)|([^%1$s]*%1$s[^%2$s]*)|([^%1$s]*%1$s[^%2$s]*%2$s[^%3$s]*)|([^%1$s]*%1$s[^%2$s]*%2$s[^%3$s]*%3$s[^%4$s]*%4$s[^%5$s]*%5$s[^%1$s]*)";
-				// "([^A]*)|([^A]*A[^B]*)|([^A]*A[^B]*B[^C]*)|([^A]*A[^B]*B[^C]*C[^X]*X[^Y]*Y[^A]*)";
+		return "([^%1$s]*)|([^%1$s]*%1$s[^%2$s]*)|([^%1$s]*%1$s[^%2$s]*%2$s[^%3$s]*%3$s[^%4$s]*%4$s[^%1$s]*)";
+				// "([^A]*)|([^A]*A[^B]*)|([^A]*A[^B]*B[^X]*X[^Y]*Y[^A]*)";
+				// "([^A]*)|([^A]*A[^B]*)|([^A]*A[^B]*B*X[^Y]*Y[^A]*)"
 	}
 
 	@Override
@@ -37,23 +37,13 @@ public class SequenceResponse32 extends Constraint {
 				this.parameters.get(0).toPatternString(),
 				this.parameters.get(1).toPatternString(),
 				this.parameters.get(2).toPatternString(),
-				this.parameters.get(3).toPatternString(),
-				this.parameters.get(4).toPatternString()
+				this.parameters.get(3).toPatternString()
 		);
 	}
 
 	@Override
 	public TaskCharSet getImplied() {
 		return null;
-	}
-
-	@Override
-	public Set<TaskChar> getInvolvedTaskChars() {
-		TreeSet<TaskChar> involvedChars = new TreeSet<TaskChar>();
-		for (TaskCharSet param : this.parameters) {
-			involvedChars.addAll(param.getSetOfTaskChars());
-		}
-		return involvedChars;
 	}
 
 	@Override
@@ -64,7 +54,7 @@ public class SequenceResponse32 extends Constraint {
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
 		this.checkParams(taskChars);
-		return new SequenceResponse32(taskChars[0], taskChars[1], taskChars[2], taskChars[3], taskChars[4]);
+		return new SequenceResponse22(taskChars[0], taskChars[1], taskChars[2], taskChars[3]);
 	}
 
 	@Override

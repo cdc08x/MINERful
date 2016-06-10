@@ -61,13 +61,7 @@ public abstract class ExistenceConstraint extends Constraint {
 	public TaskCharSet getImplied() {
 		return null;
 	}
-	
 
-	@Override
-	public Set<TaskChar> getInvolvedTaskChars() {
-		return this.base.getSetOfTaskChars();
-	}
-    
     @Override
     public ConstraintFamily getFamily() {
         return ConstraintFamily.EXISTENCE;

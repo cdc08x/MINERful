@@ -5,11 +5,7 @@
 package minerful;
 
 import minerful.concept.ProcessModel;
-import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.core.MinerFulPruningCore;
-import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.InputModelParameters;
@@ -17,12 +13,11 @@ import minerful.io.params.OutputModelParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
-import minerful.postprocessing.pruning.ConflictAndRedundancyResolver;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-public class MinerFulSimplifier extends MinerFulMinerStarter {
+public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
 
 	@Override
 	public Options setupOptions() {
@@ -54,7 +49,7 @@ public class MinerFulSimplifier extends MinerFulMinerStarter {
 	}
 	
     public static void main(String[] args) {
-    	MinerFulSimplifier prunerStarter = new MinerFulSimplifier();
+    	MinerFulSimplificationStarter prunerStarter = new MinerFulSimplificationStarter();
     	Options cmdLineOptions = prunerStarter.setupOptions();
     	
         SystemCmdParameters systemParams =
@@ -107,8 +102,7 @@ public class MinerFulSimplifier extends MinerFulMinerStarter {
         MinerFulPruningCore miFuPruNi = new MinerFulPruningCore(inputProcess, postPrarams);
         miFuPruNi.massageConstraints();
         outputProcess = miFuPruNi.getProcessModel();
-        
-        
+
         new MinerFulProcessOutputMgtStarter().manageOutput(outputProcess, viewParams, outParams, systemParams);
     }
  }

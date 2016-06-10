@@ -7,6 +7,7 @@ package minerful.concept.constraint;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -300,11 +301,12 @@ public abstract class Constraint implements Comparable<Constraint> {
 	}
 	
 	public abstract TaskCharSet getImplied();
-	
+
 	public abstract String getRegularExpressionTemplate();
 
 	public boolean isBranched() {
-		return this.base.size() > 1;
+		return	(this.getBase() != null && this.getBase().size() > 1)
+			||	(this.getImplied() != null && this.getImplied().size() > 1);
 	}
 
     
@@ -317,7 +319,13 @@ public abstract class Constraint implements Comparable<Constraint> {
         return (moreReliableThanGeneric > 0);
     }
 
-	public abstract Set<TaskChar> getInvolvedTaskChars();
+	public Set<TaskChar> getInvolvedTaskChars() {
+		TreeSet<TaskChar> involvedChars = new TreeSet<TaskChar>();
+		for (TaskCharSet param : this.parameters) {
+			involvedChars.addAll(param.getSetOfTaskChars());
+		}
+		return involvedChars;
+	}
 
 	
 	public void setConstraintWhichThisIsBasedUpon(Constraint constraintWhichThisIsBasedUpon) {

@@ -4,9 +4,6 @@
  */
 package minerful.concept.constraint.relation;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -146,14 +143,6 @@ public abstract class RelationConstraint extends Constraint {
 		return String.format(this.getRegularExpressionTemplate(), base.toPatternString(), implied.toPatternString());
 	}
 	
-	@Override
-	public Set<TaskChar> getInvolvedTaskChars() {
-		TreeSet<TaskChar> involvedChars = new TreeSet<TaskChar>();
-		involvedChars.addAll(this.base.getSetOfTaskChars());
-		involvedChars.addAll(this.implied.getSetOfTaskChars());
-		return involvedChars;
-	}
-	
 	public abstract ConstraintImplicationVerse getImplicationVerse();
 	
 	public boolean isActivationBranched() {
@@ -166,11 +155,6 @@ public abstract class RelationConstraint extends Constraint {
 	
 	public boolean isBranchedBothWays() {
 		return this.isActivationBranched() && this.isTargetBranched();
-	}
-	
-	@Override
-	public boolean isBranched() {
-		return this.isActivationBranched() || this.isTargetBranched();
 	}
 	
 	public boolean hasActivationSetStrictlyIncludingTheOneOf(Constraint c) {
@@ -251,4 +235,19 @@ public abstract class RelationConstraint extends Constraint {
 		return true;
 	}
 	
+	/**
+	 * Returns the target parameter of this relation constraint. 
+	 * @return The target parameter of this relation constraint.
+	 */
+	public TaskCharSet getTarget() {
+		return this.getImplied();
+	}
+
+	/**
+	 * Returns the activation parameter of this relation constraint. 
+	 * @return The activation parameter of this relation constraint.
+	 */
+	public TaskCharSet getActivation() {
+		return this.getBase();
+	}
 }

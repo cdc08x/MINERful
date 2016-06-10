@@ -1,4 +1,4 @@
-package minerful.relevance.test;
+package minerful.relevance.test.constraint;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -41,15 +41,6 @@ public class SequenceResponse21 extends Constraint {
 	@Override
 	public TaskCharSet getImplied() {
 		return null;
-	}
-
-	@Override
-	public Set<TaskChar> getInvolvedTaskChars() {
-		TreeSet<TaskChar> involvedChars = new TreeSet<TaskChar>();
-		for (TaskCharSet param : this.parameters) {
-			involvedChars.addAll(param.getSetOfTaskChars());
-		}
-		return involvedChars;
 	}
 
 	@Override
