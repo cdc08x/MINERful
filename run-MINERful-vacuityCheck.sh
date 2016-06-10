@@ -1,8 +1,14 @@
 #!/bin/bash
 
 # Author:       Claudio Di Ciccio
-# Date:         2016/03/10
+# Date:         2016/06/10
 # Description:  This script launches the MinerFulVacuityChecker, in order to discover the Declare constraints that are non-vacuously satisfied in a given input event log.
+# Installation: Please download the following files and directories from the MINERful GitHub Repository (https://github.com/cdc08x/MINERful):
+#                   bin/
+#                   lib/
+#                   src/
+#                   libs.cfg
+#                   run-MINERful-vacuityCheck.sh (this file)
 
 ## Runtime environment constants
 MAINCLASS="minerful.MinerFulVacuityChecker"
