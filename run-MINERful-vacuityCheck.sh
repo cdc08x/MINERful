@@ -15,7 +15,7 @@ MAINCLASS="minerful.MinerFulVacuityChecker"
 MEMORY_MAX="16G"
 
 ## Exec-specific parametres
-THRESHOLD="0.25"
+THRESHOLD="1.0"
 LOG="logs/BPIC2013/bpi_challenge_2013_closed_problems.xes.gz"
 
 ## Preliminary checks
@@ -27,6 +27,8 @@ fi
 
 ## Import the libraries and store it into $LIBS
 . ./libs.cfg
+
+echo "$LIBS"
 
 ## Clean up the screen
 clear

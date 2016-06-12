@@ -21,9 +21,6 @@ import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
 import minerful.params.SystemCmdParameters.DebugLevel;
 import minerful.relevance.ConstraintsRelevanceEvaluator;
-import minerful.relevance.test.constraint.SequenceResponse21;
-import minerful.relevance.test.constraint.SequenceResponse22;
-import minerful.relevance.test.constraint.SequenceResponse32;
 import minerful.utils.MessagePrinter;
 
 import org.apache.log4j.Logger;
@@ -45,27 +42,27 @@ public class MinerFulVacuityChecker {
 	 // Toggle the comment to add/remove the template from the set of checked ones.
 	 public static Constraint[] parametricConstraints =
 		new Constraint[] {
-			new SequenceResponse21(a,b,x),
+//			new SequenceResponse21(a,b,x),
 //			new SequenceResponse22(a,b,x,y),
 //			new SequenceResponse32(a,b,c,x,y),
 			new Participation(a),	// a.k.a. Existence(1, a)
-//			new AtMostOne(a),	// a.k.a. Absence(2, a)
-//			new Init(a),
-//			new End(a),
-//			new RespondedExistence(a,b),
-//			new Response(a, b),
-//			new AlternateResponse(a,b),
-//			new ChainResponse(a,b),
-//			new Precedence(a,b),
+			new AtMostOne(a),	// a.k.a. Absence(2, a)
+			new Init(a),
+			new End(a),
+			new RespondedExistence(a,b),
+			new Response(a, b),
+			new AlternateResponse(a,b),
+			new ChainResponse(a,b),
+			new Precedence(a,b),
 			new AlternatePrecedence(a,b),
-//			new ChainPrecedence(a,b),
+			new ChainPrecedence(a,b),
 			new CoExistence(a,b),
-//			new Succession(a,b),
-//			new AlternateSuccession(a, b),
-//			new ChainSuccession(a, b),
+			new Succession(a,b),
+			new AlternateSuccession(a, b),
+			new ChainSuccession(a, b),
 			new NotChainSuccession(a, b),
-//			new NotSuccession(a, b),
-//			new NotCoExistence(a, b),
+			new NotSuccession(a, b),
+			new NotCoExistence(a, b),
     };
 
 	protected static Logger logger;

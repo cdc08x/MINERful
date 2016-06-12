@@ -11,7 +11,7 @@ import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily
 public class Participation extends ExistenceConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*(%1$s[^%1$s]*){1,}[^%1$s]*";
+		return "[^%1$s]*([%1$s][^%1$s]*){1,}[^%1$s]*";
 	}
 
     protected Participation() {

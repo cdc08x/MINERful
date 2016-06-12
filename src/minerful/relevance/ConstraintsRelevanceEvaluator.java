@@ -266,7 +266,7 @@ public class ConstraintsRelevanceEvaluator {
 		
 		sBuil.append(ConstraintsRelevanceEvaluator.CSV_PRE_HEADER);
 		sBuil.append(RelevanceEvaluationOnLog.CSV_HEADER);
-		sBuil.append(";\n");
+		sBuil.append("\n");
 		
 		TreeSet<Constraint> constraints = new TreeSet<Constraint>(evaluationsOnLog.keySet());
 		
@@ -280,7 +280,6 @@ public class ConstraintsRelevanceEvaluator {
 			sBuil.append(this.computeVacuousSupport(this.evaluationsOnLog.get(con)));
 			sBuil.append(';');
 			sBuil.append(this.evaluationsOnLog.get(con).printCSV());
-			sBuil.append(';');
 			sBuil.append('\n');
 		}
 		

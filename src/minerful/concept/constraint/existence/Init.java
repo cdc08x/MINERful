@@ -15,7 +15,7 @@ import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily
 public class Init extends Participation {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "%1$s.*";
+		return "[%1$s].*";
 	}
 	
     protected Init() {
