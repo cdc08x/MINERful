@@ -19,11 +19,11 @@ public class ModularConstraintsComparatorFactory {
 		this.constraints = constraints;
 	}
 	
-	public ModularConstraintsComparator createModularComparator(CnsSortModularDefaultPolicy... types) {
+	public ModularConstraintsComparator createModularComparator(ConstraintSortingPolicy... types) {
 		return createModularComparator(true, types);
 	}
 	
-	public ModularConstraintsComparator createModularComparator(boolean lastLevelComparatorIsRandom, CnsSortModularDefaultPolicy... types) {
+	public ModularConstraintsComparator createModularComparator(boolean lastLevelComparatorIsRandom, ConstraintSortingPolicy... types) {
 		// Starting from the last one (i.e., the one which discriminates at the finest level of granularity
 		int i = types.length - 1;
 		ModularConstraintsComparator
@@ -44,11 +44,11 @@ public class ModularConstraintsComparatorFactory {
 		return compa;
 	}
 
-	private ModularConstraintsComparator createModularComparator(CnsSortModularDefaultPolicy type) {
+	private ModularConstraintsComparator createModularComparator(ConstraintSortingPolicy type) {
 		return createModularComparator(null, type);
 	}
 
-	private ModularConstraintsComparator createModularComparator(ModularConstraintsComparator nextLevelComparator, CnsSortModularDefaultPolicy type) {
+	private ModularConstraintsComparator createModularComparator(ModularConstraintsComparator nextLevelComparator, ConstraintSortingPolicy type) {
 		ModularConstraintsComparator
 			compa = null,
 			subCompa = null;

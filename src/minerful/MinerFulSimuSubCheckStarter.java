@@ -30,6 +30,7 @@ import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.pruning.SubsumptionCheckSummaryMaker;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Options;
 
@@ -117,7 +118,7 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
 	        }
 	        suChe.checkSubsumption(cns);
 	        
-	        System.out.println(suChe.csv());
+	        MessagePrinter.printlnOut(suChe.csv());
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

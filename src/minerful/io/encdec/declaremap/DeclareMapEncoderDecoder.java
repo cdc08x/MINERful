@@ -473,10 +473,8 @@ public class DeclareMapEncoderDecoder {
 		for(IItem item : templateList){
 			if(item instanceof ConstraintTemplate){
 				ConstraintTemplate constraintTemplate = (ConstraintTemplate)item;
-				//				System.out.println(constraintTemplate.getName()+" @ "+constraintTemplate.getDescription()+" @ "+constraintTemplate.getText());
 				if(templateNameStringDeclareTemplateMap.containsKey(constraintTemplate.getName().replaceAll("-", "").toLowerCase())){
 					declareTemplateConstraintTemplateMap.put(templateNameStringDeclareTemplateMap.get(constraintTemplate.getName().replaceAll("-", "").toLowerCase()), constraintTemplate);
-//					System.out.println(constraintTemplate.getName()+" @ "+templateNameStringDeclareTemplateMap.get(constraintTemplate.getName().replaceAll("-", "").toLowerCase()));
 				}
 			}
 		}

@@ -119,7 +119,7 @@ public class MinerFulVacuityChecker {
 		}
 		evalon.runOnTheLog();
 
-		System.out.println(evalon.printEvaluationsCSV());
+		MessagePrinter.printlnOut(evalon.printEvaluationsCSV());
 
 		if (args.length > 2) {
 			logger.debug("Storing fully-supported default-Declare constraints as a Declare map on " + args[2]);

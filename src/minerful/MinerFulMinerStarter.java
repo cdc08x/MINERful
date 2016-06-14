@@ -130,7 +130,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		LogParser logParser = null;
 		switch (inputParams.inputLanguage) {
 		case xes:
-			ClassificationType evtClassi = MinerFulLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
+			ClassificationType evtClassi = MinerFulMinerLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
 			try {
 				logParser = new XesLogParser(inputParams.inputFile, evtClassi);
 			} catch (Exception e1) {

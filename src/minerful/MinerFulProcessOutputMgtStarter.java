@@ -20,6 +20,7 @@ import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogParser;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -120,17 +121,17 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
         if (viewParams.noFoldingRequired) {
         	switch (viewParams.constraintsSorting) {
         	case interest:
-        		System.out.println(printer.printUnfoldedBagOrderedByInterest());
+        		MessagePrinter.printlnOut(printer.printUnfoldedBagOrderedByInterest());
         	case support:
-        		System.out.println(printer.printUnfoldedBagOrderedBySupport());
+        		MessagePrinter.printlnOut(printer.printUnfoldedBagOrderedBySupport());
         		break;
         	case type:
     		default:
-    			System.out.println(printer.printUnfoldedBag());
+    			MessagePrinter.printlnOut(printer.printUnfoldedBag());
     			break;
         	}
         } else {
-        	System.out.println(printer.printBag());
+        	MessagePrinter.printlnOut(printer.printBag());
         }
 
 		if (outParams.fileToSaveDotFileForAutomaton != null) {
@@ -139,7 +140,7 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
 	        	outWriter.print(printer.printDotAutomaton());
 	        	outWriter.flush();
 	        	outWriter.close();
-	        	System.out.println("Discovered process automaton written in DOT format on " + outParams.fileToSaveDotFileForAutomaton);
+	        	MessagePrinter.printlnOut("Discovered process automaton written in DOT format on " + outParams.fileToSaveDotFileForAutomaton);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -152,7 +153,7 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
 	        	outWriter.print(printer.printTSMLAutomaton());
 	        	outWriter.flush();
 	        	outWriter.close();
-	        	System.out.println("Discovered process automaton written in TSML format on " + outParams.fileToSaveTsmlFileForAutomaton);
+	        	MessagePrinter.printlnOut("Discovered process automaton written in TSML format on " + outParams.fileToSaveTsmlFileForAutomaton);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -166,7 +167,7 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
 		        	outWriter.print(printer.printWeightedXmlAutomaton(logParser));
 		        	outWriter.flush();
 		        	outWriter.close();
-		        	System.out.println("Discovered weighted process automaton written in XML format on " + outParams.fileToSaveXmlFileForAutomaton);
+		        	MessagePrinter.printlnOut("Discovered weighted process automaton written in XML format on " + outParams.fileToSaveXmlFileForAutomaton);
 				} catch (FileNotFoundException | JAXBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -202,7 +203,7 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
 							e.printStackTrace();
 						}
 					}
-					System.out.println(subAutomataPathsBuilder.toString());
+					MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
 				} catch (JAXBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -240,7 +241,7 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
 					e.printStackTrace();
 				}
 			}
-			System.out.println(subAutomataPathsBuilder.toString());
+			MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
 		}
 
 		if (outParams.processModelOutputFile != null) {

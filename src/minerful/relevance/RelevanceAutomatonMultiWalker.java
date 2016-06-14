@@ -81,9 +81,6 @@ public class RelevanceAutomatonMultiWalker {
 			}
 		}
 
-//		for (i = 0; i < walkers.length; i++) {
-//			 System.out.println(walkers[i] + " ha dato " + walkers[i].getTraceEvaluation());
-//		}
 	}
 
 	public List<RelevanceAutomatonWalker> getWalkers() {

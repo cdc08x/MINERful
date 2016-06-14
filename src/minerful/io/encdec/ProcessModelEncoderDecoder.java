@@ -29,7 +29,6 @@ public class ProcessModelEncoderDecoder {
 		unmarsh.setEventHandler(
 			    new ValidationEventHandler() {
 			        public boolean handleEvent(ValidationEvent event) {
-			        	System.out.println(event);
 			            throw new RuntimeException(event.getMessage(),
 			                                       event.getLinkedException());
 			        }
@@ -37,10 +36,6 @@ public class ProcessModelEncoderDecoder {
 		ProcessModel proMod = (ProcessModel) unmarsh.unmarshal(procSchmInFile);
 		
 		MetaConstraintUtils.createHierarchicalLinks(proMod.getAllConstraints());
-		
-//for (Constraint cns : proMod.getAllConstraints()) {
-//	System.out.println("Lurido merdone connect: cns " + cns + " a " + cns.getConstraintWhichThisIsBasedUpon());
-//}
 		
 		return proMod;
 	}

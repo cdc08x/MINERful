@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import minerful.concept.constraint.Constraint;
-import minerful.index.comparator.modular.CnsSortModularDefaultPolicy;
+import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.params.ParamsManager;
 import minerful.postprocessing.pruning.SubsumptionHierarchyMarkingPolicy;
 
@@ -40,7 +40,11 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 	}
 
-	public static enum AnalysisType {
+	/**
+	 * Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process model.
+	 * @author Claudio Di Ciccio
+	 */
+	public static enum PostProcessingAnalysisType {
 		/** No post-processing analysis. */
 		NONE,
 		/** Hierarchical subsumption pruning of constraints. */
@@ -92,13 +96,13 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_SUPPORT_THRESHOLD = Constraint.MAX_SUPPORT;
 	public static final Double DEFAULT_INTEREST_FACTOR_THRESHOLD = Constraint.MIN_INTEREST_FACTOR;
 	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = Constraint.MIN_CONFIDENCE;
-	public static final AnalysisType DEFAULT_ANALYSIS_TYPE = AnalysisType.HIERARCHY;
+	public static final PostProcessingAnalysisType DEFAULT_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
 
-	/** Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
-	public CnsSortModularDefaultPolicy[] rankingPolicies;	// mandatory assignment
+	/** Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following in the array is utilised. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
+	public ConstraintSortingPolicy[] sortingPolicies;	// mandatory assignment
 	/** Type of post-processing analysis required. Default value is {@link #DEFAULT_ANALYSIS_TYPE DEFAULT_ANALYSIS_TYPE}. */
-	public AnalysisType analysisType;
+	public PostProcessingAnalysisType analysisType;
 	/** Ignore this: it is still unused -- Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_HIERARCHY_POLICY DEFAULT_HIERARCHY_POLICY}. */
 	public HierarchySubsumptionPruningPolicy hierarchyPolicy;
 	/** Minimum support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
@@ -108,15 +112,15 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	/** Minimum interest factor threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_INTEREST_FACTOR_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
 	public Double interestFactorThreshold;
 
-	public static final CnsSortModularDefaultPolicy[] DEFAULT_PRIORITY_POLICIES = new CnsSortModularDefaultPolicy[] {
-		CnsSortModularDefaultPolicy.ACTIVATIONTARGETBONDS,
-		CnsSortModularDefaultPolicy.FAMILYHIERARCHY,
-		CnsSortModularDefaultPolicy.SUPPORTCONFIDENCEINTERESTFACTOR,
+	public static final ConstraintSortingPolicy[] DEFAULT_PRIORITY_POLICIES = new ConstraintSortingPolicy[] {
+		ConstraintSortingPolicy.ACTIVATIONTARGETBONDS,
+		ConstraintSortingPolicy.FAMILYHIERARCHY,
+		ConstraintSortingPolicy.SUPPORTCONFIDENCEINTERESTFACTOR,
 	};
 	
 	public PostProcessingCmdParameters() {
 		super();
-		this.rankingPolicies = DEFAULT_PRIORITY_POLICIES;
+		this.sortingPolicies = DEFAULT_PRIORITY_POLICIES;
 		this.analysisType = DEFAULT_ANALYSIS_TYPE;
 		this.hierarchyPolicy = DEFAULT_HIERARCHY_POLICY;
 	    this.supportThreshold = DEFAULT_SUPPORT_THRESHOLD;
@@ -160,7 +164,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		String analysisTypeString = line.getOptionValue(ANALYSIS_TYPE_PARAM_NAME);
 		if (analysisTypeString != null && !analysisTypeString.isEmpty()) {
 			try {
-				this.analysisType = AnalysisType.valueOf(fromStringToEnumValue(analysisTypeString));
+				this.analysisType = PostProcessingAnalysisType.valueOf(fromStringToEnumValue(analysisTypeString));
 			} catch (Exception e) {
 				System.err.println("Invalid option for " + ANALYSIS_TYPE_PARAM_NAME + ": " + analysisTypeString + ". Using default value.");
 			}
@@ -174,14 +178,14 @@ public class PostProcessingCmdParameters extends ParamsManager {
 			return;
 		StringTokenizer strTok = new StringTokenizer(paramString, ARRAY_SEPARATOR);
 		String token = null;
-		ArrayList<CnsSortModularDefaultPolicy> listOfPolicies = new ArrayList<CnsSortModularDefaultPolicy>(strTok.countTokens());
-		CnsSortModularDefaultPolicy policy = null;
+		ArrayList<ConstraintSortingPolicy> listOfPolicies = new ArrayList<ConstraintSortingPolicy>(strTok.countTokens());
+		ConstraintSortingPolicy policy = null;
 		
 		while (strTok.hasMoreTokens()) {
 			token = strTok.nextToken();
 			token = fromStringToEnumValue(token);
 			try {
-				policy = CnsSortModularDefaultPolicy.valueOf(token);
+				policy = ConstraintSortingPolicy.valueOf(token);
 			} catch (Exception e) {
 				System.err.println("Invalid option for " + RANKING_POLICY_PARAM_NAME + ": " + token + " is going to be ignored.");
 			}
@@ -189,7 +193,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 		
 		if (listOfPolicies.size() > 0) {
-			this.rankingPolicies = listOfPolicies.toArray(new CnsSortModularDefaultPolicy[0]);
+			this.sortingPolicies = listOfPolicies.toArray(new ConstraintSortingPolicy[0]);
 		} else {
 			System.err.println("No valid option for " + RANKING_POLICY_PARAM_NAME + ". Using default value.");
 		}
@@ -214,7 +218,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("type")
                 .withLongOpt("post-processing")
-                .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(AnalysisType.values()) +
+                .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values()) +
                 		". Default is: " + fromEnumValueToString(DEFAULT_ANALYSIS_TYPE.toString()))
                 .withType(new String())
                 .create(ANALYSIS_TYPE_PARAM_NAME)

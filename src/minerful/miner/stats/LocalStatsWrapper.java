@@ -202,10 +202,6 @@ public class LocalStatsWrapper {
 				}
 			}
 	
-			// if (baseCharacter.equals("a")) {System.out.print("Seen " + character
-			// + " by " + baseCharacter); System.out.println(" " +
-			// this.alternatingCntSwInStep.get(character)); }
-	
 			if (repetitionsAtThisStep != null) {
 				/*
 				 * for each repetition of the same character during the analysis,

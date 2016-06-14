@@ -18,18 +18,30 @@ public class InputModelParameters extends ParamsManager {
 	public static final String INPUT_MODELFILE_PATH_PARAM_LONG_NAME = "input-model";
     public static final String INPUT_MODEL_ENC_PARAM_NAME = "iME";
     public static final String INPUT_MODEL_ENC_PARAM_LONG_NAME = "input-model-encoding";
+	
+    public static final InputEncoding DEFAULT_INPUT_MODEL_ENC = InputEncoding.MINERFUL;
 
+    /**
+     * Possible file encodings for marshalled process models.
+     * @author Claudio Di Ciccio
+     */
 	public enum InputEncoding {
 		DECLARE_MAP,
 		MINERFUL	// default
 	}
 
+	/**
+	 * Input language encoding for the input process model (see {@link InputEncoding InputEncoding}. Default value is {@link #DEFAULT_INPUT_MODEL_ENC DEFAULT_INPUT_MODEL_ENC}
+	 */
 	public InputEncoding inputLanguage;
+	/**
+	 * File in which the process model is stored.
+	 */
     public File inputFile;
 
     public InputModelParameters() {
     	super();
-    	inputLanguage = InputEncoding.MINERFUL;
+    	inputLanguage = InputModelParameters.DEFAULT_INPUT_MODEL_ENC;
     	inputFile = null;
     }
 

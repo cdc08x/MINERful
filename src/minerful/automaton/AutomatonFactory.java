@@ -18,7 +18,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.index.ModularConstraintsSorter;
-import minerful.index.comparator.modular.CnsSortModularDefaultPolicy;
+import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 import org.apache.commons.lang3.StringUtils;
@@ -215,7 +215,7 @@ public class AutomatonFactory {
 			constraints.remove(excluCon);
 		}
 		
-		constraints = new ModularConstraintsSorter(constraints).sort(CnsSortModularDefaultPolicy.ACTIVATIONTARGETBONDS,CnsSortModularDefaultPolicy.FAMILYHIERARCHY);
+		constraints = new ModularConstraintsSorter(constraints).sort(ConstraintSortingPolicy.ACTIVATIONTARGETBONDS,ConstraintSortingPolicy.FAMILYHIERARCHY);
 		
 //		HashSet<Constraint> excludedConstraintsSet = null;
 //		if (excludedConstraints.length > 0)

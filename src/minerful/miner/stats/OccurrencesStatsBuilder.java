@@ -17,6 +17,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
+import minerful.utils.MessagePrinter;
 
 import org.apache.log4j.Logger;
 
@@ -135,7 +136,7 @@ public class OccurrencesStatsBuilder {
         		analysedPortion = (int) Math.floor((double)counter / logParser.length() * PROGRESS_BAR_SCALE);
         	}
         }
-        if (secondPass) { System.out.println(); }
+        if (secondPass) { MessagePrinter.printlnOut(""); }
         return this.statsTable;
     }
     

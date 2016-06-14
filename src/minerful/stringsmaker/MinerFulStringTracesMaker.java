@@ -7,6 +7,7 @@ import minerful.io.encdec.IOutEncoder;
 import minerful.io.encdec.MxmlEncoder;
 import minerful.io.encdec.XesEncoder;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 import nl.flotsam.xeger.Xeger;
 
 import org.apache.log4j.Logger;
@@ -107,7 +108,7 @@ public class MinerFulStringTracesMaker {
 	        	if (params.logFile != null) {
 					outEnco.encodeToFile(params.logFile);
 	        	} else {
-	        		System.out.println(outEnco.encodeToString());
+	        		MessagePrinter.printlnOut(outEnco.encodeToString());
 	        		System.out.flush();
 	        	}
         	} catch (IOException e) {

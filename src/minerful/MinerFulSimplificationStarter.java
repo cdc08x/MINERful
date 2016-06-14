@@ -5,9 +5,6 @@
 package minerful;
 
 import minerful.concept.ProcessModel;
-import minerful.core.MinerFulPruningCore;
-import minerful.io.encdec.ProcessModelEncoderDecoder;
-import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.InputModelParameters;
 import minerful.io.params.OutputModelParameters;
 import minerful.params.SystemCmdParameters;
@@ -56,7 +53,7 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
-		PostProcessingCmdParameters postPrarams =
+		PostProcessingCmdParameters postParams =
 				new PostProcessingCmdParameters(
 						cmdLineOptions,
 						args);
@@ -77,31 +74,17 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
         	systemParams.printHelp(cmdLineOptions);
         	System.exit(0);
         }
+
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input process model file missing!",
-					cmdLineOptions);
+			systemParams.printHelpForWrongUsage("Input process model file missing!");
 			System.exit(1);
 		}
         
         configureLogging(systemParams.debugLevel);
         
-        ProcessModel
-        	inputProcess = null,
-        	outputProcess = null;
-        try {
-	        inputProcess =
-	        		(	inputParams.inputLanguage.equals(InputModelParameters.InputEncoding.MINERFUL)
-	        			?	new ProcessModelEncoderDecoder().unmarshalProcessModel(inputParams.inputFile)
-	        			:	DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(inputParams.inputFile.getAbsolutePath()));
-        } catch (Exception e) {
-        	System.err.println("Unreadable process model from file: " + inputParams.inputFile.getAbsolutePath() + ". Check the file path or the specified encoding.");
-        	e.printStackTrace(System.err);
-        	System.exit(1);
-        }
-
-        MinerFulPruningCore miFuPruNi = new MinerFulPruningCore(inputProcess, postPrarams);
-        miFuPruNi.massageConstraints();
-        outputProcess = miFuPruNi.getProcessModel();
+        MinerFulSimplificationLauncher miFuSimpLa = new MinerFulSimplificationLauncher(inputParams, postParams, systemParams);
+        
+        ProcessModel outputProcess = miFuSimpLa.simplify();
 
         new MinerFulProcessOutputMgtStarter().manageOutput(outputProcess, viewParams, outParams, systemParams);
     }

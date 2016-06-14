@@ -14,7 +14,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.index.ModularConstraintsSorter;
-import minerful.index.comparator.modular.CnsSortModularDefaultPolicy;
+import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,14 +56,14 @@ public class ConflictAndRedundancyResolver {
 		redundantConstraintsInOriginalModel;
 	private int conflictChecksPerformed,
 		redundancyChecksPerformed;
-	private CnsSortModularDefaultPolicy[] rankingPolicies;
+	private ConstraintSortingPolicy[] rankingPolicies;
 	
 	public ConflictAndRedundancyResolver(ProcessModel process, PostProcessingCmdParameters params) {
 		this.avoidingRedundancyWithDoubleCheck = params.analysisType.isRedundancyDoubleCheckRequested();
 		this.avoidingRedundancy = this.avoidingRedundancyWithDoubleCheck || params.analysisType.isRedundancyCheckRequested();
 		this.originalProcess = process;
 		this.sorter = new ModularConstraintsSorter();
-		this.rankingPolicies = params.rankingPolicies;
+		this.rankingPolicies = params.sortingPolicies;
 		this.subMarker = new SubsumptionHierarchyMarker();
 		this.subMarker.setPolicy(SubsumptionHierarchyMarkingPolicy.CONSERVATIVE);
 		this.init();
@@ -107,7 +107,6 @@ public class ConflictAndRedundancyResolver {
 			this.safeProcess = new ProcessModel(this.originalProcess.getTaskCharArchive(), emptyBag);
 			Automaton candidateAutomaton = null;
 			this.safeAutomaton = this.safeProcess.buildAlphabetAcceptingAutomaton();
-//System.out.println("Lurido merdone, ecchete il sort: " + StringUtils.join(this.sorter.sort(this.rankingPolicies), '\n'));
 			for (Constraint candidateCon : this.sorter.sort(this.rankingPolicies)) {
 				logger.trace("Checking redundancy of " + candidateCon);
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();

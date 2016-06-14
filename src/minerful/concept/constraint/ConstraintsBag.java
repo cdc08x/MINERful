@@ -253,9 +253,7 @@ public class ConstraintsBag implements Cloneable {
 			Iterator<Constraint> constraIter = this.getConstraintsOf(tChar).iterator();
 			while (constraIter.hasNext()) {
 				auxCon = constraIter.next();
-//System.out.println("Lurido merdone, ora controllo: " + auxCon + " che est subsunto = " + auxCon.isRedundant() + " o sta sotto tresciold " + !auxCon.isAboveThresholds());
 				if (auxCon.isMarkedForExclusion()) {
-//System.out.println("Lurido merdone, ora tolgo: " + auxCon);
 					constraIter.remove();
 					markedConstraintsRemoved++;
 				}

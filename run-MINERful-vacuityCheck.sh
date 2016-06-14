@@ -10,13 +10,13 @@
 #                   libs.cfg
 #                   run-MINERful-vacuityCheck.sh (this file)
 
-## Runtime environment constants
-MAINCLASS="minerful.MinerFulVacuityChecker"
-MEMORY_MAX="16G"
-
 ## Exec-specific parametres
 THRESHOLD="1.0"
 LOG="logs/BPIC2013/bpi_challenge_2013_closed_problems.xes.gz"
+
+## Runtime environment constants
+MAINCLASS="minerful.MinerFulVacuityChecker"
+MEMORY_MAX="16G"
 
 ## Preliminary checks
 if [ ! -f ./libs.cfg ]
@@ -27,8 +27,6 @@ fi
 
 ## Import the libraries and store it into $LIBS
 . ./libs.cfg
-
-echo "$LIBS"
 
 ## Clean up the screen
 clear
