@@ -194,6 +194,27 @@ public abstract class Constraint implements Comparable<Constraint> {
 	private boolean isConflicting() {
 		return this.conflicting;
 	}
+	
+	public double getSupport() {
+		return support;
+	}
+	public void setSupport(double support) {
+		this.support = support;
+	}
+
+	public double getConfidence() {
+		return confidence;
+	}
+	public void setConfidence(double confidence) {
+		this.confidence = confidence;
+	}
+
+	public double getInterestFactor() {
+		return interestFactor;
+	}
+	public void setInterestFactor(double interestFactor) {
+		this.interestFactor = interestFactor;
+	}
 
 	/**
      * Returns <code>true</code> if and only if the {@link #support support} of this constraint is equal to or higher than the given threshold.
