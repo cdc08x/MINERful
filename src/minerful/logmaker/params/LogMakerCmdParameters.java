@@ -4,14 +4,46 @@ import java.io.File;
 
 
 public class LogMakerCmdParameters {
+	/**
+	 * Output encoding for the generated event log.
+	 * It can be either XES ({@link http://www.xes-standard.org/openxes/start}),
+	 * MXML ({@link http://www.processmining.org/logs/mxml}), or
+	 * string-based (events are turned into characters and traces into strings).
+	 */
 	public static enum Encoding {
-		xes, mxml, string;
+		/**
+		 * XES ({@link http://www.xes-standard.org/openxes/start})
+		 */
+		xes,
+		/**
+		 * MXML ({@link http://www.processmining.org/logs/mxml})
+		 */
+		mxml,
+		/**
+		 * String-based (events are turned into characters and traces into strings)
+		 */
+		string;
 	}
 	
+	/**
+	 * Minimum number of events that have to be included in the generated traces.
+	 */
 	public Integer minEventsPerTrace;	// mandatory assignment
+	/**
+	 * Maximum number of events that have to be included in the generated traces.
+	 */
     public Integer maxEventsPerTrace;	// mandatory assignment
+	/**
+	 * Number of traces in the log.
+	 */
     public Long tracesInLog;	// mandatory assignment
+    /**
+     * File in which the generated event log is going to be stored.
+     */
     public File outputLogFile;
+    /**
+     * Event log encoding (see {@link Encoding #Encoding}).
+     */
     public LogMakerCmdParameters.Encoding outputEncoding;
 
 	public LogMakerCmdParameters(
