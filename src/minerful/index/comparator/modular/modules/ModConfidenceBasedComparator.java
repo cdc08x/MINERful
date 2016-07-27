@@ -16,8 +16,8 @@ public class ModConfidenceBasedComparator extends ModularConstraintsComparator {
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
 		Double
-			confidenceOfO1 = o1.confidence,
-			confidenceOfO2 = o2.confidence;
+			confidenceOfO1 = o1.getConfidence(),
+			confidenceOfO2 = o2.getConfidence();
 		int result = 0;
 		
 		result = confidenceOfO1.compareTo(confidenceOfO2);

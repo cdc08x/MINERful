@@ -11,8 +11,6 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
-import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.Precedence;
@@ -20,9 +18,9 @@ import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.params.OutputModelParameters;
+import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
-import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
@@ -35,6 +33,8 @@ import minerful.utils.MessagePrinter;
 import org.apache.commons.cli.Options;
 
 public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulSimuSubCheckStarter.class);
+			
     public static void main(String[] args) {
     	MinerFulSimuStarter minerSimuStarter = new MinerFulSimuStarter();
     	Options cmdLineOptions = minerSimuStarter.setupOptions();
@@ -69,7 +69,7 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
         	System.exit(0);
         }
 
-        configureLogging(systemParams.debugLevel);
+        MessagePrinter.configureLogging(systemParams.debugLevel);
         
         String[] testBedArray = new String[0];
         
@@ -79,7 +79,7 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
 	        ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, systemParams, postParams, taskCharArchive);
-	        MinerFulProcessOutputMgtStarter proViewStarter = new MinerFulProcessOutputMgtStarter(); 
+	        MinerFulOutputManagementLauncher proViewStarter = new MinerFulOutputManagementLauncher(); 
 	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
 	        /*
 				AlternateResponse(a, {b,c})

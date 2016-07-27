@@ -9,8 +9,11 @@ import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.InputModelParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
+import minerful.utils.MessagePrinter;
 
 public class MinerFulSimplificationLauncher {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulSimplificationLauncher.class);
+			
 	private ProcessModel inputProcess;
 	private PostProcessingCmdParameters postParams;
 	
@@ -36,13 +39,13 @@ public class MinerFulSimplificationLauncher {
 			System.exit(1);
 		}
 
-		MinerFulMinerStarter.configureLogging(systemParams.debugLevel);
+		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 	
 	public ProcessModel simplify() {
 	    MinerFulPruningCore miFuPruNi = new MinerFulPruningCore(inputProcess, postParams);
 	    miFuPruNi.massageConstraints();
-	    
+
 	    ProcessModel outputProcess = miFuPruNi.getProcessModel();
 
 	    return outputProcess;
@@ -55,7 +58,7 @@ public class MinerFulSimplificationLauncher {
 	        inputProcess =
 	        		(	inputParams.inputLanguage.equals(InputModelParameters.InputEncoding.MINERFUL)
 	        			?	new ProcessModelEncoderDecoder().unmarshalProcessModel(inputParams.inputFile)
-	        			:	DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(inputParams.inputFile.getAbsolutePath()));
+	        			:	new DeclareMapEncoderDecoder(inputParams.inputFile.getAbsolutePath()).createMinerFulProcessModel());
 	    } catch (Exception e) {
 	    	System.err.println("Unreadable process model from file: " + inputParams.inputFile.getAbsolutePath() + ". Check the file path or the specified encoding.");
 	    	e.printStackTrace(System.err);
@@ -65,6 +68,6 @@ public class MinerFulSimplificationLauncher {
 	}
 
 	private ProcessModel extractProcessModel(AssignmentModel declareMapModel) {
-		return DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(declareMapModel);
+		return new DeclareMapEncoderDecoder(declareMapModel).createMinerFulProcessModel();
 	}
 }

@@ -47,7 +47,7 @@ public class MinerFulPruningCore {
 	public ConstraintsBag massageConstraints() {
 		logger.info("Post-processing the discovered model...");
 		
-		pruneConstraintsBelowThresholds();
+		this.markConstraintsBelowThresholds();
 		
 		if (this.postProcParams.analysisType.isPostProcessingRequested()) {
 			if (this.postProcParams.analysisType.isRedundancyCheckRequested()) {
@@ -59,7 +59,7 @@ public class MinerFulPruningCore {
 		return this.processModel.bag;
 	}
 
-	private ConstraintsBag pruneConstraintsBelowThresholds() {
+	private ConstraintsBag markConstraintsBelowThresholds() {
 		logger.info("Pruning constraints below thresholds...");
 		
 		long beforeThresholdsPruning = System.currentTimeMillis();
@@ -73,7 +73,9 @@ public class MinerFulPruningCore {
     	
 		this.threshMarker.printComputationStats(beforeThresholdsPruning, afterThresholdsPruning);
 		
-		this.processModel.bag.removeMarkedConstraints();
+		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
+			this.processModel.bag.removeMarkedConstraints();
+		}
 
 		// Let us try to free memory!
         System.gc();
@@ -92,7 +94,9 @@ public class MinerFulPruningCore {
         
         confliReso.printComputationStats(beforeConflictResolution, afterConflictResolution);
 
-		this.processModel.bag.removeMarkedConstraints();
+        if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
+			this.processModel.bag.removeMarkedConstraints();
+		}
 		
 		// Let us try to free memory!
         System.gc();
@@ -105,6 +109,10 @@ public class MinerFulPruningCore {
        	beforeSubCheck = 0L,
        	afterSubCheck = 0L;
 
+		if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
+			this.processModel.resetMarks();
+		}
+
         logger.info("Pruning redundancy, on the basis of hierarchy subsumption...");
 
         beforeSubCheck = System.currentTimeMillis();
@@ -114,7 +122,9 @@ public class MinerFulPruningCore {
         afterSubCheck = System.currentTimeMillis();
 		this.subMarker.printComputationStats(beforeSubCheck, afterSubCheck);
     	
-		this.processModel.bag.removeMarkedConstraints();
+		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
+			this.processModel.bag.removeMarkedConstraints();
+		}
     	
         // Let us try to free memory!
         System.gc();

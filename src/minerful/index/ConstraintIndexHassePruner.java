@@ -35,7 +35,7 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 	
 	private void nonRedundantConstraints(Set<Constraint> constraintsToUpdate, ConstraintIndexHasseNode nodeToExplore) {
 		for (Constraint c : nodeToExplore.constraints.values()) {
-			if (!c.redundant)
+			if (!c.isRedundant())
 				constraintsToUpdate.add(c);
 		}
 		for (ConstraintIndexHasseNode child : nodeToExplore.children.values()) {
@@ -50,7 +50,7 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			 *  E.g.,
 			 *  support ( Response(a, {b, c}) ) <= support ( Response(a, {b, c, d}) )
 			 */
-			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllPossibleForwardRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllDiscoverableForwardRelationConstraintTemplates()) {
 				for (ConstraintIndexHasseNode sinkChild : this.hasseDiagram.getSinkNodes()) {
 					this.labelRedundancyWrtSetContainment(
 							sinkChild,
@@ -88,7 +88,7 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			 *  E.g.,
 			 *  support ( Precedence({a, b}, d) ) <= support ( Precedence({a, b, c}, d}) )
 			 */
-			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllPossibleBackwardRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> conClass : MetaConstraintUtils.getAllDiscoverableBackwardRelationConstraintTemplates()) {
 				for (ConstraintIndexHasseNode sinkChild : this.hasseDiagram.getSinkNodes()) {
 					this.labelRedundancyWrtSetContainment(
 							sinkChild,
@@ -168,16 +168,16 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			for (ConstraintIndexHasseNode parentOrUncle : nodeUnderAnalysis.getParentAndUncles()) {
 				if (!parentOrUncle.equals(this.hasseDiagram.root)) {
 					parentOrUncleConstraint = parentOrUncle.constraints.get(conClass);
-					if (currentConstraint.support > parentOrUncleConstraint.support) {
-						logger.trace(currentConstraint + " has a support, " + currentConstraint.support + ", which is higher than his parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.support + " -> labeling " + parentOrUncleConstraint + " and its ancestors as redundant");
-						if (parentOrUncleConstraint.redundant != true) {
-							parentOrUncleConstraint.redundant = true;
+					if (currentConstraint.getSupport() > parentOrUncleConstraint.getSupport()) {
+						logger.trace(currentConstraint + " has a support, " + currentConstraint.getSupport() + ", which is higher than his parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.getSupport() + " -> labeling " + parentOrUncleConstraint + " and its ancestors as redundant");
+						if (!parentOrUncleConstraint.isRedundant()) {
+							parentOrUncleConstraint.setRedundant(true);
 							propagateRedundancyLabel(parentOrUncle, conClass, explorationDirection);
 						}
 					} else {
-						logger.trace(currentConstraint + " has a support, " + currentConstraint.support + ", which is equal to or lower than his parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.support + " -> labeling this as redundant");
-						currentConstraint.redundant = true;
-						if (parentOrUncleConstraint.redundant != true) {
+						logger.trace(currentConstraint + " has a support, " + currentConstraint.getSupport() + ", which is equal to or lower than his parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.getSupport() + " -> labeling this as redundant");
+						currentConstraint.setRedundant(true);
+						if (!parentOrUncleConstraint.isRedundant()) {
 							labelRedundancyWrtSetContainment(
 									parentOrUncle,
 									conClass,
@@ -193,12 +193,12 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 				for (ConstraintIndexHasseNode childParentOrUncle : child.getParentAndUncles()) {
 					childConstraint = child.constraints.get(conClass);
 					parentOrUncleConstraint = childParentOrUncle.constraints.get(conClass);
-					if (parentOrUncleConstraint.support > childConstraint.support) {
-						logger.trace(parentOrUncleConstraint + " has a support, " + parentOrUncleConstraint.support + ", which is higher than his child " + childConstraint + "'s one, " + childConstraint.support + " -> labeling " + childConstraint + " as redundant");
-						childConstraint.redundant=true;
+					if (parentOrUncleConstraint.getSupport() > childConstraint.getSupport()) {
+						logger.trace(parentOrUncleConstraint + " has a support, " + parentOrUncleConstraint.getSupport() + ", which is higher than his child " + childConstraint + "'s one, " + childConstraint.getSupport() + " -> labeling " + childConstraint + " as redundant");
+						childConstraint.setRedundant(true);
 					}
 				}
-				if (childConstraint.redundant=true) {
+				if (childConstraint.isRedundant()) {
 					logger.trace("At least a parent/uncle of " + childConstraint + " has a higher support -> labeling " + childConstraint + "' descendants as redundant");
 					propagateRedundancyLabel(child, conClass, explorationDirection);
 				} else {
@@ -227,9 +227,9 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 		case UP:
 			for (ConstraintIndexHasseNode parentOrUncle : nodeUnderAnalysis.getParentAndUncles()) {
 				if (!parentOrUncle.equals(this.hasseDiagram.root)) {
-					if (!parentOrUncle.constraints.get(conClass).redundant) {
+					if (!parentOrUncle.constraints.get(conClass).isRedundant()) {
 						logger.trace("Labeling " + parentOrUncle.constraints.get(conClass) + ", parent/uncle of " + nodeUnderAnalysis.constraints.get(conClass) + ", as redundant");
-						parentOrUncle.constraints.get(conClass).redundant = true;
+						parentOrUncle.constraints.get(conClass).setRedundant(true);
 						propagateRedundancyLabel(parentOrUncle, conClass, explorationDirection);
 					}
 				}
@@ -237,9 +237,9 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			break;
 		case DOWN:
 			for (ConstraintIndexHasseNode child : nodeUnderAnalysis.children.values()) {
-				if (!child.constraints.get(conClass).redundant) {
+				if (!child.constraints.get(conClass).isRedundant()) {
 					logger.trace("Labeling " + child.constraints.get(conClass) + ", child of " + nodeUnderAnalysis.constraints.get(conClass) + ", as redundant");
-					child.constraints.get(conClass).redundant = true;
+					child.constraints.get(conClass).setRedundant(true);
 					propagateRedundancyLabel(child, conClass, explorationDirection);
 				}
 			}

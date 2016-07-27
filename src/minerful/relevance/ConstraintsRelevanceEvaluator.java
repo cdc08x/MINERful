@@ -1,39 +1,22 @@
 package minerful.relevance;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import minerful.AbstractMinerFulStarter;
 import minerful.automaton.concept.relevance.VacuityAwareWildcardAutomaton;
-import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.existence.Participation;
-import minerful.concept.constraint.relation.AlternatePrecedence;
-import minerful.concept.constraint.relation.ChainPrecedence;
-import minerful.concept.constraint.relation.ChainResponse;
-import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.io.encdec.TaskCharEncoderDecoder;
-import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
-import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
-import minerful.logparser.StringLogParser;
-import minerful.logparser.XesLogParser;
 import minerful.params.SystemCmdParameters.DebugLevel;
 import minerful.utils.MessagePrinter;
-
-import org.apache.log4j.Logger;
 
 /**
  * Return the relevant constraints out of the log. Please beware, that the discrimination is solely based on the support.
@@ -43,7 +26,9 @@ public class ConstraintsRelevanceEvaluator {
 	public static final String CSV_PRE_HEADER = "Template;Constraint;Support;VacuousSupport;";
 	public static final double DEFAULT_SATISFACTION_THRESHOLD = 0.5;
 	public static final double NO_SATISFACTION_THRESHOLD = 0;
-	
+		
+	public static MessagePrinter logger = MessagePrinter.getInstance(ConstraintsRelevanceEvaluator.class);
+			
 	private RelevanceAutomatonMultiWalker[] texasRangers;
 	private Map<Constraint, RelevanceEvaluationOnLog> evaluationsOnLog;
 	private TaskCharEncoderDecoder taChaEncoDeco;
@@ -52,8 +37,6 @@ public class ConstraintsRelevanceEvaluator {
 	private List<Constraint> nuConstraints;
 	private LogParser logParser;
 	private double satisfactionThreshold;
-	
-	protected static Logger logger;
 
 	/**
 	 * Constructor of this class.
@@ -71,9 +54,7 @@ public class ConstraintsRelevanceEvaluator {
 	 * @param satisfactionThreshold Threshold below which the constraint will not be considered as satisfied
 	 */
 	public ConstraintsRelevanceEvaluator(LogParser logParser, Constraint[] parametricConstraints, double satisfactionThreshold) {
-		AbstractMinerFulStarter.configureLogging(DebugLevel.all);
-        if (logger == null)
-        	logger = Logger.getLogger(ConstraintsRelevanceEvaluator.class.getCanonicalName());
+		MessagePrinter.configureLogging(DebugLevel.all);
 
         long from = 0, to = 0;
         
@@ -237,7 +218,7 @@ public class ConstraintsRelevanceEvaluator {
 
 	private void updateNuConstraintsSupport() {
 		for (Constraint con : this.nuConstraints) {
-			con.support = this.computeSupport(this.evaluationsOnLog.get(con));
+			con.setSupport(this.computeSupport(this.evaluationsOnLog.get(con)));
 		}
 	}
 
@@ -275,7 +256,7 @@ public class ConstraintsRelevanceEvaluator {
 			sBuil.append(';');
 			sBuil.append(con);
 			sBuil.append(';');
-			sBuil.append(con.support);
+			sBuil.append(con.getSupport());
 			sBuil.append(';');
 			sBuil.append(this.computeVacuousSupport(this.evaluationsOnLog.get(con)));
 			sBuil.append(';');

@@ -27,7 +27,11 @@ public class DeclareMapTemplateTranslator {
 
 	public static HashMap<Class<? extends Constraint>, DeclareMapTemplate> NAME_CONVERTER =
 			new HashMap<Class<? extends Constraint>, DeclareMapTemplate>(
-					MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES,
+					MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES,
+					1.0F);
+	public static HashMap<Class<? extends Constraint>, DeclareMapTemplate> INVERSE_NAME_CONVERTER =
+			new HashMap<Class<? extends Constraint>, DeclareMapTemplate>(
+					MetaConstraintUtils.NUMBER_OF_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_RELATION_CONSTRAINT_TEMPLATES,
 					1.0F);
 
 	static {

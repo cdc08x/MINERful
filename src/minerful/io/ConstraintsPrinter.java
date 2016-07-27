@@ -26,6 +26,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
+import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
 import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
@@ -63,8 +64,10 @@ public class ConstraintsPrinter {
             sBld.append("] => {\n"
                     + "\t\t");
             for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
-        		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
-                sBld.append("\n\t\t");
+            	if (!c.isMarkedForExclusion()) {
+	        		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
+	                sBld.append("\n\t\t");
+            	}
             }
             sBld.append("\n\t}\n");
         }
@@ -97,7 +100,7 @@ public class ConstraintsPrinter {
     			sBufLegend.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
     			sBufLegend.append('\'');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.3f", c.support * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.3f", c.getSupport() * 100));
     			sBuffValues.append(';');
         	}
         }
@@ -123,31 +126,33 @@ public class ConstraintsPrinter {
 
         for (TaskChar key : this.processModel.bag.getTaskChars()) {
         	for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
-        		superSbuf.append('\'');
-//        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
-        		superSbuf.append(c.toString());
-        		superSbuf.append('\'');
-        		superSbuf.append(';');
-        		superSbuf.append('\'');
-//        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
-        		superSbuf.append(c.getName());
-        		superSbuf.append('\'');
-        		superSbuf.append(';');
-        		superSbuf.append('\'');
-        		superSbuf.append(c.getBase());
-        		superSbuf.append('\'');
-        		superSbuf.append(';');
-        		superSbuf.append('\'');
-        		superSbuf.append(c.getImplied() == null ? "" : c.getImplied());
-        		superSbuf.append('\'');
-        		superSbuf.append(';');
-        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.support * 100));
-        		superSbuf.append(';');
-        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.confidence * 100));
-        		superSbuf.append(';');
-        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.interestFactor * 100));
-//    			sBuffValues.append(';');
-        		superSbuf.append('\n');
+        		if (!c.isMarkedForExclusion()) {
+	        		superSbuf.append('\'');
+//	        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
+	        		superSbuf.append(c.toString());
+	        		superSbuf.append('\'');
+	        		superSbuf.append(';');
+	        		superSbuf.append('\'');
+//	        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
+	        		superSbuf.append(c.getName());
+	        		superSbuf.append('\'');
+	        		superSbuf.append(';');
+	        		superSbuf.append('\'');
+	        		superSbuf.append(c.getBase());
+	        		superSbuf.append('\'');
+	        		superSbuf.append(';');
+	        		superSbuf.append('\'');
+	        		superSbuf.append(c.getImplied() == null ? "" : c.getImplied());
+	        		superSbuf.append('\'');
+	        		superSbuf.append(';');
+	        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getSupport() * 100));
+	        		superSbuf.append(';');
+	        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getConfidence() * 100));
+	        		superSbuf.append(';');
+	        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getInterestFactor() * 100));
+//    				sBuffValues.append(';');
+	        		superSbuf.append('\n');
+        		}
         	}
         }
         
@@ -163,9 +168,11 @@ public class ConstraintsPrinter {
 			i = 0;
 				
         for (Constraint c : constraintsCollection) {
-        	i++;
-        	sBld.append("\n\t");
-    		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
+        	if (!c.isMarkedForExclusion()) {
+	        	i++;
+	        	sBld.append("\n\t");
+	    		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
+        	}
         }
         sBld.append("\n\n");
         sBld.append("Constraints shown: " + i + "\n");
@@ -215,7 +222,7 @@ public class ConstraintsPrinter {
 //    	int barsCounter = -halfNumberOfBars;
 //        double relativeSupport = constraint.getRelativeSupport(supportThreshold);
 
-        sBld.append(String.format(Locale.ENGLISH, "%7.3f%% ", constraint.support * 100));
+        sBld.append(String.format(Locale.ENGLISH, "%7.3f%% ", constraint.getSupport() * 100));
         sBld.append(String.format("%-" + maxPadding + "s", constraint.toString()));
 //        sBld.append(String.format(Locale.ENGLISH, "%8.3f%% ", relativeSupport * 100));
 
@@ -231,8 +238,8 @@ public class ConstraintsPrinter {
 //        for (; barsCounter <= halfNumberOfBars; barsCounter++) {
 //        	sBld.append(' ');
 //        }
-        sBld.append(String.format(Locale.ENGLISH, " conf.: %7.3f; ", constraint.confidence));
-        sBld.append(String.format(Locale.ENGLISH, " int'f: %7.3f; ", constraint.interestFactor));
+        sBld.append(String.format(Locale.ENGLISH, " conf.: %7.3f; ", constraint.getConfidence()));
+        sBld.append(String.format(Locale.ENGLISH, " int'f: %7.3f; ", constraint.getInterestFactor()));
         
        	if (additionalInfo != null)
         	sBld.append(additionalInfo);
@@ -241,7 +248,8 @@ public class ConstraintsPrinter {
     }
     
     public void printConDecModel(File outFile) throws IOException {
-		new DeclareMapEncoderDecoder(processModel).marshal(outFile.getCanonicalPath());
+    	DeclareMapEncoderDecoder deMapEnDec = new DeclareMapEncoderDecoder(processModel);
+    	DeclareMapReaderWriter.marshal(outFile.getCanonicalPath(), deMapEnDec.createDeclareMap());
     }
     
     public String printWeightedXmlAutomaton(LogParser logParser) throws JAXBException {

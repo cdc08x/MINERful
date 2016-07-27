@@ -1,5 +1,9 @@
 package minerful.io.encdec.declaremap;
 
+import minerful.utils.MessagePrinter;
+
+import org.apache.commons.lang3.text.WordUtils;
+
 public enum DeclareMapTemplate {
 	Absence, Absence2, Absence3, Alternate_Precedence, Alternate_Response, Alternate_Succession, 
 	Chain_Precedence, Chain_Response, Chain_Succession, Choice, CoExistence, 
@@ -7,5 +11,31 @@ public enum DeclareMapTemplate {
 	Init, 
 	Not_Chain_Succession, Not_CoExistence, Not_Succession,
 	Precedence, Response, Responded_Existence,
-	Succession,Not_Chain_Precedence,Not_Chain_Response,Not_Precedence,Not_Response, Not_Responded_Existence
+	Succession,Not_Chain_Precedence,Not_Chain_Response,Not_Precedence,Not_Response, Not_Responded_Existence;
+	
+	public String getName() {
+		switch(this) {
+		case CoExistence:
+		case Not_CoExistence:
+			return this.toString().replaceAll("_", " ").toLowerCase().replace("coexi", "co-exi");
+		default:
+			return this.toString().replaceAll("_", " ").toLowerCase();
+		}
+	}
+	
+	public static DeclareMapTemplate fromName(String name) {
+		if (name.contains("co-exi")) {
+			name = name.replace("co-exi", "CoExi");
+		}
+		name = WordUtils.capitalizeFully(name).replaceAll(" ", "_");
+		
+		DeclareMapTemplate mapTemplate = null;
+		try {
+			DeclareMapTemplate.valueOf(name);
+		} catch (IllegalArgumentException e) {
+			MessagePrinter.printlnError("The " + name + " template is not yet defined in MINERful.");
+		}
+		
+		return null;
+	}
 }

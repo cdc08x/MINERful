@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
+import minerful.concept.TaskCharFactory;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
@@ -62,289 +63,90 @@ import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
 
 public class DeclareMapEncoderDecoder {
-	public static final String IF_EXTRACTION_REG_EXP = ".*IF;([0-9\\.]+).*";
-	public static final String CONFIDENCE_EXTRACTION_REG_EXP = ".*confidence;([0-9\\.]+).*";
-	public static final String SUPPORT_EXTRACTION_REG_EXP = ".*support;([0-9\\.]+).*";
 	public static final String TEMPLATE_TEMP_FILE_EXTENSION = ".xml";
 	public static final String TEMPLATE_TMP_FILE_BASENAME = "template";
-	public static final String DECLARE_XML_TEMPLATE = "resources/template.xml";
+	public static final String DECLARE_XML_TEMPLATE = "resources/" + TEMPLATE_TMP_FILE_BASENAME + TEMPLATE_TEMP_FILE_EXTENSION;
 
 	private List<DeclareMapConstraintTransferObject> constraintTOs;
-	private DeclareMap map;
-
+	private TaskCharArchive taskCharArchive = null;
+	private String processModelName = null;
+	
 	public DeclareMapEncoderDecoder(ProcessModel process) {
 		this.constraintTOs = new ArrayList<DeclareMapConstraintTransferObject>(process.bag.howManyConstraints());
+		this.taskCharArchive = process.getTaskCharArchive();
+		this.processModelName = process.getName();
+
 		Collection<Constraint> auxConstraints = null;
 		DeclareMapConstraintTransferObject auxDeclareConstraintTO = null;
 		for (TaskChar tChar: process.bag.getTaskChars()) {
 			auxConstraints = process.bag.getConstraintsOf(tChar);
 			for (Constraint auxCon : auxConstraints) {
-				auxDeclareConstraintTO = new DeclareMapConstraintTransferObject(auxCon);
-				if (auxDeclareConstraintTO.template != null) {
-					this.constraintTOs.add(auxDeclareConstraintTO);
+				if (!auxCon.isMarkedForExclusion()) {
+					auxDeclareConstraintTO = new DeclareMapConstraintTransferObject(auxCon);
+					if (auxDeclareConstraintTO.template != null) {
+						this.constraintTOs.add(auxDeclareConstraintTO);
+					}
 				}
 			}
 		}
-		this.createDeclareMap();
-	}
-
-	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath) {
-		return fromDeclareMapToMinerfulProcessModel(declareMapFilePath, null);
-	}
-
-	public static ProcessModel fromDeclareMapToMinerfulProcessModel(AssignmentModel declareMapModel) {
-		return fromDeclareMapToMinerfulProcessModel(declareMapModel, null);
 	}
 	
-	private static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath, TaskCharArchive taskCharArchive) {
-		File inputFile = new File(declareMapFilePath);
-		if (!inputFile.canRead() || !inputFile.isFile()) {
-			throw new IllegalArgumentException("Unreadable file: " + declareMapFilePath);
-		}
-		
-		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(declareMapFilePath);
-		AssignmentModel model = broker.readAssignment();
-		AssignmentModelView view = new AssignmentModelView(model);
-		broker.readAssignmentGraphical(model, view);
-		return fromDeclareMapToMinerfulProcessModel(model, taskCharArchive);
+	public DeclareMapEncoderDecoder(String declareMapFilePath) {
+		AssignmentModel declareMapModel = DeclareMapReaderWriter.readFromFile(declareMapFilePath);
+		this.buildFromDeclareMapModel(declareMapModel);
 	}
 
-	private static ProcessModel fromDeclareMapToMinerfulProcessModel(AssignmentModel declareMapModel, TaskCharArchive taskCharArchive) {
-		ArrayList<String> params = new ArrayList<String>();
-		ArrayList<Constraint> minerFulConstraints = new ArrayList<Constraint>();
+	public DeclareMapEncoderDecoder(AssignmentModel declareMapModel) {
+		this.buildFromDeclareMapModel(declareMapModel);
+	}
+	
+	private void buildFromDeclareMapModel(AssignmentModel declareMapModel) {
+		/* Record the name of the process */
+		this.processModelName = declareMapModel.getName();
 
-		if (taskCharArchive == null) {
-			TaskCharEncoderDecoder encdec = new TaskCharEncoderDecoder();
+		/* Create an archive of TaskChars out of the activity definitions in the Declare Map model */
+		Collection<TaskChar> tasksInDeclareMap = new ArrayList<TaskChar>(declareMapModel.activityDefinitionsCount());
+		TaskCharEncoderDecoder tChEncDec = new TaskCharEncoderDecoder();
+		TaskCharFactory tChFactory = new TaskCharFactory(tChEncDec);
 
-			for(ConstraintDefinition cd : declareMapModel.getConstraintDefinitions()){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						encdec.encode(new StringTaskClass(ad.getName()));
-					}
-				}
-			}
-			for(ActivityDefinition ad : declareMapModel.getActivityDefinitions()){
-				encdec.encode(new StringTaskClass(ad.getName()));
-			}
-			taskCharArchive = new TaskCharArchive(encdec.getTranslationMap());
+		for (ActivityDefinition ad : declareMapModel.getActivityDefinitions()) {
+			tasksInDeclareMap.add(tChFactory.makeTaskChar(new StringTaskClass(ad.getName())));
 		}
 
-		for(ConstraintDefinition cd : declareMapModel.getConstraintDefinitions()){
-			String template = cd.getName().replace("-", "").replace(" ", "").toLowerCase();
-			params = new ArrayList<String>();
-
-			Pattern
-				supPattern = Pattern.compile(DeclareMapEncoderDecoder.SUPPORT_EXTRACTION_REG_EXP),
-				confiPattern = Pattern.compile(DeclareMapEncoderDecoder.CONFIDENCE_EXTRACTION_REG_EXP),
-				inteFaPattern = Pattern.compile(DeclareMapEncoderDecoder.IF_EXTRACTION_REG_EXP);
-			Matcher
-				supMatcher = supPattern.matcher(cd.getText().trim()),
-				confiMatcher = confiPattern.matcher(cd.getText().trim()),
-				inteFaMatcher = inteFaPattern.matcher(cd.getText().trim());
-
-			Double
-				support = (supMatcher.matches() && supMatcher.groupCount() > 0 ? Double.valueOf(supMatcher.group(1)) : Constraint.DEFAULT_SUPPORT),
-				confidence = (confiMatcher.matches() && confiMatcher.groupCount() > 0 ? Double.valueOf(confiMatcher.group(1)) : Constraint.DEFAULT_CONFIDENCE),
-				interestFact = (inteFaMatcher.matches() && inteFaMatcher.groupCount() > 0 ? Double.valueOf(inteFaMatcher.group(1)): Constraint.DEFAULT_INTEREST_FACTOR);
-
-//			Double support = new Double (cd.getText().split("|")[0].split(";")[1]);
-//			Double confidence = new Double (cd.getText().split("|")[1].split(";")[1]);
-//			Double interestFact = new Double (cd.getText().split("|")[2].split(";")[1]);
-			if(template.equals("alternateprecedence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				AlternatePrecedence minerConstr = new AlternatePrecedence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("alternateresponse")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				AlternateResponse minerConstr = new AlternateResponse(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("alternatesuccession")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				AlternateSuccession minerConstr = new AlternateSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("chainprecedence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				ChainPrecedence minerConstr = new ChainPrecedence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("chainresponse")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				ChainResponse minerConstr = new ChainResponse(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("chainsuccession")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				ChainSuccession minerConstr = new ChainSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("coexistence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				CoExistence minerConstr = new CoExistence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("notchainsuccession")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				NotChainSuccession minerConstr = new NotChainSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("notcoexistence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				NotCoExistence minerConstr = new NotCoExistence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("notsuccession")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				NotSuccession minerConstr = new NotSuccession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("precedence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				Precedence minerConstr = new Precedence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("response")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				Response minerConstr = new Response(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("succession")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				Succession minerConstr = new Succession(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("respondedexistence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				RespondedExistence minerConstr = new RespondedExistence(taskCharArchive.getTaskChar(params.get(0)),taskCharArchive.getTaskChar(params.get(1)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("init")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				Init minerConstr = new Init(taskCharArchive.getTaskChar(params.get(0)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("existence")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				Participation minerConstr = new Participation(taskCharArchive.getTaskChar(params.get(0)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}else if(template.equals("absence2")){
-				for(Parameter p : cd.getParameters()){
-					for(ActivityDefinition ad : cd.getBranches(p)){
-						params.add(ad.getName());
-					}
-				}
-				AtMostOne minerConstr = new AtMostOne(taskCharArchive.getTaskChar(params.get(0)),support);
-				minerConstr.confidence = confidence;
-				minerConstr.interestFactor = interestFact;
-				minerFulConstraints.add(minerConstr);
-			}
+		this.taskCharArchive = new TaskCharArchive(tasksInDeclareMap);
+		
+		/* Create DTOs for constraints out of the definitions in the Declare Map model */
+		this.constraintTOs = new ArrayList<DeclareMapConstraintTransferObject>(declareMapModel.constraintDefinitionsCount());
+		for (ConstraintDefinition cd : declareMapModel.getConstraintDefinitions()) {
+			this.constraintTOs.add(new DeclareMapConstraintTransferObject(cd));
+		}		
+	}
+	
+	public ProcessModel createMinerFulProcessModel() {
+		Collection<Constraint> minerFulConstraints = new ArrayList<Constraint>(this.constraintTOs.size());
+		MinerFulConstraintMaker miFuConMak = new MinerFulConstraintMaker(this.taskCharArchive);
+		
+		for (DeclareMapConstraintTransferObject conTO: constraintTOs) {
+			minerFulConstraints.add(miFuConMak.createConstraintOutOfTransferObject(conTO));
 		}
+
 		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(minerFulConstraints));
 		
-		ConstraintsBag constraintsBag = new ConstraintsBag(taskCharArchive.getTaskChars(), minerFulConstraints);
-		String processModelName = declareMapModel.getName();
-		
-		return new ProcessModel(taskCharArchive, constraintsBag, processModelName);
+		ConstraintsBag constraintsBag = new ConstraintsBag(this.taskCharArchive.getTaskChars(), minerFulConstraints);
+
+		return new ProcessModel(taskCharArchive, constraintsBag, this.processModelName);
 	}
 
 	public List<DeclareMapConstraintTransferObject> getConstraintTOs() {
 		return constraintTOs;
 	}
 
-	public DeclareMap getMap() {
-		return map;
-	}
-
-	public void createDeclareMap(){
+	public DeclareMap createDeclareMap() {
 		Vector<String> activityDefinitions = new Vector<String>();
 		Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap = new HashMap<String, DeclareMapTemplate>();
 		DeclareMapTemplate[] declareTemplates = DeclareMapTemplate.values();
-		for(DeclareMapTemplate d : declareTemplates){
-			String templateNameString = d.toString().replaceAll("_", " ").toLowerCase();
+		for (DeclareMapTemplate d : declareTemplates) {
+			String templateNameString = d.getName();
 			templateNameStringDeclareTemplateMap.put(templateNameString, d);
 		}
 		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateConstraintTemplateMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
@@ -369,14 +171,14 @@ public class DeclareMapEncoderDecoder {
 		List<Language> languages = template.readLanguages();
 		Language lang = languages.get(0);
 		AssignmentModel model = new AssignmentModel(lang);
-		model.setName("new model");
+		model.setName(this.processModelName);
 		ActivityDefinition activitydefinition = null;
 		int constraintID = 0;
 		int activityID = 1;
-		for(DeclareMapConstraintTransferObject constraint : constraintTOs){
-			for(Set<String> parameterSet : constraint.parameters){
-				for(String aName : parameterSet){
-					if(!activityDefinitions.contains(aName)){
+		for (DeclareMapConstraintTransferObject constraint : constraintTOs) {
+			for (Set<String> parameterSet : constraint.parameters) {
+				for (String aName : parameterSet) {
+					if(!activityDefinitions.contains(aName)) {
 						activityDefinitions.add(aName);
 						activitydefinition = model.addActivityDefinition(activityID); //new ActivityDefinition(parametersOfDiscoveredConstraintsInstantiationsOfCurrentTemplate[i][j], activityID, model);
 						activitydefinition.setName(aName);
@@ -388,8 +190,8 @@ public class DeclareMapEncoderDecoder {
 			ConstraintDefinition constraintdefinition = new ConstraintDefinition(constraintID, model, declareTemplateConstraintTemplateMap.get(constraint.template));
 			Collection<Parameter> parameters = (declareTemplateConstraintTemplateMap.get(constraint.template)).getParameters();
 			Iterator<Set<String>> paramsIterator = constraint.parameters.iterator();
-			for(Parameter parameter : parameters) {
-				for(String branchName : paramsIterator.next()){
+			for (Parameter parameter : parameters) {
+				for (String branchName : paramsIterator.next()) {
 					ActivityDefinition activityDefinition = model.activityDefinitionWithName(branchName);
 					constraintdefinition.addBranch(parameter, activityDefinition);
 				}
@@ -397,9 +199,8 @@ public class DeclareMapEncoderDecoder {
 			model.addConstraintDefiniton(constraintdefinition);
 		}
 
-		
 		AssignmentModelView view = new AssignmentModelView(model);
-		map = new DeclareMap(model, null, view, null, null, null);
+		DeclareMap map = new DeclareMap(model, null, view, null, null, null);
 		final JGraphOrganicLayout oc = new JGraphOrganicLayout();
 
 		oc.setDeterministic(true);
@@ -414,7 +215,7 @@ public class DeclareMapEncoderDecoder {
 
 		//	oc.setMinDistanceLimit(0.001);
 		oc.setEdgeLengthCostFactor(9999);
-		if(map.getModel().getConstraintDefinitions().size()<200){
+		if(map.getModel().getConstraintDefinitions().size()<200) {
 			oc.setEdgeLengthCostFactor(99);
 		}
 		oc.setNodeDistributionCostFactor(999999999);
@@ -424,18 +225,11 @@ public class DeclareMapEncoderDecoder {
 		oc.run(jgf);
 		final Map<?, ?> nestedMap = jgf.createNestedMap(true, true); 
 		view.getGraph().getGraphLayoutCache().edit(nestedMap); 
+		
+		return map;
 	}
 
-	public void marshal(String outfilePath){
-		marshal(outfilePath, this.map);
-	}
-
-	public static void marshal(String outfilePath, DeclareMap map) {
-		AssignmentViewBroker broker = XMLBrokerFactory.newAssignmentBroker(outfilePath);
-		broker.addAssignmentAndView(map.getModel(), map.getView());
-	}
-
-	public static Map<DeclareMapTemplate, ConstraintTemplate> readConstraintTemplates(Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap){
+	public static Map<DeclareMapTemplate, ConstraintTemplate> readConstraintTemplates(Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap) {
 		InputStream templateInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
 		File languageFile = null;
 		try {
@@ -469,12 +263,12 @@ public class DeclareMapEncoderDecoder {
 		}
 
 		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateConstraintTemplateMap = new HashMap<DeclareMapTemplate, ConstraintTemplate>();
-
-		for(IItem item : templateList){
-			if(item instanceof ConstraintTemplate){
+		for (IItem item : templateList) {
+			if(item instanceof ConstraintTemplate) {
 				ConstraintTemplate constraintTemplate = (ConstraintTemplate)item;
-				if(templateNameStringDeclareTemplateMap.containsKey(constraintTemplate.getName().replaceAll("-", "").toLowerCase())){
-					declareTemplateConstraintTemplateMap.put(templateNameStringDeclareTemplateMap.get(constraintTemplate.getName().replaceAll("-", "").toLowerCase()), constraintTemplate);
+				if(templateNameStringDeclareTemplateMap.containsKey(constraintTemplate.getName())) {
+					declareTemplateConstraintTemplateMap.put(templateNameStringDeclareTemplateMap.get(constraintTemplate.getName()), constraintTemplate);
+				} else {
 				}
 			}
 		}
@@ -482,7 +276,7 @@ public class DeclareMapEncoderDecoder {
 		return declareTemplateConstraintTemplateMap;
 	}
 
-	private static List<IItem> visit(IItem item){
+	private static List<IItem> visit(IItem item) {
 		List<IItem> templateList = new ArrayList<IItem>();
 		if (item instanceof LanguageGroup) {
 			LanguageGroup languageGroup = (LanguageGroup) item;

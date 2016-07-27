@@ -28,11 +28,14 @@ import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulMinerStarter extends AbstractMinerFulStarter {
+	private static final String PROCESS_MODEL_NAME_PATTERN = "Model discovered out of %s";
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerStarter.class);
 
 	@Override
 	public Options setupOptions() {
@@ -112,7 +115,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			System.exit(1);
 		}
 
-		configureLogging(systemParams.debugLevel);
+		MessagePrinter.configureLogging(systemParams.debugLevel);
 
 		logger.info("Loading log...");
 
@@ -123,7 +126,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		ProcessModel processModel = minerMinaStarter.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
 
-		new MinerFulProcessOutputMgtStarter().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
+		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 	}
 
 	public static LogParser deriveLogParserFromLogFile(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
@@ -180,6 +183,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		System.gc();
 
 		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
+		proMod.setName(String.format(MinerFulMinerStarter.PROCESS_MODEL_NAME_PATTERN, minerFulParams.inputFile.getName()));
 
 		proMod.bag = queryForConstraints(logParser, minerFulParams, postPrarams,
 				taskCharArchive, globalStatsTable, proMod.bag);

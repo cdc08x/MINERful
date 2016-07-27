@@ -426,7 +426,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
     
     public Set<Constraint> refineByComputingConfidenceLevel(Set<Constraint> discoveredConstraints, double participationFraction) {
 		for (Constraint relCon : discoveredConstraints) {
-			relCon.confidence = relCon.support * participationFraction;
+			relCon.setConfidence(relCon.getSupport() * participationFraction);
 		}
 		return discoveredConstraints;
     }
@@ -465,8 +465,8 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		}
 		
 		return
-				(	MetaConstraintUtils.getAllPossibleForwardRelationConstraintTemplates().size() -1 + // out-branching
-					MetaConstraintUtils.getAllPossibleBackwardRelationConstraintTemplates().size() -1 // in branching
+				(	MetaConstraintUtils.getAllDiscoverableForwardRelationConstraintTemplates().size() -1 + // out-branching
+					MetaConstraintUtils.getAllDiscoverableBackwardRelationConstraintTemplates().size() -1 // in branching
 				)
 				* tasksToQueryFor.size()
 				* numberOfPossibleConstraintsPerActivity;

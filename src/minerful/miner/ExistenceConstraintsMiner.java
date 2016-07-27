@@ -46,7 +46,7 @@ public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner
 
 	@Override
 	public long howManyPossibleConstraints() {
-		return MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * tasksToQueryFor.size();
+		return MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES * tasksToQueryFor.size();
 	}
 
 	protected abstract Constraint discoverParticipationConstraint(TaskChar base,

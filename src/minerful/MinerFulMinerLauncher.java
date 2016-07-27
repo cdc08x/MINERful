@@ -20,6 +20,8 @@ import org.deckfour.xes.model.XLog;
 import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
 public class MinerFulMinerLauncher {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerLauncher.class);
+
 	private InputCmdParameters inputParams;
 	private MinerFulCmdParameters minerFulParams;
 	private SystemCmdParameters systemParams;
@@ -62,8 +64,8 @@ public class MinerFulMinerLauncher {
     		System.exit(1);
     	}
         
-        MinerFulMinerStarter.configureLogging(systemParams.debugLevel);
-        MinerFulMinerStarter.logger.info("Loading log...");
+        MessagePrinter.configureLogging(systemParams.debugLevel);
+        logger.info("Loading log...");
         
         XesLogParser logParser = new XesLogParser(inputParams.inputFile, fromInputParamToXesLogClassificationType(inputParams.eventClassification));
         
@@ -91,7 +93,7 @@ public class MinerFulMinerLauncher {
 		this.outParams = outParams;
 		
 		this.minerFulStarter = new MinerFulMinerStarter();
-        MinerFulMinerStarter.configureLogging(systemParams.debugLevel);
+        MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 	
 	public ProcessModel mine() {
@@ -108,7 +110,7 @@ public class MinerFulMinerLauncher {
 	}
 	
 	public ProcessModel manageOutput(ProcessModel processModel) {
-		new MinerFulProcessOutputMgtStarter().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
+		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 		return processModel;
 	}
 
@@ -117,7 +119,7 @@ public class MinerFulMinerLauncher {
 		XesLogParser logParser = new XesLogParser(xLog, classiType);
 		ProcessModel processModel = minerFulStarter.mine(logParser, minerFulParams, systemParams, postParams, logParser.getTaskCharArchive());
 
-		return new DeclareMapEncoderDecoder(processModel).getMap();
+		return new DeclareMapEncoderDecoder(processModel).createDeclareMap();
 	}
 	
 	public static ClassificationType fromInputParamToXesLogClassificationType(EventClassification evtClassInputParam) {

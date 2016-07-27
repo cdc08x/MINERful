@@ -15,6 +15,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.existence.*;
 import minerful.concept.constraint.relation.*;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
+import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
@@ -26,6 +27,8 @@ import minerful.utils.MessagePrinter;
 import org.apache.log4j.Logger;
 
 public class MinerFulVacuityChecker {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulVacuityChecker.class);
+			
 	/**
 	 * Task place-holders to be used as parameters for the constraint templates to check.
 	 */
@@ -65,9 +68,6 @@ public class MinerFulVacuityChecker {
 			new NotCoExistence(a, b),
     };
 
-	protected static Logger logger;
-	
-
 	public static void main(String[] args) throws Exception {
 		System.err.println(
 				"#### WARNING"
@@ -98,9 +98,7 @@ public class MinerFulVacuityChecker {
 		
 		System.in.read();
 
-		AbstractMinerFulStarter.configureLogging(DebugLevel.all);
-        if (logger == null)
-        	logger = Logger.getLogger(ConstraintsRelevanceEvaluator.class.getCanonicalName());
+		MessagePrinter.configureLogging(DebugLevel.all);
 
 		LogParser loPar = null;
 		try {
@@ -128,14 +126,14 @@ public class MinerFulVacuityChecker {
 			Double supportThreshold = Double.valueOf(args[1]);
 
 			for (Constraint con : evalon.getNuConstraints()) {
-				if (con.getFamily() != null && con.support >= supportThreshold) {
+				if (con.getFamily() != null && con.getSupport() >= supportThreshold) {
 					nuStandardConstraints.add(con);
 				}
 			}
 
 			ConstraintsBag coBag = new ConstraintsBag(loPar.getTaskCharArchive().getTaskChars(), nuStandardConstraints);
 			ProcessModel model = new ProcessModel(loPar.getTaskCharArchive(), coBag);
-			new DeclareMapEncoderDecoder(model).marshal(args[2]);
+			DeclareMapReaderWriter.marshal(args[2], new DeclareMapEncoderDecoder(model).createDeclareMap());
 			
 			logger.debug("Done.");
 		}

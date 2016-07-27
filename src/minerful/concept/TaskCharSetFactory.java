@@ -17,8 +17,16 @@ public class TaskCharSetFactory {
 		this.taskCharArchive = taskCharArchive;
 	}
 
-	public TaskCharSet createSet(Collection<Character> fromCharacters) {
-		return new TaskCharSet(this.taskCharArchive.getTaskChars(fromCharacters));
+	public TaskCharSet createSetFromRawCharacters(Collection<Character> characters) {
+		return new TaskCharSet(this.taskCharArchive.getTaskCharsIdentifiedByCharacters(characters));
+	}
+
+	public TaskCharSet createSetFromTaskClasses(Collection<AbstractTaskClass> taskClasses) {
+		return new TaskCharSet(this.taskCharArchive.getTaskCharsIdentifiedByTaskClasses(taskClasses));
+	}
+
+	public TaskCharSet createSetFromTaskStrings(Collection<String> taskNames) {
+		return new TaskCharSet(this.taskCharArchive.getTaskCharsIdentifiedByStrings(taskNames));
 	}
 	
 	public TaskCharSet createSet(TaskCharSet existing, Character plus) {

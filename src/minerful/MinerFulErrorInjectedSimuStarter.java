@@ -12,12 +12,14 @@ import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
-	
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulErrorInjectedSimuStarter.class);
+
 	@Override
 	public Options setupOptions() {
     	Options cmdLineOptions = new Options();
@@ -98,7 +100,7 @@ public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
         	System.exit(0);
         }
         
-        configureLogging(systemParams.debugLevel);
+        MessagePrinter.configureLogging(systemParams.debugLevel);
         
         String[] testBedArray = new MinerFulStringTracesMaker().makeTraces(tracesMakParams);
     	testBedArray = MinerFulErrorInjectedTracesMakerStarter.injectErrors(testBedArray, tracesMakParams, errorInjexParams);
@@ -109,8 +111,8 @@ public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
 	        ProcessModel processModel = new MinerFulMinerStarter().mine(stringLogParser, minerFulParams, systemParams, postParams, tracesMakParams.alphabet);
 
-	        MinerFulProcessOutputMgtStarter proViewStarter = new MinerFulProcessOutputMgtStarter(); 
-	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
+	        MinerFulOutputManagementLauncher proViewLauncher = new MinerFulOutputManagementLauncher(); 
+	        proViewLauncher.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

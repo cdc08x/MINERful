@@ -39,18 +39,18 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         	// Thus, it is perfectly useless to indagate over it!
         	if (localStats.getTotalAmountOfOccurrences() > 0) {
 	        	Constraint participation = this.discoverParticipationConstraint(pivot, localStats, this.globalStats.logSize);
-	        	pivotParticipationFraction = participation.support;
+	        	pivotParticipationFraction = participation.getSupport();
 
-	        	updateConstraint(constraintsBag, pivot, participation, participation.support, pivotParticipationFraction);
+	        	updateConstraint(constraintsBag, pivot, participation, participation.getSupport(), pivotParticipationFraction);
 
 	        	Constraint atMostOne = this.discoverAtMostOnceConstraint(pivot, localStats, this.globalStats.logSize);
-	        	updateConstraint(constraintsBag, pivot, atMostOne, atMostOne.support, pivotParticipationFraction);
+	        	updateConstraint(constraintsBag, pivot, atMostOne, atMostOne.getSupport(), pivotParticipationFraction);
 	            
 	        	Constraint init = this.discoverInitConstraint(pivot, localStats, this.globalStats.logSize);
-	        	updateConstraint(constraintsBag, pivot, init, init.support, pivotParticipationFraction);
+	        	updateConstraint(constraintsBag, pivot, init, init.getSupport(), pivotParticipationFraction);
 	            
 	            Constraint end = this.discoverEndConstraint(pivot, localStats, this.globalStats.logSize);
-	        	updateConstraint(constraintsBag, pivot, end, end.support, pivotParticipationFraction);
+	        	updateConstraint(constraintsBag, pivot, end, end.getSupport(), pivotParticipationFraction);
 	            
 	            if (hasValuesAboveThresholds(participation)) this.computedConstraintsAboveThresholds++;
 	            if (hasValuesAboveThresholds(atMostOne)) this.computedConstraintsAboveThresholds++;
@@ -65,15 +65,15 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 			TaskChar indexingParam, Constraint searchedCon,
 			double support, double pivotParticipationFraction) {
 		Constraint con = constraintsBag.get(indexingParam, searchedCon);
-		con.support = support;
-		con.evaluatedOnLog = true;
+		con.setSupport(support);
+		con.setEvaluatedOnLog(true);
 		refineByComputingRelevanceMetrics(con, pivotParticipationFraction);
 		return con;
 	}
 
     public static Constraint refineByComputingRelevanceMetrics(Constraint con, double pivotParticipationFraction) {
-    	con.confidence = con.support * pivotParticipationFraction;
-    	con.interestFactor = con.support * pivotParticipationFraction * pivotParticipationFraction;
+    	con.setConfidence(con.getSupport() * pivotParticipationFraction);
+    	con.setInterestFactor(con.getSupport() * pivotParticipationFraction * pivotParticipationFraction);
     	return con;
     }
 

@@ -8,15 +8,15 @@ import minerful.concept.constraint.relation.RelationConstraint;
 public class InterestConfidenceBasedComparator implements Comparator<Constraint> {
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
-		Double 	interestOfO1 = o1.interestFactor,
-				interestOfO2 = o2.interestFactor;
+		Double 	interestOfO1 = o1.getInterestFactor(),
+				interestOfO2 = o2.getInterestFactor();
 		int		result = 0;
 		
 		result = interestOfO1.compareTo(interestOfO2);
 		
 		if (result == 0) {
-			interestOfO1 = o1.confidence;
-			interestOfO2 = o2.confidence;
+			interestOfO1 = o1.getConfidence();
+			interestOfO2 = o2.getConfidence();
 			result = interestOfO1.compareTo(interestOfO2);
 		}
 		

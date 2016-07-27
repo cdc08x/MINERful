@@ -10,11 +10,13 @@ import minerful.io.params.OutputModelParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulSimplificationStarter.class);
 
 	@Override
 	public Options setupOptions() {
@@ -80,12 +82,12 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
 			System.exit(1);
 		}
         
-        configureLogging(systemParams.debugLevel);
+        MessagePrinter.configureLogging(systemParams.debugLevel);
         
         MinerFulSimplificationLauncher miFuSimpLa = new MinerFulSimplificationLauncher(inputParams, postParams, systemParams);
         
         ProcessModel outputProcess = miFuSimpLa.simplify();
 
-        new MinerFulProcessOutputMgtStarter().manageOutput(outputProcess, viewParams, outParams, systemParams);
+        new MinerFulOutputManagementLauncher().manageOutput(outputProcess, viewParams, outParams, systemParams);
     }
  }

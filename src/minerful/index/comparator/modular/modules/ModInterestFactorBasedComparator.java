@@ -15,8 +15,8 @@ public class ModInterestFactorBasedComparator extends ModularConstraintsComparat
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
 		Double
-			interestOfO1 = o1.interestFactor,
-			interestOfO2 = o2.interestFactor;
+			interestOfO1 = o1.getInterestFactor(),
+			interestOfO2 = o2.getInterestFactor();
 		int result = 0;
 		
 		result = interestOfO1.compareTo(interestOfO2);

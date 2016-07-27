@@ -38,13 +38,10 @@ public class ThresholdsMarker {
 	public ConstraintsBag markConstraintsBelowThresholds(double supportThreshold, double confidence, double interest) {
         for (TaskChar key : constraintsBag.getTaskChars()) {
             for (Constraint con : constraintsBag.getConstraintsOf(key)) {
-            	con.belowSupportThreshold = !con.hasSufficientSupport(supportThreshold);
-            	con.belowConfidenceThreshold = !con.hasSufficientConfidence(confidence);
-            	con.belowInterestFactorThreshold = !con.hasSufficientInterestFactor(interest);
-//            	if (!(con.hasSufficientSupport(supportThreshold) && con.isConfident(confidence) && con.isOfInterest(interest))) {
-//					nuBag.getConstraintsOf(key).remove(con);
-//				}
-            	if (con.belowSupportThreshold || con.belowConfidenceThreshold || con.belowInterestFactorThreshold) {
+            	con.setBelowSupportThreshold(!con.hasSufficientSupport(supportThreshold));
+            	con.setBelowConfidenceThreshold(!con.hasSufficientConfidence(confidence));
+            	con.setBelowInterestFactorThreshold(!con.hasSufficientInterestFactor(interest));
+            	if (con.isBelowSupportThreshold() || con.isBelowConfidenceThreshold() || con.isBelowInterestFactorThreshold()) {
             		this.numberOfMarkedConstraints++;
             	}
             }

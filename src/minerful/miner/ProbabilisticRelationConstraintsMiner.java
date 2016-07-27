@@ -215,8 +215,8 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 			TaskChar indexingParam, Constraint searchedCon,
 			double support, double pivotParticipationFraction, double searchedParticipationFraction) {
 		Constraint con = constraintsBag.get(indexingParam, searchedCon);
-		con.support = support;
-		con.evaluatedOnLog = true;
+		con.setSupport(support);
+		con.setEvaluatedOnLog(true);
 		refineByComputingRelevanceMetrics(con, pivotParticipationFraction, searchedParticipationFraction);
 		return con;
 	}
@@ -346,11 +346,11 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     
     public static RelationConstraint refineByComputingConfidenceLevel(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
     	if (relCon.getSubFamily() == RelationConstraintSubFamily.COUPLING || relCon.getSubFamily() == RelationConstraintSubFamily.NEGATIVE) {
-    		relCon.confidence = relCon.support * (pivotParticipationFraction < searchedParticipationFraction ? pivotParticipationFraction : searchedParticipationFraction);
+    		relCon.setConfidence(relCon.getSupport() * (pivotParticipationFraction < searchedParticipationFraction ? pivotParticipationFraction : searchedParticipationFraction));
     	} else if (relCon.getImplicationVerse() == ConstraintImplicationVerse.BACKWARD) {
-    		relCon.confidence = relCon.support * searchedParticipationFraction;
+    		relCon.setConfidence(relCon.getSupport() * searchedParticipationFraction);
     	} else {
-    		relCon.confidence = relCon.support * pivotParticipationFraction;
+    		relCon.setConfidence(relCon.getSupport() * pivotParticipationFraction);
     	}
 		return relCon;
     }
@@ -359,20 +359,22 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     	RelationConstraint relCon = (RelationConstraint) con;
     	relCon = refineByComputingConfidenceLevel(relCon, pivotParticipationFraction, searchedParticipationFraction);
     	if (relCon.getSubFamily() != RelationConstraintSubFamily.NEGATIVE || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
-    		relCon.interestFactor =
-    				relCon.support
+    		relCon.setInterestFactor(
+    				relCon.getSupport()
     				*
     				pivotParticipationFraction
     				*
-    				searchedParticipationFraction;
+    				searchedParticipationFraction
+    		);
     	} else {
-    		relCon.interestFactor =
-    				relCon.support
+    		relCon.setInterestFactor(
+    				relCon.getSupport()
     				*
     				( pivotParticipationFraction > searchedParticipationFraction
     					?	pivotParticipationFraction * (1.0 - searchedParticipationFraction)
     					:	searchedParticipationFraction * (1.0 - pivotParticipationFraction)
-    				);
+    				)
+    		);
     	}
     	return relCon;
     }

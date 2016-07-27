@@ -60,7 +60,7 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
     public boolean isMoreReliableThanTheOpponent() {
         if (!this.hasOpponent())
             throw new IllegalStateException("No opponent constraint is set");
-        return this.support > opponent.support;
+        return this.support > opponent.getSupport();
     }
     
     public boolean hasOpponent() {

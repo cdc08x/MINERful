@@ -25,52 +25,8 @@ import minerful.utils.MessagePrinter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
-
-	@Override
-	public Options setupOptions() {
-		Options cmdLineOptions = new Options();
-		
-		Options systemOptions = SystemCmdParameters.parseableOptions(),
-				outputOptions = OutputModelParameters.parseableOptions(),
-				viewOptions = ViewCmdParameters.parseableOptions();
-    	for (Object opt: viewOptions.getOptions()) {
-    		cmdLineOptions.addOption((Option)opt);
-    	}
-    	for (Object opt: outputOptions.getOptions()) {
-    		cmdLineOptions.addOption((Option)opt);
-    	}
-    	for (Object opt: systemOptions.getOptions()) {
-    		cmdLineOptions.addOption((Option)opt);
-    	}
-		
-		return cmdLineOptions;
-	}
-
-	// FIXME	To be developed
-	public static void main(String[] args) {
-		MinerFulProcessOutputMgtStarter procViewStarter = new MinerFulProcessOutputMgtStarter();
-    	Options cmdLineOptions = procViewStarter.setupOptions();
-
-        ViewCmdParameters viewParams =
-        		new ViewCmdParameters(
-        				cmdLineOptions,
-        				args);
-		OutputModelParameters outParams =
-				new OutputModelParameters(
-						cmdLineOptions,
-						args);
-        SystemCmdParameters systemParams =
-        		new SystemCmdParameters(
-        				cmdLineOptions,
-    					args);
-
-        if (systemParams.help) {
-        	systemParams.printHelp(cmdLineOptions);
-        	System.exit(0);
-        }
-
-	}
+public class MinerFulOutputManagementLauncher {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulOutputManagementLauncher.class);
 
 	public void manageOutput(ProcessModel processModel, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputModelParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
 		ConstraintsPrinter printer = new ConstraintsPrinter(processModel, additionalCnsIndexedInfo);
@@ -117,6 +73,7 @@ public class MinerFulProcessOutputMgtStarter extends AbstractMinerFulStarter {
 		default:
 			break;
 		}
+
 
         if (viewParams.noFoldingRequired) {
         	switch (viewParams.constraintsSorting) {

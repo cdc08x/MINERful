@@ -82,7 +82,7 @@ public class LinearConstraintsIndexFactory {
 	}
 	
 	public static Map<Class<? extends Constraint>, SortedSet<Constraint>> indexByConstraintTypeAndSupport(Set<? extends Constraint> discoveredConstraints, TaskChar taskChar) {
-		Collection<Class<? extends Constraint>> possibleConstraints = MetaConstraintUtils.ALL_POSSIBLE_CONSTRAINT_TEMPLATES;
+		Collection<Class<? extends Constraint>> possibleConstraints = MetaConstraintUtils.ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES;
 		Map<Class<? extends Constraint>, SortedSet<Constraint>> localIndex = new HashMap<Class<? extends Constraint>, SortedSet<Constraint>>(possibleConstraints.size());
 		
 		for (Class<? extends Constraint> possibleConstraint : possibleConstraints) {
@@ -97,6 +97,10 @@ public class LinearConstraintsIndexFactory {
 	}
 	
 	public static Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> indexByImplyingAndImplied(ConstraintsBag bag) {
+		return indexByImplyingAndImplied(bag, false);
+	}
+	
+	public static Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> indexByImplyingAndImplied(ConstraintsBag bag, boolean onlyUnmarked) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map = new TreeMap<TaskChar, Map<TaskChar,NavigableSet<Constraint>>>();
 		Map<TaskChar, NavigableSet<Constraint>> subMap = null;
 		TaskCharSet impliedSet = null;
@@ -104,16 +108,18 @@ public class LinearConstraintsIndexFactory {
 		for (TaskChar tCh : bag.getTaskChars()) {
 			subMap = new TreeMap<TaskChar, NavigableSet<Constraint>>();
 			for (Constraint con : bag.getConstraintsOf(tCh)) {
-				impliedSet = (
-					(con.getImplied() == null)
-					?	new TaskCharSet(tCh)
-					:	con.getImplied()
-				);
-				for (TaskChar implied : impliedSet.getTaskCharsArray()) {
-					if (!subMap.containsKey(implied)) {
-						subMap.put(implied, new TreeSet<Constraint>());
+				if (!onlyUnmarked || !con.isMarkedForExclusion()) {
+					impliedSet = (
+						(con.getImplied() == null)
+						?	new TaskCharSet(tCh)
+						:	con.getImplied()
+					);
+					for (TaskChar implied : impliedSet.getTaskCharsArray()) {
+						if (!subMap.containsKey(implied)) {
+							subMap.put(implied, new TreeSet<Constraint>());
+						}
+						subMap.get(implied).add(con);
 					}
-					subMap.get(implied).add(con);
 				}
 			}
 			map.put(tCh, subMap);
@@ -122,24 +128,36 @@ public class LinearConstraintsIndexFactory {
 		return map;
 	}
 
+	public static Collection<Constraint> getAllUnmarkedConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(
+			ConstraintsBag bag) {
+		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied =
+				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag, true);
+		
+		return getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
+	}
+	
 	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
-		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOFConstraintsIndexedByImplyingAndImplied =
-				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
+		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied =
+				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag, false);
+		return getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
+	}
+
+	private static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied) {
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
-				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(mapOFConstraintsIndexedByImplyingAndImplied));
+				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(mapOfConstraintsIndexedByImplyingAndImplied));
 		Collection<Constraint> constraints = new ArrayList<Constraint>();
 		Map<TaskChar, NavigableSet<Constraint>>
 			subMap = null,
 			subMapReverse = null;
 		
 		Set<TaskChar>
-			taskCharsReverse = new TreeSet<TaskChar>(mapOFConstraintsIndexedByImplyingAndImplied.keySet());
+			taskCharsReverse = new TreeSet<TaskChar>(mapOfConstraintsIndexedByImplyingAndImplied.keySet());
 		SortedSet<Constraint> tmpReorderingSet = null;
 		
 		// Starting from the activity having the highest number of constraints-based connections with other activities...
 		for (TaskChar tCh : taskCharsSortedByNumberOfConnections) {
 			// Get all constraints pertaining to tCh, indexed by the implied (target) activity
-			subMap = mapOFConstraintsIndexedByImplyingAndImplied.get(tCh);
+			subMap = mapOfConstraintsIndexedByImplyingAndImplied.get(tCh);
 			// For every target activity
 			for (TaskChar tChRev : taskCharsReverse) {
 				if (subMap.containsKey(tChRev) && subMap.get(tChRev) != null && subMap.get(tChRev).size() > 0) {
@@ -148,8 +166,8 @@ public class LinearConstraintsIndexFactory {
 					constraints.addAll(tmpReorderingSet);
 					subMap.put(tChRev, null);
 				}
-				if (mapOFConstraintsIndexedByImplyingAndImplied.containsKey(tChRev)) {
-					subMapReverse = mapOFConstraintsIndexedByImplyingAndImplied.get(tChRev);
+				if (mapOfConstraintsIndexedByImplyingAndImplied.containsKey(tChRev)) {
+					subMapReverse = mapOfConstraintsIndexedByImplyingAndImplied.get(tChRev);
 					if (subMapReverse.containsKey(tCh) && subMapReverse.get(tCh) != null && subMapReverse.get(tCh).size() > 0) {
 						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
 						tmpReorderingSet.addAll(subMapReverse.get(tCh));
@@ -162,12 +180,12 @@ public class LinearConstraintsIndexFactory {
 		return constraints;
 	}
 	
-	public static Map<TaskChar, Set<TaskChar>> createMapOfConnections(ConstraintsBag bag) {
-		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
-				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
-		
-		return createMapOfConnections(map);
-	}
+//	public static Map<TaskChar, Set<TaskChar>> createMapOfConnections(ConstraintsBag bag) {
+//		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> map =
+//				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag);
+//		
+//		return createMapOfConnections(map);
+//	}
 	
 	public static List<TaskChar> getTaskCharsSortedByNumberOfConnections(Map<TaskChar, Set<TaskChar>> map) {
 		TreeMap<Integer, Set<TaskChar>> orderingMap = new TreeMap<Integer, Set<TaskChar>>();

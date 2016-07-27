@@ -15,8 +15,8 @@ public class ModSupportBasedComparator extends ModularConstraintsComparator {
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
 		Double
-			supportOfO1 = o1.support,
-			supportOfO2 = o2.support;
+			supportOfO1 = o1.getSupport(),
+			supportOfO2 = o2.getSupport();
 		int result = 0;
 		
 		result = supportOfO1.compareTo(supportOfO2);

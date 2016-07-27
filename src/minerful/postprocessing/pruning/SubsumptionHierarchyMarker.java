@@ -8,17 +8,11 @@ import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
+import minerful.utils.MessagePrinter;
 
 public class SubsumptionHierarchyMarker {
 	private static final String HIERARCHY_CODE = "'SH-check'";
-	private static Logger logger = Logger.getLogger(SubsumptionHierarchyMarker.class.getCanonicalName());
-	
-	public static Logger getLogger() {
-		return logger;
-	}
+	private static MessagePrinter logger = MessagePrinter.getInstance(SubsumptionHierarchyMarker.class.getCanonicalName());
 
 	private int numberOfMarkedConstraints = 0;
 	private boolean checking = false;
@@ -77,7 +71,7 @@ public class SubsumptionHierarchyMarker {
 		                if (currCon.hasConstraintToBaseUpon()) {
 		                	// ... if the current one has the same support of all others
 		                    if (currCon.isMoreInformativeThanGeneric()) {
-		                    	LogMF.trace(logger,
+		                    	logger.trace(
 		                    			"Removing the genealogy of {1}, starting with {0}, because {1} is subsumed by {0} and more informative than the whole genalogy", 
 		                    			currCon.getConstraintWhichThisIsBasedUpon(),
 		                    			currCon
@@ -86,7 +80,7 @@ public class SubsumptionHierarchyMarker {
 		                    } else {
 		                    	// If we want to be "conservative" (namely, a higher support justifies the removal of more strict constraints, this is the way to go
 		                    	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY)) {
-			                    	LogMF.trace(logger,
+		                    		logger.trace(
 			                    			"Removing {0} because {1} has a higher support and {0} is subsumed by it",
 			                    			currCon,
 			                    			currCon.getConstraintWhichThisIsBasedUpon());
@@ -104,7 +98,7 @@ public class SubsumptionHierarchyMarker {
 		                    coExiCon = (MutualRelationConstraint) currCon;
 		                    if (coExiCon.hasImplyingConstraints()) {
 		                        if (coExiCon.isAsInformativeAsTheImplyingConstraints()) {
-		                        	LogMF.trace(logger, "Removing {0}" +
+		                        	logger.trace("Removing {0}" +
 		                        			", which is the forward, and {1}" +
 		                        			", which is the backward, because {2}" +
 		                        			" is the Mutual Relation referring to them and more informative",
@@ -135,7 +129,7 @@ public class SubsumptionHierarchyMarker {
 	                    noRelCon = (NegativeRelationConstraint) currCon;
 	                    if (noRelCon.hasOpponent()) {
 	                        if (noRelCon.isMoreReliableThanTheOpponent()) {
-	                        	LogMF.trace(logger, "Removing {0}" +
+	                        	logger.trace("Removing {0}" +
 	                        			" because {1} is the opponent of {0}" +
 	                        			" but less supported",
 	                        			noRelCon.getOpponent(),
@@ -143,7 +137,7 @@ public class SubsumptionHierarchyMarker {
 //	                            constraintsBag.remove(key, noRelCon.getOpponent());
 	                        	this.markAsRedundant(noRelCon.getOpponent());
 	                        } else {
-	                        	LogMF.trace(logger, "Removing {0}" +
+	                        	logger.trace("Removing {0}" +
 	                        			" because {0} is the opponent of {1}" +
 	                        			" but less supported",
 	                        			noRelCon,
@@ -178,8 +172,8 @@ public class SubsumptionHierarchyMarker {
     }
 
 	private void markAsRedundant(Constraint constraint) {
-    	if (!constraint.redundant) {
-			constraint.redundant = true;
+    	if (!constraint.isRedundant()) {
+			constraint.setRedundant(true);
 			this.numberOfMarkedConstraints++;
     	}
 	}

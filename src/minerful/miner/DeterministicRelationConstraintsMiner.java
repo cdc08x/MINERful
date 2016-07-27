@@ -44,7 +44,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             constraintsBag = new ConstraintsBag(tasksToQueryFor);
         LocalStatsWrapper auxLocalStats = null;
         Set<Constraint> auxRelCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
+        		MetaConstraintUtils.howManyDiscoverableConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
         for (TaskChar tCh: tasksToQueryFor) {
             auxLocalStats = this.globalStats.statsTable.get(tCh.identifier);
             // Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it. Thus, it is perfectly useless to indagate over it -- and believe me, if you remove this check, it actually happens you have every possible restrictive constraint as valid in the list!
@@ -70,7 +70,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                 alwaysNeverAlternatingAfter = false, alwaysNeverAlternatingBefore = false,
                 alwaysNever = false, alwaysNeverAfter = false, alwaysNeverOneStepAfter = false;
         Set<Constraint> relaCons = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleRelationConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
+        		MetaConstraintUtils.howManyDiscoverableRelationConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
         for (TaskChar other: localStats.interplayStatsTable.keySet()) {
             never = false;
             neverAfter = false;
@@ -179,7 +179,7 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
 	@Override
     protected Set<Constraint> refineRelationConstraints(Set<Constraint> setOfConstraints) {
         Set<Constraint> auxSet = super.makeTemporarySet(
-        		MetaConstraintUtils.howManyPossibleConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
+        		MetaConstraintUtils.howManyDiscoverableConstraints(tasksToQueryFor.size(), this.taskCharArchive.size()));
 
         RelationConstraint auxConstraint = null, testConstraint = null;
         RelationConstraint[] refinedConstraints = null;

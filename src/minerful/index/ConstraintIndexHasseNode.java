@@ -26,7 +26,7 @@ public class ConstraintIndexHasseNode implements Comparable<ConstraintIndexHasse
 			SortedMap<TaskChar, ConstraintIndexHasseNode> children) {
 		this.identifier = UUID.randomUUID();
 		this.constraints = new HashMap<Class<? extends Constraint>, Constraint>(
-				MetaConstraintUtils.NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES,
+				MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES,
 				(float) 1.0);
 		this.uncles = new ArrayList<ConstraintIndexHasseNode>();
 		this.parent = parent;
@@ -78,8 +78,8 @@ public class ConstraintIndexHasseNode implements Comparable<ConstraintIndexHasse
 //			if (!constraint.redundant) {
 				sBuil.append(constraint);
 				sBuil.append(" => ");
-				sBuil.append(constraint.support);
-				if (constraint.redundant)
+				sBuil.append(constraint.getSupport());
+				if (constraint.isRedundant())
 					sBuil.append(" (redundant)");
 				sBuil.append("\n");
 //			}

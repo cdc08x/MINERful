@@ -34,12 +34,19 @@ import minerful.concept.constraint.relation.Succession;
 
 import org.reflections.Reflections;
 
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 public class MetaConstraintUtils {
-	public static Collection<Class<? extends Constraint>> ALL_POSSIBLE_CONSTRAINT_TEMPLATES = getAllPossibleConstraintTemplates();
-	public static Collection<Class<? extends Constraint>> ALL_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES = getAllPossibleRelationConstraintTemplates(ALL_POSSIBLE_CONSTRAINT_TEMPLATES);
-	public static Collection<Class<? extends Constraint>> ALL_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES = getAllPossibleExistenceConstraintTemplates();
-	public static int NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES = ALL_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES.size();
-	public static int NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES = ALL_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES.size();
+	public static Collection<Class<? extends Constraint>> ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES = getAllDiscoverableConstraintTemplates();
+	public static Collection<Class<? extends Constraint>> ALL_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES = getRelationConstraintTemplates(ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES);
+	public static Collection<Class<? extends Constraint>> ALL_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES = getExistenceConstraintTemplates(ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES);
+	public static Collection<Class<? extends Constraint>> ALL_CONSTRAINT_TEMPLATES = getAllConstraintTemplates();
+	public static Collection<Class<? extends Constraint>> ALL_RELATION_CONSTRAINT_TEMPLATES = getRelationConstraintTemplates(ALL_CONSTRAINT_TEMPLATES);
+	public static Collection<Class<? extends Constraint>> ALL_EXISTENCE_CONSTRAINT_TEMPLATES = getExistenceConstraintTemplates(ALL_CONSTRAINT_TEMPLATES);
+	public static int NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES = ALL_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES.size();
+	public static int NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES = ALL_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES.size();
+	public static int NUMBER_OF_RELATION_CONSTRAINT_TEMPLATES = ALL_RELATION_CONSTRAINT_TEMPLATES.size();
+	public static int NUMBER_OF_EXISTENCE_CONSTRAINT_TEMPLATES = ALL_EXISTENCE_CONSTRAINT_TEMPLATES.size();
 
 	public static Collection<Constraint> createHierarchicalLinks(Collection<Constraint> constraints) {
 		TreeSet<Constraint> treeConSet = new TreeSet<Constraint>(constraints);
@@ -89,24 +96,45 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(18);
 		// Existence
-		constraintTemplates.addAll(getAllPossibleExistenceConstraintTemplates());
+		constraintTemplates.addAll(getAllDiscoverableExistenceConstraintTemplates());
 		// Relation onwards
-		constraintTemplates.addAll(getAllPossibleForwardRelationConstraintTemplates());
+		constraintTemplates.addAll(getAllDiscoverableForwardRelationConstraintTemplates());
 		// Relation backwards
-		constraintTemplates.addAll(getAllPossibleBackwardRelationConstraintTemplates());
+		constraintTemplates.addAll(getAllDiscoverableBackwardRelationConstraintTemplates());
 		// Mutual relation
-		constraintTemplates.addAll(getAllPossibleMutualRelationConstraintTemplates());
+		constraintTemplates.addAll(getAllDiscoverableMutualRelationConstraintTemplates());
 		// Negation relation
-		constraintTemplates.addAll(getAllPossibleNegativeRelationConstraintTemplates());
+		constraintTemplates.addAll(getAllDiscoverableNegativeRelationConstraintTemplates());
 
 		
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleExistenceConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllConstraintTemplates() {
+		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(18);
+		// Existence
+		constraintTemplates.addAll(getAllExistenceConstraintTemplates());
+		// Relation onwards
+		constraintTemplates.addAll(getAllForwardRelationConstraintTemplates());
+		// Relation backwards
+		constraintTemplates.addAll(getAllBackwardRelationConstraintTemplates());
+		// Mutual relation
+		constraintTemplates.addAll(getAllMutualRelationConstraintTemplates());
+		// Negation relation
+		constraintTemplates.addAll(getAllNegativeRelationConstraintTemplates());
+
+		
+		return constraintTemplates;
+	}
+
+	public static Collection<Class<? extends Constraint>> getAllExistenceConstraintTemplates() {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableExistenceConstraintTemplates();
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableExistenceConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(4);
 		// Existence
 		constraintTemplates.add(End.class);
@@ -117,7 +145,11 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleForwardRelationConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllForwardRelationConstraintTemplates() {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableForwardRelationConstraintTemplates();
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableForwardRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(4);
 		// Relation onwards
 		constraintTemplates.add(RespondedExistence.class);
@@ -128,7 +160,11 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleBackwardRelationConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllBackwardRelationConstraintTemplates() {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableBackwardRelationConstraintTemplates();
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableBackwardRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(3);
 		// Relation backwards
 		constraintTemplates.add(Precedence.class);
@@ -138,7 +174,11 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleMutualRelationConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllMutualRelationConstraintTemplates() {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableMutualRelationConstraintTemplates();
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableMutualRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(4);
 		// Mutual relation
 		constraintTemplates.add(CoExistence.class);
@@ -149,7 +189,11 @@ public class MetaConstraintUtils {
 		return constraintTemplates;
 	}
 
-	public static Collection<Class<? extends Constraint>> getAllPossibleNegativeRelationConstraintTemplates() {
+	public static Collection<Class<? extends Constraint>> getAllNegativeRelationConstraintTemplates() {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableNegativeRelationConstraintTemplates();
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableNegativeRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(3);
 		// Negation relation
 		constraintTemplates.add(NotCoExistence.class);
@@ -167,9 +211,9 @@ public class MetaConstraintUtils {
 		return c instanceof RelationConstraint;
 	}
 	
-	public static Collection<Class<? extends Constraint>> getAllPossibleRelationConstraintTemplates(Collection<Class<? extends Constraint>> allPossibleConstraintTemplates) {
+	public static Collection<Class<? extends Constraint>> getRelationConstraintTemplates(Collection<Class<? extends Constraint>> constraintTemplates) {
 		Collection<Class<? extends Constraint>> relConTemplates = new ArrayList<Class<? extends Constraint>>();
-		for (Class<? extends Constraint> cnsTemplate : allPossibleConstraintTemplates) {
+		for (Class<? extends Constraint> cnsTemplate : constraintTemplates) {
 			if (RelationConstraint.class.isAssignableFrom(cnsTemplate)) {
 				relConTemplates.add(cnsTemplate);
 			}
@@ -177,10 +221,10 @@ public class MetaConstraintUtils {
 		return relConTemplates;
 	}
 	
-	public static Collection<Class<? extends Constraint>> getAllPossibleExistenceConstraintTemplates(Collection<Class<? extends Constraint>> allPossibleConstraintTemplates) {
+	public static Collection<Class<? extends Constraint>> getExistenceConstraintTemplates(Collection<Class<? extends Constraint>> constraintTemplates) {
 		Collection<Class<? extends Constraint>> relConTemplates = new ArrayList<Class<? extends Constraint>>();
 
-		for (Class<? extends Constraint> cnsTemplate : allPossibleConstraintTemplates) {
+		for (Class<? extends Constraint> cnsTemplate : constraintTemplates) {
 			if (ExistenceConstraint.class.isAssignableFrom(cnsTemplate)) {
 				relConTemplates.add(cnsTemplate);
 			}
@@ -189,45 +233,65 @@ public class MetaConstraintUtils {
 	}
 	
 	public static int howManyPossibleExistenceConstraints(int numOfTasksToQueryFor) {
-		return NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES * numOfTasksToQueryFor;
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return howManyDiscoverableExistenceConstraints(numOfTasksToQueryFor);
+	}
+	public static int howManyDiscoverableExistenceConstraints(int numOfTasksToQueryFor) {
+		return NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES * numOfTasksToQueryFor;
 	}
 	
 	public static int howManyPossibleRelationConstraints(int numOfTasksToQueryFor, int alphabetSize) {
-		return NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES * numOfTasksToQueryFor * (alphabetSize -1);
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return howManyDiscoverableRelationConstraints(numOfTasksToQueryFor, alphabetSize);
+	}
+	public static int howManyDiscoverableRelationConstraints(int numOfTasksToQueryFor, int alphabetSize) {
+		return NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES * numOfTasksToQueryFor * (alphabetSize -1);
 	}
 
 	public static int howManyPossibleConstraints(int numOfTasksToQueryFor, int alphabetSize) {
-		return	howManyPossibleRelationConstraints(numOfTasksToQueryFor, alphabetSize) +
-				howManyPossibleExistenceConstraints(numOfTasksToQueryFor);
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return howManyDiscoverableConstraints(numOfTasksToQueryFor, alphabetSize);
+	}
+	public static int howManyDiscoverableConstraints(int numOfTasksToQueryFor, int alphabetSize) {
+		return	howManyDiscoverableRelationConstraints(numOfTasksToQueryFor, alphabetSize) +
+				howManyDiscoverableExistenceConstraints(numOfTasksToQueryFor);
 	}
 	
 	public static int howManyPossibleConstraints(int alphabetSize) {
-		return	howManyPossibleRelationConstraints(alphabetSize, alphabetSize) +
-				howManyPossibleExistenceConstraints(alphabetSize);
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return howManyDiscoverableConstraints(alphabetSize);
+	}
+	public static int howManyDiscoverableConstraints(int alphabetSize) {
+		return	howManyDiscoverableRelationConstraints(alphabetSize, alphabetSize) +
+				howManyDiscoverableExistenceConstraints(alphabetSize);
 	}
 
+	public static Collection<Constraint> getAllPossibleRelationConstraints(TaskChar base, TaskChar implied) {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableRelationConstraints(base, implied);
+	}
 	/* The second coolest method I ever coded! */
-	public static Collection<Constraint> getAllRelationConstraints(TaskChar base, TaskChar implied) {
+	public static Collection<Constraint> getAllDiscoverableRelationConstraints(TaskChar base, TaskChar implied) {
 		Collection<Constraint> relCons = new ArrayList<Constraint>();
 		Constructor<? extends Constraint> tmpConstructor = null;
 
 		try {
-			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleForwardRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableForwardRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class, Double.TYPE);
 				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
 			}
-			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleBackwardRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class, Double.TYPE);
 				relCons.add(tmpConstructor.newInstance(implied, base, 0.0));
 			}
-			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleNegativeRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableNegativeRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class, Double.TYPE);
 				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
 			}
-			for (Class<? extends Constraint> relationConstraintTypeClass : getAllPossibleMutualRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class, Double.TYPE);
 				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
@@ -241,11 +305,15 @@ public class MetaConstraintUtils {
 		return relCons;
 	}
 	
+	public static Collection<Constraint> getAllPossibleExistenceConstraints(TaskChar base) {
+		// TODO Change it if new definitions of not yet discoverable templates are given
+		return getAllDiscoverableExistenceConstraints(base);
+	}
 	/* The third coolest method I ever coded! */
-	public static Collection<Constraint> getAllExistenceConstraints(TaskChar base) {
+	public static Collection<Constraint> getAllDiscoverableExistenceConstraints(TaskChar base) {
 		Collection<Constraint> exiCons = new ArrayList<Constraint>();
 
-		Collection<Class<? extends Constraint>> existenceConstraintTypeClasses = ALL_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES;
+		Collection<Class<? extends Constraint>> existenceConstraintTypeClasses = ALL_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES;
 		Constructor<? extends Constraint> tmpConstructor = null;
 		
 		for (Class<? extends Constraint> existenceConstraintTypeClass : existenceConstraintTypeClasses) {

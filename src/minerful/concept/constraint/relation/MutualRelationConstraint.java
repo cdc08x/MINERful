@@ -76,21 +76,21 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 	}
 
 	public boolean isAsInformativeAsTheImplyingConstraints() {
-	    return	this.support >= forwardConstraint.support &&
-	            this.support >= backwardConstraint.support;
+	    return	this.support >= forwardConstraint.getSupport() &&
+	            this.support >= backwardConstraint.getSupport();
 	}
 
 	public boolean isMoreInformativeThanAnyOfImplyingConstraints() {
-	    return	this.support >= forwardConstraint.support ||
-	            this.support >= backwardConstraint.support;
+	    return	this.support >= forwardConstraint.getSupport() ||
+	            this.support >= backwardConstraint.getSupport();
 	}
 
 	public boolean isMoreInformativeThanForwardConstraint() {
-	    return	this.support >= forwardConstraint.support;
+	    return	this.support >= forwardConstraint.getSupport();
 	}
 
 	public boolean isMoreInformativeThanBackwardConstraints() {
-	    return	this.support >= backwardConstraint.support;
+	    return	this.support >= backwardConstraint.getSupport();
 	}
 
 	protected boolean ckeckConsistency(RelationConstraint forwardConstraint, RelationConstraint backwardConstraint) {

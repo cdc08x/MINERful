@@ -54,10 +54,10 @@ public class MinerFulLogMaker {
 		this.parameters = parameters;
 	}
 
-	public XLog createLog(AssignmentModel declareMapModel) {
-		this.log = createLog(DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(declareMapModel));
-		return this.log;
-	}
+//	public XLog createLog(AssignmentModel declareMapModel) {
+//		this.log = createLog(DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(declareMapModel));
+//		return this.log;
+//	}
 
 	public XLog createLog(ProcessModel processModel) {
 		XFactory xFactory = new XFactoryBufferedImpl();

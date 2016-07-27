@@ -17,11 +17,13 @@ import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulSimuStarter extends MinerFulMinerStarter {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulSimuStarter.class);
 
 	@Override
 	public Options setupOptions() {
@@ -98,7 +100,7 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
         	System.exit(0);
         }
         
-        configureLogging(systemParams.debugLevel);
+        MessagePrinter.configureLogging(systemParams.debugLevel);
         
         String[] testBedArray = new String[0];
         
@@ -110,7 +112,7 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
 			ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, systemParams, postParams, taskCharArchive);
 	        
-	        MinerFulProcessOutputMgtStarter proViewStarter = new MinerFulProcessOutputMgtStarter(); 
+	        MinerFulOutputManagementLauncher proViewStarter = new MinerFulOutputManagementLauncher(); 
 	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
 
 		} catch (Exception e) {

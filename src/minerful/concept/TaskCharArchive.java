@@ -66,6 +66,11 @@ public class TaskCharArchive {
 		this.computeIndices();
 	}
 
+	public TaskCharArchive(Collection<TaskChar> taskChars) {
+		this.taskChars = new TreeSet<TaskChar>(taskChars);
+		this.computeIndices();
+	}
+
 	public TaskCharArchive(Map<Character, AbstractTaskClass> roughTaskChars) {
 		this.taskChars = new TreeSet<TaskChar>();
 		TreeMap<Character, TaskChar> fastTmpMapById = new TreeMap<Character, TaskChar>();
@@ -112,10 +117,26 @@ public class TaskCharArchive {
 		return new TreeSet<TaskChar>(this.taskChars);
 	}
 
-	public Collection<TaskChar> getTaskChars(Collection<Character> fromCharacters) {
+	public Collection<TaskChar> getTaskCharsIdentifiedByCharacters(Collection<Character> fromCharacters) {
 		Collection<TaskChar> taskChars = new ArrayList<TaskChar>(fromCharacters.size());
 		for (Character chr : fromCharacters) {
 			taskChars.add(this.getTaskChar(chr));
+		}
+		return taskChars;
+	}
+
+	public Collection<TaskChar> getTaskCharsIdentifiedByTaskClasses(Collection<AbstractTaskClass> fromtTaskClasses) {
+		Collection<TaskChar> taskChars = new ArrayList<TaskChar>(fromtTaskClasses.size());
+		for (AbstractTaskClass chr : fromtTaskClasses) {
+			taskChars.add(this.getTaskChar(chr));
+		}
+		return taskChars;
+	}
+
+	public Collection<TaskChar> getTaskCharsIdentifiedByStrings(Collection<String> taskNames) {
+		Collection<TaskChar> taskChars = new ArrayList<TaskChar>(taskNames.size());
+		for (String taskName : taskNames) {
+			taskChars.add(this.getTaskChar(taskName));
 		}
 		return taskChars;
 	}

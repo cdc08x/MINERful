@@ -9,6 +9,7 @@ import minerful.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -16,8 +17,8 @@ import org.apache.log4j.Logger;
 
 
 public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulStarter {
-    private static Logger logger = Logger.getLogger(MinerFulErrorInjectedTracesMakerStarter.class.getCanonicalName());
-
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulErrorInjectedTracesMakerStarter.class);
+	
     @Override
 	public Options setupOptions() {
     	Options cmdLineOptions = new Options();
@@ -110,7 +111,7 @@ public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulSta
         	System.exit(0);
         }
         
-    	configureLogging(systemParams.debugLevel);
+    	MessagePrinter.configureLogging(systemParams.debugLevel);
     	
     	String[] testBedArray = new MinerFulStringTracesMaker().makeTraces(tracesMakParams);
     	testBedArray = injectErrors(testBedArray, tracesMakParams, errorInjexParams);

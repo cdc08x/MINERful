@@ -168,10 +168,10 @@ public class ConstraintsBag implements Cloneable {
         Collection<TaskChar> implieds = wholeAlphabet;
         
         for (TaskChar base: bases) {
-        	nuBag.addAll(base, MetaConstraintUtils.getAllExistenceConstraints(base));
+        	nuBag.addAll(base, MetaConstraintUtils.getAllDiscoverableExistenceConstraints(base));
         	for (TaskChar implied: implieds) {
         		if (!base.equals(implied))
-        			nuBag.addAll(base, MetaConstraintUtils.getAllRelationConstraints(base, implied));
+        			nuBag.addAll(base, MetaConstraintUtils.getAllDiscoverableRelationConstraints(base, implied));
         	}
         }
         

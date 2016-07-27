@@ -3,11 +3,14 @@ package minerful;
 import minerful.params.SystemCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulTracesMakerStarter extends AbstractMinerFulStarter {
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulTracesMakerStarter.class);
+			
 	@Override
 	public Options setupOptions() {
     	Options cmdLineOptions = new Options();
@@ -43,7 +46,7 @@ public class MinerFulTracesMakerStarter extends AbstractMinerFulStarter {
         	System.exit(0);
         }
         
-    	configureLogging(systemParams.debugLevel);
+    	MessagePrinter.configureLogging(systemParams.debugLevel);
     	
     	MinerFulStringTracesMaker traMaker = new MinerFulStringTracesMaker();
     	

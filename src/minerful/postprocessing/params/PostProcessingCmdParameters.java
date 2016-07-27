@@ -23,23 +23,6 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		RANDOM
 	}
 
-	// TODO Still unused
-	public static enum HierarchySubsumptionPruningPolicy {
-		NONE,
-		HIERARCHY,
-		SUPPORTHIERARCHY;	// default
-		
-		public SubsumptionHierarchyMarkingPolicy translate() {
-			switch(this) {
-			case HIERARCHY:
-				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_SUPPORT;
-			case SUPPORTHIERARCHY:
-			default:
-				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY;
-			}
-		}
-	}
-
 	/**
 	 * Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process model.
 	 * @author Claudio Di Ciccio
@@ -89,6 +72,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final String ANALYSIS_TYPE_PARAM_NAME = "ppAT";
 	public static final String RANKING_POLICY_PARAM_NAME = "ppPP";
 	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP";
+	public static final String KEEP_CONSTRAINTS_PARAM_NAME = "keep";
 	public static final char SUPPORT_THRESHOLD_PARAM_NAME = 's';
 	public static final char INTEREST_THRESHOLD_PARAM_NAME = 'i';
 	public static final char CONFIDENCE_THRESHOLD_PARAM_NAME = 'c';
@@ -98,6 +82,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = Constraint.MIN_CONFIDENCE;
 	public static final PostProcessingAnalysisType DEFAULT_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
+	public static final boolean IS_KEEPING_ALL_CONSTRAINTS_BY_DEFAULT = false;
 
 	/** Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following in the array is utilised. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
 	public ConstraintSortingPolicy[] sortingPolicies;	// mandatory assignment
@@ -111,6 +96,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
     public Double confidenceThreshold;
 	/** Minimum interest factor threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_INTEREST_FACTOR_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
 	public Double interestFactorThreshold;
+	/** Specifies whether the redundant or inconsistent constraints should be only marked as such (<code>false</code>), hence hidden, or cropped (removed) from the model (<code>true</code>) */
+	public boolean cropRedundantAndInconsistentConstraints;
 
 	public static final ConstraintSortingPolicy[] DEFAULT_PRIORITY_POLICIES = new ConstraintSortingPolicy[] {
 		ConstraintSortingPolicy.ACTIVATIONTARGETBONDS,
@@ -126,6 +113,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	    this.supportThreshold = DEFAULT_SUPPORT_THRESHOLD;
 	    this.confidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
 	    this.interestFactorThreshold = DEFAULT_INTEREST_FACTOR_THRESHOLD;
+	    this.cropRedundantAndInconsistentConstraints = !IS_KEEPING_ALL_CONSTRAINTS_BY_DEFAULT;
 	}
     
     public PostProcessingCmdParameters(Options options, String[] args) {
@@ -160,6 +148,12 @@ public class PostProcessingCmdParameters extends ParamsManager {
 						this.confidenceThreshold.toString()
 						)
 				);
+		
+		if (line.hasOption(KEEP_CONSTRAINTS_PARAM_NAME)) {
+			this.cropRedundantAndInconsistentConstraints = false;
+		} else {
+			this.cropRedundantAndInconsistentConstraints = !IS_KEEPING_ALL_CONSTRAINTS_BY_DEFAULT;
+		}
 
 		String analysisTypeString = line.getOptionValue(ANALYSIS_TYPE_PARAM_NAME);
 		if (analysisTypeString != null && !analysisTypeString.isEmpty()) {
@@ -259,6 +253,31 @@ public class PostProcessingCmdParameters extends ParamsManager {
         		.withType(new Double(0))
         		.create(INTEREST_THRESHOLD_PARAM_NAME)
         		);
+        options.addOption(
+        		OptionBuilder
+        		.withLongOpt("keep-constraints")
+        		.withDescription("do not physically remove the redundant or inconsistent constraints from the model")
+        		.withType(new Boolean(false))
+        		.create(KEEP_CONSTRAINTS_PARAM_NAME)
+        		);
         return options;
+	}
+	
+
+	// TODO Still unused
+	public static enum HierarchySubsumptionPruningPolicy {
+		NONE,
+		HIERARCHY,
+		SUPPORTHIERARCHY;	// default
+		
+		public SubsumptionHierarchyMarkingPolicy translate() {
+			switch(this) {
+			case HIERARCHY:
+				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_SUPPORT;
+			case SUPPORTHIERARCHY:
+			default:
+				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY;
+			}
+		}
 	}
 }

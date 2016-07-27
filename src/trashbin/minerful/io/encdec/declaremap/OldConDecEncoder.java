@@ -1,4 +1,4 @@
-package minerful.io.encdec.declaremap;
+package trashbin.minerful.io.encdec.declaremap;
 
 import java.util.HashMap;
 
@@ -19,11 +19,11 @@ public class OldConDecEncoder {
 	
 	public static HashMap<Class<? extends Constraint>, String> NAME_CONVERTER =
 			new HashMap<Class<? extends Constraint>, String>(
-					MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES,
+					MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES,
 					1.0F);
 	public static HashMap<Class<? extends Constraint>, String> LTL_CONVERTER =
 			new HashMap<Class<? extends Constraint>, String>(
-					MetaConstraintUtils.NUMBER_OF_POSSIBLE_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_POSSIBLE_RELATION_CONSTRAINT_TEMPLATES,
+					MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES + MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES,
 					1.0F);
 	
 	static {

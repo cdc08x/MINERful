@@ -56,25 +56,25 @@ public abstract class Constraint implements Comparable<Constraint> {
 //	@XmlTransient
     protected TaskCharSet base;
 	@XmlElement
-    public double support;
+	protected double support;
 	@XmlElement
-	public double confidence;
+	protected double confidence;
 	@XmlElement
-	public double interestFactor;
+	protected double interestFactor;
 	@XmlAttribute
-	public boolean evaluatedOnLog = false;
+	protected boolean evaluatedOnLog = false;
 	@XmlTransient
 	public final String type = this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') +1);
-	@XmlTransient
-	public boolean redundant = false;
-	@XmlTransient
-	public boolean conflicting = false;
-	@XmlTransient
-	public boolean belowSupportThreshold = false;
-	@XmlTransient
-	public boolean belowConfidenceThreshold = false;
-	@XmlTransient
-	public boolean belowInterestFactorThreshold = false;
+	@XmlAttribute
+	protected boolean redundant = false;
+	@XmlAttribute
+	protected boolean conflicting = false;
+	@XmlAttribute
+	protected boolean belowSupportThreshold = false;
+	@XmlAttribute
+	protected boolean belowConfidenceThreshold = false;
+	@XmlAttribute
+	protected boolean belowInterestFactorThreshold = false;
 	@XmlTransient
     protected Constraint constraintWhichThisIsBasedUpon;
 	@XmlElementWrapper(name="parameters")
@@ -93,26 +93,35 @@ public abstract class Constraint implements Comparable<Constraint> {
 		this(param, DEFAULT_SUPPORT);
 	}
     
-    private void checkSupport() {
-        if (        support < MIN_SUPPORT
-                ||  support > MAX_SUPPORT) {
+    private boolean checkSupport(double support) {
+        if (support < MIN_SUPPORT || support > MAX_SUPPORT) {
             throw new IllegalArgumentException("Provided support for " + this.toString() + " out of range: " + support);
         }
-        return;
+        return true;
+    }
+    private boolean checkConfidence(double confidence) {
+        if (confidence < MIN_CONFIDENCE || confidence > MAX_CONFIDENCE) {
+            throw new IllegalArgumentException("Provided confidence level for " + this.toString() + " out of range: " + confidence);
+        }
+        return true;
+    }
+    private boolean checkInterestFactor(double interestFactor) {
+        if (interestFactor < MIN_INTEREST_FACTOR || interestFactor > MAX_INTEREST_FACTOR) {
+            throw new IllegalArgumentException("Provided interest factor for " + this.toString() + " out of range: " + interestFactor);
+        }
+        return true;
     }
 
 	public Constraint(TaskChar param, double support) {
-		this.checkSupport();
 		this.base = new TaskCharSet(param);
-		this.support = support;
+		this.setSupport(support);
 		this.parameters = new ArrayList<TaskCharSet>(1);
 		this.parameters.add(this.base);
 	}
 
     public Constraint(TaskCharSet param, double support) {
-    	this.checkSupport();
         this.base = param;
-        this.support = support;
+        this.setSupport(support);
 		this.parameters = new ArrayList<TaskCharSet>(1);
 		this.parameters.add(this.base);
     }
@@ -190,15 +199,39 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public boolean isRedundant() {
 		return this.redundant;
 	}
-
-	private boolean isConflicting() {
+	public boolean isConflicting() {
 		return this.conflicting;
+	}
+	public boolean isBelowSupportThreshold() {
+		return belowSupportThreshold;
+	}
+	public void setBelowSupportThreshold(boolean belowSupportThreshold) {
+		this.belowSupportThreshold = belowSupportThreshold;
+	}
+
+	public boolean isBelowConfidenceThreshold() {
+		return belowConfidenceThreshold;
+	}
+	public void setBelowConfidenceThreshold(boolean belowConfidenceThreshold) {
+		this.belowConfidenceThreshold = belowConfidenceThreshold;
+	}
+
+	public boolean isBelowInterestFactorThreshold() {
+		return belowInterestFactorThreshold;
+	}
+	public void setBelowInterestFactorThreshold(boolean belowInterestFactorThreshold) {
+		this.belowInterestFactorThreshold = belowInterestFactorThreshold;
+	}
+
+	public void setConflicting(boolean conflicting) {
+		this.conflicting = conflicting;
 	}
 	
 	public double getSupport() {
 		return support;
 	}
 	public void setSupport(double support) {
+		this.checkSupport(support);
 		this.support = support;
 	}
 
@@ -206,6 +239,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return confidence;
 	}
 	public void setConfidence(double confidence) {
+		this.checkConfidence(confidence);
 		this.confidence = confidence;
 	}
 
@@ -213,7 +247,15 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return interestFactor;
 	}
 	public void setInterestFactor(double interestFactor) {
+		this.checkInterestFactor(interestFactor);
 		this.interestFactor = interestFactor;
+	}
+
+	public boolean isEvaluatedOnLog() {
+		return evaluatedOnLog;
+	}
+	public void setEvaluatedOnLog(boolean evaluatedOnLog) {
+		this.evaluatedOnLog = evaluatedOnLog;
 	}
 
 	/**
@@ -412,6 +454,10 @@ public abstract class Constraint implements Comparable<Constraint> {
     	return cns;
     }
 
+	public void setRedundant(boolean redundant) {
+		this.redundant = redundant;
+	}
+
 	public boolean isMarkedForExclusion() {
 		return this.isRedundant() || !this.isAboveThresholds() || this.isConflicting();
 	}
@@ -431,5 +477,22 @@ public abstract class Constraint implements Comparable<Constraint> {
 		if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
 			this.base = this.getParameters().get(0);
 		}
+	}
+
+	/**
+	 * Resets properties
+	 * {@link #belowSupportThreshold belowSupportThreshold}, 
+	 * {@link #belowConfidenceThreshold belowConfidenceThreshold}, 
+	 * {@link #belowInterestFactorThreshold belowInterestFactorThreshold},
+	 * {@link #conflicting conflicting},
+	 * {@link #redundant redundant}
+	 * to their default values.
+	 */
+	public void resetMarks() {
+		this.belowSupportThreshold = false;
+		this.belowConfidenceThreshold = false;
+		this.belowInterestFactorThreshold = false;
+		this.conflicting = false;
+		this.redundant = false;
 	}
 }
