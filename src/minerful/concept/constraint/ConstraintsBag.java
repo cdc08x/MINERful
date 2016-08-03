@@ -204,6 +204,15 @@ public class ConstraintsBag implements Cloneable {
 		return numberOfConstraints;
 	}
 
+	public int howManyUnmarkedConstraints() {
+		int i = 0;
+		for (TaskChar key : this.getTaskChars())
+        	for (Constraint c : this.getConstraintsOf(key))
+        		if (!c.isMarkedForExclusion())
+        			i++;
+		return i;
+	}
+
 	public Long howManyExistenceConstraints() {
 		long i = 0L;
         for (TaskChar key : this.taskChars)

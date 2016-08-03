@@ -2,13 +2,10 @@ package minerful.logmaker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -18,8 +15,8 @@ import minerful.automaton.AutomatonRandomWalker;
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
-import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logmaker.params.LogMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 import org.deckfour.xes.classification.XEventNameClassifier;
 import org.deckfour.xes.extension.std.XConceptExtension;
@@ -32,14 +29,14 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 import org.deckfour.xes.out.XMxmlSerializer;
 import org.deckfour.xes.out.XesXmlSerializer;
-import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import dk.brics.automaton.Automaton;
-import dk.brics.automaton.State;
 
 public class MinerFulLogMaker {
 	private LogMakerCmdParameters parameters;
 	private XLog log;
+	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulLogMaker.class);
+
 
 	public MinerFulLogMaker(LogMakerCmdParameters parameters) throws IllegalArgumentException {
 		this.setParameters(parameters);
@@ -99,6 +96,7 @@ public class MinerFulLogMaker {
 			pickedTransitionChar = walker.walkOn();
 			while (pickedTransitionChar != null) {
 				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
+				MessagePrinter.printOut(firedTransition + ",");
 //System.out.print(firedTransition + ",");
 				
 				currentDate = generateRandomDateTimeForLogEvent(currentDate);
@@ -107,6 +105,7 @@ public class MinerFulLogMaker {
 				pickedTransitionChar = walker.walkOn();
 			}
 			this.log.add(xTrace);
+			MessagePrinter.printlnOut();
 //System.out.println();
 		}
 		

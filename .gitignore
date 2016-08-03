@@ -8,3 +8,7 @@ print-regexps.sh
 .project
 /bin/
 models
+/exec-logs/
+/studies-on-noise/
+/studies-on-space-consumption/
+/temp/

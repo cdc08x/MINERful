@@ -39,7 +39,10 @@ public class TaskChar implements Comparable<TaskChar> {
     	this.taskClass = taskClass;
 	}
 
-	@Override
+	/**
+	 * Returns {@link #getName() this.getName()}.
+	 */
+    @Override
     public String toString() {
         return this.getName();
     }
@@ -69,6 +72,9 @@ public class TaskChar implements Comparable<TaskChar> {
         return this.identifier.compareTo(t.identifier);
     }
 
+	/**
+	 * Returns the string version of {@link #taskClass this.taskClass}.
+	 */
     public String getName() {
     	return this.taskClass.toString();
     }

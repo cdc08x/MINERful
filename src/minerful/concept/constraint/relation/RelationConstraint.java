@@ -91,7 +91,7 @@ public abstract class RelationConstraint extends Constraint {
             		if (result == 0) {
             			result = this.getImplicationVerse().compareTo(other.getImplicationVerse());
 	            		if (result == 0) {
-	            			result = this.getName().compareTo(other.getName());
+	            			result = this.getTemplateName().compareTo(other.getTemplateName());
 	            			if (result != 0) {
 	                            if (this.getClass().isInstance(o)) {
 	                            	result = -1;

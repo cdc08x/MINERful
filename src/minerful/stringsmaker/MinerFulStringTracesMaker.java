@@ -3,9 +3,9 @@ package minerful.stringsmaker;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import minerful.io.encdec.IOutEncoder;
-import minerful.io.encdec.MxmlEncoder;
-import minerful.io.encdec.XesEncoder;
+import minerful.io.encdec.log.IOutEncoder;
+import minerful.io.encdec.log.MxmlEncoder;
+import minerful.io.encdec.log.XesEncoder;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 import minerful.utils.MessagePrinter;
 import nl.flotsam.xeger.Xeger;

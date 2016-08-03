@@ -22,9 +22,6 @@ import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.utils.MessagePrinter;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-
 public class MinerFulOutputManagementLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulOutputManagementLauncher.class);
 
@@ -39,11 +36,11 @@ public class MinerFulOutputManagementLauncher {
 					)
 			);
         }
-        if (outParams.fileToSaveConstraintsCsv != null) {
-			logger.info("Saving discovered constraints in CSV format as " + outParams.fileToSaveConstraintsCsv + "...");
+        if (outParams.fileToSaveConstraintsAsCSV != null) {
+			logger.info("Saving discovered constraints in CSV format as " + outParams.fileToSaveConstraintsAsCSV + "...");
 
         	try {
-    				outWriter = new PrintWriter(outParams.fileToSaveConstraintsCsv);
+    				outWriter = new PrintWriter(outParams.fileToSaveConstraintsAsCSV);
     	        	outWriter.print(printer.printBagCsv());
     	        	outWriter.flush();
     	        	outWriter.close();
@@ -52,16 +49,16 @@ public class MinerFulOutputManagementLauncher {
     				e.printStackTrace();
     			}
         }
-        if (outParams.fileToSaveConDecDefinition != null) {
-        	logger.info("Saving discovered process model in ConDec/Declare-map XML format as " + outParams.fileToSaveConDecDefinition + "...");
+        if (outParams.fileToSaveAsConDec != null) {
+        	logger.info("Saving discovered process model in ConDec/Declare-map XML format as " + outParams.fileToSaveAsConDec + "...");
         	try {
-				printer.printConDecModel(outParams.fileToSaveConDecDefinition);
+				printer.printConDecModel(outParams.fileToSaveAsConDec);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
-
+        
         ConstraintsBag bagClone = null;
         switch (viewParams.constraintsSorting) {
 		case support:
@@ -201,9 +198,9 @@ public class MinerFulOutputManagementLauncher {
 			MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
 		}
 
-		if (outParams.processModelOutputFile != null) {
-			File processModelOutFile = outParams.processModelOutputFile;
-			logger.info("Saving the discovered process as " + processModelOutFile + "...");
+		if (outParams.fileToSaveAsXML != null) {
+			File processModelOutFile = outParams.fileToSaveAsXML;
+			logger.info("Saving the discovered process as XML in " + processModelOutFile + "...");
 
 			try {
 				new ProcessModelEncoderDecoder().marshalProcessModel(processModel, processModelOutFile);
@@ -214,6 +211,21 @@ public class MinerFulOutputManagementLauncher {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (outParams.fileToSaveAsJSON != null) {
+			File processModelOutFile = outParams.fileToSaveAsJSON;
+			logger.info("Saving the discovered process as JSON in " + processModelOutFile + "...");
+
+			try {
+				new ProcessModelEncoderDecoder().writeToJson(processModel, processModelOutFile);
+			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {

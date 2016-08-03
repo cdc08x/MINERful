@@ -24,18 +24,18 @@ public enum DeclareMapTemplate {
 	}
 	
 	public static DeclareMapTemplate fromName(String name) {
-		if (name.contains("co-exi")) {
-			name = name.replace("co-exi", "CoExi");
-		}
 		name = WordUtils.capitalizeFully(name).replaceAll(" ", "_");
+		if (name.contains("Co-exi")) {
+			name = name.replace("Co-exi", "CoExi");
+		}
 		
 		DeclareMapTemplate mapTemplate = null;
 		try {
-			DeclareMapTemplate.valueOf(name);
+			mapTemplate = DeclareMapTemplate.valueOf(name);
 		} catch (IllegalArgumentException e) {
 			MessagePrinter.printlnError("The " + name + " template is not yet defined in MINERful.");
 		}
 		
-		return null;
+		return mapTemplate;
 	}
 }

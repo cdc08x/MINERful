@@ -1,4 +1,4 @@
-package minerful.io.encdec;
+package trashbin.minerful.io.encdec;
 
 import java.io.File;
 import java.util.ArrayList;

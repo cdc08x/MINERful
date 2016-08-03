@@ -14,10 +14,20 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
-import minerful.concept.ProcessModel;
-import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.MetaConstraintUtils;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
+import minerful.concept.ProcessModel;
+import minerful.concept.constraint.MetaConstraintUtils;
+import minerful.io.encdec.json.JsonPojoEncoderDecoder;
+import minerful.io.encdec.pojo.ProcessModelPojo;
+
+/**
+ * This class marshals and unmarshals process models to/from XML files.
+ * It also reads and saves process models in JSON format to/from JSON-formatted text files. 
+ * @author Claudio Di Ciccio
+ *
+ */
 public class ProcessModelEncoderDecoder {
 	public ProcessModel unmarshalProcessModel(File procSchmInFile) throws JAXBException, PropertyException, FileNotFoundException,
 			IOException {
@@ -39,6 +49,7 @@ public class ProcessModelEncoderDecoder {
 		
 		return proMod;
 	}
+
 	public void marshalProcessModel(ProcessModel processModel, File procSchmOutFile) 	throws JAXBException, PropertyException, FileNotFoundException, IOException {
 		String pkgName = processModel.getClass().getCanonicalName().toString();
 		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
@@ -60,6 +71,21 @@ public class ProcessModelEncoderDecoder {
 		strixFileWriter.flush();
 		strixFileWriter.close();
 	}
-	
-	
+
+	public ProcessModel readFromJsonFile(File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
+		ProcessModelPojo pojo = jsonPojoMgr.fromJsonToProcessModelPojo(processModelJsonFile);
+		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
+		TransferObjectToProcessModelTranslator translator = new TransferObjectToProcessModelTranslator();
+		return translator.createProcessModel(proModTO);
+	}
+
+	public void writeToJson(ProcessModel processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(processModel);
+		ProcessModelPojo pojo = proModTO.toPojo();
+		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
+		jsonPojoMgr.saveProcessModelPojo(pojo, processModelJsonFile);
+
+		return;
+	}
 }

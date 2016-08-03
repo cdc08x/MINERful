@@ -3,6 +3,8 @@ package minerful.concept;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -27,6 +29,16 @@ public class TaskCharSetFactory {
 
 	public TaskCharSet createSetFromTaskStrings(Collection<String> taskNames) {
 		return new TaskCharSet(this.taskCharArchive.getTaskCharsIdentifiedByStrings(taskNames));
+	}
+
+	public TaskCharSet[] createSetsFromTaskStringsCollection(
+			List<Set<String>> parameters) {
+		TaskCharSet[] sets = new TaskCharSet[parameters.size()];
+		int i = 0;
+		for (Set<String> paramSet: parameters) {
+			sets[i++] = this.createSetFromTaskStrings(paramSet);
+		}
+		return sets;
 	}
 	
 	public TaskCharSet createSet(TaskCharSet existing, Character plus) {

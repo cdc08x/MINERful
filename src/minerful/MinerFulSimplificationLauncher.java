@@ -55,13 +55,25 @@ public class MinerFulSimplificationLauncher {
 		ProcessModel inputProcess = null;
 			
 	    try {
-	        inputProcess =
-	        		(	inputParams.inputLanguage.equals(InputModelParameters.InputEncoding.MINERFUL)
-	        			?	new ProcessModelEncoderDecoder().unmarshalProcessModel(inputParams.inputFile)
-	        			:	new DeclareMapEncoderDecoder(inputParams.inputFile.getAbsolutePath()).createMinerFulProcessModel());
+	    	switch (inputParams.inputLanguage) {
+	    	case MINERFUL:
+	    		inputProcess = new ProcessModelEncoderDecoder().unmarshalProcessModel(inputParams.inputFile);
+	    		break;
+	    	case JSON:
+	    		inputProcess = new ProcessModelEncoderDecoder().readFromJsonFile(inputParams.inputFile);
+	    		break;
+	    	case DECLARE_MAP:
+	    		inputProcess = new DeclareMapEncoderDecoder(inputParams.inputFile.getAbsolutePath()).createMinerFulProcessModel();
+	    		break;
+    		default:
+    			break;
+	    	}
+//	        inputProcess =
+//	        		(	inputParams.inputLanguage.equals(InputModelParameters.InputEncoding.MINERFUL)
+//	        			?	new ProcessModelEncoderDecoder().unmarshalProcessModel(inputParams.inputFile)
+//	        			:	new DeclareMapEncoderDecoder(inputParams.inputFile.getAbsolutePath()).createMinerFulProcessModel());
 	    } catch (Exception e) {
-	    	System.err.println("Unreadable process model from file: " + inputParams.inputFile.getAbsolutePath() + ". Check the file path or the specified encoding.");
-	    	e.printStackTrace(System.err);
+	    	MessagePrinter.getInstance(this).error("Unreadable process model from file: " + inputParams.inputFile.getAbsolutePath() + ". Check the file path or the specified encoding.", e);
 	    	System.exit(1);
 	    }
 		return inputProcess;

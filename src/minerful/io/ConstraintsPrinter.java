@@ -134,7 +134,7 @@ public class ConstraintsPrinter {
 	        		superSbuf.append(';');
 	        		superSbuf.append('\'');
 //	        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
-	        		superSbuf.append(c.getName());
+	        		superSbuf.append(c.getTemplateName());
 	        		superSbuf.append('\'');
 	        		superSbuf.append(';');
 	        		superSbuf.append('\'');

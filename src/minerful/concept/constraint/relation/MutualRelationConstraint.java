@@ -113,13 +113,13 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 		this.backwardConstraint = backwardConstraint;
 	}
 
-	public RelationConstraint getPlausibleForwardConstraint() {
+	public RelationConstraint getPossibleForwardConstraint() {
 		if (this.hasForwardConstraint())
 			return this.getForwardConstraint();
 		return null;
 	}
 
-	public RelationConstraint getPlausibleBackwardConstraint() {
+	public RelationConstraint getPossibleBackwardConstraint() {
 		if (this.hasBackwardConstraint())
 			return this.getBackwardConstraint();
 		return null;

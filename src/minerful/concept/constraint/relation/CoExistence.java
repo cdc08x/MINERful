@@ -56,12 +56,12 @@ public class CoExistence extends MutualRelationConstraint {
 	}
 
 	@Override
-	public RespondedExistence getPlausibleForwardConstraint() {
+	public RespondedExistence getPossibleForwardConstraint() {
 		return new RespondedExistence(base, implied);
 	}
 
 	@Override
-	public RespondedExistence getPlausibleBackwardConstraint() {
+	public RespondedExistence getPossibleBackwardConstraint() {
 		return new RespondedExistence(implied, base);
 	}
 	

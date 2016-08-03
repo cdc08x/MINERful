@@ -25,6 +25,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
 import minerful.index.LinearConstraintsIndexFactory;
+import minerful.io.encdec.DeclareConstraintTransferObject;
 
 import org.apache.log4j.Logger;
 
@@ -188,6 +189,22 @@ public class ProcessModel {
 
 	public SortedSet<Constraint> getAllUnmarkedConstraints() {
 		return LinearConstraintsIndexFactory.getAllUnmarkedConstraints(bag);
+	}
+
+	public int howManyConstraints() {
+		return bag.howManyConstraints();
+	}
+
+	public int howManyUnmarkedConstraints() {
+		return bag.howManyUnmarkedConstraints();
+	}
+
+	public int howManyTasks() {
+		return this.taskCharArchive.size();
+	}
+
+	public Set<TaskChar> getTasks() {
+		return this.taskCharArchive.getTaskChars();
 	}
 
 	public void resetMarks() {

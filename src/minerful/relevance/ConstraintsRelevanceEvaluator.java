@@ -252,7 +252,7 @@ public class ConstraintsRelevanceEvaluator {
 		TreeSet<Constraint> constraints = new TreeSet<Constraint>(evaluationsOnLog.keySet());
 		
 		for (Constraint con : constraints) {
-			sBuil.append(con.getName());
+			sBuil.append(con.getTemplateName());
 			sBuil.append(';');
 			sBuil.append(con);
 			sBuil.append(';');

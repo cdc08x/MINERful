@@ -14,17 +14,18 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class OutputModelParameters extends ParamsManager {
-	public static final String PRINT_PROCESS_DOT_AUTOMATON_PARAM_NAME = "pA";
-	public static final String PRINT_PROCESS_TSML_AUTOMATON_PARAM_NAME = "pTSML";
-	public static final String FOLDER_FOR_DOT_SUBAUTOMATA_PARAM_NAME = "pSAF";
-	public static final String PRINT_CONDEC_PARAM_NAME = "condec";
-	public static final String PRINT_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "pXWA";
-	public static final String FOLDER_FOR_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "pXWSAF";
-	public static final String PRINT_CSV_PARAM_NAME = "CSV";
-	public static final String PROCESS_SCHEME_OUT_PATH_PARAM_NAME = "oMF";
+	public static final String SAVE_AS_CONDEC_PARAM_NAME = "condec";
+	public static final String SAVE_AS_CSV_PARAM_NAME = "CSV";
+	public static final String SAVE_AS_XML_PARAM_NAME = "oMF";
+	public static final String SAVE_AS_JSON_PARAM_NAME = "JSON";
+	public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "pA";
+	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "pTSML";
+	public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "pSAF";
+	public static final String SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "pXWA";
+	public static final String FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "pXWSAF";
 
 	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> for avoiding such print-out. */
-	public File fileToSaveConstraintsCsv;
+	public File fileToSaveConstraintsAsCSV;
 	/** Directory in which the discovered constraints are printed as automata, in separate GraphViz DOT files. Keep it equal to <code>null</code> for avoiding such print-outs. */
 	public File folderToSaveDotFilesForPartialAutomata;
 	/** File in which the discovered process model is printed as a TSML representation of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
@@ -32,24 +33,28 @@ public class OutputModelParameters extends ParamsManager {
 	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveDotFileForAutomaton;
 	/** File in which the discovered process model is saved as a Declare XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
-	public File fileToSaveConDecDefinition;
+	public File fileToSaveAsConDec;
 	/** File in which the discovered process model is printed as an XML representation of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveXmlFileForAutomaton;
 	/** Directory in which the discovered constraints are printed as automata, in separate XML files. Keep it equal to <code>null</code> for avoiding such print-outs. */
 	public File folderToSaveXmlFilesForPartialAutomata;
 	/** File in which the discovered process model is saved as an XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
-    public File processModelOutputFile;
-    
+    public File fileToSaveAsXML;
+	/** File in which the discovered process model is saved as a JSON file. Keep it equal to <code>null</code> for avoiding such print-out. */
+	public File fileToSaveAsJSON;
+
     public OutputModelParameters() {
-    	this.fileToSaveConstraintsCsv = null;
+    	this.fileToSaveConstraintsAsCSV = null;
     	this.folderToSaveDotFilesForPartialAutomata = null;
     	this.fileToSaveTsmlFileForAutomaton = null;
     	this.fileToSaveDotFileForAutomaton = null;
-    	this.fileToSaveConDecDefinition = null;
+    	this.fileToSaveAsConDec = null;
     	this.fileToSaveXmlFileForAutomaton = null;
     	this.folderToSaveXmlFilesForPartialAutomata = null;
+    	this.fileToSaveAsXML = null;
+    	this.fileToSaveAsJSON = null;
     }
-    
+
     public OutputModelParameters(Options options, String[] args) {
     	this();
         // parse the command line arguments
@@ -64,12 +69,16 @@ public class OutputModelParameters extends ParamsManager {
 
 	@Override
 	protected void setup(CommandLine line) {
-    	String procSchemeFilePath = line.getOptionValue(PROCESS_SCHEME_OUT_PATH_PARAM_NAME);
+    	String procSchemeFilePath = line.getOptionValue(SAVE_AS_XML_PARAM_NAME);
         if (procSchemeFilePath != null) {
-        	this.processModelOutputFile = new File(procSchemeFilePath);
+        	this.fileToSaveAsXML = new File(procSchemeFilePath);
+        }
+        String jsonFilePath = line.getOptionValue(SAVE_AS_JSON_PARAM_NAME);
+        if (jsonFilePath != null) {
+        	this.fileToSaveAsJSON = new File(jsonFilePath);
         }
 		String
-			folderToSaveDotFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_DOT_SUBAUTOMATA_PARAM_NAME);
+			folderToSaveDotFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
 	    if (folderToSaveDotFilesForPartialAutomataPath != null) {
 	        this.folderToSaveDotFilesForPartialAutomata = new File(folderToSaveDotFilesForPartialAutomataPath);
 	        if (        !this.folderToSaveDotFilesForPartialAutomata.exists()
@@ -79,32 +88,32 @@ public class OutputModelParameters extends ParamsManager {
 	            throw new IllegalArgumentException("Unwritable directory: " + folderToSaveDotFilesForPartialAutomata);
 	        }
 	    }
-		String fileToSaveDotFileForAutomatonPath = line.getOptionValue(PRINT_PROCESS_DOT_AUTOMATON_PARAM_NAME);
+		String fileToSaveDotFileForAutomatonPath = line.getOptionValue(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME);
         if (fileToSaveDotFileForAutomatonPath != null) {
             this.fileToSaveDotFileForAutomaton = new File(fileToSaveDotFileForAutomatonPath);
         }
         
-		String fileToSaveTsmlFileForAutomatonPath = line.getOptionValue(PRINT_PROCESS_TSML_AUTOMATON_PARAM_NAME);
+		String fileToSaveTsmlFileForAutomatonPath = line.getOptionValue(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
         if (fileToSaveTsmlFileForAutomatonPath != null) {
             this.fileToSaveTsmlFileForAutomaton = new File(fileToSaveTsmlFileForAutomatonPath);
         }
         
-        String fileToSaveConstraintsCsvString = line.getOptionValue(PRINT_CSV_PARAM_NAME);
+        String fileToSaveConstraintsCsvString = line.getOptionValue(SAVE_AS_CSV_PARAM_NAME);
         if (fileToSaveConstraintsCsvString != null) {
-            this.fileToSaveConstraintsCsv = new File(fileToSaveConstraintsCsvString);
+            this.fileToSaveConstraintsAsCSV = new File(fileToSaveConstraintsCsvString);
         }
         
-        String fileToSaveConDecDefinitionString = line.getOptionValue(PRINT_CONDEC_PARAM_NAME);
+        String fileToSaveConDecDefinitionString = line.getOptionValue(SAVE_AS_CONDEC_PARAM_NAME);
         if (fileToSaveConDecDefinitionString != null) {
-            this.fileToSaveConDecDefinition = new File(fileToSaveConDecDefinitionString);
+            this.fileToSaveAsConDec = new File(fileToSaveConDecDefinitionString);
         }
         
-        String fileToSaveXmlFileForAutomatonString = line.getOptionValue(PRINT_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
+        String fileToSaveXmlFileForAutomatonString = line.getOptionValue(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
         if (fileToSaveXmlFileForAutomatonString != null) {
         	this.fileToSaveXmlFileForAutomaton = new File(fileToSaveXmlFileForAutomatonString);
         }
 		String
-			folderToSaveXmlFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME);
+			folderToSaveXmlFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME);
 	    if (folderToSaveXmlFilesForPartialAutomataPath != null) {
 	        this.folderToSaveXmlFilesForPartialAutomata = new File(folderToSaveXmlFilesForPartialAutomataPath);
 	        if (        !this.folderToSaveXmlFilesForPartialAutomata.exists()
@@ -134,30 +143,38 @@ public class OutputModelParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("proc-out")
-        		.withDescription("path to write the discovered process scheme in")
+        		.withLongOpt("save-as-xml")
+        		.withDescription("path of the file in which to save the discovered process model as XML")
         		.withType(new String())
-        		.create(PROCESS_SCHEME_OUT_PATH_PARAM_NAME)
+        		.create(SAVE_AS_XML_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("print-automaton")
+        		.withLongOpt("save-as-json")
+        		.withDescription("path of the file in which to save the discovered process model as JSON")
+        		.withType(new String())
+        		.create(SAVE_AS_JSON_PARAM_NAME)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.hasArg().withArgName("path")
+        		.withLongOpt("save-automaton")
         		.withDescription(
         				attachInstabilityWarningToDescription("write a Graphviz DOT format of a finite state automaton representing the mined process on the given file")
         		)
         		.withType(new String())
-        		.create(PRINT_PROCESS_DOT_AUTOMATON_PARAM_NAME)
+        		.create(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("print-tsml")
+        		.withLongOpt("save-automaton-tsml")
         		.withDescription(
         				attachInstabilityWarningToDescription("write a TSML format of a finite state automaton representing the mined process on the given file")
         		)
         		.withType(new String())
-        		.create(PRINT_PROCESS_TSML_AUTOMATON_PARAM_NAME)
+        		.create(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
@@ -165,21 +182,21 @@ public class OutputModelParameters extends ParamsManager {
         		.withLongOpt("subautom-folder")
         		.withDescription("write the Graphviz DOT format of activities' finite state sub-automata on separate files, within the given folder")
         		.withType(new String())
-        		.create(FOLDER_FOR_DOT_SUBAUTOMATA_PARAM_NAME)
+        		.create(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME)
         		);
         options.addOption(OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("print-csv")
+        		.withLongOpt("save-as-csv")
         		.withDescription("print results in CSV format into the specified file")
         		.withType(new String())
-        		.create(PRINT_CSV_PARAM_NAME)
+        		.create(SAVE_AS_CSV_PARAM_NAME)
         		);
         options.addOption(OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("print-condec")
+        		.withLongOpt("save-as-condec")
         		.withDescription("print the discovered process as a Declare map (ConDec) into the specified file")
         		.withType(new String())
-        		.create(PRINT_CONDEC_PARAM_NAME)
+        		.create(SAVE_AS_CONDEC_PARAM_NAME)
         		);
         options.addOption(OptionBuilder
         		.hasArg().withArgName("path")
@@ -188,7 +205,7 @@ public class OutputModelParameters extends ParamsManager {
         				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file")
         		)
         		.withType(new String())
-        		.create(PRINT_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
+        		.create(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
@@ -196,7 +213,7 @@ public class OutputModelParameters extends ParamsManager {
         		.withLongOpt("xml-subautom-folder")
         		.withDescription("write the weighted automaton XML format of activities' finite state sub-automata on separate files, within the given folder")
         		.withType(new String())
-        		.create(FOLDER_FOR_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME)
+        		.create(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME)
         		);
        return options;
 	}

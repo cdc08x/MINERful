@@ -27,7 +27,8 @@ public class InputModelParameters extends ParamsManager {
      */
 	public enum InputEncoding {
 		DECLARE_MAP,
-		MINERFUL	// default
+		MINERFUL,	// default
+		JSON
 	}
 
 	/**
@@ -93,7 +94,7 @@ public class InputModelParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("language")
                 .withLongOpt(INPUT_MODEL_ENC_PARAM_LONG_NAME)
-                .withDescription("input model encoding language " + printValues(InputEncoding.values()))
+                .withDescription("input model encoding language " + printValues(InputEncoding.values()) + " (default: " + printValues(DEFAULT_INPUT_MODEL_ENC) + ")")
                 .withType(new String())
                 .create(INPUT_MODEL_ENC_PARAM_NAME)
         );

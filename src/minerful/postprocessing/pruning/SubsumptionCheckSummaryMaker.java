@@ -172,18 +172,18 @@ public class SubsumptionCheckSummaryMaker {
 				subsumption = new Subsumption(modelCon, Restriction.DESCENDANT_OF);
 			} else if (c.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
 				MutualRelationConstraint coCon = ((MutualRelationConstraint)c);
-				if (coCon.getPlausibleForwardConstraint().equals(modelCon)) {
+				if (coCon.getPossibleForwardConstraint().equals(modelCon)) {
 					subsumption = new Subsumption(modelCon, Restriction.INCLUDES_AS_FORWARD);
 				}
-				if (coCon.getPlausibleBackwardConstraint().equals(modelCon)) {
+				if (coCon.getPossibleBackwardConstraint().equals(modelCon)) {
 					subsumption = new Subsumption(modelCon, Restriction.INCLUDES_AS_BACKWARD);
 				}
 			} else if (modelCon.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
 				MutualRelationConstraint coCheckCon = ((MutualRelationConstraint)modelCon);
-				if (coCheckCon.getPlausibleForwardConstraint().equals(c)) {
+				if (coCheckCon.getPossibleForwardConstraint().equals(c)) {
 					subsumption = new Subsumption(modelCon, Extension.IS_FORWARD_OF);
 				}
-				if (coCheckCon.getPlausibleBackwardConstraint().equals(c)) {
+				if (coCheckCon.getPossibleBackwardConstraint().equals(c)) {
 					subsumption = new Subsumption(modelCon, Extension.IS_BACKWARD_OF);
 				}
 			} else if (modelCon.isBranched() || c.isBranched()) {

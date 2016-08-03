@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import minerful.concept.ProcessModel;
@@ -25,30 +23,12 @@ import minerful.concept.TaskCharFactory;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.existence.AtMostOne;
-import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
-import minerful.concept.constraint.relation.AlternatePrecedence;
-import minerful.concept.constraint.relation.AlternateResponse;
-import minerful.concept.constraint.relation.AlternateSuccession;
-import minerful.concept.constraint.relation.ChainPrecedence;
-import minerful.concept.constraint.relation.ChainResponse;
-import minerful.concept.constraint.relation.ChainSuccession;
-import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.NotChainSuccession;
-import minerful.concept.constraint.relation.NotCoExistence;
-import minerful.concept.constraint.relation.NotSuccession;
-import minerful.concept.constraint.relation.Precedence;
-import minerful.concept.constraint.relation.RespondedExistence;
-import minerful.concept.constraint.relation.Response;
-import minerful.concept.constraint.relation.Succession;
-import minerful.io.encdec.TaskCharEncoderDecoder;
-import minerful.logparser.StringTaskClass;
+import minerful.io.encdec.DeclareConstraintTransferObject;
+import minerful.io.encdec.TransferObjectToConstraintTranslator;
 
 import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModelView;
-import org.processmining.plugins.declareminer.visualizing.AssignmentViewBroker;
 import org.processmining.plugins.declareminer.visualizing.ConstraintDefinition;
 import org.processmining.plugins.declareminer.visualizing.ConstraintTemplate;
 import org.processmining.plugins.declareminer.visualizing.DeclareMap;
@@ -63,27 +43,49 @@ import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
 
 public class DeclareMapEncoderDecoder {
+	private List<DeclareConstraintTransferObject> constraintTOs;
+	private TaskCharArchive taskCharArchive = null;
+	private String processModelName = null;
+
+	public static final String
+		INTEREST_FACTOR_LABEL = "IF",
+		CONFIDENCE_LABEL = "confidence",
+		SUPPORT_LABEL = "support",
+		LABEL_VALUE_SEPARATOR = ";";
+	public static final String
+		INTEREST_FACTOR_EXTRACTION_REG_EXP =
+			".*" + INTEREST_FACTOR_LABEL + LABEL_VALUE_SEPARATOR + "([0-9\\.]+).*",
+		CONFIDENCE_EXTRACTION_REG_EXP =
+			".*" + CONFIDENCE_LABEL + LABEL_VALUE_SEPARATOR + "([0-9\\.]+).*",
+		SUPPORT_EXTRACTION_REG_EXP =
+			".*" + SUPPORT_LABEL + LABEL_VALUE_SEPARATOR + "([0-9\\.]+).*";
+	public static final Pattern
+		SUPPORT_PATTERN = Pattern.compile(SUPPORT_EXTRACTION_REG_EXP),
+		CONFIDENCE_PATTERN = Pattern.compile(CONFIDENCE_EXTRACTION_REG_EXP),
+		INTEREST_FACTOR_PATTERN = Pattern.compile(INTEREST_FACTOR_EXTRACTION_REG_EXP);
+	public static final String
+		SUPPORT_CONFIDENCE_IF_FORMAT_PATTERN =
+				SUPPORT_LABEL + LABEL_VALUE_SEPARATOR + "%f" + LABEL_VALUE_SEPARATOR
+			+	CONFIDENCE_LABEL + LABEL_VALUE_SEPARATOR + "%f" + LABEL_VALUE_SEPARATOR
+			+	INTEREST_FACTOR_LABEL + LABEL_VALUE_SEPARATOR + "%f";
+
 	public static final String TEMPLATE_TEMP_FILE_EXTENSION = ".xml";
 	public static final String TEMPLATE_TMP_FILE_BASENAME = "template";
 	public static final String DECLARE_XML_TEMPLATE = "resources/" + TEMPLATE_TMP_FILE_BASENAME + TEMPLATE_TEMP_FILE_EXTENSION;
 
-	private List<DeclareMapConstraintTransferObject> constraintTOs;
-	private TaskCharArchive taskCharArchive = null;
-	private String processModelName = null;
-	
 	public DeclareMapEncoderDecoder(ProcessModel process) {
-		this.constraintTOs = new ArrayList<DeclareMapConstraintTransferObject>(process.bag.howManyConstraints());
+		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(process.bag.howManyConstraints());
 		this.taskCharArchive = process.getTaskCharArchive();
 		this.processModelName = process.getName();
 
 		Collection<Constraint> auxConstraints = null;
-		DeclareMapConstraintTransferObject auxDeclareConstraintTO = null;
+		DeclareConstraintTransferObject auxDeclareConstraintTO = null;
 		for (TaskChar tChar: process.bag.getTaskChars()) {
 			auxConstraints = process.bag.getConstraintsOf(tChar);
 			for (Constraint auxCon : auxConstraints) {
 				if (!auxCon.isMarkedForExclusion()) {
-					auxDeclareConstraintTO = new DeclareMapConstraintTransferObject(auxCon);
-					if (auxDeclareConstraintTO.template != null) {
+					auxDeclareConstraintTO = new DeclareConstraintTransferObject(auxCon);
+					if (auxDeclareConstraintTO.declareMapTemplate != null) {
 						this.constraintTOs.add(auxDeclareConstraintTO);
 					}
 				}
@@ -106,50 +108,47 @@ public class DeclareMapEncoderDecoder {
 
 		/* Create an archive of TaskChars out of the activity definitions in the Declare Map model */
 		Collection<TaskChar> tasksInDeclareMap = new ArrayList<TaskChar>(declareMapModel.activityDefinitionsCount());
-		TaskCharEncoderDecoder tChEncDec = new TaskCharEncoderDecoder();
-		TaskCharFactory tChFactory = new TaskCharFactory(tChEncDec);
+		TaskCharFactory tChFactory = new TaskCharFactory();
 
 		for (ActivityDefinition ad : declareMapModel.getActivityDefinitions()) {
-			tasksInDeclareMap.add(tChFactory.makeTaskChar(new StringTaskClass(ad.getName())));
+			tasksInDeclareMap.add(tChFactory.makeTaskChar(ad.getName()));
 		}
 
 		this.taskCharArchive = new TaskCharArchive(tasksInDeclareMap);
 		
 		/* Create DTOs for constraints out of the definitions in the Declare Map model */
-		this.constraintTOs = new ArrayList<DeclareMapConstraintTransferObject>(declareMapModel.constraintDefinitionsCount());
+		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(declareMapModel.constraintDefinitionsCount());
 		for (ConstraintDefinition cd : declareMapModel.getConstraintDefinitions()) {
-			this.constraintTOs.add(new DeclareMapConstraintTransferObject(cd));
+			this.constraintTOs.add(new DeclareConstraintTransferObject(cd));
 		}		
 	}
 	
 	public ProcessModel createMinerFulProcessModel() {
 		Collection<Constraint> minerFulConstraints = new ArrayList<Constraint>(this.constraintTOs.size());
-		MinerFulConstraintMaker miFuConMak = new MinerFulConstraintMaker(this.taskCharArchive);
+		TransferObjectToConstraintTranslator miFuConMak = new TransferObjectToConstraintTranslator(this.taskCharArchive);
 		
-		for (DeclareMapConstraintTransferObject conTO: constraintTOs) {
-			minerFulConstraints.add(miFuConMak.createConstraintOutOfTransferObject(conTO));
+		for (DeclareConstraintTransferObject conTO: constraintTOs) {
+			minerFulConstraints.add(miFuConMak.createConstraint(conTO));
 		}
 
 		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(minerFulConstraints));
-		
 		ConstraintsBag constraintsBag = new ConstraintsBag(this.taskCharArchive.getTaskChars(), minerFulConstraints);
 
 		return new ProcessModel(taskCharArchive, constraintsBag, this.processModelName);
 	}
 
-	public List<DeclareMapConstraintTransferObject> getConstraintTOs() {
+	public List<DeclareConstraintTransferObject> getConstraintTOs() {
 		return constraintTOs;
 	}
 
 	public DeclareMap createDeclareMap() {
-		Vector<String> activityDefinitions = new Vector<String>();
 		Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap = new HashMap<String, DeclareMapTemplate>();
 		DeclareMapTemplate[] declareTemplates = DeclareMapTemplate.values();
 		for (DeclareMapTemplate d : declareTemplates) {
 			String templateNameString = d.getName();
 			templateNameStringDeclareTemplateMap.put(templateNameString, d);
 		}
-		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateConstraintTemplateMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
+		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateDefinitionsMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
 
 		InputStream ir = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
 		File language = null;
@@ -172,30 +171,39 @@ public class DeclareMapEncoderDecoder {
 		Language lang = languages.get(0);
 		AssignmentModel model = new AssignmentModel(lang);
 		model.setName(this.processModelName);
+		
 		ActivityDefinition activitydefinition = null;
-		int constraintID = 0;
-		int activityID = 1;
-		for (DeclareMapConstraintTransferObject constraint : constraintTOs) {
-			for (Set<String> parameterSet : constraint.parameters) {
-				for (String aName : parameterSet) {
-					if(!activityDefinitions.contains(aName)) {
-						activityDefinitions.add(aName);
-						activitydefinition = model.addActivityDefinition(activityID); //new ActivityDefinition(parametersOfDiscoveredConstraintsInstantiationsOfCurrentTemplate[i][j], activityID, model);
-						activitydefinition.setName(aName);
-						activityID++;
-					}
-				}
-			}
+		int
+			constraintID = 0;
+
+		/* Save activity definitions */
+		for (TaskChar tCh : this.taskCharArchive.getTaskChars()) {
+			activitydefinition = model.addActivityDefinition(tCh.identifier);
+			activitydefinition.setName(tCh.getName());
+		}
+
+		for (DeclareConstraintTransferObject constraintTo : constraintTOs) {
 			constraintID++;
-			ConstraintDefinition constraintdefinition = new ConstraintDefinition(constraintID, model, declareTemplateConstraintTemplateMap.get(constraint.template));
-			Collection<Parameter> parameters = (declareTemplateConstraintTemplateMap.get(constraint.template)).getParameters();
-			Iterator<Set<String>> paramsIterator = constraint.parameters.iterator();
+			/* Load constraint definition */
+			ConstraintDefinition constraintdefinition = new ConstraintDefinition(constraintID, model, declareTemplateDefinitionsMap.get(constraintTo.declareMapTemplate));
+			Collection<Parameter> parameters = (declareTemplateDefinitionsMap.get(constraintTo.declareMapTemplate)).getParameters();
+			Iterator<Set<String>> paramsIterator = constraintTo.parameters.iterator();
+			/* Fill in parameters */
 			for (Parameter parameter : parameters) {
 				for (String branchName : paramsIterator.next()) {
 					ActivityDefinition activityDefinition = model.activityDefinitionWithName(branchName);
 					constraintdefinition.addBranch(parameter, activityDefinition);
 				}
 			}
+			/* Specify the support, confidence and interest factor within the text */
+			constraintdefinition.setText(
+					constraintdefinition.getText() +
+					LABEL_VALUE_SEPARATOR +
+					String.format(SUPPORT_CONFIDENCE_IF_FORMAT_PATTERN,
+							constraintTo.support,
+							constraintTo.confidence,
+							constraintTo.interestFactor)
+			);
 			model.addConstraintDefiniton(constraintdefinition);
 		}
 

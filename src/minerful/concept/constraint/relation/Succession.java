@@ -59,12 +59,12 @@ public class Succession extends CoExistence {
 	}
 
 	@Override
-	public Response getPlausibleForwardConstraint() {
+	public Response getPossibleForwardConstraint() {
 		return new Response(base, implied);
 	}
 
 	@Override
-	public Precedence getPlausibleBackwardConstraint() {
+	public Precedence getPossibleBackwardConstraint() {
 		return new Precedence(base, implied);
 	}
 	

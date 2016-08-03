@@ -1,4 +1,4 @@
-package minerful.io.encdec;
+package minerful.io.encdec.log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -8,7 +8,6 @@ import java.io.OutputStream;
 
 import org.deckfour.xes.out.XMxmlSerializer;
 
-@Deprecated
 public class MxmlEncoder extends XesEncoder {
 
 	public MxmlEncoder(String[] traces) {

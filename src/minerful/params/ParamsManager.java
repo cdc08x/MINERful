@@ -78,10 +78,12 @@ public abstract class ParamsManager {
 		return token.trim().toLowerCase().replace("_", "-");
 	}
 
-	public static String printValues(Object[] values) {
+	public static String printValues(Object... values) {
         StringBuilder valuesStringBuilder = new StringBuilder();
 
-        valuesStringBuilder.append("{");
+        if (values.length > 1) {
+        	valuesStringBuilder.append("{");
+        }
 
         for (int i = 0; i < values.length; i++) {
             valuesStringBuilder.append("'");
@@ -92,7 +94,9 @@ public abstract class ParamsManager {
             }
         }
 
-        valuesStringBuilder.append("}");
+        if (values.length > 1) {
+        	valuesStringBuilder.append("}");
+        }
 
         return valuesStringBuilder.toString();
     }

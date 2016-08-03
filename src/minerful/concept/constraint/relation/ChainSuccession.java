@@ -51,12 +51,12 @@ public class ChainSuccession extends AlternateSuccession {
 	}
 
 	@Override
-	public ChainResponse getPlausibleForwardConstraint() {
+	public ChainResponse getPossibleForwardConstraint() {
 		return new ChainResponse(base, implied);
 	}
 
 	@Override
-	public ChainPrecedence getPlausibleBackwardConstraint() {
+	public ChainPrecedence getPossibleBackwardConstraint() {
 		return new ChainPrecedence(base, implied);
 	}
 	

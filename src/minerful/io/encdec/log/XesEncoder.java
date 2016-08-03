@@ -1,4 +1,4 @@
-package minerful.io.encdec;
+package minerful.io.encdec.log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,7 +22,6 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 import org.deckfour.xes.out.XesXmlSerializer;
 
-@Deprecated
 public class XesEncoder implements IOutEncoder {
 	protected XLog xLog = null;
 	

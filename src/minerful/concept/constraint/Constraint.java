@@ -130,7 +130,7 @@ public abstract class Constraint implements Comparable<Constraint> {
     public String toString() {
 		StringBuilder sBuil = new StringBuilder();
 		
-		sBuil.append(getName());
+		sBuil.append(getTemplateName());
 		sBuil.append("(");
 		
 		boolean firstParam = true;
@@ -334,8 +334,8 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return this.support == MIN_SUPPORT;
 	}
     
-    public String getName() {
-    	return this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') + 1);
+    public String getTemplateName() {
+    	return MetaConstraintUtils.getTemplateName(this);
     }
 	
 	public TaskCharSet getBase() {

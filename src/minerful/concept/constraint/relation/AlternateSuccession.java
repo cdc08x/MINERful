@@ -53,12 +53,12 @@ public class AlternateSuccession extends Succession {
 	}
 
 	@Override
-	public AlternateResponse getPlausibleForwardConstraint() {
+	public AlternateResponse getPossibleForwardConstraint() {
 		return new AlternateResponse(base, implied);
 	}
 
 	@Override
-	public AlternatePrecedence getPlausibleBackwardConstraint() {
+	public AlternatePrecedence getPossibleBackwardConstraint() {
 		return new AlternatePrecedence(base, implied);
 	}
 	

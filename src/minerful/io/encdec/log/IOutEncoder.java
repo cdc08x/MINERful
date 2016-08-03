@@ -1,9 +1,8 @@
-package minerful.io.encdec;
+package minerful.io.encdec.log;
 
 import java.io.File;
 import java.io.IOException;
 
-@Deprecated
 public interface IOutEncoder {
 
 	public abstract void setTraces(String[] traces);
