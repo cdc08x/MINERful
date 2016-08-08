@@ -7,6 +7,7 @@ import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.miner.params.MinerFulCmdParameters;
+import minerful.params.InputCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;

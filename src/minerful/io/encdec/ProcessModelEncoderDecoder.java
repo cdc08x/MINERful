@@ -24,7 +24,7 @@ import minerful.io.encdec.pojo.ProcessModelPojo;
 
 /**
  * This class marshals and unmarshals process models to/from XML files.
- * It also reads and saves process models in JSON format to/from JSON-formatted text files. 
+ * It also reads and saves process models in JSON format to/from JSON-formatted text files and strings. 
  * @author Claudio Di Ciccio
  *
  */
@@ -80,12 +80,27 @@ public class ProcessModelEncoderDecoder {
 		return translator.createProcessModel(proModTO);
 	}
 
-	public void writeToJson(ProcessModel processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public void writeToJsonFile(ProcessModel processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(processModel);
 		ProcessModelPojo pojo = proModTO.toPojo();
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		jsonPojoMgr.saveProcessModelPojo(pojo, processModelJsonFile);
 
 		return;
+	}
+
+	public ProcessModel readFromJsonString(String processModelJson) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
+		ProcessModelPojo pojo = jsonPojoMgr.fromJsonToProcessModelPojo(processModelJson);
+		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
+		TransferObjectToProcessModelTranslator translator = new TransferObjectToProcessModelTranslator();
+		return translator.createProcessModel(proModTO);
+	}
+
+	public String toJsonString(ProcessModel processModel) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(processModel);
+		ProcessModelPojo pojo = proModTO.toPojo();
+		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
+		return jsonPojoMgr.fromProcessModelPojoToJson(pojo);
 	}
 }

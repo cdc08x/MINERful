@@ -41,8 +41,6 @@ public class MinerFulCmdParameters extends ParamsManager {
 
     /** Out-branching maximum level for discovered constraints (must be greater than or equal to {@link #MINIMUM_BRANCHING_LIMIT MINIMUM_BRANCHING_LIMIT}, the default) */ 
 	public Integer branchingLimit;
-    /** Input log file */ 
-    public File inputFile;
     /** Output file where log statistics are printed out */ 
     public File statsOutputFile;
     /** Ignore this */
@@ -117,17 +115,8 @@ public class MinerFulCmdParameters extends ParamsManager {
 //        this.takeTime = line.hasOption(TIME_ANALYSIS_PARAM);
         
         String
-        	inputFilePath = line.getOptionValue(INPUT_LOGFILE_PATH_PARAM_NAME),
         	outStatsFilePath = line.getOptionValue(STATS_OUT_PATH_PARAM_NAME),
         	listOfExcludedOnesFromResultsFilePath = line.getOptionValue(EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME);
-        if (inputFilePath != null) {
-            this.inputFile = new File(inputFilePath);
-            if (        !this.inputFile.exists()
-                    ||  !this.inputFile.canRead()
-                    ||  !this.inputFile.isFile()) {
-                throw new IllegalArgumentException("Unreadable file: " + inputFilePath);
-            }
-        }
         if (outStatsFilePath != null) {
         	this.statsOutputFile = new File(outStatsFilePath);
         }
@@ -139,13 +128,14 @@ public class MinerFulCmdParameters extends ParamsManager {
                 throw new IllegalArgumentException("Unreadable file: " + listOfExcludedOnesFromResultsFilePath);
             } else {
             	try {
-					BufferedReader buRo = new BufferedReader(new FileReader(listOfExcludedOnesFromResultsFile));
+            		BufferedReader buRo = new BufferedReader(new FileReader(listOfExcludedOnesFromResultsFile));
 					String excluActi = buRo.readLine();
 					this.activitiesToExcludeFromResult = new ArrayList<String>();
 					while (excluActi != null) {
 						this.activitiesToExcludeFromResult.add(excluActi);
 						excluActi = buRo.readLine();
 					}
+					buRo.close();
 				} catch (IOException e) {
 					throw new IllegalArgumentException("Unreadable file: " + listOfExcludedOnesFromResultsFilePath);
 				}

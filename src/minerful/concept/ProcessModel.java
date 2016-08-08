@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NavigableMap;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -25,7 +27,6 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
 import minerful.index.LinearConstraintsIndexFactory;
-import minerful.io.encdec.DeclareConstraintTransferObject;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +34,7 @@ import dk.brics.automaton.Automaton;
 
 @XmlRootElement(name="processModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessModel {
+public class ProcessModel extends Observable implements Observer {
 	@XmlTransient
 	private static Logger logger = Logger.getLogger(ProcessModel.class.getCanonicalName());
 	@XmlTransient
@@ -50,6 +51,14 @@ public class ProcessModel {
 	public static final String MINERFUL_XMLNS = "https://github.com/cdc08x/MINERful/";
 
 	protected ProcessModel() {}
+
+	public ProcessModel(ConstraintsBag bag) {
+		this(new TaskCharArchive(bag.getTaskChars()), bag, DEFAULT_NAME);
+	}
+
+	public ProcessModel(ConstraintsBag bag, String name) {
+		this(new TaskCharArchive(bag.getTaskChars()), bag, name);
+	}
 	
 	public ProcessModel(TaskCharArchive taskCharArchive, ConstraintsBag bag) {
 		this(taskCharArchive, bag, DEFAULT_NAME);
@@ -59,6 +68,7 @@ public class ProcessModel {
 		this.taskCharArchive = taskCharArchive;
 		this.bag = bag;
 		this.name = name;
+		this.bag.addObserver(this);
 	}
 
 	public String getName() {
@@ -213,5 +223,12 @@ public class ProcessModel {
 				con.resetMarks();
 			}
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		this.setChanged();
+		this.notifyObservers(arg);
+		this.clearChanged();
 	}
 }

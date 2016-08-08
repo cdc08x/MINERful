@@ -21,9 +21,13 @@ public class ProcessModelTransferObject {
 		this.tasks = new TreeSet<String>();
 
 		if (modelPojo.tasks == null || modelPojo.tasks.size() == 0) {
-			if (this.constraints.size() > 0) {
-				for (DeclareConstraintTransferObject cto : this.constraints) {
-					this.tasks.addAll(cto.getAllParamsTasks());
+			if (modelPojo.constraints.size() > 0) {
+				for (ConstraintPojo pojo : modelPojo.constraints) {
+					for (Set<String> paramSet : pojo.parameters) {
+						for (String param : paramSet) {
+							this.tasks.add(param);
+						}
+					}
 				}
 			}
 		} else {

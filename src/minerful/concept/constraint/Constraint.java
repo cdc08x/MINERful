@@ -6,6 +6,8 @@ package minerful.concept.constraint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import minerful.automaton.concept.relevance.VacuityAwareWildcardAutomaton;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.ConstraintChange.ChangedProperty;
 import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
 import minerful.concept.constraint.existence.ExistenceConstraint;
 import minerful.concept.constraint.relation.RelationConstraint;
@@ -31,7 +34,7 @@ import minerful.io.encdec.TaskCharEncoderDecoder;
 @XmlRootElement(name="constraint")
 @XmlSeeAlso({RelationConstraint.class,ExistenceConstraint.class})
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class Constraint implements Comparable<Constraint> {
+public abstract class Constraint extends Observable implements Comparable<Constraint> {
 	@XmlTransient
     public static final double MIN_SUPPORT = 0;
 	@XmlTransient
@@ -80,9 +83,10 @@ public abstract class Constraint implements Comparable<Constraint> {
 	@XmlElementWrapper(name="parameters")
 	@XmlElement(name="parameter")
 	protected List<TaskCharSet> parameters;
+	@XmlTransient
+	protected boolean silentToObservers = true;
 	
 	protected Constraint() {
-//		this.base = null;
 		this.parameters = new ArrayList<TaskCharSet>();
 	}
 
@@ -113,17 +117,21 @@ public abstract class Constraint implements Comparable<Constraint> {
     }
 
 	public Constraint(TaskChar param, double support) {
+		this.setSilentToObservers(true);
 		this.base = new TaskCharSet(param);
-		this.setSupport(support);
 		this.parameters = new ArrayList<TaskCharSet>(1);
 		this.parameters.add(this.base);
+		this.setSupport(support);
+		this.setSilentToObservers(false);
 	}
 
     public Constraint(TaskCharSet param, double support) {
+		this.setSilentToObservers(true);
         this.base = param;
+        this.parameters = new ArrayList<TaskCharSet>(1);
+        this.parameters.add(this.base);
         this.setSupport(support);
-		this.parameters = new ArrayList<TaskCharSet>(1);
-		this.parameters.add(this.base);
+		this.setSilentToObservers(false);
     }
 
 	@Override
@@ -206,56 +214,87 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return belowSupportThreshold;
 	}
 	public void setBelowSupportThreshold(boolean belowSupportThreshold) {
-		this.belowSupportThreshold = belowSupportThreshold;
+		if (belowSupportThreshold != this.belowSupportThreshold) {
+			this.belowSupportThreshold = belowSupportThreshold;
+			this.notifyObservers(ChangedProperty.BELOW_SUPPORT_THRESHOLD, belowSupportThreshold);
+		}
 	}
 
 	public boolean isBelowConfidenceThreshold() {
 		return belowConfidenceThreshold;
 	}
 	public void setBelowConfidenceThreshold(boolean belowConfidenceThreshold) {
-		this.belowConfidenceThreshold = belowConfidenceThreshold;
+		if (belowConfidenceThreshold != this.belowConfidenceThreshold) {
+			this.belowConfidenceThreshold = belowConfidenceThreshold;
+			this.notifyObservers(ChangedProperty.BELOW_CONFIDENCE_THRESHOLD, belowConfidenceThreshold);
+		}
 	}
 
 	public boolean isBelowInterestFactorThreshold() {
 		return belowInterestFactorThreshold;
 	}
 	public void setBelowInterestFactorThreshold(boolean belowInterestFactorThreshold) {
-		this.belowInterestFactorThreshold = belowInterestFactorThreshold;
+		if (belowInterestFactorThreshold != this.belowInterestFactorThreshold) {
+			this.belowInterestFactorThreshold = belowInterestFactorThreshold;
+			this.notifyObservers(ChangedProperty.BELOW_INTEREST_FACTOR_THRESHOLD, belowInterestFactorThreshold);
+		}
+	}
+
+	public void setRedundant(boolean redundant) {
+		if (this.redundant != redundant) {
+			this.redundant = redundant;
+			this.notifyObservers(ConstraintChange.ChangedProperty.REDUNDANT, redundant);
+		}
 	}
 
 	public void setConflicting(boolean conflicting) {
-		this.conflicting = conflicting;
+		if (this.conflicting != conflicting) {
+			this.conflicting = conflicting;
+			this.notifyObservers(ConstraintChange.ChangedProperty.CONFLICTING, conflicting);
+		}
 	}
 	
 	public double getSupport() {
 		return support;
 	}
 	public void setSupport(double support) {
-		this.checkSupport(support);
-		this.support = support;
+		if (this.support != support) {
+			this.checkSupport(support);
+			this.support = support;
+			this.notifyObservers(ConstraintChange.ChangedProperty.SUPPORT, support);
+		}
 	}
 
 	public double getConfidence() {
 		return confidence;
 	}
 	public void setConfidence(double confidence) {
-		this.checkConfidence(confidence);
-		this.confidence = confidence;
+		if (this.confidence != confidence) {
+			this.checkConfidence(confidence);
+			this.confidence = confidence;
+			this.notifyObservers(ConstraintChange.ChangedProperty.CONFIDENCE, confidence);
+		}
 	}
 
 	public double getInterestFactor() {
 		return interestFactor;
 	}
 	public void setInterestFactor(double interestFactor) {
-		this.checkInterestFactor(interestFactor);
-		this.interestFactor = interestFactor;
+		if (this.interestFactor != interestFactor) {
+			this.checkInterestFactor(interestFactor);
+			this.interestFactor = interestFactor;
+			this.notifyObservers(ConstraintChange.ChangedProperty.INTEREST_FACTOR, interestFactor);
+		}
 	}
 
 	public boolean isEvaluatedOnLog() {
 		return evaluatedOnLog;
 	}
 	public void setEvaluatedOnLog(boolean evaluatedOnLog) {
-		this.evaluatedOnLog = evaluatedOnLog;
+		if (this.evaluatedOnLog != evaluatedOnLog) {
+			this.evaluatedOnLog = evaluatedOnLog;
+			this.notifyObservers(ConstraintChange.ChangedProperty.EVALUATED_ON_LOG, evaluatedOnLog);
+		}
 	}
 
 	/**
@@ -454,10 +493,6 @@ public abstract class Constraint implements Comparable<Constraint> {
     	return cns;
     }
 
-	public void setRedundant(boolean redundant) {
-		this.redundant = redundant;
-	}
-
 	public boolean isMarkedForExclusion() {
 		return this.isRedundant() || !this.isAboveThresholds() || this.isConflicting();
 	}
@@ -494,5 +529,33 @@ public abstract class Constraint implements Comparable<Constraint> {
 		this.belowInterestFactorThreshold = false;
 		this.conflicting = false;
 		this.redundant = false;
+	}
+
+	private void notifyObservers(ChangedProperty type, Object value) {
+		if (!this.isSilentToObservers()) {
+			ConstraintChange coCha = new ConstraintChange(this, type, value);
+			this.setChanged();
+			this.notifyObservers(coCha);
+			super.clearChanged();
+		}
+	}
+
+	@Override
+	public void notifyObservers(Object arg) {
+		// Should you add debug lines, do it here
+		super.notifyObservers(arg);
+	}
+
+	@Override
+	public synchronized void addObserver(Observer o) {
+		// TODO Auto-generated method stub
+		super.addObserver(o);
+	}
+
+	public boolean isSilentToObservers() {
+		return silentToObservers;
+	}
+	protected void setSilentToObservers(boolean silentToObservers) {
+		this.silentToObservers = silentToObservers;
 	}
 }

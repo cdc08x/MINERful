@@ -59,7 +59,7 @@ public class MinerFulMinerLauncher {
         	systemParams.printHelp(cmdLineOptions);
         	System.exit(0);
         }
-    	if (inputParams.inputFile == null) {
+    	if (inputParams.inputLogFile == null) {
     		systemParams.printHelpForWrongUsage("Input file missing!", cmdLineOptions);
     		System.exit(1);
     	}
@@ -67,7 +67,7 @@ public class MinerFulMinerLauncher {
         MessagePrinter.configureLogging(systemParams.debugLevel);
         logger.info("Loading log...");
         
-        XesLogParser logParser = new XesLogParser(inputParams.inputFile, fromInputParamToXesLogClassificationType(inputParams.eventClassification));
+        XesLogParser logParser = new XesLogParser(inputParams.inputLogFile, fromInputParamToXesLogClassificationType(inputParams.eventClassification));
         
 //        DeclareEncoderDecoder.marshal(MinerFulLauncher.TEST_OUTPUT, new MinerFulLauncher(inputParams, minerFulParams, viewParams, systemParams).mine(logParser.getFirstXLog()));
         new MinerFulMinerLauncher(inputParams, minerFulParams, postParams, systemParams).mine(logParser.getFirstXLog());
@@ -97,7 +97,7 @@ public class MinerFulMinerLauncher {
 	}
 	
 	public ProcessModel mine() {
-    	if (inputParams.inputFile == null) {
+    	if (inputParams.inputLogFile == null) {
     		MessagePrinter.printlnError("Missing input file");
     		System.exit(1);
     	}
@@ -106,7 +106,7 @@ public class MinerFulMinerLauncher {
         
         logParser = MinerFulMinerStarter.deriveLogParserFromLogFile(inputParams, minerFulParams);
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
-		return minerFulStarter.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
+		return minerFulStarter.mine(logParser, inputParams, minerFulParams, systemParams, postParams, taskCharArchive);
 	}
 	
 	public ProcessModel manageOutput(ProcessModel processModel) {
@@ -117,7 +117,7 @@ public class MinerFulMinerLauncher {
 	public DeclareMap mine(XLog xLog) {
 		ClassificationType classiType = fromInputParamToXesLogClassificationType(this.inputParams.eventClassification);
 		XesLogParser logParser = new XesLogParser(xLog, classiType);
-		ProcessModel processModel = minerFulStarter.mine(logParser, minerFulParams, systemParams, postParams, logParser.getTaskCharArchive());
+		ProcessModel processModel = minerFulStarter.mine(logParser, inputParams, minerFulParams, systemParams, postParams, logParser.getTaskCharArchive());
 
 		return new DeclareMapEncoderDecoder(processModel).createDeclareMap();
 	}

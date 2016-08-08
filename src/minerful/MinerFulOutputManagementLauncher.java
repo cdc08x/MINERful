@@ -52,7 +52,7 @@ public class MinerFulOutputManagementLauncher {
         if (outParams.fileToSaveAsConDec != null) {
         	logger.info("Saving discovered process model in ConDec/Declare-map XML format as " + outParams.fileToSaveAsConDec + "...");
         	try {
-				printer.printConDecModel(outParams.fileToSaveAsConDec);
+				printer.saveAsConDecModel(outParams.fileToSaveAsConDec);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -70,7 +70,6 @@ public class MinerFulOutputManagementLauncher {
 		default:
 			break;
 		}
-
 
         if (viewParams.noFoldingRequired) {
         	switch (viewParams.constraintsSorting) {
@@ -224,7 +223,7 @@ public class MinerFulOutputManagementLauncher {
 			logger.info("Saving the discovered process as JSON in " + processModelOutFile + "...");
 
 			try {
-				new ProcessModelEncoderDecoder().writeToJson(processModel, processModelOutFile);
+				new ProcessModelEncoderDecoder().writeToJsonFile(processModel, processModelOutFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -32,13 +32,13 @@ public class InputCmdParameters extends ParamsManager {
 	/** Classification policy to relate events to event classes, that is the task names (see enum {@link minerful.params.InputCmdParameters.EventClassification EventClassification}). Default is: {@link minerful.params.InputCmdParameters.EventClassification#name EventClassification.name}.*/
 	public EventClassification eventClassification;
 	/** Input event log file. It must not be <code>null</code>. */
-    public File inputFile;
+    public File inputLogFile;
 
     public InputCmdParameters() {
     	super();
     	inputLanguage = InputEncoding.xes;
     	eventClassification = EventClassification.name;
-    	inputFile = null;
+    	inputLogFile = null;
     }
     
     public InputCmdParameters(Options options, String[] args) {
@@ -57,10 +57,10 @@ public class InputCmdParameters extends ParamsManager {
 	protected void setup(CommandLine line) {
         String inputFilePath = line.getOptionValue(INPUT_LOGFILE_PATH_PARAM_NAME);
         if (inputFilePath != null) {
-            this.inputFile = new File(inputFilePath);
-            if (        !this.inputFile.exists()
-                    ||  !this.inputFile.canRead()
-                    ||  !this.inputFile.isFile()) {
+            this.inputLogFile = new File(inputFilePath);
+            if (        !this.inputLogFile.exists()
+                    ||  !this.inputLogFile.canRead()
+                    ||  !this.inputLogFile.isFile()) {
                 throw new IllegalArgumentException("Unreadable file: " + inputFilePath);
             }
         }

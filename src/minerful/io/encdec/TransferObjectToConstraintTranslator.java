@@ -34,7 +34,7 @@ public class TransferObjectToConstraintTranslator {
 	public Constraint createConstraint(DeclareConstraintTransferObject conTO) {
 		Constraint minerFulConstraint =
 			MetaConstraintUtils.makeConstraint(
-				conTO.minerfulTemplate,
+				conTO.minerFulTemplate,
 				this.taskCharSetFactory.createSetsFromTaskStringsCollection(
 					conTO.parameters
 				)

@@ -118,6 +118,10 @@ public class ConstraintsPrinter {
         return superSbuf.toString();
 	}
     
+	/**
+	 * Prints the constraints in a CSV format. The constraints that are marked for exclusion are not included in the print-out.
+	 * @return A string containing the list of process model' constraints in a CSV format.  
+	 */
 	public String printBagCsv() {
         StringBuilder
         	superSbuf = new StringBuilder();
@@ -247,7 +251,7 @@ public class ConstraintsPrinter {
         return sBld.toString();
     }
     
-    public void printConDecModel(File outFile) throws IOException {
+    public void saveAsConDecModel(File outFile) throws IOException {
     	DeclareMapEncoderDecoder deMapEnDec = new DeclareMapEncoderDecoder(processModel);
     	DeclareMapReaderWriter.marshal(outFile.getCanonicalPath(), deMapEnDec.createDeclareMap());
     }

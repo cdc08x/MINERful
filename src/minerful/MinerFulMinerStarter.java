@@ -34,7 +34,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class MinerFulMinerStarter extends AbstractMinerFulStarter {
-	private static final String PROCESS_MODEL_NAME_PATTERN = "Model discovered out of %s";
+	private static final String PROCESS_MODEL_NAME_PATTERN = "Process model discovered out of %s";
+	private static final String DEFAULT_ANONYMOUS_MODEL_NAME = "Discovered process model";
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerStarter.class);
 
 	@Override
@@ -109,7 +110,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			systemParams.printHelp(cmdLineOptions);
 			System.exit(0);
 		}
-		if (inputParams.inputFile == null) {
+		if (inputParams.inputLogFile == null) {
 			systemParams.printHelpForWrongUsage("Input log file missing!",
 					cmdLineOptions);
 			System.exit(1);
@@ -124,7 +125,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessModel processModel = minerMinaStarter.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
+		ProcessModel processModel = minerMinaStarter.mine(logParser, inputParams, minerFulParams, systemParams, postParams, taskCharArchive);
 
 		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 	}
@@ -135,7 +136,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		case xes:
 			ClassificationType evtClassi = MinerFulMinerLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
 			try {
-				logParser = new XesLogParser(inputParams.inputFile, evtClassi);
+				logParser = new XesLogParser(inputParams.inputLogFile, evtClassi);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -152,7 +153,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			break;
 		case strings:
 			try {
-				logParser = new StringLogParser(inputParams.inputFile, ClassificationType.NAME);
+				logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -169,13 +170,25 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 	public ProcessModel mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams,
 			SystemCmdParameters systemParams, PostProcessingCmdParameters postParams, Character[] alphabet) {
+		return this.mine(logParser, null, minerFulParams, systemParams, postParams, alphabet);
+	}
+
+	public ProcessModel mine(LogParser logParser,
+			InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams,
+			SystemCmdParameters systemParams, PostProcessingCmdParameters postParams, Character[] alphabet) {
 		TaskCharArchive taskCharArchive = new TaskCharArchive(alphabet);
-		return this.mine(logParser, minerFulParams, systemParams, postParams, taskCharArchive);
+		return this.mine(logParser, inputParams, minerFulParams, systemParams, postParams, taskCharArchive);
 	}
 
 	public ProcessModel mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams, 
-			SystemCmdParameters systemParams, PostProcessingCmdParameters postPrarams, TaskCharArchive taskCharArchive) {
+			SystemCmdParameters systemParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive) {
+		return this.mine(logParser, null, minerFulParams, systemParams, postParams, taskCharArchive);
+	}
+
+	public ProcessModel mine(LogParser logParser,
+			InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams, 
+			SystemCmdParameters systemParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive) {
 		GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
 		globalStatsTable = computeKB(logParser, minerFulParams,
 				taskCharArchive, globalStatsTable);
@@ -183,14 +196,20 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		System.gc();
 
 		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
-		proMod.setName(String.format(MinerFulMinerStarter.PROCESS_MODEL_NAME_PATTERN, minerFulParams.inputFile.getName()));
+		
+		String processModelName = (
+				(inputParams != null && inputParams.inputLogFile != null ) ?
+					String.format(MinerFulMinerStarter.PROCESS_MODEL_NAME_PATTERN, inputParams.inputLogFile.getName()) :
+						DEFAULT_ANONYMOUS_MODEL_NAME
+		);
+		proMod.setName(processModelName);
 
-		proMod.bag = queryForConstraints(logParser, minerFulParams, postPrarams,
+		proMod.bag = queryForConstraints(logParser, minerFulParams, postParams,
 				taskCharArchive, globalStatsTable, proMod.bag);
 
 		System.gc();
 		
-		return pruneConstraints(proMod, minerFulParams, postPrarams);
+		return pruneConstraints(proMod, minerFulParams, postParams);
 	}
 
 	private GlobalStatsTable computeKB(LogParser logParser,

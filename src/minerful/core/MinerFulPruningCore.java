@@ -47,15 +47,19 @@ public class MinerFulPruningCore {
 	public ConstraintsBag massageConstraints() {
 		logger.info("Post-processing the discovered model...");
 		
-		this.markConstraintsBelowThresholds();
-		
 		if (this.postProcParams.analysisType.isPostProcessingRequested()) {
+			this.markConstraintsBelowThresholds();
 			if (this.postProcParams.analysisType.isRedundancyCheckRequested()) {
 				this.detectConflictsOrRedundancies();
 			} else {
-				this.pruneRedundancyBySubsumptionHierarchy();
+				this.markRedundancyBySubsumptionHierarchy();
 			}
 		}
+		
+		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
+			this.processModel.bag.removeMarkedConstraints();
+		}
+
 		return this.processModel.bag;
 	}
 
@@ -88,7 +92,8 @@ public class MinerFulPruningCore {
     	long beforeConflictResolution = System.currentTimeMillis();
     	
     	ConflictAndRedundancyResolver confliReso = new ConflictAndRedundancyResolver(processModel, postProcParams);
-    	this.processModel = confliReso.resolveConflictsOrRedundancies();
+//    	this.processModel = confliReso.resolveConflictsOrRedundancies();
+    	confliReso.resolveConflictsOrRedundancies();
 
     	long afterConflictResolution = System.currentTimeMillis();
         
@@ -104,14 +109,14 @@ public class MinerFulPruningCore {
         return this.processModel.bag;
 	}
 
-	public ConstraintsBag pruneRedundancyBySubsumptionHierarchy() {
+	public ConstraintsBag markRedundancyBySubsumptionHierarchy() {
 		long
        	beforeSubCheck = 0L,
        	afterSubCheck = 0L;
 
-		if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
-			this.processModel.resetMarks();
-		}
+//		if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
+//			this.processModel.resetMarks();
+//		}
 
         logger.info("Pruning redundancy, on the basis of hierarchy subsumption...");
 

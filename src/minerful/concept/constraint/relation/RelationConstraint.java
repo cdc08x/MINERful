@@ -35,23 +35,31 @@ public abstract class RelationConstraint extends Constraint {
 
     public RelationConstraint(TaskCharSet param1, TaskCharSet param2, double support) {
         super(param1, support);
+        super.setSilentToObservers(true);
         this.implied = param2;
         this.parameters.add(this.implied);
+        super.setSilentToObservers(false);
     }
     public RelationConstraint(TaskCharSet param1, TaskCharSet param2) {
         super(param1);
+        super.setSilentToObservers(true);
         this.implied = param2;
         this.parameters.add(this.implied);
+        super.setSilentToObservers(false);
     }
     public RelationConstraint(TaskChar param1, TaskChar param2, double support) {
         super(param1, support);
+        super.setSilentToObservers(true);
         this.implied = new TaskCharSet(param2);
         this.parameters.add(this.implied);
+        super.setSilentToObservers(false);
     }
     public RelationConstraint(TaskChar param1, TaskChar param2) {
         super(param1);
+        super.setSilentToObservers(true);
         this.implied = new TaskCharSet(param2);
         this.parameters.add(this.implied);
+        super.setSilentToObservers(false);
     }
 
     @Override

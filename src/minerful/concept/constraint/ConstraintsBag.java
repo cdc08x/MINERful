@@ -3,6 +3,8 @@ package minerful.concept.constraint;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -20,7 +22,7 @@ import org.apache.log4j.Logger;
 @XmlRootElement
 @XmlJavaTypeAdapter(ConstraintsBagAdapter.class)
 //@XmlAccessorType(XmlAccessType.FIELD)
-public class ConstraintsBag implements Cloneable {
+public class ConstraintsBag extends Observable implements Cloneable, Observer {
 //	@XmlTransient
 	private static Logger logger = Logger.getLogger(ConstraintsBag.class.getCanonicalName());
 	
@@ -52,7 +54,10 @@ public class ConstraintsBag implements Cloneable {
 	}
 	
 	public boolean add(Constraint c) {
-		return this.add(c.base, c);
+		if (this.add(c.base, c)) {
+			return true;
+		}
+		return false;
 	}
 
     public boolean add(TaskChar tCh, Constraint c) {
@@ -61,6 +66,7 @@ public class ConstraintsBag implements Cloneable {
             this.taskChars.add(tCh);
         }
     	if (this.bag.get(tCh).add(c)) {
+    		c.addObserver(this);
     		return true;
     	}
     	return false;
@@ -79,6 +85,7 @@ public class ConstraintsBag implements Cloneable {
             return false;
         }
         if (this.bag.get(character).remove(c)) {
+        	c.deleteObserver(this);
         	return true;
         }
         return false;
@@ -95,18 +102,18 @@ public class ConstraintsBag implements Cloneable {
     }
 
 	public void replace(TaskChar tCh, Constraint constraint) {
-        if (!this.bag.containsKey(tCh)) {
-            this.bag.put(tCh, new TreeSet<Constraint>());
-            this.taskChars.add(tCh);
-        }
-        this.bag.get(tCh).remove(constraint);
-        this.bag.get(tCh).add(constraint);
+        this.remove(tCh, constraint);
+        this.add(tCh, constraint);
+        
 	}
 
 	public int eraseConstraintsOf(TaskChar taskChar) {
 		int constraintsRemoved = 0;
 		if (this.bag.containsKey(taskChar)) {
-			constraintsRemoved = this.bag.get(taskChar).size();
+			for (Constraint c : this.bag.get(taskChar)) {
+				c.deleteObserver(this);
+				constraintsRemoved++;
+			}
 			this.bag.put(taskChar, new TreeSet<Constraint>());
 		}
 		return constraintsRemoved;
@@ -123,6 +130,12 @@ public class ConstraintsBag implements Cloneable {
 
     public boolean addAll(TaskChar tCh, Collection<? extends Constraint> cs) {
     	this.add(tCh);
+    	Set<Constraint> existingConSet = this.bag.get(tCh);
+    	for (Constraint c : cs) {
+    		if (!existingConSet.contains(c)) {
+    			c.addObserver(this);
+    		}
+    	}
         return this.bag.get(tCh).addAll(cs);
     }
 
@@ -309,5 +322,14 @@ public class ConstraintsBag implements Cloneable {
 			}
 		}
 		return clone;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (Constraint.class.isAssignableFrom(o.getClass())) {
+			this.setChanged();
+			this.notifyObservers(arg);
+			this.clearChanged();
+		}
 	}
 }

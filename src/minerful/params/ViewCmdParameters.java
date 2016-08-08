@@ -15,7 +15,7 @@ public class ViewCmdParameters extends ParamsManager {
 
 	/** Set this field to <code>true</code> to print a machine-readable list of supports, for each constraint template and constrained activities. */
     public Boolean machineReadableResults;
-    /** How to sort constraints in the print-out of results (see enum {@link minerful.params.ConstraintsSorting ConstraintsSorting}). Default is: {@link minerful.params.ConstraintsSorting#type ConstraintsSorting.type}. */
+    /** How to sort constraints in the print-out of results (see enum {@link minerful.params.ConstraintsSorting ConstraintsSorting}). Default is: {@link minerful.params.ConstraintsSorting#property ConstraintsSorting.type}. */
     public ConstraintsSorting constraintsSorting;
 	/** Set this field to <code>true</code> to avoid the discovered constraints to be folded under activation tasks in the print-out. */
     public Boolean noFoldingRequired;

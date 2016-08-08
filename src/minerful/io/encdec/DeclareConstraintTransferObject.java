@@ -24,15 +24,15 @@ import org.processmining.plugins.declareminer.visualizing.Parameter;
 
 public class DeclareConstraintTransferObject implements Comparable<DeclareConstraintTransferObject> {
 	public final DeclareMapTemplate declareMapTemplate;
-	public final Class<? extends Constraint> minerfulTemplate;
+	public final Class<? extends Constraint> minerFulTemplate;
 	public final List<Set<String>> parameters;
 	public final Double support;
 	public final Double confidence;
 	public final Double interestFactor;
 	
 	public DeclareConstraintTransferObject(Constraint con) {
-		this.minerfulTemplate = con.getClass();
-		this.declareMapTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.minerfulTemplate);
+		this.minerFulTemplate = con.getClass();
+		this.declareMapTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.minerFulTemplate);
 		this.parameters = new ArrayList<Set<String>>();
 		
 		List<TaskCharSet> params = con.getParameters();
@@ -54,7 +54,7 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 	
 	public DeclareConstraintTransferObject(ConstraintDefinition declareMapConstraint) {
 		this.declareMapTemplate = DeclareMapTemplate.fromName(declareMapConstraint.getName());
-		this.minerfulTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.declareMapTemplate);
+		this.minerFulTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.declareMapTemplate);
 		this.parameters = new ArrayList<Set<String>>();
 		
 		Collection<Parameter> params = declareMapConstraint.getParameters();
@@ -79,14 +79,15 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 	
 	public DeclareConstraintTransferObject(ConstraintPojo pojo) {
 		/* Search within all possible MINERFul templates */
-		if (MetaConstraintUtils.ALL_CONSTRAINT_TEMPLATE_NAMES_MAP.containsKey(pojo.template)) {
-			this.minerfulTemplate = MetaConstraintUtils.ALL_CONSTRAINT_TEMPLATE_NAMES_MAP.get(pojo.template);
-			this.declareMapTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.minerfulTemplate);
+		Class<? extends Constraint> givenMinerFulTemplate = StringToLowerCaseAlphanumToTemplateTranslator.translateTemplateName(pojo.template);
+		if (givenMinerFulTemplate != null) {
+			this.minerFulTemplate = givenMinerFulTemplate;
+			this.declareMapTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.minerFulTemplate);
 		} else {
 			/* Search within all possible DeclareMap templates */
 			this.declareMapTemplate = DeclareMapTemplate.fromName(pojo.template);
 			if (this.declareMapTemplate != null) {
-				this.minerfulTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.declareMapTemplate);
+				this.minerFulTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.declareMapTemplate);
 			} else {
 				throw new IllegalArgumentException("Requested Declare template " + pojo.template + " does not exist.");
 			}
@@ -101,7 +102,7 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 	public ConstraintPojo toPojo() {
 		ConstraintPojo pojo = new ConstraintPojo();
 		
-		pojo.template = MetaConstraintUtils.getTemplateName(this.minerfulTemplate);
+		pojo.template = MetaConstraintUtils.getTemplateName(this.minerFulTemplate);
 		pojo.parameters = this.parameters;
 		
 		pojo.support = this.support;
@@ -117,7 +118,7 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		builder.append("DeclareConstraintTransferObject [declareMapTemplate=");
 		builder.append(declareMapTemplate);
 		builder.append(", minerfulTemplate=");
-		builder.append(minerfulTemplate);
+		builder.append(minerFulTemplate);
 		builder.append(", parameters=");
 		builder.append(parameters);
 		builder.append(", support=");

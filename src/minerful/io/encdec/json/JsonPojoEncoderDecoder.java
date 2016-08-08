@@ -3,16 +3,16 @@ package minerful.io.encdec.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
+import java.util.Map;
+
+import minerful.concept.constraint.Constraint;
+import minerful.io.encdec.pojo.ConstraintPojo;
+import minerful.io.encdec.pojo.ProcessModelPojo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-
-import minerful.io.encdec.pojo.ConstraintPojo;
-import minerful.io.encdec.pojo.ProcessModelPojo;
 
 public class JsonPojoEncoderDecoder {
 	private Gson gson;

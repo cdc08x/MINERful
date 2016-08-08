@@ -17,7 +17,6 @@ import minerful.index.ModularConstraintsSorter;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import dk.brics.automaton.Automaton;
@@ -27,15 +26,15 @@ public class ConflictAndRedundancyResolver {
 	public static final String CONFLICT_REDUNDANCY_CHECK_CODE = "'CR-check'";
 
 	public static final int MAXIMUM_VISIBLE_CONSTRAINTS_FOR_REDUNDANCY_CHECK = 24;
-	
+
 	private ProcessModel safeProcess;
 	private ProcessModel originalProcess;
-	private ConstraintsBag originalBag;
+	private ConstraintsBag originallHierarchyUnredundantBag;
 	private boolean checking;
 	private final boolean avoidingRedundancy;
 	private final boolean avoidingRedundancyWithDoubleCheck;
 	private ModularConstraintsSorter sorter;
-	private SubsumptionHierarchyMarker subMarker;
+	private SubsumptionHierarchyMarker subsumMarker;
 
 	private Automaton safeAutomaton;
 
@@ -54,7 +53,8 @@ public class ConflictAndRedundancyResolver {
 		redundantConstraints,
 		redundantConstraintsAtSecondPass,
 		redundantConstraintsInOriginalModel;
-	private int conflictChecksPerformed,
+	private int
+		conflictChecksPerformed,
 		redundancyChecksPerformed;
 	private ConstraintSortingPolicy[] rankingPolicies;
 	
@@ -64,8 +64,8 @@ public class ConflictAndRedundancyResolver {
 		this.originalProcess = process;
 		this.sorter = new ModularConstraintsSorter();
 		this.rankingPolicies = params.sortingPolicies;
-		this.subMarker = new SubsumptionHierarchyMarker();
-		this.subMarker.setPolicy(SubsumptionHierarchyMarkingPolicy.CONSERVATIVE);
+		this.subsumMarker = new SubsumptionHierarchyMarker();
+		this.subsumMarker.setPolicy(SubsumptionHierarchyMarkingPolicy.CONSERVATIVE);
 		this.init();
 	}
 	
@@ -77,21 +77,20 @@ public class ConflictAndRedundancyResolver {
 		this.redundantConstraints = new TreeSet<Constraint>();
 		this.redundantConstraintsAtSecondPass = new TreeSet<Constraint>();
 		
-		// Pre-processing: remove subsumption-redundant constraints, by all means
-		this.originalBag = (ConstraintsBag) this.originalProcess.bag.clone();
-		this.subMarker.setConstraintsBag(originalBag);
-		this.subMarker.markSubsumptionRedundantConstraints();
-		this.originalBag.removeMarkedConstraints();
-		this.originalHierarchyUnredundantConstraints = this.originalBag.getAllConstraints();
+		// Pre-processing: mark subsumption-redundant constraints
+		this.subsumMarker.setConstraintsBag(this.originalProcess.bag);
+		this.subsumMarker.markSubsumptionRedundantConstraints();
+		// Create a copy of the original bag where subsumption-redundant constraints are removed
+		this.originallHierarchyUnredundantBag = (ConstraintsBag) this.originalProcess.bag.clone();
+		this.originallHierarchyUnredundantBag.removeMarkedConstraints();
+		this.originalHierarchyUnredundantConstraints = this.originallHierarchyUnredundantBag.getAllConstraints();
 		/*
 		 * The blackboard is meant to associate to all constraints a tick,
 		 * whenever the constraint has already been checked
 		 */
 		this.sorter.setConstraints(originalHierarchyUnredundantConstraints);
 		this.blackboard = new TreeSet<Constraint>(this.sorter.getComparator());
-		ConstraintsBag safeBag = this.originalBag.getOnlyFullySupportedConstraintsInNewBag();
-//		safeBag.markSubsumptionRedundantConstraints();
-//		safeBag.removeMarkedConstraints();
+		ConstraintsBag safeBag = this.originallHierarchyUnredundantBag.getOnlyFullySupportedConstraintsInNewBag();
 		Collection<Constraint> safeConstraints = safeBag.getAllConstraints();
 		this.sorter.setConstraints(safeConstraints);
 
@@ -103,7 +102,7 @@ public class ConflictAndRedundancyResolver {
 		if (avoidingRedundancy) {
 			logger.info("Checking redundancies of fully-supported constraints...");
 
-			ConstraintsBag emptyBag = this.originalBag.createEmptyIndexedCopy();
+			ConstraintsBag emptyBag = this.originallHierarchyUnredundantBag.createEmptyIndexedCopy();
 			this.safeProcess = new ProcessModel(this.originalProcess.getTaskCharArchive(), emptyBag);
 			Automaton candidateAutomaton = null;
 			this.safeAutomaton = this.safeProcess.buildAlphabetAcceptingAutomaton();
@@ -131,7 +130,7 @@ public class ConflictAndRedundancyResolver {
 		}
 
 //System.out.println("PRESENTATION -- The safe automaton:\n" + safeAutomaton.toDot());
-		ConstraintsBag unsafeBag = this.originalBag.createComplementOfCopyPrunedByThreshold(Constraint.MAX_SUPPORT);
+		ConstraintsBag unsafeBag = this.originallHierarchyUnredundantBag.createComplementOfCopyPrunedByThreshold(Constraint.MAX_SUPPORT);
 //		for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(unsafeBag)) {
 //			blackboard.add(c);
 //		}
@@ -164,11 +163,11 @@ public class ConflictAndRedundancyResolver {
 			this.doubleCheckRedundancies();
 		}
 
-		this.subMarker.setConstraintsBag(this.safeProcess.bag);
-		this.subMarker.markSubsumptionRedundantConstraints();
+		this.subsumMarker.setConstraintsBag(this.safeProcess.bag);
+		this.subsumMarker.markSubsumptionRedundantConstraints();
 
 		this.checking = false;
-		
+
 		return this.safeProcess;
 	}
 
@@ -208,6 +207,7 @@ public class ConflictAndRedundancyResolver {
 				this.safeProcess.bag.remove(candidateCon);
 				this.redundantConstraintsAtSecondPass.add(candidateCon);
 				this.redundantConstraints.add(candidateCon);
+				candidateCon.setRedundant(true);
 				logger.warn(candidateCon + " is redundant (second-pass grid check)");
 				}
 			redundancyChecksPerformed++;
@@ -233,6 +233,7 @@ public class ConflictAndRedundancyResolver {
 					+ " conflicts with the existing safe automaton!");
 //			logger.warn("Current set of safe constraints: " + this.safeProcess.bag);
 			conflictingConstraints.add(candidateCon);
+			candidateCon.setConflicting(true);
 
 			relaxedCon = candidateCon.getConstraintWhichThisIsBasedUpon();
 			if (relaxedCon == null) {
@@ -304,6 +305,7 @@ public class ConflictAndRedundancyResolver {
 					)
 			);
 			this.redundantConstraints.add(candidateCon);
+			candidateCon.setRedundant(true);
 			return false;
 		}
 	}
