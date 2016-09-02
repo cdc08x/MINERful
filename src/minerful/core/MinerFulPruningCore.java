@@ -49,10 +49,11 @@ public class MinerFulPruningCore {
 		
 		if (this.postProcParams.analysisType.isPostProcessingRequested()) {
 			this.markConstraintsBelowThresholds();
-			if (this.postProcParams.analysisType.isRedundancyCheckRequested()) {
-				this.detectConflictsOrRedundancies();
-			} else {
+			if (this.postProcParams.analysisType.isHierarchySubsumptionResolutionRequested()) {
 				this.markRedundancyBySubsumptionHierarchy();
+			}
+			if (this.postProcParams.analysisType.isRedundancyResolutionRequested()) {
+				this.detectConflictsOrRedundancies();
 			}
 		}
 		

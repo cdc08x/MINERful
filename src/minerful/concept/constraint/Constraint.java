@@ -11,6 +11,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -513,7 +514,7 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 			this.base = this.getParameters().get(0);
 		}
 	}
-
+	
 	/**
 	 * Resets properties
 	 * {@link #belowSupportThreshold belowSupportThreshold}, 

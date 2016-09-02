@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.core.MinerFulKBCore;
 import minerful.core.MinerFulPruningCore;
@@ -208,8 +209,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				taskCharArchive, globalStatsTable, proMod.bag);
 
 		System.gc();
-		
-		return pruneConstraints(proMod, minerFulParams, postParams);
+
+		pruneConstraints(proMod, minerFulParams, postParams);
+		return proMod;
 	}
 
 	private GlobalStatsTable computeKB(LogParser logParser,

@@ -14,13 +14,13 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
 import minerful.concept.ProcessModel;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.io.encdec.json.JsonPojoEncoderDecoder;
 import minerful.io.encdec.pojo.ProcessModelPojo;
+
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * This class marshals and unmarshals process models to/from XML files.

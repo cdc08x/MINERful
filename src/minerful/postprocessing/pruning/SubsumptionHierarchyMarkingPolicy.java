@@ -12,7 +12,7 @@ public enum SubsumptionHierarchyMarkingPolicy {
 	 * for example, if the model contains AlternatePrecedence(A, B) and Precedence(A, B),
 	 * and AlternatePrecedence(A, B) has a support of 0.89
 	 * whereas Precedence(A, B) has a support of 0.9,
-	 * the AlternatePrecedence(A, B) is pruned out.
+	 * then AlternatePrecedence(A, B) is pruned out.
 	 */
 	EAGER_ON_SUPPORT_OVER_HIERARCHY,
 	/*

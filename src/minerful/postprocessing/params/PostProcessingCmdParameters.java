@@ -39,24 +39,6 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		/** Hierarchical subsumption pruning of constraints, conflicts check, and double-pass automata-based redundancy elimination. */
 		HIERARCHYCONFLICTREDUNDANCYDOUBLE;
 		
-		public boolean isRedundancyCheckRequested() {
-			switch(this) {
-			case HIERARCHYCONFLICTREDUNDANCY:
-			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
-				return true;
-			default:
-				return false;
-			}
-		}
-		
-		public boolean isRedundancyDoubleCheckRequested() {
-			switch(this) {
-			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
-				return true;
-			default:
-				return false;
-			}
-		}
 		
 		public boolean isPostProcessingRequested() {
 			switch(this) {
@@ -66,7 +48,49 @@ public class PostProcessingCmdParameters extends ParamsManager {
 				return true;
 			}
 		}
-	}
+		
+		public boolean isHierarchySubsumptionResolutionRequested() {
+			switch(this) {
+			case HIERARCHY:
+			case HIERARCHYCONFLICT:
+			case HIERARCHYCONFLICTREDUNDANCY:
+			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		public boolean isConflictResolutionRequested() {
+			switch(this) {
+			case HIERARCHYCONFLICT:
+			case HIERARCHYCONFLICTREDUNDANCY:
+			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		public boolean isRedundancyResolutionRequested() {
+			switch(this) {
+			case HIERARCHYCONFLICTREDUNDANCY:
+			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
+				return true;
+			default:
+				return false;
+			}
+		}
+		
+		public boolean isRedundancyResolutionDoubleCheckRequested() {
+			switch(this) {
+			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
+				return true;
+			default:
+				return false;
+			}
+		}
+}
 
 	public static final String ARRAY_SEPARATOR = ":";
 	public static final String ANALYSIS_TYPE_PARAM_NAME = "ppAT";
