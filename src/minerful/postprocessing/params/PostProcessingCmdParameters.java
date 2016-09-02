@@ -82,7 +82,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = Constraint.MIN_CONFIDENCE;
 	public static final PostProcessingAnalysisType DEFAULT_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
-	public static final boolean IS_KEEPING_ALL_CONSTRAINTS_BY_DEFAULT = false;
+	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
 
 	/** Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following in the array is utilised. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
 	public ConstraintSortingPolicy[] sortingPolicies;	// mandatory assignment
@@ -113,7 +113,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	    this.supportThreshold = DEFAULT_SUPPORT_THRESHOLD;
 	    this.confidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
 	    this.interestFactorThreshold = DEFAULT_INTEREST_FACTOR_THRESHOLD;
-	    this.cropRedundantAndInconsistentConstraints = !IS_KEEPING_ALL_CONSTRAINTS_BY_DEFAULT;
+	    this.cropRedundantAndInconsistentConstraints = !DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
 	}
     
     public PostProcessingCmdParameters(Options options, String[] args) {
@@ -152,7 +152,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		if (line.hasOption(KEEP_CONSTRAINTS_PARAM_NAME)) {
 			this.cropRedundantAndInconsistentConstraints = false;
 		} else {
-			this.cropRedundantAndInconsistentConstraints = !IS_KEEPING_ALL_CONSTRAINTS_BY_DEFAULT;
+			this.cropRedundantAndInconsistentConstraints = !DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
 		}
 
 		String analysisTypeString = line.getOptionValue(ANALYSIS_TYPE_PARAM_NAME);

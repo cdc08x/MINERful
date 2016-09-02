@@ -1,5 +1,8 @@
 package minerful.io.encdec.declaremap;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +28,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.io.encdec.DeclareConstraintTransferObject;
 import minerful.io.encdec.TransferObjectToConstraintTranslator;
+import minerful.utils.ResourceReader;
 
 import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
@@ -71,6 +75,7 @@ public class DeclareMapEncoderDecoder {
 
 	public static final String TEMPLATE_TEMP_FILE_EXTENSION = ".xml";
 	public static final String TEMPLATE_TMP_FILE_BASENAME = "template";
+	public static final String DECLARE_XML_TEMPLATE_LIBRARY_URL = "file:/lib/resources.jar";
 	public static final String DECLARE_XML_TEMPLATE = "resources/" + TEMPLATE_TMP_FILE_BASENAME + TEMPLATE_TEMP_FILE_EXTENSION;
 
 	public DeclareMapEncoderDecoder(ProcessModel process) {
@@ -151,7 +156,9 @@ public class DeclareMapEncoderDecoder {
 		}
 		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateDefinitionsMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
 
-		InputStream ir = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
+		InputStream ir = ResourceReader.loadResource(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE_LIBRARY_URL, DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
+//		InputStream ir = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
+
 		File language = null;
 		try {
 			language = File.createTempFile(DeclareMapEncoderDecoder.TEMPLATE_TMP_FILE_BASENAME, DeclareMapEncoderDecoder.TEMPLATE_TEMP_FILE_EXTENSION);
