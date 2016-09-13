@@ -38,7 +38,22 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		HIERARCHYCONFLICTREDUNDANCY,
 		/** Hierarchical subsumption pruning of constraints, conflicts check, and double-pass automata-based redundancy elimination. */
 		HIERARCHYCONFLICTREDUNDANCYDOUBLE;
-		
+
+		public String getDescription() {
+			switch(this) {
+			case HIERARCHY:
+				return "Template-hierarchy based simplification";
+			case HIERARCHYCONFLICT:
+				return "Template-hierarchy based simplification plus conflict check";
+			case HIERARCHYCONFLICTREDUNDANCY:
+				return "Template-hierarchy based simplification plus conflict and redundancy check";
+			case HIERARCHYCONFLICTREDUNDANCYDOUBLE:
+				return "Template-hierarchy based simplification plus conflict and double-pass redundancy check";
+			case NONE:
+			default:
+				return "No simplification";
+			}
+		}
 		
 		public boolean isPostProcessingRequested() {
 			switch(this) {
