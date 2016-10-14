@@ -51,4 +51,4 @@ targetChar="a"
 alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 
 ## Run!
-echo java -Xmx$MEMORY_MAX -jar MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -eS ${errorSpreadTypeParams[0]} -eT ${errorTypeParams[2]} -eP 30 -eC $targetChar -r ${constraints[2]} ${constraints[5]} $*
+echo java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -eS ${errorSpreadTypeParams[0]} -eT ${errorTypeParams[2]} -eP 30 -eC $targetChar -r ${constraints[2]} ${constraints[5]} $*

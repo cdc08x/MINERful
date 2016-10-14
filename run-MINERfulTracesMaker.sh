@@ -18,7 +18,7 @@ MIN_STRLEN=2
 MAX_STRLEN=10
 TESTBED_SIZE=10000
 MEMORY_MAX="2048m"
-OUTPUT_FILE="/home/claudio/Desktop/WhereTheDonkeyFalls-example.xes"
+OUTPUT_FILE="/home/claudio/Temp/WhereTheDonkeyFalls-example.xes"
 
 ## Global variables
 constraints=(
@@ -50,4 +50,4 @@ alphabet=`echo ${alphabetCharacters[@]} | sed 's/ /:/g'`
 ## Run!
 # java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -s $TESTBED_SIZE -r ${constraints[2]} $*
 . ./libs.cfg
-java -Xmx$MEMORY_MAX -jar MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r `End d` `Response a b` `AlternatePrecedence c d`
+java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS -a $alphabet -m $MIN_STRLEN -M $MAX_STRLEN -L $TESTBED_SIZE -oLF $OUTPUT_FILE -oE "xes" -r `End d` `Response a b` `AlternatePrecedence c d`
