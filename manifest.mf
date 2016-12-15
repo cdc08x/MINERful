@@ -14,8 +14,8 @@ Class-Path: lib/automaton.jar
  lib/jgraph.jar 
  lib/jsr305-1.3.9.jar 
  lib/log4j-1.2.16.jar 
- lib/OpenXES.jar 
- lib/OpenXES-XStream.jar 
+ lib/OpenXES-20160212.jar
+ lib/OpenXES-XStream-20160212.jar 
  lib/reflections-0.9.5.jar 
  lib/reflections-0.9.8.jar 
  lib/reflections-0.9.8-uberjar.jar 

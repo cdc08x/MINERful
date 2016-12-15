@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskChar;
@@ -222,7 +221,7 @@ public class TaskCharEncoderDecoder {
 		return encode(taskClasses);
 	}
 	
-	public Character[] encode(AbstractTaskClass[] taskClasses) {
+	public Character[] encode(AbstractTaskClass... taskClasses) {
 		Character[] encodedTasks = new Character[0];
 		
 		Class<? extends AbstractTaskClass> taskClassType = null;
@@ -334,6 +333,26 @@ public class TaskCharEncoderDecoder {
 		return this.inverseTasksDictionary.get(encodedTask);
 	}
 	
+	public AbstractTaskClass[] decode(Character[] charArray) {
+		AbstractTaskClass[] taskClassesArray = new AbstractTaskClass[charArray.length];
+		
+		for (int i = 0; i < charArray.length; i++) {
+			taskClassesArray[i] = this.decode(charArray[i]);
+		}
+		return taskClassesArray;
+	}
+
+	public AbstractTaskClass[] decode(String charString) {
+		Character[] charArray = new Character[charString.length()];
+
+		int i = 0;
+		for (char character : charString.toCharArray()) {
+			charArray[i++] = character;
+		}
+
+		return this.decode(charArray);
+	}
+	
 	public static char encodedCharFromString(String encodedCharString) {
 		return
 				encodedCharString.startsWith("\\u")
@@ -391,6 +410,7 @@ public class TaskCharEncoderDecoder {
 				}
 			}
 		}
+		
 		return excludedTasks;
 	}
 

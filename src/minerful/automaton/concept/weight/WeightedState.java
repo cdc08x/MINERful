@@ -16,7 +16,7 @@ import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class WeightedState extends State implements AutomatonElementButter, AutomatonNonConformityElementButter {
+public class WeightedState extends State implements AutomatonElementQuantileButter, AutomatonNonConformityElementButter {
 
 	private static final long serialVersionUID = -3665359375777248550L;
 

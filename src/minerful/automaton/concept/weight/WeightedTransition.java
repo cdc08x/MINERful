@@ -6,7 +6,7 @@ import minerful.utils.RandomCharGenerator;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
-public class WeightedTransition extends Transition implements AutomatonElementButter, AutomatonNonConformityElementButter {
+public class WeightedTransition extends Transition implements AutomatonElementQuantileButter, AutomatonNonConformityElementButter {
 	private static final long serialVersionUID = -135495105218792952L;
 	
 	private int weight = 0;
