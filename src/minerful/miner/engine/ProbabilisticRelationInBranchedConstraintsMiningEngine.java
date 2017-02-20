@@ -61,7 +61,6 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 
 		support = 1.0 - (double)negativeOccurrences / (double)searchedAppearances;
 
-System.out.println(searched + " v. " + comboToAnalyze + " => support: negativeOccurrences / searchedAppearances = " + negativeOccurrences + " / " + searchedAppearances);
 		nuConstraint = new AlternatePrecedence(
 				new TaskCharSet(searched),
 				comboToAnalyze,
