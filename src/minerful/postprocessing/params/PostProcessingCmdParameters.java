@@ -116,9 +116,9 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final char INTEREST_THRESHOLD_PARAM_NAME = 'i';
 	public static final char CONFIDENCE_THRESHOLD_PARAM_NAME = 'c';
 
-	public static final Double DEFAULT_SUPPORT_THRESHOLD = Constraint.MAX_SUPPORT;
-	public static final Double DEFAULT_INTEREST_FACTOR_THRESHOLD = Constraint.MIN_INTEREST_FACTOR;
-	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = Constraint.MIN_CONFIDENCE;
+	public static final Double DEFAULT_SUPPORT_THRESHOLD = 0.95;
+	public static final Double DEFAULT_INTEREST_FACTOR_THRESHOLD = 0.125;
+	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = 0.25;
 	public static final PostProcessingAnalysisType DEFAULT_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
@@ -251,8 +251,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("type")
                 .withLongOpt("post-processing")
-                .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values()) +
-                		". Default is: " + fromEnumValueToString(DEFAULT_ANALYSIS_TYPE.toString()))
+                .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values())
+                		+ printDefault(fromEnumValueToString(DEFAULT_ANALYSIS_TYPE)))
                 .withType(new String())
                 .create(ANALYSIS_TYPE_PARAM_NAME)
     	);
@@ -260,8 +260,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("policy")
                 .withLongOpt("post-processing-rank")
-                .withDescription("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_SEPARATOR + "-separated list of the following: " + printValues(RankingPolicy.values()) +
-                		". Default is: " + fromEnumValueToString(StringUtils.join(DEFAULT_PRIORITY_POLICIES, ARRAY_SEPARATOR)))
+                .withDescription("type of ranking of constraints for post-processing analysis. It can be a separated list of the following: " + printValues(RankingPolicy.values())
+                		+ printDefault(fromEnumValueToString(StringUtils.join(DEFAULT_PRIORITY_POLICIES, ARRAY_SEPARATOR))))
                 .withType(new String())
                 .create(RANKING_POLICY_PARAM_NAME)
     	);
@@ -269,8 +269,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("threshold")
                 .withLongOpt("support")
-                .withDescription("threshold for support (reliability); it must be a real value ranging from 0.0 to 1.0" +
-                		". Default is: " + DEFAULT_SUPPORT_THRESHOLD)
+                .withDescription("threshold for support (reliability); it must be a real value ranging from 0.0 to 1.0"
+                		+ printDefault(DEFAULT_SUPPORT_THRESHOLD))
                 .withType(new Double(0))
                 .create(SUPPORT_THRESHOLD_PARAM_NAME)
         );
@@ -278,8 +278,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("threshold")
         		.withLongOpt("confidence")
-        		.withDescription("threshold for confidence level (relevance); it must be a real value ranging from 0.0 to 1.0" +
-                		". Default is: " + DEFAULT_CONFIDENCE_THRESHOLD)
+        		.withDescription("threshold for confidence level (relevance); it must be a real value ranging from 0.0 to 1.0"
+        				+ printDefault(DEFAULT_CONFIDENCE_THRESHOLD))
         		.withType(new Double(0))
         		.create(CONFIDENCE_THRESHOLD_PARAM_NAME)
         		);
@@ -287,8 +287,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("threshold")
         		.withLongOpt("interest-factor")
-        		.withDescription("threshold for interest factor (relevance); it must be a real value ranging from 0.0 to 1.0" +
-                		". Default is: " + DEFAULT_INTEREST_FACTOR_THRESHOLD)
+        		.withDescription("threshold for interest factor (relevance); it must be a real value ranging from 0.0 to 1.0"
+        				+ printDefault(DEFAULT_INTEREST_FACTOR_THRESHOLD))
         		.withType(new Double(0))
         		.create(INTEREST_THRESHOLD_PARAM_NAME)
         		);

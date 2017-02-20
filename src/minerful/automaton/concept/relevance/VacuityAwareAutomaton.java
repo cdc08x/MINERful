@@ -160,7 +160,7 @@ public class VacuityAwareAutomaton extends Automaton {
 			// Watch out: empty automata are clearly composed only of a permanently violating state
 			if (currentState.getTransitions().size() == 0) {
 				currentStAwaState.setStatus(StateActivationStatus.VIO_PERM);
-			// An intermediate non-accepting state is a termporary violation
+			// An intermediate non-accepting state is a temporary violation
 			} else {
 				currentStAwaState.setStatus(StateActivationStatus.VIO_TEMP);
 			}

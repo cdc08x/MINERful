@@ -32,9 +32,22 @@ import org.deckfour.xes.out.XesXmlSerializer;
 
 import dk.brics.automaton.Automaton;
 
+/**
+ * Generates a log out of a MINERful declarative process model.
+ * @author Claudio Di Ciccio
+ */
 public class MinerFulLogMaker {
+	/**
+	 * Log generation parameters
+	 */
 	private LogMakerCmdParameters parameters;
+	/**
+	 * Event log
+	 */
 	private XLog log;
+	/**
+	 * For debugging purposes
+	 */
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulLogMaker.class);
 
 
@@ -51,11 +64,16 @@ public class MinerFulLogMaker {
 		this.parameters = parameters;
 	}
 
-//	public XLog createLog(AssignmentModel declareMapModel) {
-//		this.log = createLog(DeclareMapEncoderDecoder.fromDeclareMapToMinerfulProcessModel(declareMapModel));
-//		return this.log;
-//	}
-
+	/**
+	 * Generates an event log based on a MINERful process model. To do so, it
+	 * extracts an automaton out of the declarative process model. Every finite
+	 * random walk on it generates a trace. Every trace is included in the
+	 * returned event log. The minimum and maximum length of the trace, as well
+	 * as the number of traces to be generated, are specified in
+	 * {@link #parameters parameters}.
+	 * @param processModel The process model that the generated event log complies to
+	 * @return The generated event log
+	 */
 	public XLog createLog(ProcessModel processModel) {
 		XFactory xFactory = new XFactoryBufferedImpl();
 		this.log = xFactory.createLog();
@@ -112,6 +130,12 @@ public class MinerFulLogMaker {
 		return this.log;
 	}
 	
+	/**
+	 * Stores the generated event log, {@link #log log}, in the file specified in
+	 * {@link #parameters parameters}.
+	 * @return The file in which the event log has been stored
+	 * @throws IOException
+	 */
 	public File storeLog() throws IOException {
 		checkParametersForLogEncoding();
 		if (this.parameters.outputLogFile == null)
@@ -125,6 +149,11 @@ public class MinerFulLogMaker {
 		return outFile;
 	}
 
+	/**
+	 * Prints the generated event log, {@link #log log}.
+	 * @return The print-out of the event log
+	 * @throws IOException
+	 */
 	public String printEncodedLog() throws IOException {
 		checkParametersForLogEncoding();
 		OutputStream outStream = new ByteArrayOutputStream();
@@ -134,6 +163,11 @@ public class MinerFulLogMaker {
 		return outStream.toString();
 	}
 
+	/**
+	 * Prints the generated event log, {@link #log log}, in the specified output stream.
+	 * @return The print-out of the event log
+	 * @throws IOException
+	 */
 	private boolean printEncodedLogInStream(OutputStream outStream) throws IOException {
 		switch(this.parameters.outputEncoding) {
 		case xes:
@@ -151,13 +185,22 @@ public class MinerFulLogMaker {
 		return true;
 	}
 
-	private void checkParametersForLogEncoding() {
+	/**
+	 * Checks that {@link #parameters parameters} and {@link #log log} are in a
+	 * correct state for generating the event log. In case the check fails, an
+	 * exception is fired.
+	 * @throws IllegalArgumentException
+	 */
+	private void checkParametersForLogEncoding() throws IllegalArgumentException {
 		if (this.log == null)
 			throw new IllegalStateException("Log not yet generated");
 		if (this.parameters.outputEncoding == null)
 			throw new IllegalStateException("Output encoding not specified in given parameters");
 	}
 
+	/**
+	 * Creates an event for the event log
+	 */
 	private XEvent makeXEvent(XFactory xFactory, XConceptExtension concExtino,
 			XLifecycleExtension lifeExtension, XTimeExtension timeExtension,
 			TaskChar firedTransition, Date currentDate) {
@@ -168,10 +211,21 @@ public class MinerFulLogMaker {
 		return xEvent;
 	}
 
+	/**
+	 * Generates a random date and time for a log event.
+	 * @return A random date and time for the log event.
+	 */
 	private Date generateRandomDateTimeForLogEvent() {
 		return generateRandomDateTimeForLogEvent(null);
 	}
 
+	/**
+	 * Generates a random date and time for a log event, no sooner than the
+	 * provided parameter.
+	 * 
+	 * @param laterThan The date and time with respect to which the generated time stamp must be later
+	 * @return A random date and time for the log event
+	 */
 	private Date generateRandomDateTimeForLogEvent(Date laterThan) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		

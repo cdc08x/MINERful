@@ -10,7 +10,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class SystemCmdParameters extends ParamsManager {
-    public enum DebugLevel {
+    private static final DebugLevel DEFAULT_DEBUG_LEVEL = DebugLevel.info;
+	public enum DebugLevel {
         none, info, debug, trace, all;
     }
 
@@ -24,7 +25,7 @@ public class SystemCmdParameters extends ParamsManager {
 
 	public SystemCmdParameters() {
 		super();
-		debugLevel = DebugLevel.info;
+		debugLevel = DEFAULT_DEBUG_LEVEL;
 		help = false;
 	}
 	
@@ -77,7 +78,9 @@ public class SystemCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("debug_level")
                 .withLongOpt("debug")
-                .withDescription("debug level " + printValues(DebugLevel.values()))
+                .withDescription("debug level " + printValues(DebugLevel.values())
+                		+ printDefault(fromEnumValueToString(DEFAULT_DEBUG_LEVEL))
+                )
                 .withType(new Integer(0))
                 .create(SystemCmdParameters.DEBUG_PARAM_NAME)
         );

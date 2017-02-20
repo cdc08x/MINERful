@@ -17,20 +17,20 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 public class RelevanceAutomatonMultiWalker {
-	private VacuityAwareWildcardAutomaton vAwaWildAuto;
+	private VacuityAwareWildcardAutomaton vacuAwaWildAuto;
 	private Map<Character, AbstractTaskClass> logTranslationMap;
 	private List<RelevanceAutomatonWalker> walkers;
 
 	public RelevanceAutomatonMultiWalker(
 			VacuityAwareWildcardAutomaton vAwaWildAuto,
 			Map<Character, AbstractTaskClass> logTranslationMap) {
-		this.vAwaWildAuto = vAwaWildAuto;
+		this.vacuAwaWildAuto = vAwaWildAuto;
 		this.logTranslationMap = logTranslationMap;
 		this.walkers = setUpWalkers();
 	}
 
 	private List<RelevanceAutomatonWalker> setUpWalkers() {
-		SortedSet<Character> alphabetWithoutWildcard = this.vAwaWildAuto.getAlphabetWithoutWildcard();
+		SortedSet<Character> alphabetWithoutWildcard = this.vacuAwaWildAuto.getAlphabetWithoutWildcard();
 		int k = alphabetWithoutWildcard.size();
 
 		Set<Character> taskIdentifiersInLog = this.logTranslationMap.keySet();
@@ -38,7 +38,7 @@ public class RelevanceAutomatonMultiWalker {
 		if (taskIdentifiersInLog.size() < k) {
 			throw new IllegalArgumentException("Not enough tasks in the log to instanciate the constraint");
 		}
-		
+
 		ICombinatoricsVector<Character> initialVector =
 				Factory.createVector(taskIdentifiersInLog.toArray(new Character[k+1]));
 		Iterator<ICombinatoricsVector<Character>> combosPermIterator = null;
@@ -57,7 +57,7 @@ public class RelevanceAutomatonMultiWalker {
 						vectorOfChars,
 						alphabetWithoutWildcard,
 						logTranslationMap,
-						vAwaWildAuto.getInitialWildState()));
+						vacuAwaWildAuto.getInitialWildState()));
 			}
 		}
 
@@ -73,14 +73,13 @@ public class RelevanceAutomatonMultiWalker {
 
 	public void run(LogTraceParser traceParser) {
 		this.reset();
-		
+
 		while (!traceParser.isParsingOver()) {
 			AbstractTaskClass tasCla = traceParser.parseSubsequent().getEvent().getTaskClass();
 			for (RelevanceAutomatonWalker walker : walkers) {
 				walker.step(tasCla);
 			}
 		}
-
 	}
 
 	public List<RelevanceAutomatonWalker> getWalkers() {

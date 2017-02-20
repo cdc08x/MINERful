@@ -26,7 +26,6 @@ public class MinerFulCmdParameters extends ParamsManager {
 		POSITIVE, NEGATIVE
 	}
 	
-	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
 	public static final String STATS_OUT_PATH_PARAM_NAME = "oSF";
 	public static final String OUT_BRANCHING_LIMIT_PARAM_NAME = "b";
 	public static final String FORESEE_DISTANCES_PARAM_NAME = "fD";
@@ -37,6 +36,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 //	public static final String TIME_ANALYSIS_PARAM_NAME = "time";
 
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
+	public static final Integer DEFAULT_OUT_BRANCHING_LIMIT = MINIMUM_BRANCHING_LIMIT;
 	public static final Integer MINIMUM_PARALLEL_EXECUTION_THREADS = 1;
 
     /** Out-branching maximum level for discovered constraints (must be greater than or equal to {@link #MINIMUM_BRANCHING_LIMIT MINIMUM_BRANCHING_LIMIT}, the default) */ 
@@ -57,7 +57,7 @@ public class MinerFulCmdParameters extends ParamsManager {
     
     public MinerFulCmdParameters() {
 		super();
-		this.branchingLimit = MINIMUM_BRANCHING_LIMIT;
+		this.branchingLimit = DEFAULT_OUT_BRANCHING_LIMIT;
 		this.foreseeDistances = false;
 		this.memSpaceShowingRequested = false;
 		this.kbParallelProcessingThreads = MINIMUM_PARALLEL_EXECUTION_THREADS;
@@ -159,14 +159,6 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("path")
-                .withLongOpt("in-log")
-                .withDescription("path to read the log file from")
-                .withType(new String())
-                .create(INPUT_LOGFILE_PATH_PARAM_NAME)
-    	);
-        options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
         		.withLongOpt("stats-out")
@@ -188,7 +180,8 @@ public class MinerFulCmdParameters extends ParamsManager {
         		.withLongOpt("out-branch")
         		.withDescription("out-branching maximum level for discovered constraints (must be greater than or equal to "
 						+ (MINIMUM_BRANCHING_LIMIT)
-						+ ", the default)")
+						+ ")"
+						+ printDefault(DEFAULT_OUT_BRANCHING_LIMIT))
         		.withType(new Integer(0))
         		.create(OUT_BRANCHING_LIMIT_PARAM_NAME)
         		);
@@ -198,7 +191,8 @@ public class MinerFulCmdParameters extends ParamsManager {
         		.withLongOpt("kb-ll-threads")
         		.withDescription("threads for log-processing parallel execution (must be greater than or equal to "
 						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
-						+ ", the default)")
+						+ ")"
+						+ printDefault(MINIMUM_PARALLEL_EXECUTION_THREADS))
         		.withType(new Integer(0))
         		.create(KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
         		);
@@ -208,7 +202,8 @@ public class MinerFulCmdParameters extends ParamsManager {
         		.withLongOpt("q-ll-threads")
         		.withDescription("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
 						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
-						+ ", the default)")
+						+ ")"
+						+ printDefault(MINIMUM_PARALLEL_EXECUTION_THREADS))
         		.withType(new Integer(0))
         		.create(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
         		);

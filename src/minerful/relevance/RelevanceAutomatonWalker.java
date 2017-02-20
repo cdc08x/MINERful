@@ -25,11 +25,11 @@ public class RelevanceAutomatonWalker {
 		Character[]
 				alphabetWithoutWildcardArray = alphabetWithoutWildcard.toArray(new Character[alphabetWithoutWildcard.size()]),
 				recodifiedAlphabet = vector.toArray(new Character[alphabetWithoutWildcard.size()]);
-		
+
 		for (int i = 0; i < recodifiedAlphabet.length; i++) {
 			alteredInverseLogTranslationMap.put(logTranslationMap.get(recodifiedAlphabet[i]), new Character(alphabetWithoutWildcardArray[i]));
 		}
-		
+
 		this.initialState = initialState;
 		this.setUpAlteredLogTranslationMap();
 		reset();

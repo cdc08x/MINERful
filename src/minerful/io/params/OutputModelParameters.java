@@ -161,7 +161,7 @@ public class OutputModelParameters extends ParamsManager {
         		.hasArg().withArgName("path")
         		.withLongOpt("save-automaton")
         		.withDescription(
-        				attachInstabilityWarningToDescription("write a Graphviz DOT format of a finite state automaton representing the mined process on the given file")
+        				"write a Graphviz DOT format of a finite state automaton representing the mined process on the given file"
         		)
         		.withType(new String())
         		.create(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
@@ -171,7 +171,7 @@ public class OutputModelParameters extends ParamsManager {
         		.hasArg().withArgName("path")
         		.withLongOpt("save-automaton-tsml")
         		.withDescription(
-        				attachInstabilityWarningToDescription("write a TSML format of a finite state automaton representing the mined process on the given file")
+        				"write a TSML format of a finite state automaton representing the mined process on the given file"
         		)
         		.withType(new String())
         		.create(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME)

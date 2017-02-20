@@ -9,17 +9,16 @@ import minerful.concept.TaskCharArchive;
 import minerful.miner.stats.charsets.FixedTaskSetIncrementalCountersCollection;
 
 public abstract class LocalStatsWrapperForCharsets extends LocalStatsWrapper {
-    protected FixedTaskSetIncrementalCountersCollection neverAppearedCharacterSets;
-    protected FixedTaskSetIncrementalCountersCollection neverMoreAppearedAfterCharacterSets;
-    protected FixedTaskSetIncrementalCountersCollection neverMoreAppearedBeforeCharacterSets;
-    protected FixedTaskSetIncrementalCountersCollection repetitionsBeforeCharactersAppearingAfter;
-    protected FixedTaskSetIncrementalCountersCollection repetitionsAfterCharactersAppearingBefore;
-//    protected Map<String, TaskChar> nearestMatesAtThisStep;
-//    protected ArrayList<TaskChar> orderedAlreadyMetCharsAtThisStep;
-//    protected TreeSet<TaskChar> alreadyMetCharsAtThisStep;
-    protected Integer maximumTasksSetSize;
+	protected FixedTaskSetIncrementalCountersCollection neverAppearedCharacterSets;
+	protected FixedTaskSetIncrementalCountersCollection neverMoreAppearedAfterCharacterSets;
+	protected FixedTaskSetIncrementalCountersCollection neverMoreAppearedBeforeCharacterSets;
+	protected FixedTaskSetIncrementalCountersCollection repetitionsBeforeCharactersAppearingAfter;
+	protected FixedTaskSetIncrementalCountersCollection repetitionsAfterCharactersAppearingBefore;
+	protected FixedTaskSetIncrementalCountersCollection neverMoreAfterLastOccurrenceCharacterSets;
+	protected FixedTaskSetIncrementalCountersCollection neverMoreBeforeFirstOccurrenceCharacterSets;
+	protected Integer maximumTasksSetSize;
 
-    public LocalStatsWrapperForCharsets(TaskCharArchive archive, TaskChar baseTask) {
+	public LocalStatsWrapperForCharsets(TaskCharArchive archive, TaskChar baseTask) {
 		super(archive, baseTask);
 	}
 
@@ -38,7 +37,13 @@ public abstract class LocalStatsWrapperForCharsets extends LocalStatsWrapper {
 	public FixedTaskSetIncrementalCountersCollection getRepetitionsAfterCharactersAppearingBefore() {
 		return repetitionsAfterCharactersAppearingBefore;
 	}
-	
+	public FixedTaskSetIncrementalCountersCollection getNeverMoreAfterLastOccurrenceCharacterSets() {
+		return neverMoreAfterLastOccurrenceCharacterSets;
+	}
+	public FixedTaskSetIncrementalCountersCollection getNeverMoreBeforeFirstOccurrenceCharacterSets() {
+		return neverMoreBeforeFirstOccurrenceCharacterSets;
+	}
+
 	@Override
 	public void merge(LocalStatsWrapper other) {
 		if (!(other instanceof LocalStatsWrapperForCharsets)) {
@@ -53,6 +58,8 @@ public abstract class LocalStatsWrapperForCharsets extends LocalStatsWrapper {
 		neverAppearedCharacterSets.merge(otro.neverAppearedCharacterSets);
 		neverMoreAppearedAfterCharacterSets.merge(otro.neverMoreAppearedAfterCharacterSets);
 		neverMoreAppearedBeforeCharacterSets.merge(otro.neverMoreAppearedBeforeCharacterSets);
+		neverMoreAfterLastOccurrenceCharacterSets.merge(otro.neverMoreAfterLastOccurrenceCharacterSets);
+		neverMoreBeforeFirstOccurrenceCharacterSets.merge(otro.neverMoreBeforeFirstOccurrenceCharacterSets);
 		repetitionsBeforeCharactersAppearingAfter.merge(otro.repetitionsBeforeCharactersAppearingAfter);
 		repetitionsAfterCharactersAppearingBefore.merge(otro.repetitionsAfterCharactersAppearingBefore);
 	}

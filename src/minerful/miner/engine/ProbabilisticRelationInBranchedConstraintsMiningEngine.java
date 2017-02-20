@@ -40,11 +40,10 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 
 		double support = 0;
 		int negativeOccurrences = 0;
-	
-		
+
 		LocalStatsWrapperForCharsets extSearchedLocalStats = (LocalStatsWrapperForCharsets) searchedLocalStats;
-		SortedSet<TasksSetCounter> neverAppearedCharSets = 
-				extSearchedLocalStats.getNeverMoreAppearedBeforeCharacterSets()
+		SortedSet<TasksSetCounter> neverMoreBeforeFirstCharSets = 
+				extSearchedLocalStats.getNeverMoreBeforeFirstOccurrenceCharacterSets()
 				.selectCharSetCountersSharedAmong(
 						comboToAnalyze.getTaskCharsArray()
 						);
@@ -53,24 +52,19 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 				.selectCharSetCountersSharedAmong(
 						comboToAnalyze.getTaskCharsArray()
 				);
-//		CharactersSetCounter alternationsCounter =
-//				extSearchedLocalStats.getRepetitionsAfterCharactersAppearingBefore().getNearest(
-//						comboToAnalyze.getListOfIdentifiers()
-//				);
-		for (TasksSetCounter neverAppearedAfterCharSet : neverAppearedCharSets) {
-			negativeOccurrences += neverAppearedAfterCharSet.getCounter();
+		for (TasksSetCounter neverMoreBeforeFirstCharSet : neverMoreBeforeFirstCharSets) {
+			negativeOccurrences += neverMoreBeforeFirstCharSet.getCounter();
 		}
-//		if (alternationsCounter != null) {
-//			negativeOccurrences += alternationsCounter.getCounter();
-//		}
 		for (TasksSetCounter alternationBeforeCharSet : alternationCharSets) {
 			negativeOccurrences += alternationBeforeCharSet.getCounter();
 		}
 
 		support = 1.0 - (double)negativeOccurrences / (double)searchedAppearances;
+
+System.out.println(searched + " v. " + comboToAnalyze + " => support: negativeOccurrences / searchedAppearances = " + negativeOccurrences + " / " + searchedAppearances);
 		nuConstraint = new AlternatePrecedence(
-				comboToAnalyze,
 				new TaskCharSet(searched),
+				comboToAnalyze,
 				support);
 
 		return nuConstraint;
@@ -175,8 +169,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		}				
 		support = (double) positiveOccurrences / (double) searchedAppearances;
 		nuConstraint = new ChainPrecedence(
-				comboToAnalyze,
 				new TaskCharSet(searched),
+				comboToAnalyze,
 				support);
 		return nuConstraint;
 	}
@@ -311,16 +305,16 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		if (neverBeforeAppearedCharSets.size() == 0) {
 			nuConstraint = new Precedence(
-					comboToAnalyze,
 					new TaskCharSet(searched),
+					comboToAnalyze,
 					1.0);
 		} else {
 			for (TasksSetCounter neverAppearedAfterCharSet : neverBeforeAppearedCharSets) {
 				negativeOccurrences += neverAppearedAfterCharSet.getCounter();
 				support = 1.0 - (double)negativeOccurrences / (double)searchedAppearances;
 				nuConstraint = new Precedence(
-						comboToAnalyze,
 						new TaskCharSet(searched),
+						comboToAnalyze,
 						support);
 			}
 		}

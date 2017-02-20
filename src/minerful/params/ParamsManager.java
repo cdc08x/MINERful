@@ -11,7 +11,7 @@ import org.apache.commons.cli.PosixParser;
 public abstract class ParamsManager {
     public static final String EXPERIMENTAL_DEVELOPMENT_STAGE_MESSAGE = 
 			"*** WARNING: experimental development stage of implementation!";
-	private static final int DEFAULT_PROMPT_WIDTH = 120;
+	private static final int DEFAULT_PROMPT_WIDTH = 160;
     protected HelpFormatter helpFormatter = new HelpFormatter();
 
     public ParamsManager() {
@@ -74,9 +74,13 @@ public abstract class ParamsManager {
     	return null;
 	}
 
-    protected static String fromEnumValueToString(String token) {
-		return token.trim().toLowerCase().replace("_", "-");
+    protected static String fromEnumValueToString(Object token) {
+		return token.toString().trim().toLowerCase().replace("_", "-");
 	}
+    
+    public static String printDefault(Object defaultValue) {
+    	return ".\nDefault is: '" + defaultValue.toString() + "'"; 
+    }
 
 	public static String printValues(Object... values) {
         StringBuilder valuesStringBuilder = new StringBuilder();
@@ -87,7 +91,7 @@ public abstract class ParamsManager {
 
         for (int i = 0; i < values.length; i++) {
             valuesStringBuilder.append("'");
-            valuesStringBuilder.append(fromEnumValueToString(values[i].toString()));
+            valuesStringBuilder.append(fromEnumValueToString(values[i]));
             valuesStringBuilder.append("'");
             if (i < values.length -1) {
                 valuesStringBuilder.append(",");

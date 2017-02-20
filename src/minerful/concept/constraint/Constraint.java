@@ -97,43 +97,61 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	public Constraint(TaskCharSet param) {
 		this(param, DEFAULT_SUPPORT);
 	}
-    
+
+	public Constraint(TaskChar... params) {
+		this(DEFAULT_SUPPORT, params);
+	}
+
+	public Constraint(TaskCharSet... params) {
+		this(DEFAULT_SUPPORT, params);
+	}
+
     private boolean checkSupport(double support) {
         if (support < MIN_SUPPORT || support > MAX_SUPPORT) {
-            throw new IllegalArgumentException("Provided support for " + this.toString() + " out of range: " + support);
+            throw new IllegalArgumentException("Provided support for " + toString() + " out of range: " + support);
         }
         return true;
     }
     private boolean checkConfidence(double confidence) {
         if (confidence < MIN_CONFIDENCE || confidence > MAX_CONFIDENCE) {
-            throw new IllegalArgumentException("Provided confidence level for " + this.toString() + " out of range: " + confidence);
+            throw new IllegalArgumentException("Provided confidence level for " + toString() + " out of range: " + confidence);
         }
         return true;
     }
     private boolean checkInterestFactor(double interestFactor) {
         if (interestFactor < MIN_INTEREST_FACTOR || interestFactor > MAX_INTEREST_FACTOR) {
-            throw new IllegalArgumentException("Provided interest factor for " + this.toString() + " out of range: " + interestFactor);
+            throw new IllegalArgumentException("Provided interest factor for " + toString() + " out of range: " + interestFactor);
         }
         return true;
     }
 
 	public Constraint(TaskChar param, double support) {
+		this(support, param);
+	}
+
+	public Constraint(double support, TaskChar... params) {
 		this.setSilentToObservers(true);
-		this.base = new TaskCharSet(param);
-		this.parameters = new ArrayList<TaskCharSet>(1);
-		this.parameters.add(this.base);
+		this.base = new TaskCharSet(params[0]);
+		this.parameters = new ArrayList<TaskCharSet>(params.length);
+		for (TaskChar param : params)
+			this.parameters.add(new TaskCharSet(param));
 		this.setSupport(support);
 		this.setSilentToObservers(false);
 	}
 
     public Constraint(TaskCharSet param, double support) {
-		this.setSilentToObservers(true);
-        this.base = param;
-        this.parameters = new ArrayList<TaskCharSet>(1);
-        this.parameters.add(this.base);
-        this.setSupport(support);
-		this.setSilentToObservers(false);
+		this(support, param);
     }
+
+	public Constraint(double support, TaskCharSet... params) {
+		this.setSilentToObservers(true);
+		this.base = params[0];
+		this.parameters = new ArrayList<TaskCharSet>(params.length);
+		for (TaskCharSet param : params)
+			this.parameters.add(param);
+		this.setSupport(support);
+		this.setSilentToObservers(false);
+	}
 
 	@Override
     public String toString() {
@@ -144,7 +162,7 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 		
 		boolean firstParam = true;
 		
-		for (TaskCharSet param : this.parameters) {
+		for (TaskCharSet param : getParameters()) {
 			if (firstParam) { firstParam = false; }
 			else { sBuil.append(", "); }
 			sBuil.append(param);
@@ -556,6 +574,7 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	public boolean isSilentToObservers() {
 		return silentToObservers;
 	}
+
 	protected void setSilentToObservers(boolean silentToObservers) {
 		this.silentToObservers = silentToObservers;
 	}

@@ -68,8 +68,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		int negativeOccurrences = 0;
 
 		LocalStatsWrapperForCharsets extPivotLocalStats = (LocalStatsWrapperForCharsets) pivotLocalStats;
-		SortedSet<TasksSetCounter> neverAppearedCharSets = 
-				extPivotLocalStats.getNeverMoreAppearedAfterCharacterSets()
+		SortedSet<TasksSetCounter> neverMoreAfterLastCharSets = 
+				extPivotLocalStats.getNeverMoreAfterLastOccurrenceCharacterSets()
 				.selectCharSetCountersSharedAmong(
 						comboToAnalyze.getTaskCharsArray()
 				);
@@ -78,16 +78,9 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 				.selectCharSetCountersSharedAmong(
 						comboToAnalyze.getTaskCharsArray()
 				);
-//		CharactersSetCounter alternationsCounter =
-//				extPivotLocalStats
-//				.getRepetitionsBeforeCharactersAppearingAfter().getNearest(
-//						comboToAnalyze.getTaskChars()
-//				);
-		for (TasksSetCounter neverAppearedAfterCharSet : neverAppearedCharSets) {
-			negativeOccurrences += neverAppearedAfterCharSet.getCounter();
+		for (TasksSetCounter neverMoreAfterLastCharSet : neverMoreAfterLastCharSets) {
+			negativeOccurrences += neverMoreAfterLastCharSet.getCounter();
 		}
-//		if (alternationsCounter != null)
-//			negativeOccurrences += alternationsCounter.getCounter();
 		for (TasksSetCounter alternationAfterCharSet : alternationCharSets) {
 			negativeOccurrences += alternationAfterCharSet.getCounter();
 		}

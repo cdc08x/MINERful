@@ -296,8 +296,7 @@ public class LocalStatsWrapper {
 				cell.finalizeAnalysisStep(onwards, secondPass);
 			}
 			/* Resets the switchers for the alternations counter */
-			for (AlternatingCounterSwitcher sw : this.alternatingCntSwAtThisStep
-					.values()) {
+			for (AlternatingCounterSwitcher sw : this.alternatingCntSwAtThisStep.values()) {
 				sw.reset();
 			}
 			/* Resets the local stats table counters */

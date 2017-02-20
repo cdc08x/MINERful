@@ -12,8 +12,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class InputCmdParameters extends ParamsManager {
+	public static final EventClassification DEFAULT_EVENT_CLASSIFICATION = EventClassification.name;
+	public static final InputEncoding DEFAULT_INPUT_ENCODING = InputEncoding.xes;
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
-    public static final String INPUT_ENC_PARAM_NAME = "iE";
+    public static final String INPUT_ENCODING_PARAM_NAME = "iE";
 	public static final String EVENT_CLASSIFICATION_PARAM_NAME = "eC";
 	public static final String INPUT_LOGFILE_PATH_LONG_PARAM_NAME = "in-log";
     public static final String INPUT_ENC_PARAM_LONG_NAME = "in-enc";
@@ -36,8 +38,8 @@ public class InputCmdParameters extends ParamsManager {
 
     public InputCmdParameters() {
     	super();
-    	inputLanguage = InputEncoding.xes;
-    	eventClassification = EventClassification.name;
+    	inputLanguage = DEFAULT_INPUT_ENCODING;
+    	eventClassification = DEFAULT_EVENT_CLASSIFICATION;
     	inputLogFile = null;
     }
     
@@ -66,7 +68,7 @@ public class InputCmdParameters extends ParamsManager {
         }
         this.inputLanguage = InputEncoding.valueOf(
                 line.getOptionValue(
-                    INPUT_ENC_PARAM_NAME,
+                    INPUT_ENCODING_PARAM_NAME,
                     this.inputLanguage.toString()
                 )
             );
@@ -97,15 +99,17 @@ public class InputCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("language")
                 .withLongOpt(INPUT_ENC_PARAM_LONG_NAME)
-                .withDescription("input encoding language " + printValues(InputEncoding.values()))
+                .withDescription("input encoding language " + printValues(InputEncoding.values()) + ". "
+                		+ printDefault(fromEnumValueToString(DEFAULT_INPUT_ENCODING)))
                 .withType(new String())
-                .create(INPUT_ENC_PARAM_NAME)
+                .create(INPUT_ENCODING_PARAM_NAME)
         );
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("class")
                 .withLongOpt(EVENT_CLASSIFICATION_LONG_PARAM_NAME)
-                .withDescription("event classification (resp., by activity name, or according to the log-specified pattern) " + printValues(EventClassification.values()))
+                .withDescription("event classification (resp., by activity name, or according to the log-specified pattern) " + printValues(EventClassification.values())
+                		+ printDefault(fromEnumValueToString(DEFAULT_EVENT_CLASSIFICATION)))
                 .withType(new String())
                 .create(EVENT_CLASSIFICATION_PARAM_NAME)
         );
