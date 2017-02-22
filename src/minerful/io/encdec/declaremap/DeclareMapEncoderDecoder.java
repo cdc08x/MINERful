@@ -1,8 +1,5 @@
 package minerful.io.encdec.declaremap;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +45,7 @@ import com.jgraph.layout.organic.JGraphOrganicLayout;
 
 public class DeclareMapEncoderDecoder {
 	private List<DeclareConstraintTransferObject> constraintTOs;
+//	private List<DeclareConstraintTransferObject> unmappedConstraintTOs;
 	private TaskCharArchive taskCharArchive = null;
 	private String processModelName = null;
 
@@ -80,6 +78,7 @@ public class DeclareMapEncoderDecoder {
 
 	public DeclareMapEncoderDecoder(ProcessModel process) {
 		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(process.bag.howManyConstraints());
+//		this.unmappedConstraintTOs = new ArrayList<DeclareConstraintTransferObject>();
 		this.taskCharArchive = process.getTaskCharArchive();
 		this.processModelName = process.getName();
 
@@ -132,9 +131,13 @@ public class DeclareMapEncoderDecoder {
 	public ProcessModel createMinerFulProcessModel() {
 		Collection<Constraint> minerFulConstraints = new ArrayList<Constraint>(this.constraintTOs.size());
 		TransferObjectToConstraintTranslator miFuConMak = new TransferObjectToConstraintTranslator(this.taskCharArchive);
+		Constraint tmpCon = null;
 		
 		for (DeclareConstraintTransferObject conTO: constraintTOs) {
-			minerFulConstraints.add(miFuConMak.createConstraint(conTO));
+			tmpCon = miFuConMak.createConstraint(conTO);
+			if (tmpCon != null) {
+				minerFulConstraints.add(tmpCon);
+			}
 		}
 
 		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(minerFulConstraints));
@@ -148,6 +151,9 @@ public class DeclareMapEncoderDecoder {
 	}
 
 	public DeclareMap createDeclareMap() {
+//		return this.createDeclareMap(true);
+//	}
+//	public DeclareMap createDeclareMap(boolean addUnmappedDeclareMapConstraints) {
 		Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap = new HashMap<String, DeclareMapTemplate>();
 		DeclareMapTemplate[] declareTemplates = DeclareMapTemplate.values();
 		for (DeclareMapTemplate d : declareTemplates) {
@@ -157,7 +163,6 @@ public class DeclareMapEncoderDecoder {
 		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateDefinitionsMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
 
 		InputStream ir = ResourceReader.loadResource(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE_LIBRARY_URL, DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
-//		InputStream ir = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
 
 		File language = null;
 		try {
@@ -181,8 +186,8 @@ public class DeclareMapEncoderDecoder {
 		model.setName(this.processModelName);
 		
 		ActivityDefinition activitydefinition = null;
-		int
-			constraintID = 0;
+		ConstraintDefinition constraintDefinition = null;
+		int constraintID = 0;
 
 		/* Save activity definitions */
 		for (TaskChar tCh : this.taskCharArchive.getTaskChars()) {
@@ -192,28 +197,15 @@ public class DeclareMapEncoderDecoder {
 
 		for (DeclareConstraintTransferObject constraintTo : constraintTOs) {
 			constraintID++;
-			/* Load constraint definition */
-			ConstraintDefinition constraintdefinition = new ConstraintDefinition(constraintID, model, declareTemplateDefinitionsMap.get(constraintTo.declareMapTemplate));
-			Collection<Parameter> parameters = (declareTemplateDefinitionsMap.get(constraintTo.declareMapTemplate)).getParameters();
-			Iterator<Set<String>> paramsIterator = constraintTo.parameters.iterator();
-			/* Fill in parameters */
-			for (Parameter parameter : parameters) {
-				for (String branchName : paramsIterator.next()) {
-					ActivityDefinition activityDefinition = model.activityDefinitionWithName(branchName);
-					constraintdefinition.addBranch(parameter, activityDefinition);
-				}
-			}
-			/* Specify the support, confidence and interest factor within the text */
-			constraintdefinition.setText(
-					constraintdefinition.getText() +
-					LABEL_VALUE_SEPARATOR +
-					String.format(SUPPORT_CONFIDENCE_IF_FORMAT_PATTERN,
-							constraintTo.support,
-							constraintTo.confidence,
-							constraintTo.interestFactor)
-			);
-			model.addConstraintDefiniton(constraintdefinition);
+			constraintDefinition = createConstraintDefinition(
+				declareTemplateDefinitionsMap, model, constraintID, constraintTo);
+			model.addConstraintDefiniton(constraintDefinition);
 		}
+//		if (addUnmappedDeclareMapConstraints) {
+//			for (DeclareConstraintTransferObject constraintTo : unmappedConstraintTOs) {
+//				
+//			}
+//		}
 
 		AssignmentModelView view = new AssignmentModelView(model);
 		DeclareMap map = new DeclareMap(model, null, view, null, null, null);
@@ -245,6 +237,33 @@ public class DeclareMapEncoderDecoder {
 		return map;
 	}
 
+	private ConstraintDefinition createConstraintDefinition(
+			Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateDefinitionsMap,
+			AssignmentModel model, int constraintID,
+			DeclareConstraintTransferObject constraintTo) {
+		/* Load constraint definition */
+		ConstraintDefinition constraintDefinition = new ConstraintDefinition(constraintID, model, declareTemplateDefinitionsMap.get(constraintTo.declareMapTemplate));
+		Collection<Parameter> parameters = (declareTemplateDefinitionsMap.get(constraintTo.declareMapTemplate)).getParameters();
+		Iterator<Set<String>> paramsIterator = constraintTo.parameters.iterator();
+		/* Fill in parameters */
+		for (Parameter parameter : parameters) {
+			for (String branchName : paramsIterator.next()) {
+				ActivityDefinition activityDefinition = model.activityDefinitionWithName(branchName);
+				constraintDefinition.addBranch(parameter, activityDefinition);
+			}
+		}
+		/* Specify the support, confidence and interest factor within the text */
+		constraintDefinition.setText(
+				constraintDefinition.getText() +
+				LABEL_VALUE_SEPARATOR +
+				String.format(SUPPORT_CONFIDENCE_IF_FORMAT_PATTERN,
+						constraintTo.support,
+						constraintTo.confidence,
+						constraintTo.interestFactor)
+		);
+		return constraintDefinition;
+	}
+
 	public static Map<DeclareMapTemplate, ConstraintTemplate> readConstraintTemplates(Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap) {
 		InputStream templateInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
 		File languageFile = null;
@@ -266,7 +285,7 @@ public class DeclareMapEncoderDecoder {
 		TemplateBroker templateBroker = XMLBrokerFactory.newTemplateBroker(languageFile.getAbsolutePath());
 		List<Language> languagesList = templateBroker.readLanguages();
 
-		//the first language in the list is the condec language, which is what we need
+		// The first language in the list is the ConDec language, which is what we need
 		Language condecLanguage = languagesList.get(0);
 		List<IItem> templateList = new ArrayList<IItem>();
 		List<IItem> condecLanguageChildrenList = condecLanguage.getChildren();

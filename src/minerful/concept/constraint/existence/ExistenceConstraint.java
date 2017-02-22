@@ -1,7 +1,5 @@
 package minerful.concept.constraint.existence;
 
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlType;
 
 import minerful.concept.TaskChar;

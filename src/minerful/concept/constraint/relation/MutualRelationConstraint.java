@@ -1,11 +1,15 @@
 package minerful.concept.constraint.relation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
@@ -123,5 +127,25 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 		if (this.hasBackwardConstraint())
 			return this.getBackwardConstraint();
 		return null;
+	}
+
+	@Override
+	public Constraint[] suggestImpliedConstraints() {
+		Constraint[] impliCons = null;
+		Constraint[] inheritedImpliCons = super.suggestImpliedConstraints();
+		int i = 0;
+
+		if (inheritedImpliCons != null) {
+			impliCons = new Constraint[inheritedImpliCons.length + 2];
+			for (Constraint impliCon : inheritedImpliCons) {
+				impliCons[i++] = impliCon;
+			}
+		} else {
+			impliCons = new Constraint[2];
+		}
+		impliCons[i++] = getPossibleForwardConstraint();
+		impliCons[i++] = getPossibleBackwardConstraint();
+		
+		return impliCons;
 	}
 }

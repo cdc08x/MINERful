@@ -1,8 +1,6 @@
 package minerful.postprocessing.pruning;
 
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
@@ -10,7 +8,6 @@ import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
-import minerful.concept.constraint.relation.NotCoExistence;
 import minerful.utils.MessagePrinter;
 
 public class SubsumptionHierarchyMarker {

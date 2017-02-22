@@ -174,43 +174,46 @@ public class ConflictAndRedundancyResolver {
 	private void doubleCheckRedundancies() {
 		this.secondPassStartTime = System.currentTimeMillis();
 		
-		sorter.setConstraints(this.safeProcess.getAllConstraints());
-		// Let us take ALL constraints of the safe process
-		ArrayList<Constraint> constraintsSortedForDoubleCheck = new ArrayList<Constraint>(sorter.sort(this.rankingPolicies));
-		// Let us visit them in the reverse order with which they were added -- so as to be consistent with the given ranking policy
-		ListIterator<Constraint> iterator =
-				constraintsSortedForDoubleCheck.listIterator(
-						constraintsSortedForDoubleCheck.size()
-						// The last one is the constraint that we checked last. In theory, it should not constitute a problem
-						- 2);
-		Constraint candidateCon = null;
-		Automaton secondPassGridCheckAutomaton = null;
-		
-		while (iterator.hasPrevious()) {
-			candidateCon = iterator.previous();
-			logger.trace("Second-pass grid check of constraint: " +  candidateCon);
+		if (this.safeProcess.howManyConstraints() > 1) {
+			sorter.setConstraints(this.safeProcess.getAllConstraints());
+System.err.println("Lurido merdone: this.safeProcess.getAllConstraints()\n" + this.safeProcess.getAllConstraints());
+			// Let us take ALL constraints of the safe process
+			ArrayList<Constraint> constraintsSortedForDoubleCheck = new ArrayList<Constraint>(sorter.sort(this.rankingPolicies));
+			// Let us visit them in the reverse order with which they were added -- so as to be consistent with the given ranking policy
+			ListIterator<Constraint> iterator =
+					constraintsSortedForDoubleCheck.listIterator(
+							constraintsSortedForDoubleCheck.size()
+							// The last one is the constraint that we checked last. In theory, it should not constitute a problem
+							- 2);
+			Constraint candidateCon = null;
+			Automaton secondPassGridCheckAutomaton = null;
 			
-			secondPassGridCheckAutomaton =
-					AutomatonFactory.buildAutomaton(
-							this.safeProcess.bag,
-							this.safeProcess.getTaskCharArchive().getIdentifiersAlphabet(),
-							candidateCon);
-			
-			// If the safe automaton accepts 
-			if (secondPassGridCheckAutomaton.subsetOf(
-					// ... all the constraints BUT the current one...
+			while (iterator.hasPrevious()) {
+				candidateCon = iterator.previous();
+				logger.trace("Second-pass grid check of constraint: " +  candidateCon);
+				
+				secondPassGridCheckAutomaton =
+						AutomatonFactory.buildAutomaton(
+								this.safeProcess.bag,
+								this.safeProcess.getTaskCharArchive().getIdentifiersAlphabet(),
+								candidateCon);
+				
+				// If the safe automaton accepts 
+				if (secondPassGridCheckAutomaton.subsetOf(
+						// ... all the constraints BUT the current one...
 //					this.safeAutomaton.minus(
-					// ... accepts a subset of the languages that the current one accepts...
+						// ... accepts a subset of the languages that the current one accepts...
 //							new RegExp(candidateCon.getRegularExpression()).toAutomaton()))) {
-					this.safeAutomaton)) {
-				// ... then the current constraint is basically useless. Explanation is: some other constraint had been added later that made an already saved constraint redundant.
-				this.safeProcess.bag.remove(candidateCon);
-				this.redundantConstraintsAtSecondPass.add(candidateCon);
-				this.redundantConstraints.add(candidateCon);
-				candidateCon.setRedundant(true);
-				logger.warn(candidateCon + " is redundant (second-pass grid check)");
-				}
-			redundancyChecksPerformed++;
+						this.safeAutomaton)) {
+					// ... then the current constraint is basically useless. Explanation is: some other constraint had been added later that made an already saved constraint redundant.
+					this.safeProcess.bag.remove(candidateCon);
+					this.redundantConstraintsAtSecondPass.add(candidateCon);
+					this.redundantConstraints.add(candidateCon);
+					candidateCon.setRedundant(true);
+					logger.warn(candidateCon + " is redundant (second-pass grid check)");
+					}
+				redundancyChecksPerformed++;
+			}
 		}
 	}
 

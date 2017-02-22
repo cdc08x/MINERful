@@ -6,6 +6,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.End;
+import minerful.concept.constraint.existence.ExactlyOne;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
 import minerful.concept.constraint.relation.AlternatePrecedence;
@@ -22,6 +23,7 @@ import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
 import minerful.concept.constraint.relation.Succession;
+import minerful.utils.MessagePrinter;
 
 public class DeclareMapToMinerFulTemplatesTranslator {
 
@@ -62,6 +64,7 @@ public class DeclareMapToMinerFulTemplatesTranslator {
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Init, Init.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Existence, Participation.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Absence2, AtMostOne.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Exactly1, ExactlyOne.class);
 		// Relation
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Responded_Existence, RespondedExistence.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Response, Response.class);
@@ -90,7 +93,9 @@ public class DeclareMapToMinerFulTemplatesTranslator {
 	public static Class<? extends Constraint> translateTemplateName(DeclareMapTemplate declareMapTemplate) {
 		if (DECLARE_2_MINERFUL_MAP.containsKey(declareMapTemplate)) {
 			return DECLARE_2_MINERFUL_MAP.get(declareMapTemplate);
+		} else {
+			MessagePrinter.getInstance(DeclareMapEncoderDecoder.class).warn("Unmapped native Declare Map template: " + declareMapTemplate);
+			return null;
 		}
-		return null;
 	}
 }

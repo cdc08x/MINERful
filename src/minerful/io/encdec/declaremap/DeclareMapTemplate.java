@@ -11,7 +11,10 @@ public enum DeclareMapTemplate {
 	Init, 
 	Not_Chain_Succession, Not_CoExistence, Not_Succession,
 	Precedence, Response, Responded_Existence,
-	Succession,Not_Chain_Precedence,Not_Chain_Response,Not_Precedence,Not_Response, Not_Responded_Existence;
+	Succession,
+	Not_Chain_Precedence, Not_Chain_Response,
+	Not_Precedence, Not_Response,
+	Not_Responded_Existence;
 	
 	public String getName() {
 		switch(this) {
@@ -33,7 +36,7 @@ public enum DeclareMapTemplate {
 		try {
 			mapTemplate = DeclareMapTemplate.valueOf(name);
 		} catch (IllegalArgumentException e) {
-			MessagePrinter.printlnError("The " + name + " template is not yet defined in MINERful.");
+			MessagePrinter.printlnError("The " + name + " template is not yet defined in MINERful import library.");
 		}
 		
 		return mapTemplate;

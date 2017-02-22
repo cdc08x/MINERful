@@ -399,10 +399,6 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	public TaskCharSet getBase() {
 		return this.base;
 	}
-
-//	public void setBase(TaskCharSet base) {
-//		this.parameters.set(0, base);
-//	}
 	
 	public List<TaskCharSet> getParameters() {
 		return parameters;
@@ -471,7 +467,7 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 		if (baCon == null) {
 			return false;
 		}
-		return baCon.equals(c);
+		return c.equals(baCon);
 	}
 
 	public boolean isDescendantAlongSameBranchOf(Constraint c) {
@@ -501,14 +497,23 @@ public abstract class Constraint extends Observable implements Comparable<Constr
     public abstract <T extends ConstraintSubFamily> T getSubFamily();
 
     public abstract Constraint suggestConstraintWhichThisShouldBeBasedUpon();
-    
+
+    /**
+     * Returns instances of all constraints that would be derived from this one.
+     * By default, it returns the {@link #suggestConstraintWhichThisShouldBeBasedUpon() suggestConstraintWhichThisShouldBeBasedUpon()}
+     * @return 
+     */
+    public Constraint[] suggestImpliedConstraints() {
+    	return new Constraint[]{ this.suggestConstraintWhichThisShouldBeBasedUpon() };
+    }
+
     public Constraint createConstraintWhichThisShouldBeBasedUpon() {
     	Constraint cns = suggestConstraintWhichThisShouldBeBasedUpon();
-    	if (cns != null) {
-	    	cns.support = this.support;
-	    	cns.confidence = this.confidence;
-	    	cns.interestFactor = this.interestFactor;
-    	}
+		if (cns != null) {
+			cns.support = this.support;
+			cns.confidence = this.confidence;
+			cns.interestFactor = this.interestFactor;
+		}
     	return cns;
     }
 
@@ -525,12 +530,6 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(
 				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
 		return autom;
-	}
-	
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
-			this.base = this.getParameters().get(0);
-		}
 	}
 	
 	/**
@@ -577,5 +576,11 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 
 	protected void setSilentToObservers(boolean silentToObservers) {
 		this.silentToObservers = silentToObservers;
+	}
+	
+	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
+			this.base = this.getParameters().get(0);
+		}
 	}
 }
