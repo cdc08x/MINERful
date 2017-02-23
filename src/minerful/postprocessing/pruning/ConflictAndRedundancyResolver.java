@@ -176,7 +176,6 @@ public class ConflictAndRedundancyResolver {
 		
 		if (this.safeProcess.howManyConstraints() > 1) {
 			sorter.setConstraints(this.safeProcess.getAllConstraints());
-System.err.println("Lurido merdone: this.safeProcess.getAllConstraints()\n" + this.safeProcess.getAllConstraints());
 			// Let us take ALL constraints of the safe process
 			ArrayList<Constraint> constraintsSortedForDoubleCheck = new ArrayList<Constraint>(sorter.sort(this.rankingPolicies));
 			// Let us visit them in the reverse order with which they were added -- so as to be consistent with the given ranking policy
