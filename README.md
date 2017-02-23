@@ -46,6 +46,10 @@ Example usage (with .sh files)
   	- Mine a XES log file located in /home/user/file.xes
 
       	run-MINERful.sh -iLF '/home/user/file.xes' 
+
+  	- Display the help screen
+
+      	run-MINERful.sh -h
   
   	- Mine a XES log file located in /home/user/file.xes and export the discovered model in a XML file located in /home/user/model-condec.xml, formatted as Declare/ConDec. Set a support threshold of 0.95, a confidence level threshold of 0.25, and an interest factor threshold of 0.125
 
@@ -67,8 +71,9 @@ Example usage (with .sh files)
 Usage (with the .class files)
 ---------
 
-    This is a little bit trickier, but necessary, in case you have a Microsoft Windows system.
-    From your prompt, type:
+This is a little bit trickier, but necessary, in case you have a Microsoft Windows system.
+From your prompt, type:
+
         java -jar MINERful.jar minerful.<LAUNCHER_CLASS> -h
     where <LAUNCHER_CLASS> can be either
 
@@ -90,5 +95,5 @@ A GUI-equipped log generator is also in its beta version, based on the [Declare 
 Contacts
 ---------
 
-Please contact the author, Claudio Di Ciccio, for any information, comment or bug reporting 
+Please contact the author, Claudio Di Ciccio, for any information, comment or bug reporting:
 [dc.claudio@gmail.com](mailto:dc.claudio@gmail.com)
