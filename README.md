@@ -40,6 +40,11 @@ Usage (with .sh files)
 
   The SH scripts that end with "-unstable.sh" suffix do not launch MINERful by the JAR, as they use the bytecode files. In this way, the user can immediately try the modified source code without overwriting the JAR version.
 
+MINERful as a Java package
+---------
+
+For advanced users: You can use MINERful as a Java package and integrate it with your software! Check out the [examples.api](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api) source code to see some examples.
+
 Example usage (with .sh files)
 --------
     
@@ -75,7 +80,8 @@ This is a little bit trickier, but necessary, in case you have a Microsoft Windo
 From your prompt, type:
 
         java -jar MINERful.jar minerful.<LAUNCHER_CLASS> -h
-    where <LAUNCHER_CLASS> can be either
+
+where the LAUNCHER_CLASS can be either
 
   	- MinerFulMinerStarter
         to launch the miner
@@ -83,7 +89,6 @@ From your prompt, type:
         to launch the builder of synthetic logs
 
   The "-h" parameter appended at the end of the prompt shows and explains the parameters you can pass. They are exactly the same as the Linux/MacOS version.
-
 
 Other software packages using MINERful
 ---------
