@@ -94,8 +94,8 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
                 .hasArg().withArgName("policy")
                 .withLongOpt("err-spread-policy")
                 .withDescription("policy for the distribution of the errors. Possible values are:\n" +
-                		"'" + ErrorInjector.SpreadingPolicy.collection + "'\n for spreading the errors over the whole collection of strings [DEFAULT];\n" +
-                		"'" + ErrorInjector.SpreadingPolicy.string + "'\n for injecting the errors in every string")
+                		"'" + ErrorInjector.SpreadingPolicy.collection + "'\n to spread the errors over the whole collection of traces [DEFAULT];\n" +
+                		"'" + ErrorInjector.SpreadingPolicy.string + "'\n to inject the errors in every trace")
                 .withType(new Integer(0))
                 .create(ErrorInjectorCmdParameters.ERROR_SPREADING_POLICY_PARAM_NAME)
         );
@@ -104,8 +104,8 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
                 .hasArg().withArgName("type")
                 .withLongOpt("err-type")
                 .withDescription("type of the errors to inject. Possible values are:\n" +
-                		"'" + ErrorInjector.ErrorType.ins + "'\n suppression of the target character;\n" +
-                		"'" + ErrorInjector.ErrorType.del + "'\n insertion of the target character;\n" +
+                		"'" + ErrorInjector.ErrorType.ins + "'\n suppression of the target task;\n" +
+                		"'" + ErrorInjector.ErrorType.del + "'\n insertion of the target task;\n" +
                 		"'" + ErrorInjector.ErrorType.insdel + "'\n mixed (suppressions or insertions, as decided by random) [DEFAULT]")
                 .withType(new Integer(0))
                 .create(ErrorInjectorCmdParameters.ERROR_TYPE_PARAM_NAME)
@@ -114,7 +114,7 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("percent")
                 .withLongOpt("err-percentage")
-                .withDescription("percentage of the errors to inject (from 0 to 100) [DEFAULT: 0]")
+                .withDescription("percentage of the errors to be injected (from 0 to 100) [DEFAULT: 0]")
                 .withType(new Integer(0))
                 .create(ErrorInjectorCmdParameters.ERROR_PERCENTAGE_PARAM_NAME)
         );
@@ -122,7 +122,7 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("char")
                 .withLongOpt("err-target")
-                .withDescription("target character")
+                .withDescription("target task")
                 .withType(new Character('0'))
                 .create(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME)
         );
@@ -130,7 +130,7 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("file path")
                 .withLongOpt("err-out-log")
-                .withDescription("path to the file to write the error-injected log in")
+                .withDescription("path to the file in which the error-injected log is stored")
                 .withType(new String())
                 .create(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME)
     	);

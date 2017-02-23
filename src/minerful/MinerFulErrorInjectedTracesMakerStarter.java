@@ -61,7 +61,7 @@ public class MinerFulErrorInjectedTracesMakerStarter extends AbstractMinerFulSta
                     + "Target character: " + errorInjexParams.getTargetChar()
                 ).replaceAll("\n", "\n\t")
             );
-        
+
         testBedArray = errorInjex.injectErrors();
 
         if (errorInjexParams.logFile != null) {

@@ -7,5 +7,10 @@ cp "MINERful-v${VERSION_DATE}.jar" "MINERful.jar"
 zip -r "MINERful-v${VERSION_DATE}" \
     MINERful.jar \
     README.mv LICENSE licenses \
-    run*.sh constraintsFunctions.cfg
+    constraintsFunctions.cfg \
+    run-AutoMINERful-unstable.sh \
+    run-MINERful.sh \
+    run-MINERfulSimplifier.sh \
+    run-MINERful-vacuityCheck.sh \
+    run-MINERfulTracesMaker.sh
 cp "MINERful-v${VERSION_DATE}.zip" "MINERful.zip"

@@ -12,3 +12,13 @@ models
 /studies-on-noise/
 /studies-on-space-consumption/
 /temp/
+/run-MINERfulErrorInjectedTracesMaker.sh
+/run-MINERful-overErrorInjectedTraces.sh
+/run-MINERful-overErrorInjectedTraces-unstable.sh
+/run-MINERful-overSimulatedTraces.sh
+/run-MINERful-overSimulatedTraces-unstable.sh
+/run-MINERfulSimplifier-unstable.sh
+/run-MINERfulTracesMaker.sh
+/run-MINERfulTracesMaker-kala.sh
+/run-MINERfulTracesMaker-unstable.sh
+/run-MINERful-unstable.sh

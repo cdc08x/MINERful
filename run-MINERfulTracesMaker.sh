@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Author:       Claudio Di Ciccio
-# Date:         2013/09/20
+# Date:         2017/02/23
 # Description:  This script launches the MinerFulTracesMakerStarter to create synthetic collections of strings (which can be seen as logs): the (main) input is a set of regular expressions (declarative process model constraints) determining the language (the process model) that generate strings (traces).
 #               Run this launcher with "-h" to understand the meaning of options you can pass.
 
@@ -16,7 +16,7 @@ MAINCLASS="minerful.MinerFulTracesMakerStarter"
 
 MIN_STRLEN=2
 MAX_STRLEN=10
-TESTBED_SIZE=10000
+TESTBED_SIZE=1000
 MEMORY_MAX="2048m"
 OUTPUT_FILE="/home/claudio/Temp/WhereTheDonkeyFalls-example.xes"
 
