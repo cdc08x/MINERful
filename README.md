@@ -1,7 +1,7 @@
 MINERful
 =========================
 
-MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings. Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in JSON or in the ConDec native language. Simply play around with it!
+MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in JSON or in the ConDec native language. Simply play around with it!
 
 Publications and further material
 ------------
@@ -11,16 +11,19 @@ Selected publications about MINERful and presentation slides:
     Claudio Di Ciccio, Massimo Mecella: On the Discovery of Declarative Control Flows for Artful Processes. ACM Trans. Management Inf. Syst. 5(4): 24:1-24:37 (2015)
     - DOI: [http://doi.acm.org/10.1145/2629447](http://doi.acm.org/10.1145/2629447)
     - Presentation: [https://www.slideshare.net/cdc08x/automated-discovery-of-declarative-process-models](https://www.slideshare.net/cdc08x/automated-discovery-of-declarative-process-models)
-  - Discovery of more complex (target-branched) DECLARE models:
+    
+  - Discovery of more target-branched (read: more complex) declarative models:
   
     Claudio Di Ciccio, Fabrizio Maria Maggi, Jan Mendling: Efficient discovery of Target-Branched Declare constraints. Inf. Syst. 56: 258-283 (2016)
     - DOI: [https://doi.org/10.1016/j.is.2015.06.009](https://doi.org/10.1016/j.is.2015.06.009)
+    
   - Getting rid of redundancies and inconsistencies:
   
     Claudio Di Ciccio, Fabrizio Maria Maggi, Marco Montali, Jan Mendling: Resolving inconsistencies and redundancies in declarative process models. Inf. Syst. 64: 425-446 (2017)
     - DOI: [https://doi.org/10.1016/j.is.2016.09.005](https://doi.org/10.1016/j.is.2016.09.005)
     - Presentation: [https://www.slideshare.net/cdc08x/resolving-inconsistencies-and-redundancies-in-declarative-process-models](https://www.slideshare.net/cdc08x/resolving-inconsistencies-and-redundancies-in-declarative-process-models)
-  - Simulation of DECLARE models:
+    
+  - Simulation of declarative models:
   
     Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36
     - DOI: [https://doi.org/10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
@@ -29,9 +32,9 @@ Installation
 ------------
 
 You need to have a JRE 7+ installed on your machine.
-To launch the SH files, you have to run them on a Unix-based system with a BASH shell.
+To launch the `.sh` files, you have to run them on a Unix-based system with a BASH shell.
 No installation procedure is required.
-This version has been tested on both a Ubuntu Linux (10.04, 12.04) and a Mac OS X (Snow Leopard) machine.
+This version has been tested on both a Ubuntu Linux (16.04) and a Mac OS X (Snow Leopard) machine.
 
 Usage (with .sh files)
 ---------
@@ -112,5 +115,5 @@ Please read the [LICENSE](https://github.com/cdc08x/MINERful/edit/master/LICENSE
 Contacts
 =========================
 
-Please contact the author, Claudio Di Ciccio, for any information, comment or bug reporting:
+Please contact the developer, [Claudio Di Ciccio](https://www.wu.ac.at/en/infobiz/team/diciccio/), for any information, comment or bug reporting:
 [dc.claudio@gmail.com](mailto:dc.claudio@gmail.com)
