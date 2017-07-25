@@ -11,15 +11,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import minerful.utils.RandomCharGenerator;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
+import minerful.utils.MessagePrinter;
+import minerful.utils.RandomCharGenerator;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class WeightedState extends State implements AutomatonElementQuantileButter, AutomatonNonConformityElementButter {
 
 	private static final long serialVersionUID = -3665359375777248550L;
 
+	public static MessagePrinter logger = MessagePrinter.getInstance(WeightedState.class);
+	
 	private int weight = 0;
 	private int weightQuantile = UNASSIGNED_QUANTILE;
 	private int nonConformityWeight = 0;
@@ -150,10 +153,11 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 		try {
 			((WeightedTransition) this.transitionMap.get(chr)).increaseWeight();
 		} catch (NullPointerException nPEx) {
-			System.err.println("Unallowed transition requested!");
+			logger.error("Unallowed transition requested!");
 			// nPEx.printStackTrace();
-			System.err.println("Transition map: " + this.transitionMap);
-			System.err.println("Searched chr: " + chr);
+			logger.error("Transition map: " + this.transitionMap);
+			logger.error("Searched chr: " + chr);
+			logger.error("State: " + super.toString());
 			return null;
 		}
 		

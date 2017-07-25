@@ -2,11 +2,11 @@ package minerful.utils;
 
 import java.util.Properties;
 
-import minerful.params.SystemCmdParameters;
-
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+
+import minerful.params.SystemCmdParameters;
 
 public class MessagePrinter {
 	Logger logger = null;
@@ -43,7 +43,7 @@ public class MessagePrinter {
     }
     
     protected MessagePrinter(Class<?> invokingClass) {
-    	logger = Logger.getLogger(invokingClass);
+    	this.logger = Logger.getLogger(invokingClass);
     }
     protected MessagePrinter(Object invokingObject) {
     	this(invokingObject.getClass());

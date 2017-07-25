@@ -12,14 +12,14 @@ import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.AbstractTaskClass;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
+import minerful.utils.MessagePrinter;
 
 import org.apache.log4j.Logger;
 
 import dk.brics.automaton.Automaton;
 
 public class WeightedAutomatonFactory {
-	private static Logger logger = Logger.getLogger(AutomatonFactory.class
-			.getCanonicalName());
+	private static MessagePrinter logger = MessagePrinter.getInstance(WeightedAutomatonFactory.class);
 	private NavigableMap<Character, AbstractTaskClass> translationMap;
 
 	public static class IllegalTransitionException extends IllegalStateException {
@@ -40,17 +40,22 @@ public class WeightedAutomatonFactory {
 	}
 
 	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser) {
-		return this.augmentByReplay(automaton, logParser, false);
+		return this.augmentByReplay(automaton, logParser, true);
 	}
 
 	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser, boolean ignoreIfNotCompliant) {
 		if (automaton == null || automaton.isEmpty())
 			return null;
 		WeightedAutomaton weightedAutomaton = new WeightedAutomaton(automaton, translationMap);
+
 		WeightedState
 			initState = (WeightedState) weightedAutomaton.getInitialState(),
 			currentState = null,
 			nextState = null;
+		
+		WeightedState
+			faultPitState = new WeightedState();
+		faultPitState.setIllegal(true);
 
 		StringBuilder soFar = new StringBuilder();
 		String trace = null;
@@ -70,9 +75,10 @@ public class WeightedAutomatonFactory {
 				nextState = initState;
 				nextState.increaseWeight(); // This is the initial state: at every start of a trace, a +1 is added to the visit counter
 
-				logger.trace("Replaying legal trace #" + (i++) + "/" + logParser.length());
+				logger.trace("Replaying legal trace #{0}/{1}: {2}", i++, logParser.length(), trace);
 				
 				boolean illegalTransitionRequested = false;
+				
 				while(!auXTraPar.isParsingOver() && !illegalTransitionRequested) {
 					auxEvtIdentifier = auXTraPar.parseSubsequentAndEncode();
 					currentState = nextState;
@@ -83,6 +89,10 @@ public class WeightedAutomatonFactory {
 					} else {
 						nextState.increaseWeight();
 					}
+				}
+				if (illegalTransitionRequested) {
+					logger.error("Last read: " + auxEvtIdentifier + " (" + translationMap.get(auxEvtIdentifier) + ")");
+					logger.error("Full trace: " + trace);
 				}
 				
 			} else if (!ignoreIfNotCompliant) {
@@ -101,17 +111,13 @@ public class WeightedAutomatonFactory {
 						nextState.increaseNonConformityWeight();
 					} else {
 						illegalEventReached = true;
-						// Create a new illegal transition to a new illegal state
-						// New illegal state
-						WeightedState illegalState = new WeightedState();
-						illegalState.setIllegal(true);
 						// New illegal transition
-						WeightedTransition illegalTransition = new WeightedTransition(auxEvtIdentifier, illegalState, this.translationMap.get(auxEvtIdentifier).getName());
+						WeightedTransition illegalTransition = new WeightedTransition(auxEvtIdentifier, faultPitState, this.translationMap.get(auxEvtIdentifier).getName());
 						illegalTransition.setIllegal(true);
 						// Connect the transition to the current state
 						currentState.addTransition(illegalTransition);
 						// Increase the non-conformity weight
-						illegalState.increaseNonConformityWeight();
+						faultPitState.increaseNonConformityWeight();
 						illegalTransition.increaseNonConformityWeight();
 					}
 					// TODO Record somewhere and somewhat the illegal trace + the state where it took place the last legal action!
@@ -120,7 +126,6 @@ public class WeightedAutomatonFactory {
 				}
 				logger.trace("Legal trunk of replayed trace: " + soFar.substring(0, soFar.length() - 2));
 			}
-				
 		}
 		
 		WeightedAutomatonStats wAutSta = new WeightedAutomatonStats(weightedAutomaton);
@@ -129,6 +134,7 @@ public class WeightedAutomatonFactory {
 			wAutSta.augmentWeightedAutomatonWithIllegalityQuantiles();
 		}
 
+System.out.println(weightedAutomaton);
 		return weightedAutomaton;
 	}
 }

@@ -135,6 +135,13 @@ public class OccurrencesStatsBuilder {
         		}
         		analysedPortion = (int) Math.floor((double)counter / logParser.length() * PROGRESS_BAR_SCALE);
         	}
+
+        	/*
+        	 * If the analysis is made backwards, we should toggle the reverse sense of reading again to put the log parser in its initial status
+        	 */
+            if (!onwards) {
+            	auxTraceParser.reverse();
+            }
         }
         if (secondPass) { MessagePrinter.printlnOut(""); }
         return this.statsTable;
