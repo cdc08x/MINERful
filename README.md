@@ -1,7 +1,7 @@
 MINERful
 =========================
 
-MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in JSON or in the ConDec native language. Simply play around with it!
+MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
 
 Publications and further material
 ------------
@@ -9,28 +9,27 @@ Selected publications about MINERful and presentation slides:
   - The main discovery algorithm:
   
     Claudio Di Ciccio, Massimo Mecella: On the Discovery of Declarative Control Flows for Artful Processes. ACM Trans. Management Inf. Syst. 5(4): 24:1-24:37 (2015)
-    - DOI: [http://doi.acm.org/10.1145/2629447](http://doi.acm.org/10.1145/2629447)
+    - DOI: [10.1145/2629447](http://doi.acm.org/10.1145/2629447)
     - Presentation: [https://www.slideshare.net/cdc08x/automated-discovery-of-declarative-process-models](https://www.slideshare.net/cdc08x/automated-discovery-of-declarative-process-models)
     
   - Discovery of more target-branched (read: more complex) declarative models:
   
     Claudio Di Ciccio, Fabrizio Maria Maggi, Jan Mendling: Efficient discovery of Target-Branched Declare constraints. Inf. Syst. 56: 258-283 (2016)
-    - DOI: [https://doi.org/10.1016/j.is.2015.06.009](https://doi.org/10.1016/j.is.2015.06.009)
+    - DOI: [10.1016/j.is.2015.06.009](https://doi.org/10.1016/j.is.2015.06.009)
     
   - Getting rid of redundancies and inconsistencies:
   
     Claudio Di Ciccio, Fabrizio Maria Maggi, Marco Montali, Jan Mendling: Resolving inconsistencies and redundancies in declarative process models. Inf. Syst. 64: 425-446 (2017)
-    - DOI: [https://doi.org/10.1016/j.is.2016.09.005](https://doi.org/10.1016/j.is.2016.09.005)
+    - DOI: [10.1016/j.is.2016.09.005](https://doi.org/10.1016/j.is.2016.09.005)
     - Presentation: [https://www.slideshare.net/cdc08x/resolving-inconsistencies-and-redundancies-in-declarative-process-models](https://www.slideshare.net/cdc08x/resolving-inconsistencies-and-redundancies-in-declarative-process-models)
     
   - Simulation of declarative models:
   
     Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36
-    - DOI: [https://doi.org/10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
+    - DOI: [10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
 
 Installation
 ------------
-
 You need to have a JRE 7+ installed on your machine.
 To launch the `.sh` files, you have to run them on a Unix-based system with a BASH shell.
 No installation procedure is required.
@@ -76,8 +75,6 @@ Usage examples of MINERful as a stand-alone application (with `.sh` files)
 
       run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv' -s 0.95 -c 0.25 -i 0.125
 
-More examples to be added soon!
-
 Usage examples of MINERful as a stand-alone application (directly with bytecode files)
 ---------
 
@@ -92,7 +89,15 @@ The `-h` parameter appended at the end of the prompt shows and explains the para
 
 MINERful as a Java package
 ---------
-For advanced users: You can use MINERful as a Java package and integrate it with your software! Check out the [examples.api](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api) source code to see some examples.
+For advanced users: You can use MINERful as a Java package and integrate it with your software! Check out the [minerful.examples.api](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api) source code to see some examples.
+In particular:
+- [discovery.MinerFulObserverInvokerOnXesFile](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/discovery/MinerFulObserverInvokerOnXesFile.java)  demonstrates how to invoke the MINERful miner as an API, and subsequently observe the changes that are applied to the process model in a [publish/subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) fashion. Lastly, the model is saved as a Declare Map file.
+- [discovery.MinerFulCallerOnStringFile](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/discovery/MinerFulCallerOnStringFile.java) demonstrates how to call MINERful to discover a process model out of strings saved on a file.
+- [logmaking.FromCharactersProcessModelToLog](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/logmaking/FromStringsProcessModelToLog.java) demonstrates how to generate XES logs starting from the definitions of new constraints. It can be interesting also because it shows how to create a process model on the fly.
+- [logmaking.FromStringsProcessModelToLog](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/logmaking/FromStringsProcessModelToLog.java) demonstrates how to generate XES logs starting from the definitions of constraints exerted on activities identified by single characters (more or less the same as above).
+- [logmaking.FromDeclareMapToLog](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/logmaking/FromDeclareMapToLog.java) demonstrates how to generate XES logs from an existing Declare map XML file. It is worth to see how to convert process models from the Declare Maps Miner format, for those who used that tool in [ProM](http://www.promtools.org).
+- [logmaking.FromJsonProcessModelToLog](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/logmaking/FromJsonProcessModelToLog.java) demonstrates how to generate XES logs starting with the definitions of constraints specified with [JSON](http://www.json.org/) objects.
+- [simplification.MinerFulSimplificationInvokerOnDeclareMapFile](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/simplification/MinerFulSimplificationInvokerOnDeclareMapFile.java) demonstrates how to load a Declare Map file as a process model, then run the simplification engine of MINERful to remove the redundant constraints.
 
 Other software packages using MINERful
 ---------
@@ -101,7 +106,7 @@ A ProM package of MINERful exists, although it is in beta version and with limit
   - Claudio Di Ciccio, Mitchel H. M. Schouten, Massimiliano de Leoni, Jan Mendling: Declarative Process Discovery with MINERful in ProM. BPM (Demos) 2015: 60-64. URL: [http://ceur-ws.org/Vol-1418/paper13.pdf](http://ceur-ws.org/Vol-1418/paper13.pdf)
 
 A GUI-equipped log generator is also in its beta version, based on the [Declare Designer](http://ceur-ws.org/Vol-489/paper1.pdf) tool: It is available for download on the [Synthetic log generator GitHub page](https://github.com/processmining/synthetic-log-generator). More information is available in this paper:
-  - Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36. DOI: [https://doi.org/10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
+  - Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36. DOI: [10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
 
 Licensing
 =========================
