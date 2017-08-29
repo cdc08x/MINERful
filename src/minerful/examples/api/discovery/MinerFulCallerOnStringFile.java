@@ -13,6 +13,10 @@ import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 
+/**
+ * This example class demonstrates how to call MINERful to discover a process model out of strings saved on a file.
+ * @author Claudio Di Ciccio (dc.claudio@gmail.com)
+ */
 public class MinerFulCallerOnStringFile {
 
 	public static void main(String[] args) {

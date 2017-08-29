@@ -19,6 +19,10 @@ import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
 
 import org.apache.log4j.Logger;
 
+/**
+ * The class managing the set of constraints of a declarative process model.
+ * @author Claudio Di Ciccio (dc.claudio@gmail.com)
+ */
 @XmlRootElement
 @XmlJavaTypeAdapter(ConstraintsBagAdapter.class)
 //@XmlAccessorType(XmlAccessType.FIELD)

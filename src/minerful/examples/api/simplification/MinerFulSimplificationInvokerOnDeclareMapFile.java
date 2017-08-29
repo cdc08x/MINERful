@@ -14,6 +14,10 @@ import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessingAnalysisType;
 
+/**
+ * This example class demonstrates how to load a Declare Map file as a process model, then run the simplification engine of MINERful to remove the redundant constraints.
+ * @author Claudio Di Ciccio (dc.claudio@gmail.com)
+ */
 public class MinerFulSimplificationInvokerOnDeclareMapFile {
 
 	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/claudio/Desktop/example-model.xml";

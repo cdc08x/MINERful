@@ -12,7 +12,7 @@ import minerful.logmaker.params.LogMakerCmdParameters.Encoding;
 import org.deckfour.xes.model.XLog;
 
 /**
- * This usage example class generates XES logs from an existing Declare map file.
+ * This usage example class demonstrates how to generate XES logs from an existing Declare map XML file.
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
 public class FromDeclareMapToLog {

@@ -12,7 +12,7 @@ import minerful.logmaker.params.LogMakerCmdParameters.Encoding;
 import org.deckfour.xes.model.XLog;
 
 /**
- * This usage exmaple class generates XES logs starting with the definitions of constraints specified with JSON objects.
+ * This usage exmaple class demonstrates how to generate XES logs starting with the definitions of constraints specified with JSON objects.
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
 public class FromJsonProcessModelToLog {

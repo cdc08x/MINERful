@@ -21,11 +21,11 @@ import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessingAnalysisType;
 
 /**
- * This class shows how to invoke the MINERful miner as an API, and subsequently observe the
+ * This example class demonstrates how to invoke the MINERful miner as an API, and subsequently observe the
  * changes that are applied to the process model from the MinerFulSimplificationLauncher.
  * Lastly, we save the model as a Declare Map file.
  * 
- * @author Claudio Di Ciccio
+ * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  * 
  */
 public class MinerFulObserverInvokerOnXesFile implements Observer {
@@ -146,7 +146,7 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 	
 		System.out.println("...Done");		
 		
-		// That’s all for now
+		// That's all for now
 		System.exit(0);
 	}
 
