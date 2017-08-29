@@ -36,7 +36,7 @@ To launch the `.sh` files, you have to run them on a Unix-based system with a BA
 No installation procedure is required.
 This version has been tested on both a Ubuntu Linux (16.04) and a Mac OS X (Snow Leopard) machine.
 
-Usage (with .sh files)
+MINERful as a stand-alone application (with .sh files)
 ---------
 The easiest way to launch MINERful is to make use of the `.sh` files.
   - To launch the miner: `run-MINERful.sh`
@@ -48,12 +48,9 @@ In case, feel free to modify the constants declared at the beginning of the scri
 
 The scripts that end with the `-unstable.sh` suffix do not launch MINERful via its JAR, but with bytecode files. In this way, we can immediately try the modified source code without overwriting the JAR version.
 
-MINERful as a Java package
----------
+Some usage examples follow.
 
-For advanced users: You can use MINERful as a Java package and integrate it with your software! Check out the [examples.api](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api) source code to see some examples.
-
-Example usage (with `.sh` files)
+Usage examples of MINERful as a stand-alone application (with `.sh` files)
 --------
 - Mine an `XES` log file located in `/home/user/file.xes`:
 
@@ -61,43 +58,41 @@ Example usage (with `.sh` files)
 
 - Display the help screen:
 
-      	run-MINERful.sh -h
+      run-MINERful.sh -h
   
  Mine an `XES` log file located in `/home/user/file.xes` and export the discovered model in an `XML` file located in `/home/user/model-condec.xml`, formatted as Declare/ConDec. Set a support threshold of 0.95, a confidence level threshold of 0.25, and an interest factor threshold of 0.125 (if you have no idea what these parameters are about, check [this paper](http://doi.acm.org/10.1145/2629447) paper out):
 
-      	run-MINERful.sh -iLF '/home/user/file.xes' -condec '/home/user/model-condec.xml' -s 0.95 -c 0.25 -i 0.125
+      run-MINERful.sh -iLF '/home/user/file.xes' -condec '/home/user/model-condec.xml' -s 0.95 -c 0.25 -i 0.125
   
 - Mine an `XES` log file located in `/home/user/file.xes`, with comprehensive debug lines
 
-       	run-MINERful.sh -d all -iLF '/home/user/file.xes' 
+      run-MINERful.sh -d all -iLF '/home/user/file.xes' 
   
 - Mine an `XES` log file located in `/home/user/file.xes`, with comprehensive debug lines. Let results be exported in a `CSV` file located in `/home/user/output.csv`:
 
-     		run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv'
+      run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv'
     
 - Mine an `XES` log file located in `/home/user/file.xes`, with comprehensive debug lines. Set a support threshold of 0.95, a confidence level threshold of 0.25, and an interest factor threshold of 0.125 (if you have no idea what these parameters are about, check [this paper](http://doi.acm.org/10.1145/2629447) out). Let results be exported in a `CSV` file located in `/home/user/output.csv`:
 
-      	run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv' -s 0.95 -c 0.25 -i 0.125
+      run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv' -s 0.95 -c 0.25 -i 0.125
 
 More examples to be added soon!
 
-Usage (with the .class files)
+Usage examples of MINERful as a stand-alone application (directly with bytecode files)
 ---------
 
 This is a little bit trickier, but necessary, in case you have a Microsoft Windows system.
 From your prompt, type:
 
-        java -jar MINERful.jar minerful.<LAUNCHER_CLASS> -h
+      java -jar MINERful.jar minerful.<LAUNCHER_CLASS> -h
 
-where the LAUNCHER_CLASS can be either
+where the LAUNCHER_CLASS can be either `MinerFulMinerStarter` to launch the miner, or `MinerFulTracesMakerStarter` to launch the builder of synthetic logs.
 
-  	MinerFulMinerStarter
-to launch the miner, or
+The `-h` parameter appended at the end of the prompt shows and explains the parameters you can pass. They are exactly the same as the Linux/MacOS version.
 
-  	MinerFulTracesMakerStarter
-to launch the builder of synthetic logs
-
-  The `-h` parameter appended at the end of the prompt shows and explains the parameters you can pass. They are exactly the same as the Linux/MacOS version.
+MINERful as a Java package
+---------
+For advanced users: You can use MINERful as a Java package and integrate it with your software! Check out the [examples.api](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api) source code to see some examples.
 
 Other software packages using MINERful
 ---------
