@@ -6,7 +6,7 @@ jar cvfm "MINERful-v${VERSION_DATE}.jar" manifest.mf lib src -C ./bin .
 cp "MINERful-v${VERSION_DATE}.jar" "MINERful.jar"
 zip -r "MINERful-v${VERSION_DATE}" \
     MINERful.jar \
-    README.mv LICENSE licenses \
+    README.md LICENSE licenses \
     constraintsFunctions.cfg \
     run-AutoMINERful-unstable.sh \
     run-MINERful.sh \

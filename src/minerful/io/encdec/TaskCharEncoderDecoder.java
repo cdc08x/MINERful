@@ -18,7 +18,7 @@ import minerful.logparser.StringTaskClass;
 import org.apache.log4j.Logger;
 
 /*
- 0030-0039 [numbers]			   		9	
+ 0030-0039 [numbers]			       9	
  0041-005A [u.c. basic latin]		+ 25	=  34
  0061-007A [l.c. basic latin]		+ 25	=  59
  00C0-00FF [latin supplement]		+ 63	= 122

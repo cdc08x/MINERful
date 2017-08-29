@@ -16,7 +16,7 @@ import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessing
 
 public class MinerFulSimplificationInvokerOnDeclareMapFile {
 
-	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/claudio/Desktop/Temp-MINERful/example-model.xml";
+	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/claudio/Desktop/example-model.xml";
 	private static final String EXAMPLE_INPUT_PROCESS_MODEL_FILE = "/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075.xml";
 
 	public static void main(String[] args) {
