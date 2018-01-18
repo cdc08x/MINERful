@@ -20,7 +20,7 @@ public class FromDeclareMapToLog {
 	public static final Integer MAX_EVENTS_PER_TRACE = 45;
 	public static final Long TRACES_IN_LOG = (long)100;
 	public static final Encoding OUTPUT_ENCODING = Encoding.xes;
-	public static final File OUTPUT_LOG = new File("/home/claudio/Desktop/Temp-MINERful/test-log-output/log-from-Declare-map.xml");
+	public static final File OUTPUT_LOG = new File("/home/claudio/Desktop/log-from-Declare-map.xes");
 
 	public static void main(String[] args) throws IOException {
 		/*
@@ -33,7 +33,7 @@ public class FromDeclareMapToLog {
 		 */
 		ProcessModel proMod =
 				new DeclareMapEncoderDecoder(
-						"/home/claudio/University/Pubs/declarativeprocessmining/model-consistency-paper/test-on-BPIC2012/DMM-output/A24_C69_Tuttifiltri.xml"
+						"/home/claudio/model.xml"
 				).createMinerFulProcessModel();
 		
 		/*

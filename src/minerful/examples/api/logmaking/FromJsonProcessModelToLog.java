@@ -20,7 +20,7 @@ public class FromJsonProcessModelToLog {
 	public static final Integer MAX_EVENTS_PER_TRACE = 45;
 	public static final Long TRACES_IN_LOG = (long)50;
 	public static final Encoding OUTPUT_ENCODING = Encoding.xes;
-	public static final File OUTPUT_LOG = new File("/home/claudio/Desktop/Temp-MINERful/test-log-output/log-from-Declare-map.xml");
+	public static final File OUTPUT_LOG = new File("/home/claudio/Desktop/log-from-JSON.xes");
 
 	public static void main(String[] args) throws IOException {
 		// This is a JSON string with the minimal definition of a process. It is not case sensitive, and allows for some extra spaces, dashes, etc. in the template names. */
@@ -48,9 +48,9 @@ public class FromJsonProcessModelToLog {
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
 //			.readFromJsonFile(new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.json"));
 //		/* Alternative 2: load from a (minimal) string version of the JSON model. Uncomment the following line to use this method. */ 
-//			.readFromJsonString(processJsonMin);
+			.readFromJsonString(processJsonMin);
 //		/* Alternative 3: load from another string version of the JSON model. Uncomment the following line to use this method. */ 
-			.readFromJsonString(processJsonWithExtraTask);
+//			.readFromJsonString(processJsonWithExtraTask);
 
 		/*
 		 * Specifies the parameters used to create the log
