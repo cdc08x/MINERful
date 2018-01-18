@@ -1,7 +1,7 @@
 MINERful
 =========================
 
-MINERful is a fast miner for discovering declarative process models out of logs. Logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
+MINERful is a fast process mining tool for discovering declarative process models out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
 
 Publications and further material
 ------------
