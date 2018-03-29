@@ -15,12 +15,23 @@ import minerful.logparser.CharTaskClass;
 
 import minerful.concept.xmlenc.TaskClassAdapter;
 
+/**
+ * Class associating tasks to single-character identifiers and event classes as per the event log.
+ * @author Claudio Di Ciccio (dc.claudio@gmail.com)
+ *
+ */
 @XmlRootElement(name="task")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaskChar implements Comparable<TaskChar> {
+	/**
+	 * Character identifier for this event class.
+	 */
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value=CharAdapter.class)
     public Character identifier;
+	/**
+	 * Event class mapper (can be depending on the XES event log, a pure string, etc.).
+	 */
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value=TaskClassAdapter.class)
     public final AbstractTaskClass taskClass;
@@ -73,7 +84,7 @@ public class TaskChar implements Comparable<TaskChar> {
     }
 
 	/**
-	 * Returns the string version of {@link #taskClass this.taskClass}.
+	 * Returns the string version (say, human-readable name) of {@link #taskClass this.taskClass}.
 	 */
     public String getName() {
     	return this.taskClass.toString();

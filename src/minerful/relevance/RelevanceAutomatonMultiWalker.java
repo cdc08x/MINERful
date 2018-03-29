@@ -16,6 +16,12 @@ import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
+/**
+ * This class serves as a machine to walk on automata that abstract from the single specific event class.
+ * The trick is, the automaton is parametric to the specific character that labels the action.
+ * Multiple cursors ("walkers") point at the current state as if the underyling automaton was not parametric.
+ * @author Claudio Di Ciccio (dc.claudio@gmail.com)
+ */
 public class RelevanceAutomatonMultiWalker {
 	private VacuityAwareWildcardAutomaton vacuAwaWildAuto;
 	private Map<Character, AbstractTaskClass> logTranslationMap;

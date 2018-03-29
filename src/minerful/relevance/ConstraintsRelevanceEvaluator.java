@@ -143,6 +143,9 @@ public class ConstraintsRelevanceEvaluator {
 		return numOfGeneratedConstraints;
 	}
 
+	/**
+	 * Evaluates relevance of constraints on the event log passed to the constructor.
+	 */
 	public void runOnTheLog() {
 		logger.debug("Running on the log");
 		

@@ -62,6 +62,9 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 		// With the following option set up to "false", redundant/inconsistent/below-thresholds constraints are retained in the model, although marked as redundant/inconsistent/below-thresholds
 		postParams.cropRedundantAndInconsistentConstraints = false;
 		
+		// To completely remove any form of post-processing, uncomment the following line:
+		// postParams.analysisType = PostProcessingAnalysisType.NONE;
+		
 		// Run the discovery algorithm
 		System.out.println("Running the discovery algorithm...");
 		

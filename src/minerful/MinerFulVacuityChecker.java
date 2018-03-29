@@ -12,8 +12,24 @@ import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.existence.*;
-import minerful.concept.constraint.relation.*;
+import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.End;
+import minerful.concept.constraint.existence.Init;
+import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.relation.AlternatePrecedence;
+import minerful.concept.constraint.relation.AlternateResponse;
+import minerful.concept.constraint.relation.AlternateSuccession;
+import minerful.concept.constraint.relation.ChainPrecedence;
+import minerful.concept.constraint.relation.ChainResponse;
+import minerful.concept.constraint.relation.ChainSuccession;
+import minerful.concept.constraint.relation.CoExistence;
+import minerful.concept.constraint.relation.NotChainSuccession;
+import minerful.concept.constraint.relation.NotCoExistence;
+import minerful.concept.constraint.relation.NotSuccession;
+import minerful.concept.constraint.relation.Precedence;
+import minerful.concept.constraint.relation.RespondedExistence;
+import minerful.concept.constraint.relation.Response;
+import minerful.concept.constraint.relation.Succession;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
 import minerful.logparser.LogEventClassifier.ClassificationType;
@@ -22,9 +38,8 @@ import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
 import minerful.params.SystemCmdParameters.DebugLevel;
 import minerful.relevance.ConstraintsRelevanceEvaluator;
+import minerful.relevance.test.constraint.SequenceResponse21;
 import minerful.utils.MessagePrinter;
-
-import org.apache.log4j.Logger;
 
 public class MinerFulVacuityChecker {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulVacuityChecker.class);

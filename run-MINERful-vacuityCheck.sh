@@ -10,9 +10,9 @@
 #                   libs.cfg
 #                   run-MINERful-vacuityCheck.sh (this file)
 
-## Exec-specific parametres
-THRESHOLD="1.0"
-LOG="logs/BPIC2013/bpi_challenge_2013_closed_problems.xes.gz"
+## Exec-specific parameters
+THRESHOLD="0.5"
+LOG="/home/claudio/Code/MINERful/logs/BPIC2012/financial_log-restricted.xes.gz"
 
 ## Runtime environment constants
 MAINCLASS="minerful.MinerFulVacuityChecker"

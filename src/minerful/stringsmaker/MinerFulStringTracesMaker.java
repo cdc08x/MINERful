@@ -12,6 +12,7 @@ import nl.flotsam.xeger.Xeger;
 
 import org.apache.log4j.Logger;
 
+@Deprecated
 public class MinerFulStringTracesMaker {
     private static Logger logger = Logger.getLogger(MinerFulStringTracesMaker.class.getCanonicalName());
 

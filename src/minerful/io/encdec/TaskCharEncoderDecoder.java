@@ -170,6 +170,24 @@ public class TaskCharEncoderDecoder {
 		return new HashMap<Character, AbstractTaskClass>(this.inverseTasksDictionary);
 	}
 	
+	/**
+	 * Returns a string representation of the decoding map, from single-character identifier to task.
+	 * @return A string representation of the decoding map.
+	 */
+	public String printDecodingMap() {
+		StringBuilder sBuil = new StringBuilder();
+		sBuil.append("Deconding map. Read:\n"
+				+ "  <key>  =>  <value>\n");
+		for (Character key : this.inverseTasksDictionary.keySet()) {
+			sBuil.append("  ");
+			sBuil.append(key);
+			sBuil.append("  =>  ");
+			sBuil.append(this.inverseTasksDictionary.get(key));
+			sBuil.append("\n");
+		}
+		return sBuil.toString();
+	}
+	
 	public static final Map<Character, AbstractTaskClass> getTranslationMap(TaskChar... tasks) {
 		HashMap<Character, AbstractTaskClass> transMap = new HashMap<Character, AbstractTaskClass>(tasks.length, (float)1.0);
 		
@@ -310,6 +328,11 @@ public class TaskCharEncoderDecoder {
 		return this.tasksDictionary.get(taskClass);
 	}
 	
+	/**
+	 * Encodes a list of lists of task classes into a set of strings, where each character encodes a single event class.
+	 * @param tasksTraces An event log
+	 * @return A list of strings (one per trace in the log)
+	 */
 	public String[] encode(List<List<AbstractTaskClass>> tasksTraces) {
 		String[] stringsTracesArray = new String[0];
 		List<String> stringTraces = new ArrayList<String>(tasksTraces.size());

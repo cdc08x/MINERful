@@ -14,7 +14,7 @@ clear
 MAINCLASS="minerful.relevance.ConstraintsRelevanceEvaluator"
 MEMORY_MAX="32G"
 
-## Exec-specific parametres
+## Exec-specific parameters
 THRESHOLD="1.0"
 
 LOG="logs/Road-traffic-fines/Road_Traffic_Fine_Management_Process.xes.gz"
@@ -37,7 +37,7 @@ OUTFILE="models/vacuity/`basename ${LOG}`.model.xml"
 ## Run!
 java -Xmx$MEMORY_MAX -classpath $LIBS $MAINCLASS $LOG $THRESHOLD $OUTFILE &> "$OUTLOGFILE"
 
-## Exec-specific parametres
+## Exec-specific parameters
 THRESHOLD="0.50"
 
 # LOG="/home/claudio/Code/MINERful/logs/BPIC2012/financial_log.xes.gz"
