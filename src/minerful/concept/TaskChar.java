@@ -27,6 +27,8 @@ public class TaskChar implements Comparable<TaskChar> {
 	 * Character identifier for this event class.
 	 */
 	@XmlAttribute
+	// This is due to the ridiculous bug of the Metro implementation of JAXB.
+	// Without an Adapter, you would have an Integer encoding the Character as a result.
 	@XmlJavaTypeAdapter(value=CharAdapter.class)
     public Character identifier;
 	/**

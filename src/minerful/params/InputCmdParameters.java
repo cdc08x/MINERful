@@ -99,7 +99,7 @@ public class InputCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("language")
                 .withLongOpt(INPUT_ENC_PARAM_LONG_NAME)
-                .withDescription("input encoding language " + printValues(InputEncoding.values()) + ". "
+                .withDescription("input encoding language " + printValues(InputEncoding.values()) 
                 		+ printDefault(fromEnumValueToString(DEFAULT_INPUT_ENCODING)))
                 .withType(new String())
                 .create(INPUT_ENCODING_PARAM_NAME)

@@ -162,7 +162,7 @@ public class MinerFulCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("path")
         		.withLongOpt("stats-out")
-        		.withDescription("path to write the statistics in")
+        		.withDescription("path in which to write the statistics kept in the MINERful knowledge base (say, that this task occurs without another occurring that number of times, etc.); the file is saved in an XML format")
         		.withType(new String())
         		.create(STATS_OUT_PATH_PARAM_NAME)
         		);
