@@ -127,44 +127,7 @@ public class ConstraintsPrinter {
 	 * @return A string containing the list of process model' constraints in a CSV format.  
 	 */	
 	public String printBagCsv() {
-        StringBuilder
-        	superSbuf = new StringBuilder();
-
-        superSbuf.append("'Name';'Constraint template';'Implying activity';'Implied activity';'Support';'Confidence level';'Interest factor'\n");
-
-        for (TaskChar key : this.processModel.bag.getTaskChars()) {
-        	for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
-        		if (!c.isMarkedForExclusion()) {
-	        		superSbuf.append('\'');
-//	        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
-	        		superSbuf.append(c.toString());
-	        		superSbuf.append('\'');
-	        		superSbuf.append(';');
-	        		superSbuf.append('\'');
-//	        		superSbuf.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
-	        		superSbuf.append(c.getTemplateName());
-	        		superSbuf.append('\'');
-	        		superSbuf.append(';');
-	        		superSbuf.append('\'');
-	        		superSbuf.append(c.getBase());
-	        		superSbuf.append('\'');
-	        		superSbuf.append(';');
-	        		superSbuf.append('\'');
-	        		superSbuf.append(c.getImplied() == null ? "" : c.getImplied());
-	        		superSbuf.append('\'');
-	        		superSbuf.append(';');
-	        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getSupport() * 100));
-	        		superSbuf.append(';');
-	        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getConfidence() * 100));
-	        		superSbuf.append(';');
-	        		superSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getInterestFactor() * 100));
-//    				sBuffValues.append(';');
-	        		superSbuf.append('\n');
-        		}
-        	}
-        }
-        
-        return superSbuf.toString();
+        return this.printBagCsv(CsvEncoder.PRINT_OUT_ELEMENT.values());
 	}
 	
 	/**
