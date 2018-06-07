@@ -4,6 +4,7 @@ import java.io.File;
 
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessModel;
+import minerful.io.encdec.csv.CsvEncoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
 import minerful.params.SystemCmdParameters;
@@ -11,6 +12,7 @@ import minerful.params.ViewCmdParameters;
 
 /**
  * This example class demonstrates how to use MINERful to convert an existing Declare map XML file into multiple formats.
+ * Here it is also shown how to limit the columns to be printed in the CSV.
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
 public class FromDeclareMapToJSONandXMLandCSV {
@@ -32,12 +34,22 @@ public class FromDeclareMapToJSONandXMLandCSV {
 		 */
 		ProcessModel proMod =
 				new DeclareMapEncoderDecoder(
-						"/home/claudio/Declare-map-model.xml"
+						"/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075-model-s075_CONDEC.xml"
 				).createMinerFulProcessModel();
 
 		outParams.fileToSaveAsXML = new File("/home/claudio/MINERful-declarative-model.xml");
 		outParams.fileToSaveAsJSON = new File("/home/claudio/MINERful-declarative-model.json");
 		outParams.fileToSaveConstraintsAsCSV = new File("/home/claudio/MINERful-declarative-model.csv");
+		outParams.csvColumnsToPrint = new CsvEncoder.PRINT_OUT_ELEMENT[]{
+				CsvEncoder.PRINT_OUT_ELEMENT.FULL_NAME, // ("Constraint"),
+				CsvEncoder.PRINT_OUT_ELEMENT.TEMPLATE_NAME, //("Template"),
+				CsvEncoder.PRINT_OUT_ELEMENT.ACTIVATION, //("Activation"),
+				CsvEncoder.PRINT_OUT_ELEMENT.TARGET, //("Target"),
+				/* The following are commented out, because default ConDec models do not bear support, confidence, and interest factor. */ 
+				// CsvEncoder.PRINT_OUT_ELEMENT.SUPPORT, //("Support"),
+				// CsvEncoder.PRINT_OUT_ELEMENT.CONFIDENCE_LEVEL, //("Confidence level"),
+				// CsvEncoder.PRINT_OUT_ELEMENT.INTEREST_FACTOR, //("Interest factor"),
+		};
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
 		outputMgt.manageOutput(proMod, viewParams, outParams, systemParams);

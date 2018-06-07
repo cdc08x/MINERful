@@ -3,10 +3,13 @@ package minerful.io;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.NavigableMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,6 +28,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
+import minerful.io.encdec.csv.CsvEncoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
 import minerful.logparser.LogParser;
@@ -121,7 +125,7 @@ public class ConstraintsPrinter {
 	/**
 	 * Prints the constraints in a CSV format. The constraints that are marked for exclusion are not included in the print-out.
 	 * @return A string containing the list of process model' constraints in a CSV format.  
-	 */
+	 */	
 	public String printBagCsv() {
         StringBuilder
         	superSbuf = new StringBuilder();
@@ -161,6 +165,18 @@ public class ConstraintsPrinter {
         }
         
         return superSbuf.toString();
+	}
+	
+	/**
+	 * Prints the CSV format of the constraints bag. The columns appearing in the file can be customised.
+	 * @param columns A sorted set of columns. See the <code>PRINT_OUT_ELEMENT</code> enumeration.
+	 * @return A CSV string containing the constraints bag.
+	 */
+	public String printBagCsv(CsvEncoder.PRINT_OUT_ELEMENT... columns) {
+		return new CsvEncoder().printAsCsv(
+				new TreeSet<CsvEncoder.PRINT_OUT_ELEMENT>(Arrays.asList(columns)),
+				this.processModel
+		);
 	}
 	
 	private String printConstraintsCollection(Collection<Constraint> constraintsCollection) {

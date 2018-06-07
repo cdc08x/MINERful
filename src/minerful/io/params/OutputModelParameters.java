@@ -6,6 +6,7 @@ package minerful.io.params;
 
 import java.io.File;
 
+import minerful.io.encdec.csv.CsvEncoder;
 import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
@@ -42,6 +43,8 @@ public class OutputModelParameters extends ParamsManager {
     public File fileToSaveAsXML;
 	/** File in which the discovered process model is saved as a JSON file. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveAsJSON;
+	/** Columns to be printed if constraints are printed in CSV format. Notice that this attribute is not associated to a command-line parameter. */
+	public CsvEncoder.PRINT_OUT_ELEMENT[] csvColumnsToPrint = CsvEncoder.PRINT_OUT_ELEMENT.values();
 
     public OutputModelParameters() {
     	this.fileToSaveConstraintsAsCSV = null;

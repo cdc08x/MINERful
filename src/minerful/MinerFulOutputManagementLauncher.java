@@ -41,7 +41,7 @@ public class MinerFulOutputManagementLauncher {
 
         	try {
     				outWriter = new PrintWriter(outParams.fileToSaveConstraintsAsCSV);
-    	        	outWriter.print(printer.printBagCsv());
+    	        	outWriter.print(printer.printBagCsv(outParams.csvColumnsToPrint));
     	        	outWriter.flush();
     	        	outWriter.close();
     			} catch (FileNotFoundException e) {
