@@ -11,7 +11,7 @@
 #                   run-MINERful-vacuityCheck.sh (this file)
 
 ## Exec-specific parameters
-THRESHOLD="0.5"
+THRESHOLD="0.01"
 LOG="/home/claudio/Code/MINERful/logs/BPIC2012/financial_log-restricted.xes.gz"
 
 ## Runtime environment constants

@@ -39,6 +39,8 @@ import minerful.logparser.XesLogParser;
 import minerful.params.SystemCmdParameters.DebugLevel;
 import minerful.relevance.ConstraintsRelevanceEvaluator;
 import minerful.relevance.test.constraint.SequenceResponse21;
+import minerful.relevance.test.constraint.SequenceResponse22;
+import minerful.relevance.test.constraint.SequenceResponse32;
 import minerful.utils.MessagePrinter;
 
 public class MinerFulVacuityChecker {
@@ -60,9 +62,9 @@ public class MinerFulVacuityChecker {
 	 // Toggle the comment to add/remove the template from the set of checked ones.
 	 public static Constraint[] parametricConstraints =
 		new Constraint[] {
-//			new SequenceResponse21(a,b,x),
-//			new SequenceResponse22(a,b,x,y),
-//			new SequenceResponse32(a,b,c,x,y),
+			new SequenceResponse21(a,b,x),
+			new SequenceResponse22(a,b,x,y),
+			new SequenceResponse32(a,b,c,x,y),
 			new Participation(a),	// a.k.a. Existence(1, a)
 			new AtMostOne(a),	// a.k.a. Absence(2, a)
 			new Init(a),
