@@ -7,7 +7,7 @@ Class-Path: lib/automaton.jar
  lib/commons-math3-3.1.1.jar 
  lib/DeclareVisualizer.jar 
  lib/dom4j-1.6.1.jar 
- lib/gson-1.4.jar 
+ lib/gson-2.7.jar 
  lib/guava-16.0.1.jar 
  lib/javassist-3.12.1.GA.jar 
  lib/jfreechart-1.0.14.jar 

@@ -54,7 +54,7 @@ public class MinerFulKBCore implements Callable<GlobalStatsTable> {
         		new OccurrencesStatsBuilder(taskCharArchive, branchingLimit);
         // builds the (empty) stats table
         GlobalStatsTable statsTable = statsBuilder.checkThisOut(logParser);
-       logger.info("Done!");
+        logger.info("Done!");
         
         after = System.currentTimeMillis();
 
