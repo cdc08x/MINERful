@@ -22,6 +22,12 @@ Selected publications about MINERful and presentation slides:
     Claudio Di Ciccio, Fabrizio Maria Maggi, Marco Montali, Jan Mendling: Resolving inconsistencies and redundancies in declarative process models. Inf. Syst. 64: 425-446 (2017)
     - DOI: [10.1016/j.is.2016.09.005](https://doi.org/10.1016/j.is.2016.09.005)
     - Presentation: [https://www.slideshare.net/cdc08x/resolving-inconsistencies-and-redundancies-in-declarative-process-models](https://www.slideshare.net/cdc08x/resolving-inconsistencies-and-redundancies-in-declarative-process-models)
+
+  - Retaining only non-vacuously satisfied (read: relevant) constraints:
+  
+    Claudio Di Ciccio, Fabrizio Maria Maggi, Marco Montali, JanMendling: On the relevance of a business constraint to an event log. Inf. Syst. 78: 144-161 (2018)
+    - DOI: [10.1016/j.is.2018.01.011](https://doi.org/10.1016/j.is.2018.01.011)
+    - Presentation: [https://www.slideshare.net/cdc08x/semantical-vacuity-detection-in-declarative-process-mining](https://www.slideshare.net/cdc08x/semantical-vacuity-detection-in-declarative-process-mining)
     
   - Simulation of declarative models:
   
