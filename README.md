@@ -110,10 +110,10 @@ A ProM package of MINERful exists, although it is in beta version and with limit
 A GUI-equipped log generator is also in its beta version, based on the [Declare Designer](http://ceur-ws.org/Vol-489/paper1.pdf) tool: It is available for download on the [Synthetic log generator GitHub page](https://github.com/processmining/synthetic-log-generator). More information is available in this paper:
   - Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36. DOI: [10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
 
-# Licensing
+# License
 Please read the [LICENSE](https://github.com/cdc08x/MINERful/edit/master/LICENSE) file.
 
-# Contacts
+# Contact
 
 Please contact the developer, [Claudio Di Ciccio](https://www.wu.ac.at/en/infobiz/team/diciccio/), for any information, comment or bug reporting:
-[dc.claudio@gmail.com](mailto:dc.claudio@gmail.com)
+[dc.claudio@gmail.com](mailto:dc.claudio@gmail.com).
