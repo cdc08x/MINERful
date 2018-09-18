@@ -34,15 +34,14 @@ Selected publications about MINERful and presentation slides:
     Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36
     - DOI: [10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
 
-Installation
-------------
-You need to have a JRE 7+ installed on your machine.
-To launch the `.sh` files, you have to run them on a Unix-based system with a BASH shell.
+# Installation
+As a requirement, a JRE 7+ should be installed on your machine.
+To launch the `.sh` files, you have to run them on a Unix-based system with a BASH shell. Alternatively, the JAR files can be called directly, which may come handy if you are using a Windows system for instance.
 No installation procedure is required.
-This version has been tested on both a Ubuntu Linux (16.04) and a Mac OS X (Snow Leopard) machine.
+This version has been tested on both a Ubuntu Linux (18.04) and a Mac OS X (Snow Leopard) machine.
 
-MINERful as a stand-alone application (with .sh files)
----------
+# Usage
+## MINERful as a stand-alone application (with `.sh` files)
 The easiest way to launch MINERful is to make use of the `.sh` files.
   - To launch the miner: `run-MINERful.sh`
   - To create synthetic logs: `run-MINERfulTracesMaker.sh`
@@ -55,8 +54,7 @@ The scripts that end with the `-unstable.sh` suffix do not launch MINERful via i
 
 Some usage examples follow.
 
-Usage examples of MINERful as a stand-alone application (with `.sh` files)
---------
+### Usage examples of MINERful as a stand-alone application (with `.sh` files)
 - Mine an `XES` log file located in `/home/user/file.xes`:
 
       run-MINERful.sh -iLF '/home/user/file.xes' 
@@ -65,7 +63,7 @@ Usage examples of MINERful as a stand-alone application (with `.sh` files)
 
       run-MINERful.sh -h
   
- Mine an `XES` log file located in `/home/user/file.xes` and export the discovered model in an `XML` file located in `/home/user/model-condec.xml`, formatted as Declare/ConDec. Set a support threshold of 0.95, a confidence level threshold of 0.25, and an interest factor threshold of 0.125 (if you have no idea what these parameters are about, check [this paper](http://doi.acm.org/10.1145/2629447) paper out):
+ Mine an `XES` log file located in `/home/user/file.xes` and export the discovered model in an `XML` file located in `/home/user/model-condec.xml`, formatted as Declare/ConDec. Set a support threshold of 0.95, a confidence level threshold of 0.25, and an interest factor threshold of 0.125 (if you have no idea what these parameters are about, check [this paper](http://doi.acm.org/10.1145/2629447) out):
 
       run-MINERful.sh -iLF '/home/user/file.xes' -condec '/home/user/model-condec.xml' -s 0.95 -c 0.25 -i 0.125
   
@@ -81,8 +79,7 @@ Usage examples of MINERful as a stand-alone application (with `.sh` files)
 
       run-MINERful.sh -d all -iLF '/home/user/file.xes' -CSV '/home/user/output.csv' -s 0.95 -c 0.25 -i 0.125
 
-Usage examples of MINERful as a stand-alone application (directly with bytecode files)
----------
+### Usage examples of MINERful as a stand-alone application (directly with bytecode files)
 
 This is a little bit trickier, but necessary, in case you have a Microsoft Windows system.
 From your prompt, type:
@@ -93,8 +90,7 @@ where the LAUNCHER_CLASS can be either `MinerFulMinerStarter` to launch the mine
 
 The `-h` parameter appended at the end of the prompt shows and explains the parameters you can pass. They are exactly the same as the Linux/MacOS version.
 
-MINERful as a Java package
----------
+## MINERful as a Java package
 For advanced users: You can use MINERful as a Java package and integrate it with your software! Check out the [minerful.examples.api](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api) source code to see some examples.
 In particular:
 - [discovery.MinerFulObserverInvokerOnXesFile](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/discovery/MinerFulObserverInvokerOnXesFile.java)  demonstrates how to invoke the MINERful miner as an API, and subsequently observe the changes that are applied to the process model in a [publish/subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) fashion. Lastly, the model is saved as a Declare Map file.
@@ -106,8 +102,7 @@ In particular:
 - [logmaking.FromJsonProcessModelToLog](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/logmaking/FromJsonProcessModelToLog.java) demonstrates how to generate XES logs starting with the definitions of constraints specified with [JSON](http://www.json.org/) objects.
 - [simplification.MinerFulSimplificationInvokerOnDeclareMapFile](https://github.com/cdc08x/MINERful/tree/master/src/minerful/examples/api/simplification/MinerFulSimplificationInvokerOnDeclareMapFile.java) demonstrates how to load a Declare Map file as a process model, then run the simplification engine of MINERful to remove the redundant constraints.
 
-Other software packages using MINERful
----------
+# Other software packages using MINERful
 
 A ProM package of MINERful exists, although it is in beta version and with limited functionalities: It is available in the [ProM Nightly Build SVN repository](https://svn.win.tue.nl/repos/prom/Packages/DeclareMinerFul/Trunk/). More information is available in this paper:
   - Claudio Di Ciccio, Mitchel H. M. Schouten, Massimiliano de Leoni, Jan Mendling: Declarative Process Discovery with MINERful in ProM. BPM (Demos) 2015: 60-64. URL: [http://ceur-ws.org/Vol-1418/paper13.pdf](http://ceur-ws.org/Vol-1418/paper13.pdf)
@@ -115,12 +110,10 @@ A ProM package of MINERful exists, although it is in beta version and with limit
 A GUI-equipped log generator is also in its beta version, based on the [Declare Designer](http://ceur-ws.org/Vol-489/paper1.pdf) tool: It is available for download on the [Synthetic log generator GitHub page](https://github.com/processmining/synthetic-log-generator). More information is available in this paper:
   - Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36. DOI: [10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
 
-Licensing
-=========================
+# Licensing
 Please read the [LICENSE](https://github.com/cdc08x/MINERful/edit/master/LICENSE) file.
 
-Contacts
-=========================
+# Contacts
 
 Please contact the developer, [Claudio Di Ciccio](https://www.wu.ac.at/en/infobiz/team/diciccio/), for any information, comment or bug reporting:
 [dc.claudio@gmail.com](mailto:dc.claudio@gmail.com)
