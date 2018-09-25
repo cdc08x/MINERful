@@ -14,8 +14,8 @@ import minerful.concept.constraint.existence.Participation;
 import minerful.concept.constraint.relation.Precedence;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.logmaker.MinerFulLogMaker;
-import minerful.logmaker.params.LogMakerCmdParameters;
-import minerful.logmaker.params.LogMakerCmdParameters.Encoding;
+import minerful.logmaker.params.LogMakerParameters;
+import minerful.logmaker.params.LogMakerParameters.Encoding;
 
 import org.deckfour.xes.model.XLog;
 
@@ -64,8 +64,8 @@ public class FromCharactersProcessModelToLog {
 //Creation of the log...
 //////////////////////////////////////////////////////////////////
 		// Initialise the parameters to creat the log
-		LogMakerCmdParameters logMakParameters =
-				new LogMakerCmdParameters(
+		LogMakerParameters logMakParameters =
+				new LogMakerParameters(
 						minEventsPerTrace, maxEventsPerTrace, tracesInLog);
 		
 		// Instantiate the class to make event logs, based on the parameters defined above

@@ -6,8 +6,8 @@ import java.io.IOException;
 import minerful.concept.ProcessModel;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.logmaker.MinerFulLogMaker;
-import minerful.logmaker.params.LogMakerCmdParameters;
-import minerful.logmaker.params.LogMakerCmdParameters.Encoding;
+import minerful.logmaker.params.LogMakerParameters;
+import minerful.logmaker.params.LogMakerParameters.Encoding;
 
 import org.deckfour.xes.model.XLog;
 
@@ -55,8 +55,8 @@ public class FromJsonProcessModelToLog {
 		/*
 		 * Specifies the parameters used to create the log
 		 */
-		LogMakerCmdParameters logMakParameters =
-				new LogMakerCmdParameters(
+		LogMakerParameters logMakParameters =
+				new LogMakerParameters(
 						MIN_EVENTS_PER_TRACE, MAX_EVENTS_PER_TRACE, TRACES_IN_LOG);
 
 		/*

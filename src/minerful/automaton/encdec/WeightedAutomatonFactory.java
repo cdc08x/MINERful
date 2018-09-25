@@ -134,7 +134,6 @@ public class WeightedAutomatonFactory {
 			wAutSta.augmentWeightedAutomatonWithIllegalityQuantiles();
 		}
 
-System.out.println(weightedAutomaton);
 		return weightedAutomaton;
 	}
 }

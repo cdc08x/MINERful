@@ -162,6 +162,8 @@ public class MinerFulOutputManagementLauncher {
 					e.printStackTrace();
 				}
 			}
+		} else if (outParams.folderToSaveXmlFilesForPartialAutomata != null || outParams.fileToSaveXmlFileForAutomaton != null) {
+			throw new IllegalArgumentException("A log parser must be provided to create the weighted XML automaton corresponding to the process model");
 		}
 
 		if (outParams.folderToSaveDotFilesForPartialAutomata != null) {
@@ -243,5 +245,13 @@ public class MinerFulOutputManagementLauncher {
 	public void manageOutput(ProcessModel processModel,
 			ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
 		this.manageOutput(processModel, null, outParams, viewParams, systemParams, null);
+	}
+	
+	public void manageOutput(ProcessModel processModel, OutputModelParameters outParams) {
+		this.manageOutput(processModel, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null);
+	}
+	
+	public void manageOutput(ProcessModel processModel, OutputModelParameters outParams, LogParser logParser) {
+		this.manageOutput(processModel, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser);
 	}
 }

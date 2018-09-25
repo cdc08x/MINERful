@@ -102,7 +102,7 @@ public class InputModelParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("path")
                 .withLongOpt(INPUT_MODELFILE_PATH_PARAM_LONG_NAME)
-                .withDescription("path to read the process model file from")
+                .withDescription("path of the file from which the process model should be read")
                 .withType(new String())
                 .create(INPUT_MODELFILE_PATH_PARAM_NAME)
     	);

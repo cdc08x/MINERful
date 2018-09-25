@@ -7,7 +7,7 @@ package minerful.stringsmaker.params;
 import java.io.File;
 
 import minerful.io.encdec.TaskCharEncoderDecoder;
-import minerful.logmaker.params.LogMakerCmdParameters;
+import minerful.logmaker.params.LogMakerParameters;
 import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
@@ -25,7 +25,6 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
 	public static final char REG_EXPS_PARAM_NAME = 'r';
 
 	public static final String ALPHABET_CHARACTERS_SEPARATOR = ":";
-    public static final Long SIZE = 100L;
     public static final Character[] TEST_ALPHABET = 
             {'n', 'p', 'r', 'c'};
     public static final String TEST_REGEXP =
@@ -48,8 +47,9 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
             //     	"[npr]*(r[npr]*c)*[npr]*" + // AlternatePrecedence(r, c); ^[^s]*(r[^s]*s)*[^s]*$
             // 		"n[nrc]+[nprc]+c" +
             ")";
-    public static final Integer MIN_OCCURRENCES = 0;
-    public static final Integer MAX_OCCURRENCES = Integer.MAX_VALUE;
+    public static final Long DEFAULT_SIZE = 100L;
+    public static final Integer DEFAULT_MIN_TRACE_LENGTH = 0;
+    public static final Integer DEFAULT_MAX_TRACE_LENGTH = Integer.MAX_VALUE;
             
     public String[] regexps;
     public Character[] alphabet;
@@ -57,17 +57,17 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
     public Integer maxChrsPerString;
     public Long size;
     public File logFile;
-    public LogMakerCmdParameters.Encoding outputEncoding;
+    public LogMakerParameters.Encoding outputEncoding;
     
     public StringTracesMakerCmdParameters() {
     	super();
     	regexps = new String[]{TEST_REGEXP};
         alphabet = TEST_ALPHABET;
-        minChrsPerString = MIN_OCCURRENCES;
-        maxChrsPerString = MAX_OCCURRENCES;
-        size = SIZE;
+        minChrsPerString = DEFAULT_MIN_TRACE_LENGTH;
+        maxChrsPerString = DEFAULT_MAX_TRACE_LENGTH;
+        size = DEFAULT_SIZE;
         logFile = null;
-        outputEncoding = LogMakerCmdParameters.Encoding.string;
+        outputEncoding = LogMakerParameters.Encoding.strings;
     }
     
     public StringTracesMakerCmdParameters(Options options, String[] args) {
@@ -100,7 +100,7 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
         this.size =
         		Long.valueOf(line.getOptionValue(StringTracesMakerCmdParameters.SIZE_PARAM_NAME, this.size.toString()));
         this.outputEncoding = Enum.valueOf(
-        		LogMakerCmdParameters.Encoding.class,
+        		LogMakerParameters.Encoding.class,
         		line.getOptionValue(OUT_ENC_PARAM_NAME, this.outputEncoding.toString())
 		);
         if (line.hasOption(StringTracesMakerCmdParameters.OUTPUT_FILE_PARAM_NAME)) {
@@ -174,7 +174,7 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("encoding")
                 .withLongOpt("out-enc")
-                .withDescription("encoding language for output log " + printValues(LogMakerCmdParameters.Encoding.values()))
+                .withDescription("encoding language for output log " + printValues(LogMakerParameters.Encoding.values()))
                 .withType(new String())
                 .create(StringTracesMakerCmdParameters.OUT_ENC_PARAM_NAME)
     	);

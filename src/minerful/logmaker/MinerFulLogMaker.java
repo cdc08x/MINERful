@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -15,7 +16,7 @@ import minerful.automaton.AutomatonRandomWalker;
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
-import minerful.logmaker.params.LogMakerCmdParameters;
+import minerful.logmaker.params.LogMakerParameters;
 import minerful.utils.MessagePrinter;
 
 import org.deckfour.xes.classification.XEventNameClassifier;
@@ -40,28 +41,41 @@ public class MinerFulLogMaker {
 	/**
 	 * Log generation parameters
 	 */
-	private LogMakerCmdParameters parameters;
+	private LogMakerParameters parameters;
 	/**
 	 * Event log
 	 */
 	private XLog log;
+	/**
+	 * Event log as strings
+	 */
+	private String[] stringsLog;
+	/**
+	 * Maximum amount of traces we want to save as strings
+	 */
+	public static int MAX_SIZE_OF_STRINGS_LOG = Integer.MAX_VALUE;
+	
 	/**
 	 * For debugging purposes
 	 */
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulLogMaker.class);
 
 
-	public MinerFulLogMaker(LogMakerCmdParameters parameters) throws IllegalArgumentException {
+	public MinerFulLogMaker(LogMakerParameters parameters) throws IllegalArgumentException {
 		this.setParameters(parameters);
 	}
 
-	public void setParameters(LogMakerCmdParameters parameters) {
+	public void setParameters(LogMakerParameters parameters) {
 		String errors = parameters.checkValidity();
 		
 		if (errors != null)
 			throw new IllegalArgumentException(errors);
 
 		this.parameters = parameters;
+		
+		this.stringsLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
+				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
+					MAX_SIZE_OF_STRINGS_LOG)];
 	}
 
 	/**
@@ -88,7 +102,9 @@ public class MinerFulLogMaker {
 		this.log.getExtensions().add(timeExtension);
 		this.log.getClassifiers().add(new XEventNameClassifier());
 
-		concExtino.assignName(this.log, "Synthetic log for process: " + processModel.getName());
+		concExtino.assignName(this.log,
+				"Synthetic log for process: " + processModel.getName()
+		);
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 		
 		Automaton automaton = processModel.buildAutomaton();
@@ -102,8 +118,10 @@ public class MinerFulLogMaker {
 		Date currentDate = null;
 		int padder = (int)(Math.ceil(Math.log10(this.parameters.tracesInLog)));
 		String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
+		StringBuffer sBuf = new StringBuffer();
 
 		for (int traceNum = 0; traceNum < this.parameters.tracesInLog; traceNum++) {
+			sBuf.append("<");
 			walker.goToStart();
 			xTrace = xFactory.createTrace();
 			concExtino.assignName(
@@ -114,8 +132,9 @@ public class MinerFulLogMaker {
 			pickedTransitionChar = walker.walkOn();
 			while (pickedTransitionChar != null) {
 				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
-				MessagePrinter.printOut(firedTransition + ",");
-//System.out.print(firedTransition + ",");
+				if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
+					sBuf.append(firedTransition + ",");
+				}
 				
 				currentDate = generateRandomDateTimeForLogEvent(currentDate);
 				xEvent = makeXEvent(xFactory, concExtino, lifeExtension, timeExtension, firedTransition, currentDate);
@@ -123,8 +142,10 @@ public class MinerFulLogMaker {
 				pickedTransitionChar = walker.walkOn();
 			}
 			this.log.add(xTrace);
-			MessagePrinter.printlnOut();
-//System.out.println();
+			if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
+				this.stringsLog[traceNum] = sBuf.substring(0, Math.max(1, sBuf.length() -1)) + ">";
+				sBuf = new StringBuffer();
+			}
 		}
 		
 		return this.log;
@@ -176,7 +197,15 @@ public class MinerFulLogMaker {
 		case mxml:
 			new XMxmlSerializer().serialize(this.log, outStream);
 			break;
-		case string:
+		case strings:
+			PrintWriter priWri = new PrintWriter(outStream);
+			for (String stringTrace : this.stringsLog) {
+				priWri.println(stringTrace);
+				MessagePrinter.printlnOut(stringTrace);
+			}
+			priWri.flush();
+			priWri.close();
+			break;
 		default:
 			outStream.flush();
 			outStream.close();
