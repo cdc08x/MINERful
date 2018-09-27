@@ -23,6 +23,7 @@ public class OutputModelParameters extends ParamsManager {
 	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "pTSML";
 	public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "pSAF";
 	public static final String SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "pXWA";
+	public static final String SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "pXsWA";
 	public static final String FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "pXWSAF";
 
 	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> for avoiding such print-out. */
@@ -35,8 +36,10 @@ public class OutputModelParameters extends ParamsManager {
 	public File fileToSaveDotFileForAutomaton;
 	/** File in which the discovered process model is saved as a Declare XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveAsConDec;
-	/** File in which the discovered process model is printed as an XML representation of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveXmlFileForAutomaton;
+	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Transitions that are never traversed are removed. Keep it equal to <code>null</code> for avoiding such print-out. */
+	public File fileToSaveSkimmedXmlFileForAutomaton;
 	/** Directory in which the discovered constraints are printed as automata, in separate XML files. Keep it equal to <code>null</code> for avoiding such print-outs. */
 	public File folderToSaveXmlFilesForPartialAutomata;
 	/** File in which the discovered process model is saved as an XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
@@ -53,6 +56,7 @@ public class OutputModelParameters extends ParamsManager {
     	this.fileToSaveDotFileForAutomaton = null;
     	this.fileToSaveAsConDec = null;
     	this.fileToSaveXmlFileForAutomaton = null;
+    	this.fileToSaveSkimmedXmlFileForAutomaton = null;
     	this.folderToSaveXmlFilesForPartialAutomata = null;
     	this.fileToSaveAsXML = null;
     	this.fileToSaveAsJSON = null;
@@ -114,6 +118,10 @@ public class OutputModelParameters extends ParamsManager {
         String fileToSaveXmlFileForAutomatonString = line.getOptionValue(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
         if (fileToSaveXmlFileForAutomatonString != null) {
         	this.fileToSaveXmlFileForAutomaton = new File(fileToSaveXmlFileForAutomatonString);
+        }
+        String fileToSaveSkimmedXmlFileForAutomatonString = line.getOptionValue(SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
+        if (fileToSaveSkimmedXmlFileForAutomatonString != null) {
+        	this.fileToSaveSkimmedXmlFileForAutomaton = new File(fileToSaveSkimmedXmlFileForAutomatonString);
         }
 		String
 			folderToSaveXmlFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME);
@@ -205,10 +213,19 @@ public class OutputModelParameters extends ParamsManager {
         		.hasArg().withArgName("path")
         		.withLongOpt("print-weighted-autom")
         		.withDescription(
-        				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file")
+        				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. The weight is computed based on the number of times the event log replay traverses the transition.")
         		)
         		.withType(new String())
         		.create(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
+        		);        
+        options.addOption(OptionBuilder
+        		.hasArg().withArgName("path")
+        		.withLongOpt("print-skimmed-weighted-autom")
+        		.withDescription(
+        				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. Remove the transitions (and states) that have weight 0. The weight is computed based on the number of times the event log replay traverses the transition.")
+        		)
+        		.withType(new String())
+        		.create(SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder

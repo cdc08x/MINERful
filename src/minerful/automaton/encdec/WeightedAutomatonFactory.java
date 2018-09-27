@@ -3,7 +3,7 @@ package minerful.automaton.encdec;
 import java.util.Iterator;
 import java.util.NavigableMap;
 
-import minerful.automaton.AutomatonFactory;
+import dk.brics.automaton.Automaton;
 import minerful.automaton.concept.weight.WeightedAutomaton;
 import minerful.automaton.concept.weight.WeightedAutomatonStats;
 import minerful.automaton.concept.weight.WeightedState;
@@ -13,10 +13,6 @@ import minerful.concept.AbstractTaskClass;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
 import minerful.utils.MessagePrinter;
-
-import org.apache.log4j.Logger;
-
-import dk.brics.automaton.Automaton;
 
 public class WeightedAutomatonFactory {
 	private static MessagePrinter logger = MessagePrinter.getInstance(WeightedAutomatonFactory.class);
@@ -39,11 +35,11 @@ public class WeightedAutomatonFactory {
 		this.translationMap = navigableMap;
 	}
 
-	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser) {
-		return this.augmentByReplay(automaton, logParser, true);
+	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser, boolean skimIt) {
+		return this.augmentByReplay(automaton, logParser, skimIt, true);
 	}
 
-	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser, boolean ignoreIfNotCompliant) {
+	public WeightedAutomaton augmentByReplay(Automaton automaton, LogParser logParser, boolean skimIt, boolean ignoreIfNotCompliant) {
 		if (automaton == null || automaton.isEmpty())
 			return null;
 		WeightedAutomaton weightedAutomaton = new WeightedAutomaton(automaton, translationMap);
@@ -129,7 +125,7 @@ public class WeightedAutomatonFactory {
 		}
 		
 		WeightedAutomatonStats wAutSta = new WeightedAutomatonStats(weightedAutomaton);
-		wAutSta.augmentWeightedAutomatonWithQuantiles();
+		wAutSta.augmentWeightedAutomatonWithQuantiles(skimIt);
 		if (!ignoreIfNotCompliant) {
 			wAutSta.augmentWeightedAutomatonWithIllegalityQuantiles();
 		}

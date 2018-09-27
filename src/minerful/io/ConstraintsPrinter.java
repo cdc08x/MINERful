@@ -235,12 +235,12 @@ public class ConstraintsPrinter {
     	DeclareMapReaderWriter.marshal(outFile.getCanonicalPath(), deMapEnDec.createDeclareMap());
     }
     
-    public String printWeightedXmlAutomaton(LogParser logParser) throws JAXBException {
+    public String printWeightedXmlAutomaton(LogParser logParser, boolean skimIt) throws JAXBException {
 		if (this.processAutomaton == null)
 			processAutomaton = this.processModel.buildAutomaton();
 		
 		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag));
-		WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, logParser);
+		WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, logParser, skimIt);
 
 		if (wAut == null)
 			return null;
@@ -278,7 +278,7 @@ public class ConstraintsPrinter {
 		marsh.setProperty("jaxb.formatted.output", true);
 
 		for (SubAutomaton partialAuto : partialAutomata) {
-			wAut = wAF.augmentByReplay(partialAuto.automaton, logParser, true);
+			wAut = wAF.augmentByReplay(partialAuto.automaton, logParser, false, true);
 			if (wAut != null) {
 				strixWriter = new StringWriter();
 				marsh.marshal(wAut, strixWriter);

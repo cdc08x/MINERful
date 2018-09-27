@@ -1,5 +1,8 @@
 package minerful.automaton.concept.weight;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import dk.brics.automaton.State;
@@ -27,15 +30,30 @@ public class WeightedAutomatonStats {
 		this.buildIllegalityStats();
 	}
 
-	public void augmentWeightedAutomatonWithQuantiles() {
+	public void augmentWeightedAutomatonWithQuantiles(boolean doRemoveNeverTraversedTransitions) {
 		WeightedState auxWState = null;
 		WeightedTransition auxWTrans = null;
+		ArrayList<Transition> neverTraversedTransitions = null;
 		for (State state : this.automaton.getStates()) {
+			if (doRemoveNeverTraversedTransitions) {
+				neverTraversedTransitions = new ArrayList<Transition>();
+			}
+			
 			auxWState = (WeightedState) state;
 			auxWState.setWeightQuantile(this.calculateStateQuantile(auxWState.getWeight()));
 			for (Transition trans : auxWState.getTransitions()) {
 				auxWTrans = (WeightedTransition) trans;
-				auxWTrans.setWeightQuantile(this.calculateTransQuantile(auxWTrans.getWeight()));
+				if (doRemoveNeverTraversedTransitions && auxWTrans.getWeight() == 0) {
+					neverTraversedTransitions.add(auxWTrans);
+				} else {
+					auxWTrans.setWeightQuantile(this.calculateTransQuantile(auxWTrans.getWeight()));
+				}
+			}
+			
+			if (doRemoveNeverTraversedTransitions) {
+				for (Transition inuTran : neverTraversedTransitions) {
+					auxWState.getTransitions().remove(inuTran);
+				}
 			}
 		}
 	}

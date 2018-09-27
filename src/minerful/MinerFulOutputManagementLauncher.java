@@ -117,10 +117,23 @@ public class MinerFulOutputManagementLauncher {
 			if (outParams.fileToSaveXmlFileForAutomaton != null) {
 	        	try {
 	        		outWriter = new PrintWriter(new File(outParams.fileToSaveXmlFileForAutomaton.getAbsolutePath()));
-		        	outWriter.print(printer.printWeightedXmlAutomaton(logParser));
+		        	outWriter.print(printer.printWeightedXmlAutomaton(logParser, false));
 		        	outWriter.flush();
 		        	outWriter.close();
 		        	MessagePrinter.printlnOut("Discovered weighted process automaton written in XML format on " + outParams.fileToSaveXmlFileForAutomaton);
+				} catch (FileNotFoundException | JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (outParams.fileToSaveSkimmedXmlFileForAutomaton != null) {
+	        	try {
+	        		outWriter = new PrintWriter(new File(outParams.fileToSaveSkimmedXmlFileForAutomaton.getAbsolutePath()));
+		        	outWriter.print(printer.printWeightedXmlAutomaton(logParser, true));
+		        	outWriter.flush();
+		        	outWriter.close();
+		        	MessagePrinter.printlnOut("Discovered skimmed weighted process automaton written in XML format on " + outParams.fileToSaveSkimmedXmlFileForAutomaton);
 				} catch (FileNotFoundException | JAXBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
