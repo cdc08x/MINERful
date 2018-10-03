@@ -88,15 +88,17 @@ public abstract class AbstractLogParser implements LogParser {
 		}
 		
 		if (this.subLogLength > 0 || this.startingTrace > 0) {
-			int i = 0;
-			this.navigableTraceParsers =
-				new ArrayList<LogTraceParser>(
-					Math.min(
+			int 
+				i = 0,
+				actualLength = Math.min(
 						this.subLogLength,
-						this.traceParsers.size() - this.startingTrace));
+						this.traceParsers.size() - this.startingTrace);
+			
+			this.navigableTraceParsers =
+				new ArrayList<LogTraceParser>(actualLength);
 			Iterator<LogTraceParser> parsers =
 					this.traceParsers.listIterator(this.startingTrace);
-			while (parsers.hasNext()) {
+			while (parsers.hasNext() && i < actualLength) {
 				this.navigableTraceParsers.add(i++, parsers.next());
 			}
 		} else {
