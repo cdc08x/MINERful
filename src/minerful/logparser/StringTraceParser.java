@@ -22,15 +22,17 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 	@Override
 	public Character parseSubsequentAndEncode() {
 		Character encodedEvent = null;
-		if (stepToSubsequent())
+		if (stepToSubsequent()) {
 			encodedEvent = strEventParser.evtIdentifier();
+		}
 		return encodedEvent;
 	}
 
 	@Override
 	public LogEventParser parseSubsequent() {
-		if (stepToSubsequent())
+		if (stepToSubsequent()) {
 			return strEventParser;
+		}
 		return null;
 	}
 
@@ -50,10 +52,12 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 			case ONWARDS:
 				this.currentIndex++;
 				this.strEventParser = new StringEventParser(this, this.strTrace.charAt(currentIndex));
+System.out.println(this.strTrace.charAt(currentIndex));
 				break;
 			case BACKWARDS:
 				this.currentIndex--;
 				this.strEventParser = new StringEventParser(this, this.strTrace.charAt(currentIndex));
+				break;
 			default:
 				break;
 			}

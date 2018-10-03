@@ -18,39 +18,62 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
     
 	protected StringLogParser(TaskCharEncoderDecoder taChaEncoDeco,
 			TaskCharArchive taskCharArchive, List<LogTraceParser> traceParsers,
-			StringEventClassifier strEventClassifier) {
-		super(taChaEncoDeco, taskCharArchive, traceParsers);
+			StringEventClassifier strEventClassifier,
+			Integer startingTrace,
+			Integer subLogLength) {
+		super(taChaEncoDeco, taskCharArchive, traceParsers,startingTrace,subLogLength);
 		this.strEventClassifier = strEventClassifier;
 	}
+	
+	public StringLogParser(String[] strings,
+    		LogEventClassifier.ClassificationType evtClassType) {
+		this(strings, evtClassType, 0, 0);
+	}
 
-    public StringLogParser(String[] strings, LogEventClassifier.ClassificationType evtClassType) throws Exception {
-        this.init(evtClassType);
+    public StringLogParser(String[] strings,
+    		LogEventClassifier.ClassificationType evtClassType,
+			Integer startingTrace,
+			Integer subLogLength) {
+        this.init(evtClassType, startingTrace, subLogLength);
         
         super.archiveTaskChars(this.parseLog(strings));
+        
+        super.postInit();
 	}
-	
-	public StringLogParser(File stringsLogFile, LogEventClassifier.ClassificationType evtClassType) throws Exception {
+
+	public StringLogParser(File stringsLogFile,
+    		LogEventClassifier.ClassificationType evtClassType) throws Exception {
+		this(stringsLogFile, evtClassType, 0, 0);
+	}
+
+	public StringLogParser(File stringsLogFile,
+			LogEventClassifier.ClassificationType evtClassType,
+			Integer startingTrace,
+			Integer subLogLength) throws Exception {
         if (!stringsLogFile.canRead()) {
         	throw new IllegalArgumentException("Unparsable log file: " + stringsLogFile.getAbsolutePath());
         }
-
-        init(evtClassType);
+        this.init(evtClassType, startingTrace, subLogLength);
         
         super.archiveTaskChars(this.parseLog(stringsLogFile));
+        
+        super.postInit();
 	}
 
-	private void init(LogEventClassifier.ClassificationType evtClassType) {
+	private void init(
+			LogEventClassifier.ClassificationType evtClassType,
+			Integer startingTrace,
+			Integer subLogLength) {
 		this.taChaEncoDeco = new TaskCharEncoderDecoder();
-        this.traceParsers = new ArrayList<LogTraceParser>();
         this.strEventClassifier = new StringEventClassifier(evtClassType);
+        this.traceParsers = new ArrayList<LogTraceParser>();
+        
+        super.init(startingTrace, subLogLength);
 	}
 	
 	protected Collection<AbstractTaskClass> parseLog(String[] strings) {
 		for (String strLine : strings) {
         	strLine = strLine.trim();
-
-        	this.updateTraceMetrics(strLine);
-        	this.updateTraceParsers(strLine);
         	this.updateClasses(strLine);
 		}
         return this.strEventClassifier.getTaskClasses();
@@ -66,12 +89,6 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 		}
 	}
 
-	private void updateTraceMetrics(String strLine) {
-		updateMaximumTraceLength(strLine.length());
-		updateMinimumTraceLength(strLine.length());
-		updateNumberOfEvents(strLine.length());
-	}
-
 	@Override
 	protected Collection<AbstractTaskClass> parseLog(File stringsLogFile) throws Exception {
         FileInputStream fstream = new FileInputStream(stringsLogFile);
@@ -81,8 +98,7 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
         
         while (strLine != null) {
         	strLine = strLine.trim();
-        	
-        	updateTraceMetrics(strLine);
+
         	updateTraceParsers(strLine);
             updateClasses(strLine);
 
@@ -100,7 +116,10 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 	@Override
 	protected AbstractLogParser makeACopy(
 			TaskCharEncoderDecoder taChaEncoDeco,
-			TaskCharArchive taskCharArchive, List<LogTraceParser> traceParsers) {
-		return new StringLogParser(taChaEncoDeco, taskCharArchive, traceParsers, strEventClassifier);
+			TaskCharArchive taskCharArchive,
+			List<LogTraceParser> traceParsers,
+			Integer startingTrace,
+			Integer subLogLength) {
+		return new StringLogParser(taChaEncoDeco, taskCharArchive, traceParsers, strEventClassifier, subLogLength, startingTrace);
 	}
 }

@@ -67,7 +67,9 @@ public class MinerFulMinerLauncher {
         MessagePrinter.configureLogging(systemParams.debugLevel);
         logger.info("Loading log...");
         
-        XesLogParser logParser = new XesLogParser(inputParams.inputLogFile, fromInputParamToXesLogClassificationType(inputParams.eventClassification));
+        XesLogParser logParser = new XesLogParser(
+        		inputParams.inputLogFile,
+        		fromInputParamToXesLogClassificationType(inputParams.eventClassification));
         
 //        DeclareEncoderDecoder.marshal(MinerFulLauncher.TEST_OUTPUT, new MinerFulLauncher(inputParams, minerFulParams, viewParams, systemParams).mine(logParser.getFirstXLog()));
         new MinerFulMinerLauncher(inputParams, minerFulParams, postParams, systemParams).mine(logParser.getFirstXLog());

@@ -20,6 +20,10 @@ public class InputCmdParameters extends ParamsManager {
 	public static final String INPUT_LOGFILE_PATH_LONG_PARAM_NAME = "in-log";
     public static final String INPUT_ENC_PARAM_LONG_NAME = "in-enc";
 	public static final String EVENT_CLASSIFICATION_LONG_PARAM_NAME = "evt-class";
+	public static final String START_FROM_TRACE_PARAM_NAME = "tStart";
+	public static final Integer FIRST_TRACE_NUM = 0;
+	public static final String SUB_LOG_SIZE_PARAM_NAME = "subL";
+	public static final Integer WHOLE_LOG_LENGTH = 0;
 
 	public enum InputEncoding {
 		xes, strings;
@@ -36,10 +40,17 @@ public class InputCmdParameters extends ParamsManager {
 	/** Input event log file. It must not be <code>null</code>. */
     public File inputLogFile;
 
+	/** Number of the trace to start the analysis from */
+	public Integer startFromTrace;
+	/** Length of the sub-sequence of traces to analyse */
+	public Integer subLogLength;
+
     public InputCmdParameters() {
     	super();
     	inputLanguage = DEFAULT_INPUT_ENCODING;
     	eventClassification = DEFAULT_EVENT_CLASSIFICATION;
+		this.startFromTrace = FIRST_TRACE_NUM;
+		this.subLogLength = WHOLE_LOG_LENGTH;
     	inputLogFile = null;
     }
     
@@ -76,6 +87,18 @@ public class InputCmdParameters extends ParamsManager {
                 line.getOptionValue(
                 	EVENT_CLASSIFICATION_PARAM_NAME,
                     this.eventClassification.toString()
+                )
+            );
+        this.startFromTrace = Integer.valueOf(
+                line.getOptionValue(
+                    START_FROM_TRACE_PARAM_NAME,
+                    this.startFromTrace.toString()
+                )
+            );
+        this.subLogLength = Integer.valueOf(
+                line.getOptionValue(
+                    SUB_LOG_SIZE_PARAM_NAME,
+                    this.subLogLength.toString()
                 )
             );
     }
@@ -121,6 +144,24 @@ public class InputCmdParameters extends ParamsManager {
                 .withType(new String())
                 .create(INPUT_LOGFILE_PATH_PARAM_NAME)
     	);
+        options.addOption(
+        		OptionBuilder
+        		.hasArg().withArgName("number")
+        		.withLongOpt("start-from-trace")
+        		.withDescription("ordinal number of the trace from which the analysed sub-log should start "
+						+ printDefault(FIRST_TRACE_NUM))
+        		.withType(new Long(0))
+        		.create(START_FROM_TRACE_PARAM_NAME)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.hasArg().withArgName("length")
+        		.withLongOpt("sub-log-size")
+        		.withDescription("number of traces to be analysed in the sub-log. To have the entire log analysed, leave the default value. "
+						+ printDefault(WHOLE_LOG_LENGTH))
+        		.withType(new Long(0))
+        		.create(SUB_LOG_SIZE_PARAM_NAME)
+        		);
         return options;
 	}
 }

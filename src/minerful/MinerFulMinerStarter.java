@@ -133,11 +133,20 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 	public static LogParser deriveLogParserFromLogFile(InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
 		LogParser logParser = null;
+		boolean doAnalyseSubLog =
+				!inputParams.startFromTrace.equals(InputCmdParameters.FIRST_TRACE_NUM)
+				||
+				!inputParams.subLogLength.equals(InputCmdParameters.WHOLE_LOG_LENGTH);
 		switch (inputParams.inputLanguage) {
 		case xes:
 			ClassificationType evtClassi = MinerFulMinerLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
 			try {
-				logParser = new XesLogParser(inputParams.inputLogFile, evtClassi);
+				if (doAnalyseSubLog) {
+					logParser = new XesLogParser(inputParams.inputLogFile, evtClassi, inputParams.startFromTrace, inputParams.subLogLength);
+				} else {
+//					logParser = new XesLogParser(inputParams.inputLogFile, evtClassi);
+					logParser = new XesLogParser(inputParams.inputLogFile, evtClassi, inputParams.startFromTrace, inputParams.subLogLength);
+				}
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -154,7 +163,12 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			break;
 		case strings:
 			try {
-				logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME);
+				if (doAnalyseSubLog) {
+					logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME, inputParams.startFromTrace, inputParams.subLogLength);
+				} else {
+//					logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME);
+					logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME, inputParams.startFromTrace, inputParams.subLogLength);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);

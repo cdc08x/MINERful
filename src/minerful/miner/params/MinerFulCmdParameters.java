@@ -26,7 +26,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 		POSITIVE, NEGATIVE
 	}
 	
-	public static final String STATS_OUT_PATH_PARAM_NAME = "oSF";
+	public static final String STATS_OUT_PATH_PARAM_NAME = "statXML";
 	public static final String OUT_BRANCHING_LIMIT_PARAM_NAME = "b";
 	public static final String FORESEE_DISTANCES_PARAM_NAME = "fD";
 	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "sMS";
@@ -53,7 +53,6 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public Integer kbParallelProcessingThreads;
     /** Number of parallel threads to use while running the knowledge-base discovery phase of the algorithm (must be greater than or equal to {@link #MINIMUM_PARALLEL_EXECUTION_THREADS MINIMUM_PARALLEL_EXECUTION_THREADS}, the default) */ 
 	public Integer queryParallelProcessingThreads;
-
     
     public MinerFulCmdParameters() {
 		super();
@@ -161,8 +160,8 @@ public class MinerFulCmdParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("stats-out")
-        		.withDescription("path in which to write the statistics kept in the MINERful knowledge base (say, that this task occurs without another occurring that number of times, etc.); the file is saved in an XML format")
+        		.withLongOpt("stats-XML-out")
+        		.withDescription("path in which to write the statistics kept in the MINERful knowledge base (say, task A occurs but B does not for N times, etc.); the file is saved in an XML format")
         		.withType(new String())
         		.create(STATS_OUT_PATH_PARAM_NAME)
         		);
@@ -228,6 +227,17 @@ public class MinerFulCmdParameters extends ParamsManager {
         		.withLongOpt("show-mem")
         		.withDescription("show the memory consumption peak (could slow down the overall computation)")
         		.create(SHOW_MEMSPACE_USED_PARAM_NAME)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.hasArg().withArgName("number")
+        		.withLongOpt("q-ll-threads")
+        		.withDescription("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
+						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
+						+ ")"
+						+ printDefault(MINIMUM_PARALLEL_EXECUTION_THREADS))
+        		.withType(new Integer(0))
+        		.create(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
         		);
         return options;
 	}

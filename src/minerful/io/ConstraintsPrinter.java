@@ -116,7 +116,7 @@ public class ConstraintsPrinter {
 	        superSbuf.append("\r\n");
         }
         superSbuf.append(sBufLegend.substring(0, sBufLegend.length() -1));
-        superSbuf.append("\r\n\r\nSupport values: ");
+        superSbuf.append("\r\nSupport values: ");
         superSbuf.append(sBuffValues.substring(0, sBuffValues.length() -1));
         
         return superSbuf.toString();
