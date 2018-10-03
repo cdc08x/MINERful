@@ -119,14 +119,14 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_SUPPORT_THRESHOLD = 0.95;
 	public static final Double DEFAULT_INTEREST_FACTOR_THRESHOLD = 0.125;
 	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = 0.25;
-	public static final PostProcessingAnalysisType DEFAULT_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
+	public static final PostProcessingAnalysisType DEFAULT_POST_PROCESSING_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
 
 	/** Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following in the array is utilised. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
 	public ConstraintSortingPolicy[] sortingPolicies;	// mandatory assignment
-	/** Type of post-processing analysis required. Default value is {@link #DEFAULT_ANALYSIS_TYPE DEFAULT_ANALYSIS_TYPE}. */
-	public PostProcessingAnalysisType analysisType;
+	/** Type of post-processing analysis required. Default value is {@link #DEFAULT_POST_PROCESSING_ANALYSIS_TYPE DEFAULT_ANALYSIS_TYPE}. */
+	public PostProcessingAnalysisType postProcessingAnalysisType;
 	/** Ignore this: it is still unused -- Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_HIERARCHY_POLICY DEFAULT_HIERARCHY_POLICY}. */
 	public HierarchySubsumptionPruningPolicy hierarchyPolicy;
 	/** Minimum support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
@@ -147,12 +147,24 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public PostProcessingCmdParameters() {
 		super();
 		this.sortingPolicies = DEFAULT_PRIORITY_POLICIES;
-		this.analysisType = DEFAULT_ANALYSIS_TYPE;
+		this.postProcessingAnalysisType = DEFAULT_POST_PROCESSING_ANALYSIS_TYPE;
 		this.hierarchyPolicy = DEFAULT_HIERARCHY_POLICY;
 	    this.supportThreshold = DEFAULT_SUPPORT_THRESHOLD;
 	    this.confidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
 	    this.interestFactorThreshold = DEFAULT_INTEREST_FACTOR_THRESHOLD;
 	    this.cropRedundantAndInconsistentConstraints = !DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
+	}
+	
+	public static PostProcessingCmdParameters makeParametersForNoPostProcessing() {
+		PostProcessingCmdParameters noPostProcessParams = new PostProcessingCmdParameters();
+		noPostProcessParams.postProcessingAnalysisType = PostProcessingAnalysisType.NONE;
+		noPostProcessParams.hierarchyPolicy = HierarchySubsumptionPruningPolicy.NONE;
+		noPostProcessParams.supportThreshold = 0.0;
+		noPostProcessParams.confidenceThreshold = 0.0;
+		noPostProcessParams.interestFactorThreshold = 0.0;
+		noPostProcessParams.cropRedundantAndInconsistentConstraints = DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
+	
+		return noPostProcessParams;
 	}
     
     public PostProcessingCmdParameters(Options options, String[] args) {
@@ -197,7 +209,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		String analysisTypeString = line.getOptionValue(ANALYSIS_TYPE_PARAM_NAME);
 		if (analysisTypeString != null && !analysisTypeString.isEmpty()) {
 			try {
-				this.analysisType = PostProcessingAnalysisType.valueOf(fromStringToEnumValue(analysisTypeString));
+				this.postProcessingAnalysisType = PostProcessingAnalysisType.valueOf(fromStringToEnumValue(analysisTypeString));
 			} catch (Exception e) {
 				System.err.println("Invalid option for " + ANALYSIS_TYPE_PARAM_NAME + ": " + analysisTypeString + ". Using default value.");
 			}
@@ -252,7 +264,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 .hasArg().withArgName("type")
                 .withLongOpt("post-processing")
                 .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values())
-                		+ printDefault(fromEnumValueToString(DEFAULT_ANALYSIS_TYPE)))
+                		+ printDefault(fromEnumValueToString(DEFAULT_POST_PROCESSING_ANALYSIS_TYPE)))
                 .withType(new String())
                 .create(ANALYSIS_TYPE_PARAM_NAME)
     	);

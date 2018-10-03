@@ -30,52 +30,6 @@ public class MinerFulMinerLauncher {
 	private LogParser logParser;
 	private ViewCmdParameters viewParams;
 	private OutputModelParameters outParams;
-	
-	/**
-	 * For dummy testing only.
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) throws Exception {
-    	MinerFulMinerStarter minerMinaStarter = new MinerFulMinerStarter();
-    	Options cmdLineOptions = minerMinaStarter.setupOptions();
-    	
-    	InputCmdParameters inputParams =
-    			new InputCmdParameters(
-    					cmdLineOptions,
-    					args);
-        MinerFulCmdParameters minerFulParams =
-        		new MinerFulCmdParameters(
-        				cmdLineOptions,
-    					args);
-        SystemCmdParameters systemParams =
-        		new SystemCmdParameters(
-        				cmdLineOptions,
-    					args);
-        PostProcessingCmdParameters postParams =
-        		new PostProcessingCmdParameters(cmdLineOptions, args);
-        
-        if (systemParams.help) {
-        	systemParams.printHelp(cmdLineOptions);
-        	System.exit(0);
-        }
-    	if (inputParams.inputLogFile == null) {
-    		systemParams.printHelpForWrongUsage("Input file missing!", cmdLineOptions);
-    		System.exit(1);
-    	}
-        
-        MessagePrinter.configureLogging(systemParams.debugLevel);
-        logger.info("Loading log...");
-        
-        XesLogParser logParser = new XesLogParser(
-        		inputParams.inputLogFile,
-        		fromInputParamToXesLogClassificationType(inputParams.eventClassification));
-        
-//        DeclareEncoderDecoder.marshal(MinerFulLauncher.TEST_OUTPUT, new MinerFulLauncher(inputParams, minerFulParams, viewParams, systemParams).mine(logParser.getFirstXLog()));
-        new MinerFulMinerLauncher(inputParams, minerFulParams, postParams, systemParams).mine(logParser.getFirstXLog());
-        
-        System.exit(0);
-	}
 
 	public MinerFulMinerLauncher(InputCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
@@ -104,7 +58,7 @@ public class MinerFulMinerLauncher {
     		System.exit(1);
     	}
     	
-        MinerFulMinerStarter.logger.info("Loading log...");
+        logger.info("Loading log...");
         
         logParser = MinerFulMinerStarter.deriveLogParserFromLogFile(inputParams, minerFulParams);
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();

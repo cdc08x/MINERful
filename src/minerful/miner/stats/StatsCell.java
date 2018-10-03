@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.log4j.Logger;
+
 import minerful.miner.stats.xmlenc.DistancesMapAdapter;
 
 @XmlType
@@ -25,6 +27,9 @@ public class StatsCell implements Cloneable {
     public static final int NEVER_BACKWARDS = Integer.MIN_VALUE;
     @XmlTransient
     public static final int NEVER_EVER = 0;
+    
+    @XmlTransient
+    protected static Logger logger = Logger.getLogger(StatsCell.class);
     
     @XmlJavaTypeAdapter(value=DistancesMapAdapter.class)
     public NavigableMap<Integer, Integer> distances;
@@ -131,7 +136,7 @@ public class StatsCell implements Cloneable {
         return 0;
     }
 
-	public void merge(StatsCell other) {
+	public void mergeAdditively(StatsCell other) {
 		this.betweenBackwards += other.betweenBackwards;
 		this.betweenOnwards += other.betweenOnwards;
 		
@@ -144,6 +149,23 @@ public class StatsCell implements Cloneable {
 		for (Integer distance : other.distances.keySet()) {
 			if (!this.distances.containsKey(distance)) {
 				this.distances.put(distance, other.distances.get(distance));
+			}
+		}
+	}
+
+	public void mergeSubtractively(StatsCell other) {
+		this.betweenBackwards -= other.betweenBackwards;
+		this.betweenOnwards -= other.betweenOnwards;
+		
+		for (Integer distance : this.distances.keySet()) {
+			if (other.distances.containsKey(distance)) {
+				this.distances.put(distance, this.distances.get(distance) - other.distances.get(distance));
+			}
+		}
+		
+		for (Integer distance : other.distances.keySet()) {
+			if (!this.distances.containsKey(distance)) {
+				logger.warn("Trying to merge subtractively distance stats that were not included for " + distance);
 			}
 		}
 	}

@@ -52,7 +52,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     
     @Override
     public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
-        // Inizialization
+        // Inizialisation
         if (constraintsBag == null) {
             constraintsBag = new ConstraintsBag(tasksToQueryFor);
         }
@@ -214,7 +214,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 	protected Constraint updateConstraint(ConstraintsBag constraintsBag,
 			TaskChar indexingParam, Constraint searchedCon,
 			double support, double pivotParticipationFraction, double searchedParticipationFraction) {
-		Constraint con = constraintsBag.get(indexingParam, searchedCon);
+		Constraint con = constraintsBag.getOrAdd(indexingParam, searchedCon);
 		con.setSupport(support);
 		con.setEvaluatedOnLog(true);
 		refineByComputingRelevanceMetrics(con, pivotParticipationFraction, searchedParticipationFraction);

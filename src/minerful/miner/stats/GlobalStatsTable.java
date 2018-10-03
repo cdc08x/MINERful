@@ -26,7 +26,8 @@ import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalStatsTable {
-    protected static Logger logger = Logger.getLogger(GlobalStatsTable.class);
+	@XmlTransient
+	protected static Logger logger = Logger.getLogger(GlobalStatsTable.class);
 
 	@XmlElement
 	@XmlJavaTypeAdapter(value=GlobalStatsMapAdapter.class)
@@ -106,20 +107,37 @@ public class GlobalStatsTable {
         return sBuf.toString();
     }
 
-	public void merge(GlobalStatsTable other) {
+	public void mergeAdditively(GlobalStatsTable other) {
 		this.logSize += other.logSize;
 		
 		for (TaskChar key : this.statsTable.keySet()) {
 			if (other.statsTable.containsKey(key)) {
-				logger.trace("Merging the statistics tables of " + key);
-				this.statsTable.get(key).merge(other.statsTable.get(key));
+				logger.trace("Additively merging the statistics tables of " + key);
+				this.statsTable.get(key).mergeAdditively(other.statsTable.get(key));
 			}
 		}
 		
 		for (TaskChar key : other.statsTable.keySet()) {
 			if (!this.statsTable.containsKey(key)) {
-				logger.trace("Merging the statistics tables of " + key);
+				logger.trace("Additively merging the statistics tables of " + key);
 				this.statsTable.put(key, other.statsTable.get(key));
+			}
+		}
+	}
+
+	public void mergeSubtractively(GlobalStatsTable other) {
+		this.logSize += other.logSize;
+		
+		for (TaskChar key : this.statsTable.keySet()) {
+			if (other.statsTable.containsKey(key)) {
+				logger.trace("Subtractively merging the statistics tables of " + key);
+				this.statsTable.get(key).mergeSubtractively(other.statsTable.get(key));
+			}
+		}
+		
+		for (TaskChar key : other.statsTable.keySet()) {
+			if (!this.statsTable.containsKey(key)) {
+				logger.warn("Trying to merge subtractively a part of the stats table that was not included for " + key);
 			}
 		}
 	}

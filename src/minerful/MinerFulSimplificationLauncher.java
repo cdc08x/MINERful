@@ -3,11 +3,11 @@ package minerful;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import minerful.concept.ProcessModel;
-import minerful.core.MinerFulPruningCore;
 import minerful.io.ProcessModelLoader;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.InputModelParameters;
+import minerful.miner.core.MinerFulPruningCore;
 import minerful.params.SystemCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.utils.MessagePrinter;

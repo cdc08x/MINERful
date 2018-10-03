@@ -35,6 +35,10 @@ import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
 public class ConstraintsPrinter {
+	private static final String MACHINE_READABLE_RESULTS_SUPPORT_TEXT_SIGNAL = "Support values: ";
+	public static final String MACHINE_READABLE_RESULTS_LEGEND_TEXT_SIGNAL = "Legend: ";
+	public static final String MACHINE_READABLE_RESULTS_TEXT_SIGNAL = "Machine-readable results:\n";
+
 	public static final int SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER = // 3;
 			AutomatonFactory.NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA;
 	public static final double MINIMUM_THRESHOLD = 0.0;
@@ -109,14 +113,14 @@ public class ConstraintsPrinter {
         	}
         }
         
-        superSbuf.append("Machine-readable results:\n");
-        superSbuf.append("Legend: ");
+        superSbuf.append(MACHINE_READABLE_RESULTS_TEXT_SIGNAL);
+        superSbuf.append(MACHINE_READABLE_RESULTS_LEGEND_TEXT_SIGNAL);
         if (withNumericalIndex) {
 	        superSbuf.append(sBuffIndex.substring(0, sBuffIndex.length() -1));
 	        superSbuf.append("\r\n");
         }
         superSbuf.append(sBufLegend.substring(0, sBufLegend.length() -1));
-        superSbuf.append("\r\nSupport values: ");
+        superSbuf.append(MACHINE_READABLE_RESULTS_SUPPORT_TEXT_SIGNAL);
         superSbuf.append(sBuffValues.substring(0, sBuffValues.length() -1));
         
         return superSbuf.toString();

@@ -59,8 +59,8 @@ public class ConflictAndRedundancyResolver {
 	private ConstraintSortingPolicy[] rankingPolicies;
 	
 	public ConflictAndRedundancyResolver(ProcessModel process, PostProcessingCmdParameters params) {
-		this.avoidingRedundancyWithDoubleCheck = params.analysisType.isRedundancyResolutionDoubleCheckRequested();
-		this.avoidingRedundancy = this.avoidingRedundancyWithDoubleCheck || params.analysisType.isRedundancyResolutionRequested();
+		this.avoidingRedundancyWithDoubleCheck = params.postProcessingAnalysisType.isRedundancyResolutionDoubleCheckRequested();
+		this.avoidingRedundancy = this.avoidingRedundancyWithDoubleCheck || params.postProcessingAnalysisType.isRedundancyResolutionRequested();
 		this.originalProcess = process;
 		this.sorter = new ModularConstraintsSorter();
 		this.rankingPolicies = params.sortingPolicies;

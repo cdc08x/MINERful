@@ -3,9 +3,9 @@ package minerful;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import minerful.errorinjector.ErrorInjector;
-import minerful.errorinjector.ErrorInjectorFactory;
-import minerful.errorinjector.params.ErrorInjectorCmdParameters;
+import minerful.logmaker.errorinjector.ErrorInjector;
+import minerful.logmaker.errorinjector.ErrorInjectorFactory;
+import minerful.logmaker.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;

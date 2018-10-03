@@ -217,6 +217,11 @@ public abstract class AbstractLogParser implements LogParser {
 		}
 		return logParsers;
 	}
+	
+	@Override
+	public LogParser takeASlice(Integer from, Integer length) {
+		return this.makeACopy(taChaEncoDeco, taskCharArchive, navigableTraceParsers, from, length);
+	}
 
 	@Override
 	public void excludeTasksByName(Collection<String> tasksToExcludeFromResult) {

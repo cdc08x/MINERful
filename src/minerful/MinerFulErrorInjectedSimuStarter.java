@@ -1,8 +1,8 @@
 package minerful;
 
 import minerful.concept.ProcessModel;
-import minerful.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.io.params.OutputModelParameters;
+import minerful.logmaker.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;

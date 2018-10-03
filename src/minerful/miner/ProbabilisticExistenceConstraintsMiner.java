@@ -64,7 +64,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 	protected Constraint updateConstraint(ConstraintsBag constraintsBag,
 			TaskChar indexingParam, Constraint searchedCon,
 			double support, double pivotParticipationFraction) {
-		Constraint con = constraintsBag.get(indexingParam, searchedCon);
+		Constraint con = constraintsBag.getOrAdd(indexingParam, searchedCon);
 		con.setSupport(support);
 		con.setEvaluatedOnLog(true);
 		refineByComputingRelevanceMetrics(con, pivotParticipationFraction);
@@ -108,7 +108,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     protected Constraint discoverInitConstraint(TaskChar base,
             LocalStatsWrapper localStats, long testbedSize) {
 //    	if (!(localStats.repetitions.containsKey(0) && (localStats.repetitions.get(0) > 0))) {
-            if (localStats.getAppearancesAsFirst() >= testbedSize) {
+    		if (localStats.getAppearancesAsFirst() >= testbedSize) {
                 return new Init(base);
             } else {
                 return new Init(base, ((double) localStats.getAppearancesAsFirst() / (double) testbedSize));

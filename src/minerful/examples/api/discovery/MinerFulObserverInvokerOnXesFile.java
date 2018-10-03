@@ -90,7 +90,7 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 		postParams.supportThreshold = 0.9;
 		postParams.confidenceThreshold = 0.5;
 		postParams.interestFactorThreshold = 0.25;
-		postParams.analysisType = PostProcessingAnalysisType.HIERARCHYCONFLICTREDUNDANCYDOUBLE;
+		postParams.postProcessingAnalysisType = PostProcessingAnalysisType.HIERARCHYCONFLICTREDUNDANCYDOUBLE;
 		
 		// Run the simplification algorithm
 		System.out.println("Running the simplification algorithm...");
@@ -128,7 +128,7 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 
 		// Let us minimise the model now, by removing the redundant/conflicting/below-the-thresholds constraints.
 		postParams.cropRedundantAndInconsistentConstraints = true;
-		postParams.analysisType = PostProcessingAnalysisType.NONE;
+		postParams.postProcessingAnalysisType = PostProcessingAnalysisType.NONE;
 		// It is not necessary to go again through all checks again, if we do not want to change the thresholds or the conflict/redundancy-check policies: it is just enough to set the previous option to "true"
 		
 		System.out.println("Removing the already detected inconsistencies/redundancies...");

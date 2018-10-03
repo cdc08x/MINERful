@@ -3,6 +3,7 @@ package minerful.concept.constraint;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -122,6 +123,14 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 		}
 		return constraintsRemoved;
 	}
+	
+	public int wipeOutConstraints() {
+		int erasedConstraints = 0;
+		for (TaskChar tChar : this.taskChars) {
+			erasedConstraints += eraseConstraintsOf(tChar);
+		}
+		return erasedConstraints;
+	}
 
 	public boolean add(TaskChar tCh) {
         if (!this.bag.containsKey(tCh)) {
@@ -152,7 +161,26 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
     }
 
     public Constraint get(TaskChar character, Constraint searched) {
-   		return this.bag.get(character).headSet(searched, true).last();
+    	if (!this.bag.containsKey(character)) {
+    		return null;
+    	}
+    	if (!this.bag.get(character).contains(searched)) {
+    		return null;
+    	}
+    	NavigableSet<Constraint> srCnss = this.bag.get(character).headSet(searched, true);
+    	if (srCnss.isEmpty()) {
+    		return null;
+    	}
+   		return srCnss.last();
+    }
+    
+    public Constraint getOrAdd(TaskChar character, Constraint searched) {
+    	Constraint con = this.get(character, searched);
+		if (con == null) {
+			this.add(character, searched);
+			con = this.get(character, searched);
+		}
+		return con;
     }
 
 	@Override

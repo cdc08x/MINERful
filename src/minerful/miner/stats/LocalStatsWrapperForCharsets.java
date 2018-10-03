@@ -45,13 +45,13 @@ public abstract class LocalStatsWrapperForCharsets extends LocalStatsWrapper {
 	}
 
 	@Override
-	public void merge(LocalStatsWrapper other) {
+	public void mergeAdditively(LocalStatsWrapper other) {
 		if (!(other instanceof LocalStatsWrapperForCharsets)) {
 			// If you can read this, I am already far from you
 			throw new IllegalArgumentException("Unsummable pears with apples");
 		}
 		
-		super.merge(other);
+		super.mergeAdditively(other);
 
 		LocalStatsWrapperForCharsets otro = (LocalStatsWrapperForCharsets) other;
 		

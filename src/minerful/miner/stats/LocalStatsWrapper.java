@@ -16,10 +16,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.log4j.Logger;
+
 import minerful.concept.Event;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
-import minerful.miner.stats.xmlenc.FirstOccurrencesMapAdapter;
 import minerful.miner.stats.xmlenc.LocalStatsMapAdapter;
 import minerful.miner.stats.xmlenc.RepetitionsMapAdapter;
 
@@ -27,7 +28,11 @@ import minerful.miner.stats.xmlenc.RepetitionsMapAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LocalStatsWrapper {
+	@XmlTransient
 	public static final int FIRST_POSITION_IN_TRACE = 1;
+	
+	@XmlTransient
+	protected static Logger logger = Logger.getLogger(LocalStatsWrapper.class);
 
 	// TODO Do not consider this a constant, but rather a user-definable
 	// parameter
@@ -384,7 +389,7 @@ public class LocalStatsWrapper {
 		return sBuf.toString();
 	}
 
-	public void merge(LocalStatsWrapper other) {
+	public void mergeAdditively(LocalStatsWrapper other) {
 		this.occurencesAsFirst += other.occurencesAsFirst;
 		this.occurrencesAsLast += other.occurrencesAsLast;
 		this.totalAmountOfOccurrences += other.totalAmountOfOccurrences;
@@ -403,7 +408,7 @@ public class LocalStatsWrapper {
 		
 		for (TaskChar key : this.interplayStatsTable.keySet()) {
 			if (other.interplayStatsTable.containsKey(key)) {
-				this.interplayStatsTable.get(key).merge(other.interplayStatsTable.get(key));
+				this.interplayStatsTable.get(key).mergeAdditively(other.interplayStatsTable.get(key));
 			}
 		}
 		
@@ -424,5 +429,35 @@ public class LocalStatsWrapper {
 			}
 		}
  */
+	}
+
+	public void mergeSubtractively(LocalStatsWrapper other) {
+		this.occurencesAsFirst -= other.occurencesAsFirst;
+		this.occurrencesAsLast -= other.occurrencesAsLast;
+		this.totalAmountOfOccurrences -= other.totalAmountOfOccurrences;
+		
+		for (Integer numOfReps : this.repetitions.keySet()) {
+			if (other.repetitions.containsKey(numOfReps)) {
+				this.repetitions.put(numOfReps, this.repetitions.get(numOfReps) - other.repetitions.get(numOfReps));
+			}
+		}
+		
+		for (Integer numOfReps : other.repetitions.keySet()) {
+			if (!this.repetitions.containsKey(numOfReps)) {
+				logger.warn("Trying to merge subtractively a number of repetitions that were not included for " + numOfReps);
+			}
+		}
+		
+		for (TaskChar key : this.interplayStatsTable.keySet()) {
+			if (other.interplayStatsTable.containsKey(key)) {
+				this.interplayStatsTable.get(key).mergeSubtractively(other.interplayStatsTable.get(key));
+			}
+		}
+		
+		for (TaskChar key : other.interplayStatsTable.keySet()) {
+			if (!this.interplayStatsTable.containsKey(key)) {
+				logger.warn("Trying to merge subtractively interplay stats that were not included for " + key);
+			}
+		}
 	}
 }

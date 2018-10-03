@@ -31,7 +31,7 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		SystemCmdParameters systemParams = new SystemCmdParameters();
 
 		// Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process model
-		postParams.analysisType = PostProcessingAnalysisType.HIERARCHYCONFLICTREDUNDANCYDOUBLE;
+		postParams.postProcessingAnalysisType = PostProcessingAnalysisType.HIERARCHYCONFLICTREDUNDANCYDOUBLE;
 		// Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following one in the array is utilised. 
 		postParams.sortingPolicies = new ConstraintSortingPolicy[]{
 			ConstraintSortingPolicy.ACTIVATIONTARGETBONDS,

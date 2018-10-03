@@ -52,7 +52,6 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 			case ONWARDS:
 				this.currentIndex++;
 				this.strEventParser = new StringEventParser(this, this.strTrace.charAt(currentIndex));
-System.out.println(this.strTrace.charAt(currentIndex));
 				break;
 			case BACKWARDS:
 				this.currentIndex--;
