@@ -24,4 +24,5 @@ public interface LogParser {
 	List<LogParser> split(Integer parts);
 	void excludeTasksByName(Collection<String> activitiesToExcludeFromResult);
 	LogParser takeASlice(Integer from, Integer length);
+	int wholeLength();
 }

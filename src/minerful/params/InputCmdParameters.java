@@ -139,6 +139,7 @@ public class InputCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("path")
+                .isRequired(true)
                 .withLongOpt(INPUT_LOGFILE_PATH_LONG_PARAM_NAME)
                 .withDescription("path to read the log file from")
                 .withType(new String())

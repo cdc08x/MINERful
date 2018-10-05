@@ -43,7 +43,6 @@ public abstract class AbstractLogParser implements LogParser {
 		this.taChaEncoDeco = taChaEncoDeco;
 		this.taskCharArchive = taskCharArchive;
 		this.traceParsers = traceParsers;
-		
 		init(startingTrace, subLogLength);
 
 		this.postInit();
@@ -78,13 +77,13 @@ public abstract class AbstractLogParser implements LogParser {
 	}
 
 	protected void setUpNavigableTraceParsers() {
-		if (this.startingTrace >= this.traceParsers.size()) {
-			logger.warn("The given starting trace number (" + this.startingTrace + ") is higher than the size of the event log. Restoring it to default (0)");
+		if (this.startingTrace >= this.wholeLength()) {
+			logger.warn("The given starting trace number (" + this.startingTrace + ") is higher than the size of the event log (" + this.wholeLength() + "). Restoring it to default (0)");
 			this.startingTrace = 0;
 		}
-		if (this.subLogLength > this.traceParsers.size() - this.startingTrace) {
-			logger.warn("The given length of the sub-log is too high. Changing its value to the maximum possible value");
-			this.subLogLength = this.traceParsers.size() - this.startingTrace;
+		if (this.subLogLength > this.wholeLength() - this.startingTrace) {
+			logger.warn("The given length of the sub-log (" + this.subLogLength + ") is too high. Changing its value to the maximum possible value");
+			this.subLogLength = this.wholeLength() - this.startingTrace;
 		}
 		
 		if (this.subLogLength > 0 || this.startingTrace > 0) {
@@ -92,7 +91,7 @@ public abstract class AbstractLogParser implements LogParser {
 				i = 0,
 				actualLength = Math.min(
 						this.subLogLength,
-						this.traceParsers.size() - this.startingTrace);
+						this.wholeLength() - this.startingTrace);
 			
 			this.navigableTraceParsers =
 				new ArrayList<LogTraceParser>(actualLength);
@@ -151,6 +150,11 @@ public abstract class AbstractLogParser implements LogParser {
 	@Override
 	public int length() {
 		return this.navigableTraceParsers.size();
+	}
+
+	@Override
+	public int wholeLength() {
+		return this.traceParsers.size();
 	}
 
 	protected void archiveTaskChars(Collection<AbstractTaskClass> classes) {
@@ -222,7 +226,7 @@ public abstract class AbstractLogParser implements LogParser {
 	
 	@Override
 	public LogParser takeASlice(Integer from, Integer length) {
-		return this.makeACopy(taChaEncoDeco, taskCharArchive, navigableTraceParsers, from, length);
+		return this.makeACopy(taChaEncoDeco, taskCharArchive, traceParsers, from, length);
 	}
 
 	@Override

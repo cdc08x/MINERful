@@ -93,7 +93,7 @@ public class GlobalStatsTable {
             }
             sBuf.append(
                     "\t[" + key + "\n"
-                    + "\t aggregate appearances = {"
+                    + "\t aggregate occurrences = {"
                     + (aggregateAppearancesBuffer.length() > 0 ? aggregateAppearancesBuffer.substring(2) : "")
                     + "}, for a total amount of "
                     + statsWrapper.getTotalAmountOfOccurrences()
@@ -126,7 +126,7 @@ public class GlobalStatsTable {
 	}
 
 	public void mergeSubtractively(GlobalStatsTable other) {
-		this.logSize += other.logSize;
+		this.logSize -= other.logSize;
 		
 		for (TaskChar key : this.statsTable.keySet()) {
 			if (other.statsTable.containsKey(key)) {

@@ -97,7 +97,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             appearancesAsUpToOne += localStats.repetitions.get(1);
             if (localStats.repetitions.containsKey(0)) {
                 appearancesAsUpToOne += localStats.repetitions.get(0);
-            }
+               }
         }
         double support =
                 (double) appearancesAsUpToOne / (double) testbedSize;

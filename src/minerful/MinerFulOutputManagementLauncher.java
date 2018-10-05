@@ -32,7 +32,9 @@ public class MinerFulOutputManagementLauncher {
 		if (viewParams.machineReadableResults) {
         	logger.info(printer.printBagAsMachineReadable(
         			(systemParams.debugLevel.compareTo(
-        					SystemCmdParameters.DebugLevel.debug) >= 0)
+        					SystemCmdParameters.DebugLevel.debug) >= 0),
+        			true,
+        			true
 					)
 			);
         }

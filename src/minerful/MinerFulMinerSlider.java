@@ -1,5 +1,9 @@
 package minerful;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import minerful.concept.ProcessModel;
@@ -12,6 +16,7 @@ import minerful.miner.core.MinerFulQueryingCore;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.params.InputCmdParameters;
+import minerful.params.SlidingCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -20,16 +25,27 @@ import minerful.utils.MessagePrinter;
 public class MinerFulMinerSlider extends MinerFulMinerStarter {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerSlider.class);
 
-	/**
-	 * @param args
-	 *            the command line arguments: [regular expression] [number of
-	 *            strings] [minimum number of characters per string] [maximum
-	 *            number of characters per string] [alphabet]...
-	 */
+	@Override
+	public Options setupOptions() {
+		Options cmdLineOptions = super.setupOptions();
+		
+		Options slidingOptions = SlidingCmdParameters.parseableOptions();
+		
+    	for (Object opt: slidingOptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
+		
+		return cmdLineOptions;
+	}
+
 	public static void main(String[] args) {
 		MinerFulMinerSlider minerMinaSlider = new MinerFulMinerSlider();
 		Options cmdLineOptions = minerMinaSlider.setupOptions();
 
+		SlidingCmdParameters slideParams =
+				new SlidingCmdParameters(
+						cmdLineOptions,
+						args);
 		InputCmdParameters inputParams =
 				new InputCmdParameters(
 						cmdLineOptions,
@@ -74,27 +90,32 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessModel processModel = minerMinaSlider.slideAndMine(logParser, inputParams, minerFulParams, taskCharArchive);
+		ProcessModel processModel = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive);
 
 		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 	}
 	
-	public ProcessModel slideAndMine(LogParser logParser, InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams, TaskCharArchive taskCharArchive) {
-		GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
+	public ProcessModel slideAndMine(LogParser logParser, SlidingCmdParameters slideParams, InputCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive) {
+		GlobalStatsTable
+			statsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit),
+			globalStatsTable = null;
+		if (!slideParams.stickTail) {
+			globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
+		}
 		PostProcessingCmdParameters noPostProcParams = PostProcessingCmdParameters.makeParametersForNoPostProcessing();
 		
-		globalStatsTable = computeKB(logParser, minerFulParams,
-				taskCharArchive, globalStatsTable);
+		statsTable = computeKB(logParser.takeASlice(inputParams.startFromTrace, inputParams.subLogLength), minerFulParams,
+				taskCharArchive, statsTable);
+		globalStatsTable.mergeAdditively(statsTable);
 		
 		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
 		proMod.setName(makeDiscoveredProcessName(inputParams));
 		
 		proMod.bag = queryForConstraints(logParser, minerFulParams,
 				noPostProcParams,
-				taskCharArchive, globalStatsTable, proMod.bag);
+				taskCharArchive, statsTable, proMod.bag);
 
-		// FIXME Make this parametric
-		int step = 2;
+		int step = slideParams.slidingStep;
 		
 		LogParser slicedLogParser = null;
 		GlobalStatsTable slicedStatsTable = null;
@@ -105,34 +126,73 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				minerFulParams, taskCharArchive);
 		MinerFulQueryingCore qCore = new MinerFulQueryingCore(0,
 				logParser, minerFulParams, noPostProcParams, taskCharArchive,
-				globalStatsTable, proMod.bag);
+				statsTable, proMod.bag);
 		ConstraintsPrinter cPrin = new ConstraintsPrinter(proMod);
-		
-		for (int i = 0; inputParams.startFromTrace + inputParams.subLogLength + i < logParser.length() - step; i += step) {
-			slicedLogParser = logParser.takeASlice(inputParams.startFromTrace + i, step);
-			kbCore.setLogParser(slicedLogParser);
 
-			slicedStatsTable = kbCore.discover();
-			// subtract the tail
-			globalStatsTable.mergeSubtractively(slicedStatsTable);
-			
-			slicedLogParser = logParser.takeASlice(inputParams.startFromTrace + inputParams.subLogLength + i, step);
+		PrintWriter outWriter = null;
+    	try {
+    		outWriter = new PrintWriter(slideParams.intermediateOutputCsvFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.warn("Redirecting intermediate model measures to standard output");
+		}
+    	
+    	outWriter.println(cPrin.printBagAsMachineReadable(false,false,true));
+
+    	
+    	//  ----    ++++     ---     +++
+    	//  ----    ++++     ---     +++
+    	//  ----    ++++     ---     +++
+    	//  ----    ++++     ---     +++
+    	//  ----    ++++     ---     +++
+    	//  ========>>>>     ===     >>>
+    	int
+    		subtraLen = Math.min(step, inputParams.subLogLength),
+    		addiStartGap = (step < inputParams.subLogLength ? inputParams.subLogLength : step),
+    		addiLen = Math.min(step, inputParams.subLogLength);
+		
+		for (int i = 0; inputParams.startFromTrace + i + addiStartGap + addiLen <= logParser.wholeLength(); i += step) {
+			if (!slideParams.stickTail) {
+				slicedLogParser = logParser.takeASlice(
+						inputParams.startFromTrace + i,
+						subtraLen
+				);
+				kbCore.setLogParser(slicedLogParser);
+
+				slicedStatsTable = kbCore.discover();
+				// subtract the tail
+				statsTable.mergeSubtractively(slicedStatsTable);
+			}
+			slicedLogParser = logParser.takeASlice(inputParams.startFromTrace + i + addiStartGap, addiLen);
 			kbCore.setLogParser(slicedLogParser);
-			
+		
 			slicedStatsTable = kbCore.discover();
 			
 			// add the head
-			globalStatsTable.mergeAdditively(slicedStatsTable);
+			statsTable.mergeAdditively(slicedStatsTable);
+			if (!slideParams.stickTail) {
+				globalStatsTable.mergeAdditively(slicedStatsTable);
+			}
 			
 			// wipe out existing constraints
 			proMod.bag.wipeOutConstraints();
 			// query the altered knowledge base!
 			qCore.discover();
 			
-			// FIXME Make this customisable
-			System.out.println(cPrin.printBagAsMachineReadable());
+			outWriter.println(cPrin.printBagAsMachineReadable(false,false,false));
 		}
 		
+		outWriter.flush();
+		outWriter.close();
+		if (!slideParams.stickTail) {
+			proMod.bag.wipeOutConstraints();
+			qCore.setStatsTable(globalStatsTable);
+			qCore.discover();
+		}
+		
+		super.pruneConstraints(proMod, minerFulParams, postParams);
+
 		return proMod;
 	}
 

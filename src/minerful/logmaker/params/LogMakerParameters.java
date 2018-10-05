@@ -177,7 +177,7 @@ public class LogMakerParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("file path")
                 .withLongOpt("out-log")
-                .withDescription("path to the file in which the log should be written")
+                .withDescription("path of the file in which the log should be written")
                 .withType(new String())
                 .create(OUTPUT_FILE_PARAM_NAME)
     	);

@@ -10,8 +10,8 @@ public class ViewCmdParameters extends ParamsManager {
 	}
 
 	public static final String MACHINE_READABLE_RESULTS_PARAM_NAME = "mR";
-	public static final String CONSTRAINTS_SORTING_TYPE_NAME = "cS";
-	public static final String CONSTRAINTS_NO_FOLDING_NAME = "noCF";
+	public static final String CONSTRAINTS_SORTING_TYPE_PARAM_NAME = "cS";
+	public static final String CONSTRAINTS_NO_FOLDING_PARAM_NAME = "noCF";
 
 	/** Set this field to <code>true</code> to print a machine-readable list of supports, for each constraint template and constrained activities. */
     public Boolean machineReadableResults;
@@ -49,12 +49,12 @@ public class ViewCmdParameters extends ParamsManager {
         this.constraintsSorting =
         		Enum.valueOf(ConstraintsSorting.class,
         				line.getOptionValue(
-        						CONSTRAINTS_SORTING_TYPE_NAME,
+        						CONSTRAINTS_SORTING_TYPE_PARAM_NAME,
         						this.constraintsSorting.toString()
         						)
         				);
         this.machineReadableResults = line.hasOption(MACHINE_READABLE_RESULTS_PARAM_NAME);
-        this.noFoldingRequired = line.hasOption(CONSTRAINTS_NO_FOLDING_NAME);
+        this.noFoldingRequired = line.hasOption(CONSTRAINTS_NO_FOLDING_PARAM_NAME);
 	}
 	
 	@SuppressWarnings("static-access")
@@ -66,13 +66,13 @@ public class ViewCmdParameters extends ParamsManager {
         		.withLongOpt("sort-constraints")
         		.withDescription("Sorting policy for constraints of the discovered process: " + printValues(ConstraintsSorting.values()))
         		.withType(new String())
-        		.create(CONSTRAINTS_SORTING_TYPE_NAME)
+        		.create(CONSTRAINTS_SORTING_TYPE_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("nofolding")
         		.withDescription("avoid the discovered constraints to be folded under activation tasks")
-        		.create(CONSTRAINTS_NO_FOLDING_NAME)
+        		.create(CONSTRAINTS_NO_FOLDING_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder

@@ -21,7 +21,7 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 			StringEventClassifier strEventClassifier,
 			Integer startingTrace,
 			Integer subLogLength) {
-		super(taChaEncoDeco, taskCharArchive, traceParsers,startingTrace,subLogLength);
+		super(taChaEncoDeco, taskCharArchive, traceParsers, startingTrace, subLogLength);
 		this.strEventClassifier = strEventClassifier;
 	}
 	
@@ -120,6 +120,6 @@ public class StringLogParser extends AbstractLogParser implements LogParser {
 			List<LogTraceParser> traceParsers,
 			Integer startingTrace,
 			Integer subLogLength) {
-		return new StringLogParser(taChaEncoDeco, taskCharArchive, traceParsers, strEventClassifier, subLogLength, startingTrace);
+		return new StringLogParser(taChaEncoDeco, taskCharArchive, traceParsers, strEventClassifier, startingTrace, subLogLength);
 	}
 }
