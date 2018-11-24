@@ -3,22 +3,13 @@ package minerful.examples.api.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import minerful.MinerFulMinerStarter;
-import minerful.MinerFulOutputManagementLauncher;
-import minerful.concept.ProcessModel;
-import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
-import minerful.io.params.OutputModelParameters;
+import minerful.MinerFulMinerLauncher;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputCmdParameters;
-import minerful.params.SystemCmdParameters;
-import minerful.params.ViewCmdParameters;
-import minerful.postprocessing.params.PostProcessingCmdParameters;
+import minerful.params.InputLogCmdParameters;
 
 /**
  * This example class demonstrates how to use MINERful to convert an existing XES log into a strings-based new log, and store it.
@@ -26,8 +17,8 @@ import minerful.postprocessing.params.PostProcessingCmdParameters;
  */
 public class FromXESLogToStringsLog {
 	public static void main(String[] args) throws FileNotFoundException {
-		InputCmdParameters inputParams =
-				new InputCmdParameters();
+		InputLogCmdParameters inputParams =
+				new InputLogCmdParameters();
 		MinerFulCmdParameters minerFulParams =
 				new MinerFulCmdParameters();
 		
@@ -39,7 +30,7 @@ public class FromXESLogToStringsLog {
 		//   regardless of the specific file format (XES, string...).
 		//   The static "deriveLogParserFromLogFile" method
 		//   takes care of the assignment of the correct class instance to implement the interface.
-		LogParser logParser = MinerFulMinerStarter.deriveLogParserFromLogFile(inputParams, minerFulParams);
+		LogParser logParser = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputParams, minerFulParams);
 		
 		// Print out the decoding map
 		System.out.println(logParser.getEventEncoderDecoder().printDecodingMap());

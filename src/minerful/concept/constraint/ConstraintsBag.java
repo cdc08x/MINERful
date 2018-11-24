@@ -157,6 +157,8 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
     }
 
     public Set<Constraint> getConstraintsOf(TaskChar character) {
+    	if (this.bag.get(character) == null)
+    		return new TreeSet<Constraint>();
         return this.bag.get(character);
     }
 

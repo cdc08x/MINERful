@@ -1,15 +1,15 @@
-package minerful.relevance;
+package minerful.checking.relevance.dao;
 
-public class RelevanceEvaluationOnLog {
-	public static final String CSV_HEADER = "Satisfactions;VacuousSatisfactions;Violations";
-	public int numberOfSatisfyingTraces = 0;
+public class ConstraintFitnessEvaluation {
+	public static final String CSV_HEADER = "FullSatisfactions;VacuousSatisfactions;Violations";
+	public int numberOfFullySatisfyingTraces = 0;
 	public int numberOfVacuouslySatisfyingTraces = 0;
 	public int numberOfViolatingTraces = 0;
 	
 	public void increment(TraceEvaluation eval) {
 		switch (eval) {
 		case SATISFACTION:
-			this.numberOfSatisfyingTraces++;
+			this.numberOfFullySatisfyingTraces++;
 			break;
 		case VACUOUS_SATISFACTION:
 		case NONE:
@@ -27,15 +27,19 @@ public class RelevanceEvaluationOnLog {
 		return this.numberOfVacuouslySatisfyingTraces + this.numberOfViolatingTraces;
 	}
 	
-	public int numberOfVacuouslySatisfyingOrSatisfyingTraces() {
-		return this.numberOfVacuouslySatisfyingTraces + this.numberOfSatisfyingTraces;
+	public int numberOfNonViolatingTraces() {
+		return this.numberOfVacuouslySatisfyingTraces + this.numberOfFullySatisfyingTraces;
+	}
+
+	public double numberOfFullySatisfyingTraces() {
+		return numberOfFullySatisfyingTraces;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("LogEvaluation [numberOfSatisfyingTraces=");
-		builder.append(numberOfSatisfyingTraces);
+		builder.append("LogEvaluation [numberOfFullySatisfyingTraces=");
+		builder.append(numberOfFullySatisfyingTraces);
 		builder.append(", numberOfVacuouslySatisfyingTraces=");
 		builder.append(numberOfVacuouslySatisfyingTraces);
 		builder.append(", numberOfViolatingTraces=");
@@ -45,10 +49,6 @@ public class RelevanceEvaluationOnLog {
 	}
 	
 	public String printCSV() {
-		return numberOfSatisfyingTraces + ";" + numberOfVacuouslySatisfyingTraces + ";" + numberOfViolatingTraces;
-	}
-
-	public double numberOfRelevantlySatisfyingTraces() {
-		return numberOfSatisfyingTraces;
+		return numberOfFullySatisfyingTraces + ";" + numberOfVacuouslySatisfyingTraces + ";" + numberOfViolatingTraces;
 	}
 }

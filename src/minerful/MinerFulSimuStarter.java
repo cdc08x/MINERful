@@ -12,7 +12,7 @@ import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputCmdParameters;
+import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -111,7 +111,7 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-			ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, systemParams, postParams, taskCharArchive);
+			ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, postParams, taskCharArchive);
 	        
 	        MinerFulOutputManagementLauncher proViewStarter = new MinerFulOutputManagementLauncher(); 
 	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);

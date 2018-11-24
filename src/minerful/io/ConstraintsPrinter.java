@@ -34,7 +34,7 @@ import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
 public class ConstraintsPrinter {
-	private static final String MACHINE_READABLE_RESULTS_SUPPORT_TEXT_SIGNAL = "Support values: ";
+	private static final String MACHINE_READABLE_RESULTS_SUPPORT_TEXT_SIGNAL = "Measures: ";
 	public static final String MACHINE_READABLE_RESULTS_LEGEND_TEXT_SIGNAL = "Legend: ";
 	public static final String MACHINE_READABLE_RESULTS_TEXT_SIGNAL = "Machine-readable results: ";
 
@@ -248,6 +248,9 @@ public class ConstraintsPrinter {
 //        }
         sBld.append(String.format(Locale.ENGLISH, " conf.: %7.3f; ", constraint.getConfidence()));
         sBld.append(String.format(Locale.ENGLISH, " int'f: %7.3f; ", constraint.getInterestFactor()));
+        if (constraint.getFitness() != null) {
+        	sBld.append(String.format(Locale.ENGLISH, " fit: %7.3f; ", constraint.getFitness()));
+        }
         
        	if (additionalInfo != null)
         	sBld.append(additionalInfo);

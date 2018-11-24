@@ -20,7 +20,7 @@ public class VacuityAwareWildcardAutomaton extends VacuityAwareAutomaton {
 		super();
 	}
 	
-	public VacuityAwareWildcardAutomaton(
+	protected VacuityAwareWildcardAutomaton(
 			String regExp,
 			Map<Character, AbstractTaskClass> translationMap) {
 		super(translationMap);
@@ -36,8 +36,8 @@ public class VacuityAwareWildcardAutomaton extends VacuityAwareAutomaton {
 		super.postConstructionInit(automaton);
 	}
 
-	public VacuityAwareWildcardAutomaton(String regularExpression,
-			Map<Character, AbstractTaskClass> translationMap, String name) {
+	public VacuityAwareWildcardAutomaton(String name, String regularExpression,
+			Map<Character, AbstractTaskClass> translationMap) {
 		this(regularExpression, translationMap);
 		this.name = name;
 	}
@@ -74,6 +74,8 @@ public class VacuityAwareWildcardAutomaton extends VacuityAwareAutomaton {
 		StringBuilder builder = new StringBuilder();
 		builder.append("VacuityAwareWildcardAutomaton [name=");
 		builder.append(name);
+		builder.append(", automaton=");
+		builder.append(super.toDot().trim() + " // Open this with XDot or similar GraphViz tools");
 		builder.append("]");
 		return builder.toString();
 	}

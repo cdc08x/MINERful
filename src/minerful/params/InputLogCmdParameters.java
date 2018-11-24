@@ -11,7 +11,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
-public class InputCmdParameters extends ParamsManager {
+public class InputLogCmdParameters extends ParamsManager {
 	public static final EventClassification DEFAULT_EVENT_CLASSIFICATION = EventClassification.name;
 	public static final InputEncoding DEFAULT_INPUT_ENCODING = InputEncoding.xes;
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
@@ -33,9 +33,9 @@ public class InputCmdParameters extends ParamsManager {
 		name, logspec
 	}
 
-	/** Encoding language for the input event log (see enum {@link minerful.params.InputCmdParameters.InputEncoding InputEncoding}). Default is: {@link minerful.params.InputCmdParameters.InputEncoding#xes InputEncoding.xes}.*/
+	/** Encoding language for the input event log (see enum {@link minerful.params.InputLogCmdParameters.InputEncoding InputEncoding}). Default is: {@link minerful.params.InputLogCmdParameters.InputEncoding#xes InputEncoding.xes}.*/
 	public InputEncoding inputLanguage;
-	/** Classification policy to relate events to event classes, that is the task names (see enum {@link minerful.params.InputCmdParameters.EventClassification EventClassification}). Default is: {@link minerful.params.InputCmdParameters.EventClassification#name EventClassification.name}.*/
+	/** Classification policy to relate events to event classes, that is the task names (see enum {@link minerful.params.InputLogCmdParameters.EventClassification EventClassification}). Default is: {@link minerful.params.InputLogCmdParameters.EventClassification#name EventClassification.name}.*/
 	public EventClassification eventClassification;
 	/** Input event log file. It must not be <code>null</code>. */
     public File inputLogFile;
@@ -45,7 +45,7 @@ public class InputCmdParameters extends ParamsManager {
 	/** Length of the sub-sequence of traces to analyse */
 	public Integer subLogLength;
 
-    public InputCmdParameters() {
+    public InputLogCmdParameters() {
     	super();
     	inputLanguage = DEFAULT_INPUT_ENCODING;
     	eventClassification = DEFAULT_EVENT_CLASSIFICATION;
@@ -54,13 +54,13 @@ public class InputCmdParameters extends ParamsManager {
     	inputLogFile = null;
     }
     
-    public InputCmdParameters(Options options, String[] args) {
+    public InputLogCmdParameters(Options options, String[] args) {
     	this();
         // parse the command line arguments
     	this.parseAndSetup(options, args);
 	}
 
-	public InputCmdParameters(String[] args) {
+	public InputLogCmdParameters(String[] args) {
     	this();
         // parse the command line arguments
     	this.parseAndSetup(new Options(), args);
@@ -139,7 +139,7 @@ public class InputCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("path")
-                .isRequired(true)
+//                .isRequired(true) // Causing more problems than not
                 .withLongOpt(INPUT_LOGFILE_PATH_LONG_PARAM_NAME)
                 .withDescription("path to read the log file from")
                 .withType(new String())
@@ -149,7 +149,7 @@ public class InputCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("number")
         		.withLongOpt("start-from-trace")
-        		.withDescription("ordinal number of the trace from which the analysed sub-log should start "
+        		.withDescription("ordinal number of the trace from which the analysed sub-log should start"
 						+ printDefault(FIRST_TRACE_NUM))
         		.withType(new Long(0))
         		.create(START_FROM_TRACE_PARAM_NAME)
@@ -158,7 +158,7 @@ public class InputCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("length")
         		.withLongOpt("sub-log-size")
-        		.withDescription("number of traces to be analysed in the sub-log. To have the entire log analysed, leave the default value. "
+        		.withDescription("number of traces to be analysed in the sub-log. To have the entire log analysed, leave the default value"
 						+ printDefault(WHOLE_LOG_LENGTH))
         		.withType(new Long(0))
         		.create(SUB_LOG_SIZE_PARAM_NAME)

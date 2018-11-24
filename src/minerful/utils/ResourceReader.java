@@ -39,7 +39,7 @@ public class ResourceReader {
 		return ResourceReader.class.getClassLoader().getResourceAsStream(resourcePath);
 	}
 	
-	public static final InputStream loadResource(String libraryUrl, String resourcePath) {
+	public static final InputStream loadResource(String libraryUrl, String resourcePath, Class<?> classLoaderProvider) {
 		URL url = null;
 		try {
 			url = new URL(libraryUrl);
@@ -48,7 +48,7 @@ public class ResourceReader {
 			e1.printStackTrace();
 		}
 		URL[] urls = {url};
-		URLClassLoader classLoader = new URLClassLoader(urls, DeclareMapEncoderDecoder.class.getClassLoader());
+		URLClassLoader classLoader = new URLClassLoader(urls, classLoaderProvider.getClassLoader());
 		Thread.currentThread().setContextClassLoader(classLoader);
 		
 		return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);

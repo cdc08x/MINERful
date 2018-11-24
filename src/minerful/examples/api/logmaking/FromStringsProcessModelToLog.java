@@ -42,10 +42,10 @@ public class FromStringsProcessModelToLog {
 		TaskCharFactory tChFactory = new TaskCharFactory();
 		
 		// Create the tasks to be used to model the process
-		TaskChar a0 = tChFactory.makeTaskChar(new StringTaskClass("A0"));
-		TaskChar a0a1 = tChFactory.makeTaskChar(new StringTaskClass("A0A1"));
-		TaskChar b0b1b2b0 = tChFactory.makeTaskChar(new StringTaskClass("B0B1B2_BO"));
-		TaskChar b0b1b2b0b3 = tChFactory.makeTaskChar(new StringTaskClass("B0B1B2_BOB1B2B3"));
+		TaskChar a0 = tChFactory.makeTaskChar("A0");
+		TaskChar a0a1 = tChFactory.makeTaskChar("A0A1");
+		TaskChar b0b1b2b0 = tChFactory.makeTaskChar("B0B1B2_BO");
+		TaskChar b0b1b2b0b3 = tChFactory.makeTaskChar("B0B1B2_BOB1B2B3");
 
 		// Create the tasks archive to store the "process alphabet"
 		TaskCharArchive taChaAr = new TaskCharArchive(

@@ -1,4 +1,4 @@
-package minerful.relevance;
+package minerful.checking.relevance.dao;
 
 public enum TraceEvaluation {
 	NONE,

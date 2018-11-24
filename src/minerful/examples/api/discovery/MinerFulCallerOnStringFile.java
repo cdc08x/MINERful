@@ -7,8 +7,8 @@ import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessModel;
 import minerful.io.params.OutputModelParameters;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputCmdParameters;
-import minerful.params.InputCmdParameters.InputEncoding;
+import minerful.params.InputLogCmdParameters;
+import minerful.params.InputLogCmdParameters.InputEncoding;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -20,8 +20,8 @@ import minerful.postprocessing.params.PostProcessingCmdParameters;
 public class MinerFulCallerOnStringFile {
 
 	public static void main(String[] args) {
-		InputCmdParameters inputParams =
-				new InputCmdParameters();
+		InputLogCmdParameters inputParams =
+				new InputLogCmdParameters();
 		MinerFulCmdParameters minerFulParams =
 				new MinerFulCmdParameters();
 		ViewCmdParameters viewParams =

@@ -11,6 +11,9 @@ import java.util.TreeMap;
 
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
+import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.logparser.CharTaskClass;
 import minerful.logparser.StringTaskClass;
@@ -230,6 +233,11 @@ public class TaskCharEncoderDecoder {
 		return encodedTasks;
 	}
 
+	/**
+	 * Records the encoding of the passed task chars.
+	 * @param taskChars
+	 * @return
+	 */
 	public Character[] encode(Collection<TaskChar> taskChars) {
 		AbstractTaskClass[] taskClasses = new AbstractTaskClass[taskChars.size()];
 		int i = 0;
@@ -295,6 +303,8 @@ public class TaskCharEncoderDecoder {
 		} else if (taskClass.toString().length() == 0) {
 			logger.warn("A task is identified by an empty string");
 		}
+
+//System.out.println("MERDACCIA lurida: this.tasksDictionary.containsKey(taskClass)" + taskClass + " ? " + this.tasksDictionary.containsKey(taskClass));
 
 		// If the tasks dictionary already contains this task, skip this!
 		if (!this.tasksDictionary.containsKey(taskClass)) {
@@ -448,5 +458,28 @@ public class TaskCharEncoderDecoder {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Includes the tasks from the constraints in the managed set.
+	 * As a side effect, it replaces the existing index with a new one.
+	 * @param constraints Constraints from which TaskChars are extracted
+	 */
+	public void mergeWithConstraintsAndUpdateItsParameters(Constraint... constraints) {
+		char charId = Character.END_PUNCTUATION;
+		boolean changedCharId = false;
+		for (Constraint con : constraints) {
+			for (TaskCharSet taChSet : con.getParameters()) {
+				changedCharId = false;
+				for (TaskChar taChar : taChSet.getTaskCharsArray()) {
+					charId = this.encode(taChar.taskClass);
+					changedCharId = changedCharId || (taChar.identifier != charId);
+					taChar.identifier = charId;
+				}
+				if (changedCharId) {
+					taChSet.refreshListOfIdentifiers();
+				}
+			}
+		}
 	}
 }

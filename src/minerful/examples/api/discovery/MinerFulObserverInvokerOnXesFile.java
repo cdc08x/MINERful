@@ -13,7 +13,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintChange;
 import minerful.io.params.OutputModelParameters;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputCmdParameters;
+import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.params.SystemCmdParameters.DebugLevel;
@@ -35,8 +35,8 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 //		Discovery phase
 //////////////////////////////////////////////////////////////////
 
-		InputCmdParameters inputParams =
-				new InputCmdParameters();
+		InputLogCmdParameters inputParams =
+				new InputLogCmdParameters();
 		MinerFulCmdParameters minerFulParams =
 				new MinerFulCmdParameters();
 		ViewCmdParameters viewParams =

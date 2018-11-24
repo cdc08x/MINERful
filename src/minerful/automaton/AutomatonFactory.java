@@ -2,6 +2,7 @@ package minerful.automaton;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import java.util.concurrent.Future;
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.index.ModularConstraintsSorter;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
@@ -234,5 +236,9 @@ public class AutomatonFactory {
 			return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet, minLen, maxLen);	
 		}
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet);
+	}
+
+	public static Automaton buildAutomatonWithWildcard(Constraint constraint) {
+		return fromRegularExpressions(Arrays.asList(constraint.getRegularExpression()),constraint.getInvolvedTaskCharIdentifiers(),true);
 	}
 }

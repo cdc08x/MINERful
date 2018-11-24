@@ -15,17 +15,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import minerful.concept.AbstractTaskClass;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
+import minerful.concept.AbstractTaskClass;
+import minerful.utils.MessagePrinter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-//@XmlJavaTypeAdapter(WeightedAutomatonXmlAdapter.class)
 public class VacuityAwareAutomaton extends Automaton {
+	public static MessagePrinter logger = MessagePrinter.getInstance(VacuityAwareAutomaton.class);
 
 	private static final long serialVersionUID = 7002546525205169853L;
+	private String name;
 	protected Set<Character> alphabet;
 	protected Map<Character, AbstractTaskClass> translationMap;
 
@@ -39,12 +41,15 @@ public class VacuityAwareAutomaton extends Automaton {
 		this.translationMap = translationMap;
 	}
 
-	public VacuityAwareAutomaton(Automaton automaton, Map<Character, AbstractTaskClass> translationMap) {
+	public VacuityAwareAutomaton(String name, Automaton automaton, Map<Character, AbstractTaskClass> translationMap) {
 		this(translationMap);
+		this.name = name;
 		this.postConstructionInit(automaton);
 	}
 	
 	protected void postConstructionInit(Automaton automaton) {
+//		logger.debug(String.format("Building %s", this.name));
+
 		this.alphabet = new TreeSet<Character>();
 		
 		automaton.minimize();
@@ -80,6 +85,7 @@ public class VacuityAwareAutomaton extends Automaton {
 		this.decideActivationStatus(currentState, currentStAwaState);
 
 		for (Transition trans : currentState.getTransitions()) {
+//			logger.debug(String.format("Visiting %s", trans.toString()));
 			destinationState = trans.getDest();
 			
 			if (!statesTranslationMap.containsKey(destinationState)) {
@@ -165,6 +171,7 @@ public class VacuityAwareAutomaton extends Automaton {
 				currentStAwaState.setStatus(StateActivationStatus.VIO_TEMP);
 			}
 		}
+//		logger.debug(String.format("Current state is %2$s (%1$s)", currentState.toString(), currentStAwaState.getStatus()));
 	}
 	
 
@@ -191,14 +198,5 @@ public class VacuityAwareAutomaton extends Automaton {
 
 	public Set<Character> getAlphabet() {
 		return alphabet;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("VacuityAwareAutomaton [getInitialState()=");
-		builder.append(getInitialState());
-		builder.append("]");
-		return builder.toString();
 	}
 }

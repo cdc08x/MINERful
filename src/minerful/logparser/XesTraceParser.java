@@ -75,6 +75,22 @@ public class XesTraceParser extends AbstractTraceParser implements LogTraceParse
 	}
 
 	@Override
+	public String printStringTrace() {
+		Iterator<XEvent> auxIterator = xesTrace.iterator();
+		StringBuilder sBuil = new StringBuilder();
+		
+		while (auxIterator.hasNext()) {
+			sBuil.append(',');
+			sBuil.append(new XesEventParser(this, auxIterator.next()).getEvent().getTaskClass());
+		}
+		sBuil.delete(0, 1);
+		sBuil.append('>');
+		sBuil.insert(0, '<');
+		
+		return sBuil.toString();
+	}
+
+	@Override
 	public LogEventParser parseSubsequent() {
 		if (stepToSubsequent()) {
 			return xesEventParser;

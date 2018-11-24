@@ -1,17 +1,22 @@
-package minerful.relevance;
+package minerful.checking.relevance.walkers;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeMap;
 
 import minerful.automaton.concept.relevance.ActivationStatusWildcardAwareState;
 import minerful.automaton.concept.relevance.RelevanceAwareTransition;
 import minerful.automaton.concept.relevance.TransitionRelevance;
+import minerful.checking.relevance.dao.TraceEvaluation;
 import minerful.concept.AbstractTaskClass;
+import minerful.logparser.LogTraceParser;
+import minerful.utils.MessagePrinter;
 
 public class RelevanceAutomatonWalker {
+	public static MessagePrinter logger = MessagePrinter.getInstance(RelevanceAutomatonWalker.class);
+	
 	private Map<AbstractTaskClass, Character> alteredInverseLogTranslationMap;
 	private Map<Character, AbstractTaskClass> alteredLogTranslationMap;
 	private ActivationStatusWildcardAwareState currentStateInTheWalk;
@@ -19,20 +24,25 @@ public class RelevanceAutomatonWalker {
 	private TraceEvaluation traceEvaluation;
 	private boolean relevantTransitionTraversed;
 	private boolean noNeedToCheckFurther;
+	public final String name;
 
-	public RelevanceAutomatonWalker(List<Character> vector, SortedSet<Character> alphabetWithoutWildcard, Map<Character, AbstractTaskClass> logTranslationMap, ActivationStatusWildcardAwareState initialState) {
-		this.alteredInverseLogTranslationMap = new HashMap<AbstractTaskClass, Character>(vector.size(), (float)1.0);
+	public RelevanceAutomatonWalker(String name, List<Character> actualCharParams, List<Character> formalCharParams, Map<Character, AbstractTaskClass> logTranslationMap, ActivationStatusWildcardAwareState initialState) {
+		this.name = name;
+		this.alteredInverseLogTranslationMap = new HashMap<AbstractTaskClass, Character>(actualCharParams.size(), (float)1.0);
 		Character[]
-				alphabetWithoutWildcardArray = alphabetWithoutWildcard.toArray(new Character[alphabetWithoutWildcard.size()]),
-				recodifiedAlphabet = vector.toArray(new Character[alphabetWithoutWildcard.size()]);
+				formalCharParamsArray = formalCharParams.toArray(new Character[formalCharParams.size()]),
+				actualCharParamsArray = actualCharParams.toArray(new Character[formalCharParams.size()]);
 
-		for (int i = 0; i < recodifiedAlphabet.length; i++) {
-			alteredInverseLogTranslationMap.put(logTranslationMap.get(recodifiedAlphabet[i]), new Character(alphabetWithoutWildcardArray[i]));
+		for (int i = 0; i < actualCharParamsArray.length; i++) {
+			alteredInverseLogTranslationMap.put(logTranslationMap.get(actualCharParamsArray[i]), new Character(formalCharParamsArray[i]));
 		}
 
 		this.initialState = initialState;
 		this.setUpAlteredLogTranslationMap();
 		reset();
+//System.out.println("Lurida merdazza alteredInverseLogTranslationMap " + alteredInverseLogTranslationMap);
+//System.out.println("Lurida merdazza formalCharParamsArray " + Arrays.toString(formalCharParamsArray));
+//System.out.println("Lurida merdazza actualCharParamsArray " + Arrays.toString(actualCharParamsArray));
 	}
 
 	public void reset() {
@@ -52,17 +62,31 @@ public class RelevanceAutomatonWalker {
 			alteredLogTranslationMap.put(codify(cls), cls);
 		}
 	}
+	
 
-	public TraceEvaluation step(AbstractTaskClass tasClass) {
+	public void run(LogTraceParser traceParser) {
+		this.reset();
+
+		AbstractTaskClass tasCla = null;
+		while (!traceParser.isParsingOver()) {
+			tasCla = traceParser.parseSubsequent().getEvent().getTaskClass();
+			this.step(tasCla);
+		}
+	}
+
+	public TraceEvaluation step(AbstractTaskClass taskClass) {
 		if (!noNeedToCheckFurther) {
 			ActivationStatusWildcardAwareState necState = null;
 			RelevanceAwareTransition relAwaTrans = null;
 			Character arg0 = null;
-			if (alteredInverseLogTranslationMap.containsKey(tasClass)) {
-				arg0 = codify(tasClass);
+//System.out.println("Lurido merdone: req. tasClass = " + taskClass + " alteredInverseLogTranslationMap.containsKey(taskClass) = " + alteredInverseLogTranslationMap.containsKey(taskClass) + (alteredInverseLogTranslationMap.containsKey(taskClass) ? " " + codify(taskClass): " e sto cazzo"));
+			if (alteredInverseLogTranslationMap.containsKey(taskClass)) {
+				arg0 = codify(taskClass);
 				relAwaTrans = this.currentStateInTheWalk.getTransition(arg0);
 				necState = ((ActivationStatusWildcardAwareState) this.currentStateInTheWalk.step(arg0));
+				// logger.info(taskClass + " => " + codify(taskClass) + " is involved in this constraint (" + this.name + ") and leads to " + (necState!=null?necState.getStatus():null));
 			} else {
+				// logger.info(taskClass + " is not involved in this constraint (" + this.name + ")");
 				relAwaTrans = this.currentStateInTheWalk.getWildTransition();
 				necState = (ActivationStatusWildcardAwareState) this.currentStateInTheWalk.stepWild();
 			}

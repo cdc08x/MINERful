@@ -13,7 +13,7 @@ public class SlidingCmdParameters extends ParamsManager {
 	public static final String STICK_TAIL_PARAM_NAME = "sliStick";
 	public static final boolean DEFAULT_STICKY_TAIL_POLICY = false;
 
-	public static final String INTERMEDIATE_OUTPUT_PARAM_NAME = "slideOut";
+	public static final String INTERMEDIATE_OUTPUT_PARAM_NAME = "sliOut";
 
 	/** Sets how long is the step to slide the window on the event log. The default is {@link SlidingCmdParameters#DEFAULT_SLIDING_STEP DEFAULT_SLIDING_STEP} */
     public Integer slidingStep;
@@ -50,8 +50,8 @@ public class SlidingCmdParameters extends ParamsManager {
         						this.slidingStep.toString()
         						)
         				);
-        if (slidingStep <= 0) {
-        	throw new IllegalArgumentException("The sliding window step should be a positive integer");
+        if (slidingStep < 0) {
+        	throw new IllegalArgumentException("The sliding window step should be an integer higher than, or equal to, 0");
         }
         String intermediateOutputCsvFilePath = line.getOptionValue(INTERMEDIATE_OUTPUT_PARAM_NAME);
         if (intermediateOutputCsvFilePath != null) {
@@ -84,8 +84,8 @@ public class SlidingCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("file")
                 .isRequired(true)
-        		.withLongOpt("nofolding")
-        		.withDescription("path of the file in which the values of constraints' supports are written")
+        		.withLongOpt("sliding-results-out")
+        		.withDescription("path of the file in which the values of constraints' measures are written")
         		.create(INTERMEDIATE_OUTPUT_PARAM_NAME)
         		);
        return options;

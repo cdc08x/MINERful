@@ -54,6 +54,12 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	@XmlTransient
 	public static final double DEFAULT_CONFIDENCE = MIN_CONFIDENCE;
 	@XmlTransient
+    public static final double MIN_FITNESS = 0;
+	@XmlTransient
+    public static final double MAX_FITNESS = 1.0;
+	@XmlTransient
+	public static final double DEFAULT_FITNESS = MAX_FITNESS;
+	@XmlTransient
     public static final double RANGE_FOR_SUPPORT = (MAX_SUPPORT - MIN_SUPPORT);
 	@XmlIDREF
     protected TaskCharSet base;
@@ -63,6 +69,8 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	protected double confidence;
 	@XmlElement
 	protected double interestFactor;
+	@XmlElement
+	protected Double fitness;
 	@XmlAttribute
 	protected boolean evaluatedOnLog = false;
 	@XmlTransient
@@ -77,6 +85,8 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	protected boolean belowConfidenceThreshold = false;
 	@XmlAttribute
 	protected boolean belowInterestFactorThreshold = false;
+	@XmlAttribute
+	private boolean belowFitnessThreshold = false;
 	@XmlTransient
     protected Constraint constraintWhichThisIsBasedUpon;
 	@XmlElementWrapper(name="parameters")
@@ -119,6 +129,12 @@ public abstract class Constraint extends Observable implements Comparable<Constr
     private boolean checkInterestFactor(double interestFactor) {
         if (interestFactor < MIN_INTEREST_FACTOR || interestFactor > MAX_INTEREST_FACTOR) {
             throw new IllegalArgumentException("Provided interest factor for " + toString() + " out of range: " + interestFactor);
+        }
+        return true;
+    }
+    private boolean checkFitness(double fitness) {
+        if (fitness < MIN_FITNESS || fitness > MAX_FITNESS) {
+            throw new IllegalArgumentException("Provided fitness for " + toString() + " out of range: " + fitness);
         }
         return true;
     }
@@ -257,6 +273,16 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 		}
 	}
 
+	public boolean isBelowFitnessThreshold() {
+		return belowFitnessThreshold;
+	}
+	public void setBelowFitnessThreshold(boolean belowFitnessThreshold) {
+		if (belowFitnessThreshold != this.belowSupportThreshold) {
+			this.belowFitnessThreshold = belowFitnessThreshold;
+			this.notifyObservers(ChangedProperty.BELOW_FITNESS_THRESHOLD, belowFitnessThreshold);
+		}
+	}
+
 	public void setRedundant(boolean redundant) {
 		if (this.redundant != redundant) {
 			this.redundant = redundant;
@@ -301,6 +327,17 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 			this.checkInterestFactor(interestFactor);
 			this.interestFactor = interestFactor;
 			this.notifyObservers(ConstraintChange.ChangedProperty.INTEREST_FACTOR, interestFactor);
+		}
+	}
+
+	public Double getFitness() {
+		return fitness;
+	}
+	public void setFitness(double fitness) {
+		if (this.fitness == null || this.fitness != fitness) {
+			this.checkFitness(fitness);
+			this.fitness = fitness;
+			this.notifyObservers(ConstraintChange.ChangedProperty.FITNESS, interestFactor);
 		}
 	}
 
@@ -442,6 +479,13 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 		return involvedChars;
 	}
 
+	public Set<Character> getInvolvedTaskCharIdentifiers() {
+		TreeSet<Character> involvedChars = new TreeSet<Character>();
+		for (TaskCharSet param : this.parameters) {
+			involvedChars.addAll(param.getListOfIdentifiers());
+		}
+		return involvedChars;
+	}
 	
 	public void setConstraintWhichThisIsBasedUpon(Constraint constraintWhichThisIsBasedUpon) {
 	    if (this.constraintWhichThisIsBasedUpon == null) {
@@ -526,6 +570,7 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 
 	public VacuityAwareWildcardAutomaton getCheckAutomaton() {
 		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(
+				this.toString(),
 				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
 		return autom;
 	}

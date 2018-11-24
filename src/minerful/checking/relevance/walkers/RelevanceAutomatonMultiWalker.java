@@ -1,20 +1,19 @@
-package minerful.relevance;
+package minerful.checking.relevance.walkers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
+
+import org.paukov.combinatorics.Factory;
+import org.paukov.combinatorics.Generator;
+import org.paukov.combinatorics.ICombinatoricsVector;
 
 import minerful.automaton.concept.relevance.VacuityAwareWildcardAutomaton;
 import minerful.concept.AbstractTaskClass;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
-
-import org.paukov.combinatorics.Factory;
-import org.paukov.combinatorics.Generator;
-import org.paukov.combinatorics.ICombinatoricsVector;
 
 /**
  * This class serves as a machine to walk on automata that abstract from the single specific event class.
@@ -23,20 +22,59 @@ import org.paukov.combinatorics.ICombinatoricsVector;
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
 public class RelevanceAutomatonMultiWalker {
+	private final String name;
 	private VacuityAwareWildcardAutomaton vacuAwaWildAuto;
 	private Map<Character, AbstractTaskClass> logTranslationMap;
 	private List<RelevanceAutomatonWalker> walkers;
+	
 
-	public RelevanceAutomatonMultiWalker(
-			VacuityAwareWildcardAutomaton vAwaWildAuto,
-			Map<Character, AbstractTaskClass> logTranslationMap) {
+	private void init(VacuityAwareWildcardAutomaton vAwaWildAuto, Map<Character, AbstractTaskClass> logTranslationMap) {
 		this.vacuAwaWildAuto = vAwaWildAuto;
 		this.logTranslationMap = logTranslationMap;
-		this.walkers = setUpWalkers();
 	}
 
-	private List<RelevanceAutomatonWalker> setUpWalkers() {
-		SortedSet<Character> alphabetWithoutWildcard = this.vacuAwaWildAuto.getAlphabetWithoutWildcard();
+	public RelevanceAutomatonMultiWalker(
+			String name,
+			VacuityAwareWildcardAutomaton vAwaWildAuto,
+			Map<Character, AbstractTaskClass> logTranslationMap) {
+		this.name = name;
+		init(vAwaWildAuto, logTranslationMap);
+		this.walkers = setUpAllWalkersByPermutationsOfTasks();
+	}
+
+	public RelevanceAutomatonMultiWalker(
+			String name,
+			VacuityAwareWildcardAutomaton vAwaWildAuto,
+			Map<Character, AbstractTaskClass> logTranslationMap,
+			List<List<Character>> charParametersList) {
+		this.name = name;
+		init(vAwaWildAuto, logTranslationMap);
+//System.out.println("Lurido merdonazzo charParametersList " + charParametersList);
+		this.walkers = setupAllWalkers(charParametersList);
+	}
+	
+	private List<RelevanceAutomatonWalker> setupAllWalkers(List<List<Character>> charParametersList) {
+		List<Character> automAlphabetNoWildcard = charParametersList.get(0);
+		ArrayList<RelevanceAutomatonWalker> walkers =
+				new ArrayList<RelevanceAutomatonWalker>(charParametersList.size());
+		for (List<Character> charParameters : charParametersList) {
+//System.out.println("Lurido merdo charParameters " + charParameters);
+//System.out.println("Lurido merdo alphabetWithoutWildcard " + automAlphabetNoWildcard);
+			walkers.add(
+					new RelevanceAutomatonWalker(
+							this.name + "/" + charParameters,
+							charParameters,
+							automAlphabetNoWildcard,
+							logTranslationMap, 
+							vacuAwaWildAuto.getInitialWildState()));
+
+		}
+//System.out.println("Lurido merdone logTranslationMap: " + logTranslationMap);
+		return walkers;
+	}
+
+	private List<RelevanceAutomatonWalker> setUpAllWalkersByPermutationsOfTasks() {
+		List<Character> alphabetWithoutWildcard = new ArrayList<Character>(vacuAwaWildAuto.getAlphabetWithoutWildcard());
 		int k = alphabetWithoutWildcard.size();
 
 		Set<Character> taskIdentifiersInLog = this.logTranslationMap.keySet();
@@ -60,6 +98,7 @@ public class RelevanceAutomatonMultiWalker {
 			while (combosPermIterator.hasNext()) {
 				vectorOfChars = combosPermIterator.next().getVector();
 				walkers.add(i++, new RelevanceAutomatonWalker(
+						this.name + "/" + vectorOfChars,
 						vectorOfChars,
 						alphabetWithoutWildcard,
 						logTranslationMap,
@@ -80,8 +119,9 @@ public class RelevanceAutomatonMultiWalker {
 	public void run(LogTraceParser traceParser) {
 		this.reset();
 
+		AbstractTaskClass tasCla = null;
 		while (!traceParser.isParsingOver()) {
-			AbstractTaskClass tasCla = traceParser.parseSubsequent().getEvent().getTaskClass();
+			tasCla = traceParser.parseSubsequent().getEvent().getTaskClass();
 			for (RelevanceAutomatonWalker walker : walkers) {
 				walker.step(tasCla);
 			}

@@ -27,7 +27,7 @@ public class CallableAutomataMaker implements Callable<Automaton> {
 		Automaton processAutomaton = null, nuConstraintAutomaton = null;
 		String nuRegExp = null;
 
-		logger.trace("Preparing the automaton...");
+//		logger.trace("Preparing the automaton...");
 
 		if (regularExpressions.size() > 0) {
 			Iterator<String> regExpsIterator = regularExpressions.iterator();

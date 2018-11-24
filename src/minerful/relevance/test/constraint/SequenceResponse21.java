@@ -100,8 +100,8 @@ public class SequenceResponse21 extends Constraint {
 
 	@Override
 	public VacuityAwareWildcardAutomaton getCheckAutomaton() {
-		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(
-				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()), this.toString());
+		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(this.toString(),
+				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
 		
 		// TODO Tweaking to insert the loopback to the initial state
 		State state = autom.getInitialState();

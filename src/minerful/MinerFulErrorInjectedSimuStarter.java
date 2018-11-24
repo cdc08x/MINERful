@@ -7,7 +7,7 @@ import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputCmdParameters;
+import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -110,7 +110,7 @@ public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
 			LogParser stringLogParser = new StringLogParser(testBedArray, ClassificationType.NAME);
 
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-	        ProcessModel processModel = new MinerFulMinerStarter().mine(stringLogParser, minerFulParams, systemParams, postParams, tracesMakParams.alphabet);
+	        ProcessModel processModel = new MinerFulMinerStarter().mine(stringLogParser, minerFulParams, postParams, tracesMakParams.alphabet);
 
 	        MinerFulOutputManagementLauncher proViewLauncher = new MinerFulOutputManagementLauncher(); 
 	        proViewLauncher.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);

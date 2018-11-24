@@ -80,7 +80,7 @@ public class MinerFulSimuSubCheckStarter extends MinerFulSimuStarter {
 			LogParser stringLogParser = new StringLogParser(testBedArray, ClassificationType.NAME);
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
-	        ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, systemParams, postParams, taskCharArchive);
+	        ProcessModel processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, postParams, taskCharArchive);
 	        MinerFulOutputManagementLauncher proViewStarter = new MinerFulOutputManagementLauncher(); 
 	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
 	        /*

@@ -6,10 +6,11 @@ import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
+import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputCmdParameters;
-import minerful.params.InputCmdParameters.EventClassification;
+import minerful.params.InputLogCmdParameters;
+import minerful.params.InputLogCmdParameters.EventClassification;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -22,7 +23,7 @@ import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 public class MinerFulMinerLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerLauncher.class);
 
-	private InputCmdParameters inputParams;
+	private InputLogCmdParameters inputParams;
 	private MinerFulCmdParameters minerFulParams;
 	private SystemCmdParameters systemParams;
 	private PostProcessingCmdParameters postParams;
@@ -31,13 +32,13 @@ public class MinerFulMinerLauncher {
 	private ViewCmdParameters viewParams;
 	private OutputModelParameters outParams;
 
-	public MinerFulMinerLauncher(InputCmdParameters inputParams,
+	public MinerFulMinerLauncher(InputLogCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
 			PostProcessingCmdParameters postParams, SystemCmdParameters systemParams) {
 		this(inputParams, minerFulParams, postParams, systemParams, null, null);
 	}
 
-	public MinerFulMinerLauncher(InputCmdParameters inputParams,
+	public MinerFulMinerLauncher(InputLogCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
 			PostProcessingCmdParameters postParams, SystemCmdParameters systemParams,
 			ViewCmdParameters viewParams, OutputModelParameters outParams) {
@@ -60,22 +61,19 @@ public class MinerFulMinerLauncher {
     	
         logger.info("Loading log...");
         
-        logParser = MinerFulMinerStarter.deriveLogParserFromLogFile(inputParams, minerFulParams);
+        logParser = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputParams, minerFulParams);
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
-		return minerFulStarter.mine(logParser, inputParams, minerFulParams, systemParams, postParams, taskCharArchive);
+		return minerFulStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
 	}
 	
-	public ProcessModel manageOutput(ProcessModel processModel) {
-		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
-		return processModel;
-	}
-
-	public DeclareMap mine(XLog xLog) {
+	public ProcessModel mine(XLog xLog) {
 		ClassificationType classiType = fromInputParamToXesLogClassificationType(this.inputParams.eventClassification);
-		XesLogParser logParser = new XesLogParser(xLog, classiType);
-		ProcessModel processModel = minerFulStarter.mine(logParser, inputParams, minerFulParams, systemParams, postParams, logParser.getTaskCharArchive());
+		logParser = new XesLogParser(xLog, classiType);
+		return minerFulStarter.mine(logParser, inputParams, minerFulParams, postParams, logParser.getTaskCharArchive());
+	}	
 
-		return new DeclareMapEncoderDecoder(processModel).createDeclareMap();
+	public DeclareMap mineDeclareMap(XLog xLog) {
+		return new DeclareMapEncoderDecoder(mine(xLog)).createDeclareMap();
 	}
 	
 	public static ClassificationType fromInputParamToXesLogClassificationType(EventClassification evtClassInputParam) {
@@ -89,5 +87,56 @@ public class MinerFulMinerLauncher {
 		}
 	}
 
+	public static LogParser deriveLogParserFromLogFile(InputLogCmdParameters inputParams) {
+		return deriveLogParserFromLogFile(inputParams, null);
+	}
 
+	public static LogParser deriveLogParserFromLogFile(InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
+		LogParser logParser = null;
+		boolean doAnalyseSubLog =
+				!inputParams.startFromTrace.equals(InputLogCmdParameters.FIRST_TRACE_NUM)
+				||
+				!inputParams.subLogLength.equals(InputLogCmdParameters.WHOLE_LOG_LENGTH);
+		switch (inputParams.inputLanguage) {
+		case xes:
+			ClassificationType evtClassi = MinerFulMinerLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
+			try {
+				if (doAnalyseSubLog) {
+					logParser = new XesLogParser(inputParams.inputLogFile, evtClassi, inputParams.startFromTrace, inputParams.subLogLength);
+				} else {
+					logParser = new XesLogParser(inputParams.inputLogFile, evtClassi);
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			// Remove from the analysed alphabet those activities that are
+			// specified in a user-defined list
+			if (minerFulParams != null && minerFulParams.activitiesToExcludeFromResult != null && minerFulParams.activitiesToExcludeFromResult.size() > 0) {
+				logParser.excludeTasksByName(minerFulParams.activitiesToExcludeFromResult);
+			}
+
+			// Let us try to free memory from the unused XesDecoder!
+			System.gc();
+			break;
+		case strings:
+			try {
+				if (doAnalyseSubLog) {
+					logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME, inputParams.startFromTrace, inputParams.subLogLength);
+				} else {
+					logParser = new StringLogParser(inputParams.inputLogFile, ClassificationType.NAME);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+			break;
+		default:
+			throw new UnsupportedOperationException("This encoding ("
+					+ inputParams.inputLanguage + ") is not yet supported");
+		}
+
+		return logParser;
+	}
 }

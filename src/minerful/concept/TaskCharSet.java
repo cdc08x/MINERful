@@ -27,10 +27,10 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	private final TaskChar[] taskChars;
 	@XmlAttribute
 	@XmlID
-	private final String joinedStringOfIdentifiers;
+	private String joinedStringOfIdentifiers;
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value=CharAdapter.class)
-	private final Collection<Character> listOfIdentifiers;
+	private Collection<Character> listOfIdentifiers;
 	public static final TaskCharSet VOID_TASK_CHAR_SET =
 			new TaskCharSet(new TaskChar[0]);
 	
@@ -47,8 +47,7 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 			this.joinedStringOfIdentifiers = "";
 		} else {
 			this.taskChars = taskChars;
-			this.listOfIdentifiers = this.toListOfIdentifiers();
-			this.joinedStringOfIdentifiers = this.toJoinedStringOfIdentifiers();
+			this.refreshListOfIdentifiers();
 		}
 	}
 	public TaskCharSet(SortedSet<TaskChar> taskChars) {
@@ -71,6 +70,11 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		this.taskChars = taskChars;
 		this.joinedStringOfIdentifiers = joinedStringOfIdentifiers;
 		this.listOfIdentifiers = listOfIdentifiers;
+	}
+	
+	public void refreshListOfIdentifiers() {
+		this.listOfIdentifiers = this.toListOfIdentifiers();
+		this.joinedStringOfIdentifiers = this.toJoinedStringOfIdentifiers();
 	}
 
 	public TaskChar[] getTaskCharsArray() {

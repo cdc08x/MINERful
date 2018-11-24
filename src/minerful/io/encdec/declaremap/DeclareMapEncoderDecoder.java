@@ -16,17 +16,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import minerful.concept.ProcessModel;
-import minerful.concept.TaskChar;
-import minerful.concept.TaskCharArchive;
-import minerful.concept.TaskCharFactory;
-import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.io.encdec.DeclareConstraintTransferObject;
-import minerful.io.encdec.TransferObjectToConstraintTranslator;
-import minerful.utils.ResourceReader;
-
 import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModelView;
@@ -42,6 +31,17 @@ import org.processmining.plugins.declareminer.visualizing.XMLBrokerFactory;
 
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
+
+import minerful.concept.ProcessModel;
+import minerful.concept.TaskChar;
+import minerful.concept.TaskCharArchive;
+import minerful.concept.TaskCharFactory;
+import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintsBag;
+import minerful.concept.constraint.MetaConstraintUtils;
+import minerful.io.encdec.DeclareConstraintTransferObject;
+import minerful.io.encdec.TransferObjectToConstraintTranslator;
+import minerful.utils.ResourceReader;
 
 public class DeclareMapEncoderDecoder {
 	private List<DeclareConstraintTransferObject> constraintTOs;
@@ -162,7 +162,10 @@ public class DeclareMapEncoderDecoder {
 		}
 		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateDefinitionsMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
 
-		InputStream ir = ResourceReader.loadResource(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE_LIBRARY_URL, DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
+		InputStream ir = ResourceReader.loadResource(
+				DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE_LIBRARY_URL,
+				DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE,
+				DeclareMapEncoderDecoder.class);
 
 		File language = null;
 		try {

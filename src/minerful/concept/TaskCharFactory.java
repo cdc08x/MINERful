@@ -10,6 +10,10 @@ public class TaskCharFactory {
 		this(new TaskCharEncoderDecoder());
 	}
 
+	public TaskCharEncoderDecoder getTaChaEncDec() {
+		return this.taChaEncDec;
+	}
+
 	public TaskCharFactory(TaskCharEncoderDecoder taskCharEncoderDecoder) {
 		this.taChaEncDec = taskCharEncoderDecoder;
 	}

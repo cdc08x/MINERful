@@ -12,6 +12,9 @@ import minerful.logmaker.params.LogMakerParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.utils.MessagePrinter;
 
+/**
+ * Launches the generation of event logs from declarative process specifications.
+ */
 public class MinerFulLogMakerLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulLogMakerLauncher.class);
 			
