@@ -1,5 +1,8 @@
 package minerful;
 
+import org.deckfour.xes.model.XLog;
+import org.processmining.plugins.declareminer.visualizing.DeclareMap;
+
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskCharArchive;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
@@ -15,10 +18,6 @@ import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.utils.MessagePrinter;
-
-import org.apache.commons.cli.Options;
-import org.deckfour.xes.model.XLog;
-import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
 public class MinerFulMinerLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerLauncher.class);

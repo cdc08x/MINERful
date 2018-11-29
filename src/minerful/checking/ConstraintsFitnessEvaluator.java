@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import minerful.automaton.concept.relevance.VacuityAwareWildcardAutomaton;
 import minerful.checking.relevance.dao.ConstraintFitnessEvaluation;
 import minerful.checking.relevance.dao.ConstraintsFitnessEvaluationsMap;
+import minerful.checking.relevance.dao.TraceEvaluation;
 import minerful.checking.relevance.walkers.RelevanceAutomatonMultiWalker;
 import minerful.checking.relevance.walkers.RelevanceAutomatonWalker;
 import minerful.concept.TaskChar;
@@ -237,13 +238,15 @@ public class ConstraintsFitnessEvaluator {
 
 		int
 			traceCount = 0,
-			barCount = 0;
+			barCount = 0,
+			traceNum = 0;
 		MessagePrinter.printOut("Parsing log: ");
 		
 		from = System.currentTimeMillis();
 		
 		while (logParIter.hasNext()) {
 			constraintIndex = 0;
+			traceNum++;
 			loTraParse = logParIter.next();
 			for (RelevanceAutomatonMultiWalker texasMultiRanger : texasMultiRangers) {
 				loTraParse.init();
@@ -252,7 +255,10 @@ public class ConstraintsFitnessEvaluator {
 					constraintUnderAnalysis = this.checkedConstraints.get(constraintIndex);
 					
 					eval = logEvalsMap.increment(constraintUnderAnalysis, walker.getTraceEvaluation());
-//System.out.println("MERDACCIA " + constraintUnderAnalysis + constraintUnderAnalysis.getRegularExpression() + " ha dato " + walker.getTraceEvaluation() + " su " + loTraParse.encodeTrace());
+					
+					if (walker.getTraceEvaluation().equals(TraceEvaluation.VIOLATION)) {
+						logger.trace("Trace " + loTraParse.printStringTrace() + " (num " + traceNum + ", " + loTraParse.getName() + ") violates " + constraintUnderAnalysis);
+					}
 
 					if (fitnessThreshold != null && isFitnessInsufficient(fitnessThreshold, eval, logParser)) {
 						this.checkedConstraints.remove(constraintIndex);

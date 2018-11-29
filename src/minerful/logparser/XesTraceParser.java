@@ -116,4 +116,9 @@ public class XesTraceParser extends AbstractTraceParser implements LogTraceParse
 		}
 		return isParsing();
 	}
+
+	@Override
+	public String getName() {
+		return this.xesTrace.getAttributes().get("concept:name").toString();
+	}
 }

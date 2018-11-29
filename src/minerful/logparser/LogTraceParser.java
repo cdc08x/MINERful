@@ -22,4 +22,5 @@ public interface LogTraceParser {
 	void init();
 	String encodeTrace();
 	String printStringTrace();
+	String getName();
 }

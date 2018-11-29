@@ -95,4 +95,9 @@ public class StringTraceParser extends AbstractTraceParser implements LogTracePa
 	public String printStringTrace() {
 		return strTrace;
 	}
+	
+	@Override
+	public String getName() {
+		return strTrace;
+	}
 }

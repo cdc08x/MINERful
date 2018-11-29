@@ -44,11 +44,12 @@ public class MinerFulFitnessCheckLauncher {
 			InputLogCmdParameters inputLogParams, CheckingCmdParameters chkParams, SystemCmdParameters systemParams) {
 		this(chkParams);
 
-		this.inputProcess = new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage, inputParams.inputFile);
 		if (inputParams.inputFile == null) {
 			systemParams.printHelpForWrongUsage("Input process model file missing!");
 			System.exit(1);
 		}
+		this.inputProcess = 
+				new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage,inputParams.inputFile);
 		this.inputLog = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputLogParams);
 
 		MessagePrinter.configureLogging(systemParams.debugLevel);
