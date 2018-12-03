@@ -5,11 +5,13 @@ import java.io.File;
 import org.deckfour.xes.in.XesXmlParser;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
+import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
 import minerful.MinerFulMinerLauncher;
 import minerful.checking.integration.prom.ModelFitnessEvaluatorOpenXesInterface;
 import minerful.checking.relevance.dao.ModelFitnessEvaluation;
 import minerful.concept.ProcessModel;
+import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputLogCmdParameters;
@@ -64,6 +66,15 @@ public class FitnessCheckOfDiscoveredProcessModelWithOpenXes {
 		ProcessModel processModel = miFuMiLa.mine(myXLog);
 		
 		System.out.println("...Done");
+		
+		// In case we want a reference to an equivalent DeclareMap, use the converter as in the line below.
+		// Notice that the graphical position of elements in the Declare Map is not rendered here.
+		// Watch out though: it might take time! In case you do not need this instruction, just comment the following two lines.
+		DeclareMap declareMap = new DeclareMapEncoderDecoder(processModel).createDeclareMap();
+		System.out.println("The constraint definitions in the Declare Map amount to: " + declareMap.getModel().constraintDefinitionsCount());
+		
+		// Notice that there is also a method that returns directly a DeclareMap upon mining the event log:
+		// DeclareMap declareMap = miFuMiLa.mineDeclareMap(myXLog);
 
 //////////////////////////////////////////////////////////////////
 //Evaluation phase on an entire log (an instance of OpenXES XLog)
