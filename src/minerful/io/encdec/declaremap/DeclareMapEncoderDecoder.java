@@ -72,9 +72,9 @@ public class DeclareMapEncoderDecoder {
 			+	INTEREST_FACTOR_LABEL + LABEL_VALUE_SEPARATOR + "%f";
 
 	public static final String TEMPLATE_TEMP_FILE_EXTENSION = ".xml";
-	public static final String TEMPLATE_TMP_FILE_BASENAME = "template";
-	public static final String DECLARE_XML_TEMPLATE_LIBRARY_URL = "file:/lib/resources.jar";
-	public static final String DECLARE_XML_TEMPLATE = "resources/" + TEMPLATE_TMP_FILE_BASENAME + TEMPLATE_TEMP_FILE_EXTENSION;
+	public static final String TEMPLATE_TMP_FILE_BASENAME = "ConDecTemplate";
+	public static final String DECLARE_XML_TEMPLATE_LIBRARY_URL = "minerful/io/encdec/declaremap/";
+	public static final String DECLARE_XML_TEMPLATE = TEMPLATE_TMP_FILE_BASENAME + TEMPLATE_TEMP_FILE_EXTENSION;
 
 	public DeclareMapEncoderDecoder(ProcessModel process) {
 		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(process.bag.howManyConstraints());
@@ -161,11 +161,7 @@ public class DeclareMapEncoderDecoder {
 			templateNameStringDeclareTemplateMap.put(templateNameString, d);
 		}
 		Map<DeclareMapTemplate, ConstraintTemplate> declareTemplateDefinitionsMap = readConstraintTemplates(templateNameStringDeclareTemplateMap);
-
-		InputStream ir = ResourceReader.loadResource(
-				DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE_LIBRARY_URL,
-				DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE,
-				DeclareMapEncoderDecoder.class);
+		InputStream ir = loadConDecXmlTemplate();
 
 		File language = null;
 		try {
@@ -268,7 +264,8 @@ public class DeclareMapEncoderDecoder {
 	}
 
 	public static Map<DeclareMapTemplate, ConstraintTemplate> readConstraintTemplates(Map<String, DeclareMapTemplate> templateNameStringDeclareTemplateMap) {
-		InputStream templateInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
+		InputStream templateInputStream = //ClassLoader.getSystemClassLoader().getResourceAsStream(DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
+				loadConDecXmlTemplate();
 		File languageFile = null;
 		try {
 			languageFile = File.createTempFile(DeclareMapEncoderDecoder.TEMPLATE_TMP_FILE_BASENAME, DeclareMapEncoderDecoder.TEMPLATE_TEMP_FILE_EXTENSION);
@@ -312,6 +309,12 @@ public class DeclareMapEncoderDecoder {
 		}
 
 		return declareTemplateConstraintTemplateMap;
+	}
+
+	private static InputStream loadConDecXmlTemplate() {
+		return ResourceReader.loadResource(
+				DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE_LIBRARY_URL +
+				DeclareMapEncoderDecoder.DECLARE_XML_TEMPLATE);
 	}
 
 	private static List<IItem> visit(IItem item) {
