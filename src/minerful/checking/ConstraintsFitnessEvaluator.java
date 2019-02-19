@@ -64,7 +64,7 @@ public class ConstraintsFitnessEvaluator {
 		Arrays.sort(constraints, new TemplateAndParametersBasedComparator());
 		this.checkedConstraints = new ArrayList<Constraint>(Arrays.asList(constraints));
 		this.taChaEncoDeco = taChaEncoDeco;
-		this.taChaEncoDeco.mergeWithConstraintsAndUpdateItsParameters(constraints);
+		this.taChaEncoDeco.mergeWithConstraintsAndUpdateTheirParameters(constraints);
 
 		Collection<Constraint> templates = identifyTemplates(this.checkedConstraints);
 		
@@ -138,7 +138,6 @@ public class ConstraintsFitnessEvaluator {
 			}
 			charParameters = new ArrayList<Character>();
 			for (TaskCharSet param : constraint.getParameters()) {
-//System.out.println("MERDACCIA param " + param + " => " + param.getListOfIdentifiers());
 				charParameters.addAll(param.getListOfIdentifiers());
 			}
 			if (!parametersPerTemplate.containsKey(constraint)) {
@@ -234,32 +233,45 @@ public class ConstraintsFitnessEvaluator {
 		ArrayList<RelevanceAutomatonWalker> walkersToRemove = new ArrayList<RelevanceAutomatonWalker>();
 		ConstraintFitnessEvaluation eval = null;
 		
-		ConstraintsFitnessEvaluationsMap logEvalsMap =  new ConstraintsFitnessEvaluationsMap(checkedConstraints);
+		ConstraintsFitnessEvaluationsMap logEvalsMap = 
+				new ConstraintsFitnessEvaluationsMap(checkedConstraints);
 
 		int
 			traceCount = 0,
 			barCount = 0,
 			traceNum = 0;
+		boolean
+			traceIsFitting = true;
 		MessagePrinter.printOut("Parsing log: ");
 		
 		from = System.currentTimeMillis();
 		
+		// For every trace
 		while (logParIter.hasNext()) {
 			constraintIndex = 0;
 			traceNum++;
 			loTraParse = logParIter.next();
+			// We assume the trace fits, by default
+			traceIsFitting = true;
+			// For parametric automata associated to constraint templates
 			for (RelevanceAutomatonMultiWalker texasMultiRanger : texasMultiRangers) {
 				loTraParse.init();
+				// Run the cursors on the parametric automata
 				texasMultiRanger.run(loTraParse);
+				// For every run
 				for (RelevanceAutomatonWalker walker : texasMultiRanger.getWalkers()) {
+					// Get the corresponding checked constraint
 					constraintUnderAnalysis = this.checkedConstraints.get(constraintIndex);
 					
+					// Retrieve the results of the verification of the trace by replay 
 					eval = logEvalsMap.increment(constraintUnderAnalysis, walker.getTraceEvaluation());
-					
+					// If the trace violates the corresponding constraint
 					if (walker.getTraceEvaluation().equals(TraceEvaluation.VIOLATION)) {
 						logger.trace("Trace " + loTraParse.printStringTrace() + " (num " + traceNum + ", " + loTraParse.getName() + ") violates " + constraintUnderAnalysis);
+						traceIsFitting = traceIsFitting & false;
 					}
 
+					// This condition is activated only when fitness is used for mining -- to save memory by removing those constraints that for sure will not make it to have a sufficient fitness at this stage already
 					if (fitnessThreshold != null && isFitnessInsufficient(fitnessThreshold, eval, logParser)) {
 						this.checkedConstraints.remove(constraintIndex);
 						walkersToRemove.add(walker);
@@ -269,18 +281,20 @@ public class ConstraintsFitnessEvaluator {
 					}
 				}
 				
+				// This loop is run only when fitness is used for mining -- to save memory by removing those constraints that for sure will not make it to have a sufficient fitness at this stage already
 				for (RelevanceAutomatonWalker walkerToRemove : walkersToRemove) {
 					texasMultiRanger.remove(walkerToRemove);
 				}
 				walkersToRemove = new ArrayList<RelevanceAutomatonWalker>();
 			}
-			if (barCount > logParser.length() / 80) {
-				barCount = 0;
-				MessagePrinter.printOut("|");
-			}
+			barCount = displayAdvancementBars(logParser.length(), barCount);
 			traceCount++;
 			barCount++;
-//System.exit(0);
+			if (traceIsFitting) {
+				logEvalsMap.incrementFittingTracesCount();
+			} else {
+				logEvalsMap.incrementNonFittingTracesCount();
+			}
 		}
 		
 		this.updateConstraintsFitness(logEvalsMap, logParser);
@@ -292,6 +306,14 @@ public class ConstraintsFitnessEvaluator {
 		logger.debug("Evaluation done. Time in msec: " + (to - from));
 		
 		return logEvalsMap;
+	}
+
+	private static int displayAdvancementBars(int logParserLength, int barCount) {
+		if (barCount > logParserLength / 80) {
+			barCount = 0;
+			MessagePrinter.printOut("|");
+		}
+		return barCount;
 	}
 	
 	public ConstraintsFitnessEvaluationsMap runOnTrace(LogTraceParser loTraParser) {
@@ -336,7 +358,8 @@ public class ConstraintsFitnessEvaluator {
 	}
 	
 	public static boolean isFitnessInsufficient(Double fitnessThreshold, ConstraintFitnessEvaluation eval, LogParser logParser) {
-		return eval.numberOfViolatingOrVacuouslySatisfyingTraces() > (logParser.length() - fitnessThreshold * logParser.length());
+		return
+			eval.numberOfViolatingTraces > (logParser.length() - fitnessThreshold * logParser.length());
 	}
 
 	public static double computeFitness(ConstraintFitnessEvaluation eval, LogParser logParser) {

@@ -12,11 +12,22 @@ public class ConstraintsFitnessEvaluationsMap {
 
 	public Map<Constraint, ConstraintFitnessEvaluation> evaluationsOnLog;
 	
+	private int fittingTracesCount = 0;
+	private int nonFittingTracesCount = 0;
+	
 	public ConstraintsFitnessEvaluationsMap(List<Constraint> checkedConstraints) {
 		this.evaluationsOnLog = new HashMap<Constraint, ConstraintFitnessEvaluation>(checkedConstraints.size(), (float)1.0);
 		for (Constraint chkCns : checkedConstraints) {
 			this.evaluationsOnLog.put(chkCns, new ConstraintFitnessEvaluation());
 		}
+	}
+
+	public int getFittingTracesCount() {
+		return fittingTracesCount;
+	}
+
+	public int getNonFittingTracesCount() {
+		return nonFittingTracesCount;
 	}
 
 	public ConstraintFitnessEvaluation increment(Constraint constraintUnderAnalysis, TraceEvaluation traceEvaluation) {
@@ -27,6 +38,16 @@ public class ConstraintsFitnessEvaluationsMap {
 
 	public ConstraintFitnessEvaluation remove(Constraint constraintUnderAnalysis) {
 		return this.evaluationsOnLog.remove(constraintUnderAnalysis);
+	}
+	
+	public int incrementFittingTracesCount() {
+		fittingTracesCount++;
+		return this.getFittingTracesCount();
+	}
+	
+	public int incrementNonFittingTracesCount() {
+		nonFittingTracesCount++;
+		return this.getNonFittingTracesCount();
 	}
 
 	public String printCSV() {

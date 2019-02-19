@@ -304,8 +304,6 @@ public class TaskCharEncoderDecoder {
 			logger.warn("A task is identified by an empty string");
 		}
 
-//System.out.println("MERDACCIA lurida: this.tasksDictionary.containsKey(taskClass)" + taskClass + " ? " + this.tasksDictionary.containsKey(taskClass));
-
 		// If the tasks dictionary already contains this task, skip this!
 		if (!this.tasksDictionary.containsKey(taskClass)) {
 			// If the bound was not reached for the current translation group,
@@ -462,23 +460,18 @@ public class TaskCharEncoderDecoder {
 
 	/**
 	 * Includes the tasks from the constraints in the managed set.
-	 * As a side effect, it replaces the existing index with a new one.
+	 * As a side effect, it replaces the existing index characters of the constraints' parameters with new ones.
 	 * @param constraints Constraints from which TaskChars are extracted
 	 */
-	public void mergeWithConstraintsAndUpdateItsParameters(Constraint... constraints) {
+	public void mergeWithConstraintsAndUpdateTheirParameters(Constraint... constraints) {
 		char charId = Character.END_PUNCTUATION;
-		boolean changedCharId = false;
 		for (Constraint con : constraints) {
 			for (TaskCharSet taChSet : con.getParameters()) {
-				changedCharId = false;
 				for (TaskChar taChar : taChSet.getTaskCharsArray()) {
 					charId = this.encode(taChar.taskClass);
-					changedCharId = changedCharId || (taChar.identifier != charId);
 					taChar.identifier = charId;
 				}
-				if (changedCharId) {
-					taChSet.refreshListOfIdentifiers();
-				}
+				taChSet.refreshListOfIdentifiers();
 			}
 		}
 	}

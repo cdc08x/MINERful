@@ -11,10 +11,11 @@
 #                   run-MINERful-vacuityCheck.sh (this file)
 
 ## Exec-specific parameters
-FITNESS_THRESHOLD="0.9"
+FITNESS_THRESHOLD="1.0"
 # LOG="/home/claudio/Code/MINERful/logs/BPIC2012/financial_log-restricted.xes.gz"
 LOG="/home/claudio/Code/MINERful/logs/BPIC2013/bpi_challenge_2013_closed_problems.xes"
 # LOG="/home/claudio/Code/MINERful/logs/Example-logs/ABC.txt"
+LOG="/home/claudio/Downloads/manually-annotated-speech-acts-SPEECH.xes.gz"
 
 ## Runtime environment constants
 MAINCLASS="minerful.MinerFulVacuityChecker"

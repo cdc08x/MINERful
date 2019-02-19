@@ -104,16 +104,19 @@ public class ConstraintsPrinter {
         			sBuffIndex.append(';');
     			}
     			sBufLegend.append('\'');
-    			sBufLegend.append(c.toString().replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
+    			// BUG-FIX: there is no reason why we have to flatten all non-word characters into "_".
+    			// This creates tremendous issues with logs like BPIC 2012, where we have both
+    			// "A_ACCEPTED" and "W_Completeren aanvraag"
+    			sBufLegend.append(c.toString().replace("'", "\\'")); //.replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
     			sBufLegend.append('\'');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.3f", c.getSupport() * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getSupport() * 100));
     			sBuffValues.append(';');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.3f", c.getConfidence() * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getConfidence() * 100));
     			sBuffValues.append(';');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.3f", c.getInterestFactor() * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getInterestFactor() * 100));
     			sBuffValues.append(';');
     			
     			i++;

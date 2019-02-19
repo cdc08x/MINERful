@@ -46,6 +46,7 @@ public class ProcessModelLoader {
 			MessagePrinter.getInstance(this).error("Unreadable process model from file: " + inputFile.getAbsolutePath()
 					+ ". Check the file path or the specified encoding.", e);
 		}
+	
 		return inputProcess;
 	}
 

@@ -1,9 +1,10 @@
 package minerful.checking.relevance.dao;
 
 import minerful.concept.constraint.Constraint;
+import minerful.utils.MessagePrinter;
 
 public class ModelFitnessEvaluation {
-	public static final String CSV_POST_HEADER = ";Avg-fitness";
+	public static final String CSV_POST_HEADER = ";Avg-fitness;Trace-fit-ratio";
 	public final ConstraintsFitnessEvaluationsMap evaloMap;
 	public final String name;
 	
@@ -22,14 +23,19 @@ public class ModelFitnessEvaluation {
 		return avgFitness / denominator;
 	}
 	
+	public Double traceFitRatio() {
+		int denominator = evaloMap.getFittingTracesCount() + evaloMap.getNonFittingTracesCount();
+		return evaloMap.getFittingTracesCount() * 1.0 / denominator;
+	}
+	
 	public boolean isFullyFitting() {
 		return avgFitness() >= 1.0;
 	}
 
 	public String printCSV() {
 		String csv = this.evaloMap.printCSV();
-		String appendedAvgFitness = ";" + avgFitness();
-		csv = csv.replace("\n", appendedAvgFitness+"\n");
+		String appendedAvgFitness = ";" + MessagePrinter.formatFloatNumForCSV(avgFitness()) + ";" + MessagePrinter.formatFloatNumForCSV(traceFitRatio());
+		csv = csv.replace("\n", appendedAvgFitness + "\n");
 		csv = csv.replace(ConstraintFitnessEvaluation.CSV_HEADER+appendedAvgFitness, ConstraintFitnessEvaluation.CSV_HEADER + CSV_POST_HEADER);
 		
 		return csv;

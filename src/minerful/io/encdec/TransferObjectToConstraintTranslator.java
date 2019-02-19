@@ -21,7 +21,6 @@ public class TransferObjectToConstraintTranslator {
 						conTO.parameters
 					)
 				);
-			
 			if (conTO.support != null) {
 				minerFulConstraint.setSupport(conTO.support);
 			}

@@ -8,19 +8,18 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
+import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
+import org.processmining.plugins.declareminer.visualizing.ConstraintDefinition;
+import org.processmining.plugins.declareminer.visualizing.Parameter;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapTemplate;
 import minerful.io.encdec.declaremap.DeclareMapToMinerFulTemplatesTranslator;
 import minerful.io.encdec.pojo.ConstraintPojo;
-
-import org.processmining.plugins.declareminer.visualizing.ActivityDefinition;
-import org.processmining.plugins.declareminer.visualizing.ConstraintDefinition;
-import org.processmining.plugins.declareminer.visualizing.Parameter;
 
 public class DeclareConstraintTransferObject implements Comparable<DeclareConstraintTransferObject> {
 	public final DeclareMapTemplate declareMapTemplate;
@@ -149,28 +148,31 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		
 		result = this.declareMapTemplate.compareTo(o.declareMapTemplate);
 		if (result == 0) {
-			/* Compare the parameters' sizes */
-    		for (int i = 0; i < this.parameters.size() && result == 0; i++) {
-    			if (this.parameters.get(i) == null) {
-    				if (o.parameters.get(i) != null) {
-    					return 1;
-    				}
-    			} else {
-    				if (o.parameters.get(i) == null) {
-    					return -1;
-    				}
-    			}
-    			result = new Integer(this.parameters.get(i).size()).compareTo(o.parameters.get(i).size());
-    			/* Compare the respective parameters' tasks */
-    			if (result == 0) {
-    				Iterator<String>
-    					thisParamsIterator = this.parameters.get(i).iterator(),
-    					oParamsIterator = o.parameters.get(i).iterator();
-    				while (thisParamsIterator.hasNext() && result == 0) {
-    					result = thisParamsIterator.next().compareTo(oParamsIterator.next());
-    				}
-    			}
-    		}
+			result = this.minerFulTemplate.getName().compareTo(o.minerFulTemplate.getName());
+			if (result == 0) {
+				/* Compare the parameters' sizes */
+	    		for (int i = 0; i < this.parameters.size() && result == 0; i++) {
+	    			if (this.parameters.get(i) == null) {
+	    				if (o.parameters.get(i) != null) {
+	    					return 1;
+	    				}
+	    			} else {
+	    				if (o.parameters.get(i) == null) {
+	    					return -1;
+	    				}
+	    			}
+	    			result = new Integer(this.parameters.get(i).size()).compareTo(o.parameters.get(i).size());
+	    			/* Compare the respective parameters' tasks */
+	    			if (result == 0) {
+	    				Iterator<String>
+	    					thisParamsIterator = this.parameters.get(i).iterator(),
+	    					oParamsIterator = o.parameters.get(i).iterator();
+	    				while (thisParamsIterator.hasNext() && result == 0) {
+	    					result = thisParamsIterator.next().compareTo(oParamsIterator.next());
+	    				}
+	    			}
+	    		}
+			}
 		}
 		
 		return result;

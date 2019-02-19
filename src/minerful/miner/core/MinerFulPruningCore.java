@@ -29,7 +29,9 @@ public class MinerFulPruningCore {
 	
 	public MinerFulPruningCore(ProcessModel processModel,
 			PostProcessingCmdParameters postProcParams) {
-		this(processModel, processModel.getProcessAlphabet(), postProcParams);
+		this(	processModel,
+				processModel.getProcessAlphabet(),
+				postProcParams);
 	}
 	
 	public MinerFulPruningCore(ProcessModel processModel,
@@ -114,7 +116,7 @@ public class MinerFulPruningCore {
 		long
        	beforeSubCheck = 0L,
        	afterSubCheck = 0L;
-
+		
 //		if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
 //			this.processModel.resetMarks();
 //		}

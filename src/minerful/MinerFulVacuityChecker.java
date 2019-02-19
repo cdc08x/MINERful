@@ -1,6 +1,7 @@
 package minerful;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,8 +34,10 @@ import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
 import minerful.concept.constraint.relation.Succession;
+import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
+import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
@@ -66,26 +69,26 @@ public class MinerFulVacuityChecker {
 	 public static Constraint[] parametricConstraints =
 		new Constraint[] {
 			new SequenceResponse21(a,b,x),
-			new SequenceResponse22(a,b,x,y),
+//			new SequenceResponse22(a,b,x,y),
 //			new SequenceResponse32(a,b,c,x,y),
 			new Participation(a),	// a.k.a. Existence(1, a)
-			new AtMostOne(a),	// a.k.a. Absence(2, a)
+//			new AtMostOne(a),	// a.k.a. Absence(2, a)
 			new Init(a),
 			new End(a),
-			new RespondedExistence(a,b),
-			new Response(a, b),
-			new AlternateResponse(a,b),
-			new ChainResponse(a,b),
-			new Precedence(a,b),
-			new AlternatePrecedence(a,b),
-			new ChainPrecedence(a,b),
-			new CoExistence(a,b),
-			new Succession(a,b),
-			new AlternateSuccession(a, b),
-			new ChainSuccession(a, b),
-			new NotChainSuccession(a, b),
-			new NotSuccession(a, b),
-			new NotCoExistence(a, b),
+//			new RespondedExistence(a,b),
+//			new Response(a, b),
+//			new AlternateResponse(a,b),
+//			new ChainResponse(a,b),
+//			new Precedence(a,b),
+//			new AlternatePrecedence(a,b),
+//			new ChainPrecedence(a,b),
+//			new CoExistence(a,b),
+//			new Succession(a,b),
+//			new AlternateSuccession(a, b),
+//			new ChainSuccession(a, b),
+//			new NotChainSuccession(a, b),
+//			new NotSuccession(a, b),
+//			new NotCoExistence(a, b),
     };
 
 	public static void main(String[] args) throws Exception {
@@ -136,10 +139,11 @@ public class MinerFulVacuityChecker {
 						loPar.getTaskCharArchive(),
 						Arrays.asList(parametricConstraints));
 		ConstraintsFitnessEvaluationsMap evalon = null;
+
 		if (args.length > 1) {
-			evalon = evalor.runOnLog(loPar);
-		} else {
 			evalon = evalor.runOnLog(loPar, Double.valueOf(args[1]));
+		} else {
+			evalon = evalor.runOnLog(loPar);
 		}
 
 		MessagePrinter.printlnOut(evalon.printCSV());
@@ -148,10 +152,10 @@ public class MinerFulVacuityChecker {
 			logger.debug("Storing fully-supported default-Declare constraints as a Declare map on " + args[2]);
 
 			Collection<Constraint> nuStandardConstraints = new ArrayList<Constraint>();
-			Double supportThreshold = Double.valueOf(args[1]);
+			Double fitnessThreshold = Double.valueOf(args[1]);
 
 			for (Constraint con : evalor.getCheckedConstraints()) {
-				if (con.getFamily() != null && con.getSupport() >= supportThreshold) {
+				if (con.getFamily() != null && con.getFitness() >= fitnessThreshold) {
 					nuStandardConstraints.add(con);
 				}
 			}

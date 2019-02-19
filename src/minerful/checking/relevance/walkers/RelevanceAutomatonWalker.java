@@ -34,6 +34,7 @@ public class RelevanceAutomatonWalker {
 				actualCharParamsArray = actualCharParams.toArray(new Character[formalCharParams.size()]);
 
 		for (int i = 0; i < actualCharParamsArray.length; i++) {
+//System.out.println("Merdaccia infame: actualCharParamsArray[i]: " + actualCharParamsArray[i] + " formalCharParamsArray[i] " + formalCharParamsArray[i]);
 			alteredInverseLogTranslationMap.put(logTranslationMap.get(actualCharParamsArray[i]), new Character(formalCharParamsArray[i]));
 		}
 
@@ -43,6 +44,7 @@ public class RelevanceAutomatonWalker {
 //System.out.println("Lurida merdazza alteredInverseLogTranslationMap " + alteredInverseLogTranslationMap);
 //System.out.println("Lurida merdazza formalCharParamsArray " + Arrays.toString(formalCharParamsArray));
 //System.out.println("Lurida merdazza actualCharParamsArray " + Arrays.toString(actualCharParamsArray));
+
 	}
 
 	public void reset() {
@@ -84,9 +86,9 @@ public class RelevanceAutomatonWalker {
 				arg0 = codify(taskClass);
 				relAwaTrans = this.currentStateInTheWalk.getTransition(arg0);
 				necState = ((ActivationStatusWildcardAwareState) this.currentStateInTheWalk.step(arg0));
-				// logger.info(taskClass + " => " + codify(taskClass) + " is involved in this constraint (" + this.name + ") and leads to " + (necState!=null?necState.getStatus():null));
+//				logger.info(taskClass + " => " + codify(taskClass) + " is involved in this constraint (" + this.name + ") and leads to " + (necState!=null?necState.getStatus():null));
 			} else {
-				// logger.info(taskClass + " is not involved in this constraint (" + this.name + ")");
+//				logger.info(taskClass + " is not involved in this constraint (" + this.name + ")");
 				relAwaTrans = this.currentStateInTheWalk.getWildTransition();
 				necState = (ActivationStatusWildcardAwareState) this.currentStateInTheWalk.stepWild();
 			}

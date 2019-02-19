@@ -19,7 +19,6 @@ public class ProcessModelTransferObject {
 		this.name = modelPojo.name;
 		this.constraints = new TreeSet<DeclareConstraintTransferObject>();
 		this.tasks = new TreeSet<String>();
-
 		if (modelPojo.tasks == null || modelPojo.tasks.size() == 0) {
 			if (modelPojo.constraints.size() > 0) {
 				for (ConstraintPojo pojo : modelPojo.constraints) {

@@ -124,6 +124,10 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 		return constraintsRemoved;
 	}
 	
+	/**
+	 * Removes all constraints.
+	 * @return The number of erased constraints
+	 */
 	public int wipeOutConstraints() {
 		int erasedConstraints = 0;
 		for (TaskChar tChar : this.taskChars) {

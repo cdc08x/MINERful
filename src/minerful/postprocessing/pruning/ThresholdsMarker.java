@@ -46,7 +46,7 @@ public class ThresholdsMarker {
             	}
             }
         }
-        
+
         return constraintsBag;
     }
 

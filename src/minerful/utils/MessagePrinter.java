@@ -1,5 +1,7 @@
 package minerful.utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Properties;
 
 import org.apache.log4j.LogMF;
@@ -10,6 +12,9 @@ import minerful.params.SystemCmdParameters;
 
 public class MessagePrinter {
 	Logger logger = null;
+	
+	static DecimalFormat df = new DecimalFormat("0");
+	static { df.setMaximumFractionDigits(16); }
 
     public static void configureLogging(SystemCmdParameters.DebugLevel debugLevel) {
     	String threshold = "ALL";
@@ -68,6 +73,13 @@ public class MessagePrinter {
 	}
 	public static void printlnError(String s) {
 		System.err.println(s);
+	}
+	
+	public static String formatFloatNumForCSV(float num) {
+		return df.format(num);
+	}
+	public static String formatFloatNumForCSV(double num) {
+		return df.format(num);
 	}
 	
 	public void info(String message) {

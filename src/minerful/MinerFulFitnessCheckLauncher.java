@@ -13,15 +13,17 @@ import minerful.io.ProcessModelLoader;
 import minerful.io.params.InputModelParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
+import minerful.miner.core.MinerFulPruningCore;
 import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.utils.MessagePrinter;
 
 public class MinerFulFitnessCheckLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulFitnessCheckLauncher.class);
 			
-	private ProcessModel inputProcess;
-	private LogParser inputLog;
+	private ProcessModel processSpecification;
+	private LogParser eventLog;
 	private CheckingCmdParameters chkParams;
 	
 	private MinerFulFitnessCheckLauncher(CheckingCmdParameters chkParams) {
@@ -30,17 +32,17 @@ public class MinerFulFitnessCheckLauncher {
 	
 	public MinerFulFitnessCheckLauncher(AssignmentModel declareMapModel, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
-		this.inputProcess = new ProcessModelLoader().loadProcessModel(declareMapModel);
-		this.inputLog = inputLog;
+		this.processSpecification = new ProcessModelLoader().loadProcessModel(declareMapModel);
+		this.eventLog = inputLog;
 	}
 
 	public MinerFulFitnessCheckLauncher(ProcessModel minerFulProcessModel, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
-		this.inputProcess = minerFulProcessModel;
-		this.inputLog = inputLog;
+		this.processSpecification = minerFulProcessModel;
+		this.eventLog = inputLog;
 	}
 
-	public MinerFulFitnessCheckLauncher(InputModelParameters inputParams, 
+	public MinerFulFitnessCheckLauncher(InputModelParameters inputParams, PostProcessingCmdParameters preProcParams,
 			InputLogCmdParameters inputLogParams, CheckingCmdParameters chkParams, SystemCmdParameters systemParams) {
 		this(chkParams);
 
@@ -48,44 +50,67 @@ public class MinerFulFitnessCheckLauncher {
 			systemParams.printHelpForWrongUsage("Input process model file missing!");
 			System.exit(1);
 		}
-		this.inputProcess = 
-				new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage,inputParams.inputFile);
-		this.inputLog = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputLogParams);
+		// Load the process specification from the file
+		this.processSpecification = 
+				new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage, inputParams.inputFile);
+		// Apply some preliminary pruning
+		MinerFulPruningCore pruniCore = new MinerFulPruningCore(this.processSpecification, preProcParams);
+		this.processSpecification.bag = pruniCore.massageConstraints();
+
+		this.eventLog = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputLogParams);
 
 		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
-	
-	public ProcessModel check() {
-		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
-				this.inputLog.getEventEncoderDecoder(), this.inputProcess);
 
-		ModelFitnessEvaluation evalon = evalor.evaluateOnLog(this.inputLog);
+	public ProcessModel getProcessSpecification() {
+		return processSpecification;
+	}
+
+	public LogParser getEventLog() {
+		return eventLog;
+	}
+	
+	public ModelFitnessEvaluation check() {
+		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
+				this.eventLog.getEventEncoderDecoder(), this.processSpecification);
+
+		ModelFitnessEvaluation evalon = evalor.evaluateOnLog(this.eventLog);
 		
 		reportOnEvaluation(evalon);
 		
-	    return inputProcess;
+	    return evalon;
 	}
 
-	public ProcessModel check(LogTraceParser trace) {
+	public ModelFitnessEvaluation check(LogTraceParser trace) {
 		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
-				this.inputLog.getEventEncoderDecoder(), this.inputProcess);
+				this.eventLog.getEventEncoderDecoder(), this.processSpecification);
 		
 		ModelFitnessEvaluation evalon = evalor.evaluateOnTrace(trace);
 		
 		reportOnEvaluation(evalon);
 		
-		return inputProcess;
+		return evalon;
+	}
+	
+	private static String printFitnessJsonSummary(ModelFitnessEvaluation evalon) {
+		return "{\"Avg.fitness\":" 
+				+ MessagePrinter.formatFloatNumForCSV(evalon.avgFitness()) + ";" 
+				+ "\"Trace-fit-ratio\":" 
+				+ MessagePrinter.formatFloatNumForCSV(evalon.traceFitRatio())
+				+ "}";
 	}
 
 	private void reportOnEvaluation(ModelFitnessEvaluation evalon) {
 		if (evalon.isFullyFitting()) {
-			logger.info("Yay! The passed declarative process specification is fully fitting with the input traces!");
+			logger.info("Yay! The passed declarative process specification is fully fitting with the input traces! Summary:\n"
+			+ printFitnessJsonSummary(evalon) + "\n");
 		} else {
 			logger.warn(
-					"The passed declarative process specification is not fully fitting with the input traces"
+					"The passed declarative process specification is not fully fitting with the input traces. Summary:\n"
+					+ printFitnessJsonSummary(evalon) + "\n"
 					+ ((chkParams.fileToSaveResultsAsCSV == null) ?
-							". See below for further details." :
-							". See " + chkParams.fileToSaveResultsAsCSV.getAbsolutePath() + " for further details.")
+							"See below for further details." :
+							"See " + chkParams.fileToSaveResultsAsCSV.getAbsolutePath() + " for further details.")
 					);
 		}
 		

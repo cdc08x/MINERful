@@ -4,24 +4,22 @@
  */
 package minerful;
 
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
 import minerful.concept.ProcessModel;
 import minerful.concept.TaskCharArchive;
-import minerful.concept.constraint.ConstraintsBag;
 import minerful.io.params.OutputModelParameters;
+import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
-import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
-import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.stringsmaker.MinerFulStringTracesMaker;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
 import minerful.utils.MessagePrinter;
-
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 
 public class MinerFulSimuStarter extends MinerFulMinerStarter {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulSimuStarter.class);

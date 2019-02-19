@@ -7,13 +7,16 @@ package minerful;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import jdk.nashorn.internal.ir.CallNode.EvalArgs;
 import minerful.checking.params.CheckingCmdParameters;
+import minerful.checking.relevance.dao.ModelFitnessEvaluation;
 import minerful.concept.ProcessModel;
 import minerful.io.params.InputModelParameters;
 import minerful.io.params.OutputModelParameters;
 import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.SystemCmdParameters.DebugLevel;
+import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.utils.MessagePrinter;
 
@@ -26,6 +29,7 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
 		
 		Options systemOptions = SystemCmdParameters.parseableOptions(),
 				outputOptions = OutputModelParameters.parseableOptions(),
+				postPrOptions = PostProcessingCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				chkOptions = CheckingCmdParameters.parseableOptions(),
 				inputLogOptions = InputLogCmdParameters.parseableOptions(),
@@ -35,6 +39,9 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: outputOptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
+    	for (Object opt: postPrOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: viewOptions.getOptions()) {
@@ -65,6 +72,10 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
 				new OutputModelParameters(
 						cmdLineOptions,
 						args);
+		PostProcessingCmdParameters preProcParams =
+				new PostProcessingCmdParameters(
+						cmdLineOptions,
+						args);
 		CheckingCmdParameters chkParams =
 				new CheckingCmdParameters(
 						cmdLineOptions,
@@ -88,11 +99,11 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
         	systemParams.printHelp(cmdLineOptions);
         	System.exit(0);
         }
-
-        MinerFulFitnessCheckLauncher miFuCheLa = new MinerFulFitnessCheckLauncher(inpuModlParams, inputLogParams, chkParams, systemParams);
+        MinerFulFitnessCheckLauncher miFuCheLa = new MinerFulFitnessCheckLauncher(inpuModlParams, preProcParams, inputLogParams, chkParams, systemParams);
         
-        ProcessModel outputProcess = miFuCheLa.check();
+        ModelFitnessEvaluation evaluationOutput = miFuCheLa.check();
+        ProcessModel processModel = miFuCheLa.getProcessSpecification();
 
-        new MinerFulOutputManagementLauncher().manageOutput(outputProcess, viewParams, outParams, systemParams);
+        new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams);
     }
  }

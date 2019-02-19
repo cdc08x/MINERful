@@ -12,6 +12,12 @@ public class ViewCmdParameters extends ParamsManager {
 	public static final String MACHINE_READABLE_RESULTS_PARAM_NAME = "mR";
 	public static final String CONSTRAINTS_SORTING_TYPE_PARAM_NAME = "cS";
 	public static final String CONSTRAINTS_NO_FOLDING_PARAM_NAME = "noCF";
+	public static final String SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME = "shush";
+	
+	public static final Boolean DEFAULT_DO_MACHINE_READABLE_RESULTS = false;
+	public static final ConstraintsSorting DEFAULT_CONSTRAINTS_SORTING_TYPE = ConstraintsSorting.type;
+	public static final Boolean DEFAULT_DO_CONSTRAINTS_NO_FOLDING = false;
+	public static final Boolean DEFAULT_DO_SUPPRESS_SCREEN_PRINT_OUT = false;
 
 	/** Set this field to <code>true</code> to print a machine-readable list of supports, for each constraint template and constrained activities. */
     public Boolean machineReadableResults;
@@ -19,16 +25,18 @@ public class ViewCmdParameters extends ParamsManager {
     public ConstraintsSorting constraintsSorting;
 	/** Set this field to <code>true</code> to avoid the discovered constraints to be folded under activation tasks in the print-out. */
     public Boolean noFoldingRequired;
-
+	/** Set this field to <code>true</code> to avoid the discovered constraints to be printed out on screen. */
+	public Boolean suppressScreenPrintOut;
 
 	/**
 	 * 
 	 */
 	public ViewCmdParameters() {
 		super();
-		machineReadableResults = false;
-	    constraintsSorting = ConstraintsSorting.type;
-	    noFoldingRequired = false;
+		machineReadableResults = DEFAULT_DO_MACHINE_READABLE_RESULTS;
+	    constraintsSorting = DEFAULT_CONSTRAINTS_SORTING_TYPE;
+	    noFoldingRequired = DEFAULT_DO_CONSTRAINTS_NO_FOLDING;
+	    suppressScreenPrintOut = DEFAULT_DO_SUPPRESS_SCREEN_PRINT_OUT;
 	}
 
 
@@ -55,6 +63,7 @@ public class ViewCmdParameters extends ParamsManager {
         				);
         this.machineReadableResults = line.hasOption(MACHINE_READABLE_RESULTS_PARAM_NAME);
         this.noFoldingRequired = line.hasOption(CONSTRAINTS_NO_FOLDING_PARAM_NAME);
+        this.suppressScreenPrintOut = line.hasOption(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME);
 	}
 	
 	@SuppressWarnings("static-access")
@@ -64,21 +73,31 @@ public class ViewCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("type")
         		.withLongOpt("sort-constraints")
-        		.withDescription("Sorting policy for constraints of the discovered process: " + printValues(ConstraintsSorting.values()))
+        		.withDescription("Sorting policy for constraints of the discovered process: " + printValues(ConstraintsSorting.values()) + 
+        				printDefault(DEFAULT_CONSTRAINTS_SORTING_TYPE))
         		.withType(new String())
         		.create(CONSTRAINTS_SORTING_TYPE_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("nofolding")
-        		.withDescription("avoid the discovered constraints to be folded under activation tasks")
+        		.withDescription("avoid the discovered constraints to be folded under activation tasks" + 
+        				printDefault(DEFAULT_DO_CONSTRAINTS_NO_FOLDING))
         		.create(CONSTRAINTS_NO_FOLDING_PARAM_NAME)
         		);
         options.addOption(
         		OptionBuilder
         		.withLongOpt("machine-readable")
-        		.withDescription("print a machine-eadable list of supports, for each constraint template and constrained activities in the print-out")
+        		.withDescription("print a machine-readable list of supports, for each constraint template and constrained activities in the print-out" + 
+        				printDefault(DEFAULT_DO_MACHINE_READABLE_RESULTS))
         		.create(MACHINE_READABLE_RESULTS_PARAM_NAME)
+        		);
+        options.addOption(
+        		OptionBuilder
+        		.withLongOpt("no-screen-print-out")
+        		.withDescription("suppresses the print-out of constraints on screen" + 
+        				printDefault(DEFAULT_DO_SUPPRESS_SCREEN_PRINT_OUT))
+        		.create(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME)
         		);
        return options;
 	}

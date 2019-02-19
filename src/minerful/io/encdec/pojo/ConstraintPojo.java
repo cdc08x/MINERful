@@ -45,6 +45,8 @@ public class ConstraintPojo implements Comparable<ConstraintPojo> {
 			if (o.template == null) {
 				return -1;
 			}
+//if (this.template == "End" && o.template == "Participation") 
+//System.err.println(this.template + " vs " + o.template + " = " + this.template.compareTo(o.template));
 			result = this.template.compareTo(o.template);
 		}
 		

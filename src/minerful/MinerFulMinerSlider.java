@@ -90,14 +90,15 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessModel processModel = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive);
-
-		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
+		MinerFulOutputManagementLauncher minerFulOutputMgr = new MinerFulOutputManagementLauncher();
+		
+		ProcessModel processModel = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
 	}
 
-	public ProcessModel slideAndMine(LogParser logParser, SlidingCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive) {
+	public ProcessModel slideAndMine(LogParser logParser, SlidingCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
 		PostProcessingCmdParameters noPostProcParams = PostProcessingCmdParameters.makeParametersForNoPostProcessing();
 		ProcessModel proMod = null;
+		int from = 0, to = 0;
 
 		proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
 		proMod.setName(makeDiscoveredProcessName(inputParams));
@@ -134,13 +135,20 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				statsTable, proMod.bag);
 		ConstraintsPrinter cPrin = new ConstraintsPrinter(proMod);
 
+		from = inputParams.startFromTrace;
+		to = inputParams.startFromTrace + slicedLogParser.length();
+		
 		PrintWriter outWriter = setUpCSVPrintWriter(slideParams);
     	outWriter.println(
     			"'From';'To';" +
     			cPrin.printBagAsMachineReadable(false,false,true).replace(
-    					"\n", "\n" + inputParams.startFromTrace + ";" + (inputParams.startFromTrace + slicedLogParser.length()) + ";"));
+    					"\n", "\n" + from + ";" + to + ";").replace(
+    							from + ";" + to + ";'",";;'"));
+    					// The last one is to avoid, e.g., “0;297;'Support';'Confidence'” in the header
+		minerFulOutputMgr.setAdditionalFileSuffix(String.format("-%06d-%06d", from, to));
+		minerFulOutputMgr.manageOutput(proMod, viewParams, outParams, systemParams, logParser);
 
-    	if (slideParams.slidingStep > 0) {    		
+		if (slideParams.slidingStep > 0) {   		
     		//
     		// In the ASCII picture below, every column is a trace.
     		// The '=' symbols denote the original sub-log.
@@ -188,11 +196,17 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				// query the altered knowledge base!
 				qCore.discover();
 				
+				from = inputParams.startFromTrace + i + step;
+				to = inputParams.startFromTrace + i + addiStartGap + addiLen;
+				
 				outWriter.println(
-						(inputParams.startFromTrace + i + addiStartGap) + ";" +
-						(inputParams.startFromTrace + i + addiStartGap + addiLen) + ";" +
+						from + ";" +
+						to + ";" +
 						cPrin.printBagAsMachineReadable(false,false,false)
 				);
+				
+				minerFulOutputMgr.setAdditionalFileSuffix(String.format("-%06d-%06d", from, to));
+				minerFulOutputMgr.manageOutput(proMod, viewParams, outParams, systemParams, logParser);
 			}
 			
 			if (!slideParams.stickTail) {
@@ -209,6 +223,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		return proMod;
 	}
+
 
 	public PrintWriter setUpCSVPrintWriter(SlidingCmdParameters slideParams) {
 		PrintWriter outWriter = null;
