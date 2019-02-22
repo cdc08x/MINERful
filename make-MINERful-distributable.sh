@@ -12,6 +12,7 @@ zip -r "MINERful-v${VERSION_DATE}" \
     constraintsFunctions.cfg \
     run-MINERful.sh \
     run-MINERfulSimplifier.sh \
+    run-MINERfulSlider.sh \
     run-MINERfulEventLogMaker.sh \
     run-MINERfulFitnessChecker.sh
 cp "MINERful-v${VERSION_DATE}.zip" "MINERful.zip"
