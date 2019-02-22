@@ -27,4 +27,4 @@ fi
 clear
 
 ## Run!
-java -Xmx$MEMORY_MAX -jar MINERful.jar $MAINCLASS $* # -d $DEBUGLEVEL -t $THRESHOLD
+java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS $* # -d $DEBUGLEVEL -t $THRESHOLD
