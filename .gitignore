@@ -6,7 +6,6 @@ count-constraints.sh
 print-regexps.sh
 .classpath
 .project
-/bin/
 models
 /exec-logs/
 /studies-on-noise/
