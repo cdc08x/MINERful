@@ -103,9 +103,7 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
         		LogMakerParameters.Encoding.class,
         		line.getOptionValue(OUT_ENC_PARAM_NAME, this.outputEncoding.toString())
 		);
-        if (line.hasOption(StringTracesMakerCmdParameters.OUTPUT_FILE_PARAM_NAME)) {
-        	this.logFile = new File(line.getOptionValue(StringTracesMakerCmdParameters.OUTPUT_FILE_PARAM_NAME));
-        }
+       	this.logFile = openOutputFile(line, OUTPUT_FILE_PARAM_NAME);
 	}
     
 	@Override

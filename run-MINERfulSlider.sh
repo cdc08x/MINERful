@@ -4,6 +4,11 @@
 # Date:         2013/09/20
 # Description:  This script launches the MinerFulMinerStarter, in order to discover the declarative process model out of a log, provided as input.
 #               Run this launcher with "-h" to understand the meaning of options you can pass.
+# Installation: Please download the following files and directories from the MINERful GitHub Repository (https://github.com/cdc08x/MINERful):
+#                   bin/
+#                   lib/
+#                   src/
+#                   libs.cfg
 
 ## Exec-specific parametres
 DEBUGLEVEL="none"

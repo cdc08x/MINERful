@@ -76,64 +76,26 @@ public class OutputModelParameters extends ParamsManager {
 
 	@Override
 	protected void setup(CommandLine line) {
-    	String procSchemeFilePath = line.getOptionValue(SAVE_AS_XML_PARAM_NAME);
-        if (procSchemeFilePath != null) {
-        	this.fileToSaveAsXML = new File(procSchemeFilePath);
-        }
-        String jsonFilePath = line.getOptionValue(SAVE_AS_JSON_PARAM_NAME);
-        if (jsonFilePath != null) {
-        	this.fileToSaveAsJSON = new File(jsonFilePath);
-        }
-		String
-			folderToSaveDotFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
-	    if (folderToSaveDotFilesForPartialAutomataPath != null) {
-	        this.folderToSaveDotFilesForPartialAutomata = new File(folderToSaveDotFilesForPartialAutomataPath);
-	        if (        !this.folderToSaveDotFilesForPartialAutomata.exists()
-	        		||	!this.folderToSaveDotFilesForPartialAutomata.isDirectory()
-	                ||  !this.folderToSaveDotFilesForPartialAutomata.canWrite()
-	                ) {
-	            throw new IllegalArgumentException("Unwritable directory: " + folderToSaveDotFilesForPartialAutomata);
-	        }
-	    }
-		String fileToSaveDotFileForAutomatonPath = line.getOptionValue(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME);
-        if (fileToSaveDotFileForAutomatonPath != null) {
-            this.fileToSaveDotFileForAutomaton = new File(fileToSaveDotFileForAutomatonPath);
-        }
+    	this.fileToSaveAsXML = openOutputFile(line, SAVE_AS_XML_PARAM_NAME);
         
-		String fileToSaveTsmlFileForAutomatonPath = line.getOptionValue(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
-        if (fileToSaveTsmlFileForAutomatonPath != null) {
-            this.fileToSaveTsmlFileForAutomaton = new File(fileToSaveTsmlFileForAutomatonPath);
-        }
+    	this.fileToSaveAsJSON = openOutputFile(line, SAVE_AS_JSON_PARAM_NAME);
+
+        this.folderToSaveDotFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
+
+        this.fileToSaveDotFileForAutomaton = openOutputFile(line, SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME);
         
-        String fileToSaveConstraintsCsvString = line.getOptionValue(SAVE_AS_CSV_PARAM_NAME);
-        if (fileToSaveConstraintsCsvString != null) {
-            this.fileToSaveConstraintsAsCSV = new File(fileToSaveConstraintsCsvString);
-        }
+		this.fileToSaveTsmlFileForAutomaton = openOutputFile(line, SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
         
-        String fileToSaveConDecDefinitionString = line.getOptionValue(SAVE_AS_CONDEC_PARAM_NAME);
-        if (fileToSaveConDecDefinitionString != null) {
-            this.fileToSaveAsConDec = new File(fileToSaveConDecDefinitionString);
-        }
+        this.fileToSaveConstraintsAsCSV = openOutputFile(line, SAVE_AS_CSV_PARAM_NAME);
         
-        String fileToSaveXmlFileForAutomatonString = line.getOptionValue(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
-        if (fileToSaveXmlFileForAutomatonString != null) {
-        	this.fileToSaveXmlFileForAutomaton = new File(fileToSaveXmlFileForAutomatonString);
-        }
-        String fileToSaveSkimmedXmlFileForAutomatonString = line.getOptionValue(SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
-        if (fileToSaveSkimmedXmlFileForAutomatonString != null) {
-        	this.fileToSaveSkimmedXmlFileForAutomaton = new File(fileToSaveSkimmedXmlFileForAutomatonString);
-        }
-		String
-			folderToSaveXmlFilesForPartialAutomataPath = line.getOptionValue(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME);
-	    if (folderToSaveXmlFilesForPartialAutomataPath != null) {
-	        this.folderToSaveXmlFilesForPartialAutomata = new File(folderToSaveXmlFilesForPartialAutomataPath);
-	        if (        !this.folderToSaveXmlFilesForPartialAutomata.exists()
-	        		||	!this.folderToSaveXmlFilesForPartialAutomata.isDirectory()
-	                ||  !this.folderToSaveXmlFilesForPartialAutomata.canWrite()
-	                ) {
-	            throw new IllegalArgumentException("Unwritable directory: " + folderToSaveXmlFilesForPartialAutomataPath);
-	        }
-	    }
+        this.fileToSaveAsConDec = openOutputFile(line, SAVE_AS_CONDEC_PARAM_NAME);
+        
+        this.fileToSaveXmlFileForAutomaton = openOutputFile(line, SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
+
+        this.fileToSaveSkimmedXmlFileForAutomaton = openOutputFile(line, SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
+        
+        this.folderToSaveXmlFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME);
+
     }
     
 	@Override

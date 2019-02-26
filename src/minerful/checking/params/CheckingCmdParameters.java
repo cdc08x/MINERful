@@ -59,10 +59,7 @@ public class CheckingCmdParameters extends ParamsManager {
 						this.strictnessPolicy.toString()
 						)
 				);
-        String fileToSaveResultsAsCsvString = line.getOptionValue(SAVE_AS_CSV_PARAM_NAME);
-        if (fileToSaveResultsAsCsvString != null) {
-            this.fileToSaveResultsAsCSV = new File(fileToSaveResultsAsCsvString);
-        }
+		this.fileToSaveResultsAsCSV = openOutputFile(line, SAVE_AS_CSV_PARAM_NAME);
 	}
 
 	@Override

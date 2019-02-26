@@ -53,13 +53,9 @@ public class SlidingCmdParameters extends ParamsManager {
         if (slidingStep < 0) {
         	throw new IllegalArgumentException("The sliding window step should be an integer higher than, or equal to, 0");
         }
-        String intermediateOutputCsvFilePath = line.getOptionValue(INTERMEDIATE_OUTPUT_PARAM_NAME);
-        if (intermediateOutputCsvFilePath != null) {
-            this.intermediateOutputCsvFile = new File(intermediateOutputCsvFilePath);
-            if (this.intermediateOutputCsvFile.isDirectory()) {
-                throw new IllegalArgumentException("Unwritable file: " + this.intermediateOutputCsvFile);
-            }
-        }
+        
+        this.intermediateOutputCsvFile = openOutputFile(line, INTERMEDIATE_OUTPUT_PARAM_NAME);
+
         this.stickTail = line.hasOption(STICK_TAIL_PARAM_NAME);
 	}
 	

@@ -1,28 +1,17 @@
 package minerful.postprocessing.params;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
-import minerful.concept.constraint.Constraint;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.params.ParamsManager;
 import minerful.postprocessing.pruning.SubsumptionHierarchyMarkingPolicy;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringUtils;
-
 
 public class PostProcessingCmdParameters extends ParamsManager {
-	public static enum RankingPolicy {
-		SUPPORTCONFIDENCEINTERESTFACTOR,
-		FAMILYHIERARCHY,
-		ACTIVATIONTARGETBONDS,
-		RANDOM
-	}
-
 	/**
 	 * Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process model.
 	 * @author Claudio Di Ciccio
@@ -107,7 +96,6 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 }
 
-	public static final String ARRAY_SEPARATOR = ":";
 	public static final String ANALYSIS_TYPE_PARAM_NAME = "ppAT";
 	public static final String RANKING_POLICY_PARAM_NAME = "ppPP";
 	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP";
@@ -219,15 +207,14 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	}
 
 	private void updateRankingPolicies(String paramString) {
-		if (paramString == null)
+		String[] tokens = tokenise(paramString);
+		if (tokens == null)
 			return;
-		StringTokenizer strTok = new StringTokenizer(paramString, ARRAY_SEPARATOR);
-		String token = null;
-		ArrayList<ConstraintSortingPolicy> listOfPolicies = new ArrayList<ConstraintSortingPolicy>(strTok.countTokens());
+
+		ArrayList<ConstraintSortingPolicy> listOfPolicies = new ArrayList<ConstraintSortingPolicy>(tokens.length);
 		ConstraintSortingPolicy policy = null;
 		
-		while (strTok.hasMoreTokens()) {
-			token = strTok.nextToken();
+		for (String token : tokens) {
 			token = fromStringToEnumValue(token);
 			try {
 				policy = ConstraintSortingPolicy.valueOf(token);
@@ -244,18 +231,6 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 	}
 
-	@Override
-    public Options addParseableOptions(Options options) {
-		Options myOptions = listParseableOptions();
-		for (Object myOpt: myOptions.getOptions())
-			options.addOption((Option)myOpt);
-        return options;
-	}
-	
-	@Override
-    public Options listParseableOptions() {
-    	return parseableOptions();
-    }
 	@SuppressWarnings("static-access")
 	public static Options parseableOptions() {
 		Options options = new Options();
@@ -272,8 +247,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 OptionBuilder
                 .hasArg().withArgName("policy")
                 .withLongOpt("post-processing-rank")
-                .withDescription("type of ranking of constraints for post-processing analysis. It can be a separated list of the following: " + printValues(RankingPolicy.values())
-                		+ printDefault(fromEnumValueToString(StringUtils.join(DEFAULT_PRIORITY_POLICIES, ARRAY_SEPARATOR))))
+                .withDescription("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
+                		+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_PRIORITY_POLICIES)))
                 .withType(new String())
                 .create(RANKING_POLICY_PARAM_NAME)
     	);

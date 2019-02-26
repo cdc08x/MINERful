@@ -14,5 +14,6 @@ zip -r "MINERful-v${VERSION_DATE}" \
     run-MINERfulSimplifier.sh \
     run-MINERfulSlider.sh \
     run-MINERfulEventLogMaker.sh \
-    run-MINERfulFitnessChecker.sh
+    run-MINERfulFitnessChecker.sh \
+    run-XesLogSorter.sh
 cp "MINERful-v${VERSION_DATE}.zip" "MINERful.zip"

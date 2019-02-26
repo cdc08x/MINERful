@@ -60,21 +60,13 @@ public class InputModelParameters extends ParamsManager {
 
 	@Override
 	protected void setup(CommandLine line) {
-        String inputFilePath = line.getOptionValue(INPUT_MODELFILE_PATH_PARAM_NAME);
-        if (inputFilePath != null) {
-            this.inputFile = new File(inputFilePath);
-            if (        !this.inputFile.exists()
-                    ||  !this.inputFile.canRead()
-                    ||  !this.inputFile.isFile()) {
-                throw new IllegalArgumentException("Unreadable file: " + inputFilePath);
-            }
-        }
+        this.inputFile = openInputFile(line, INPUT_MODELFILE_PATH_PARAM_NAME);
         this.inputLanguage = InputEncoding.valueOf(
                 fromStringToEnumValue(line.getOptionValue(INPUT_MODEL_ENC_PARAM_NAME, this.inputLanguage.toString())
                 )
             );
     }
-    
+
 	@Override
     public Options addParseableOptions(Options options) {
 		Options myOptions = listParseableOptions();

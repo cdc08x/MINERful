@@ -113,32 +113,22 @@ public class MinerFulCmdParameters extends ParamsManager {
         this.memSpaceShowingRequested = line.hasOption(SHOW_MEMSPACE_USED_PARAM_NAME);
 //        this.takeTime = line.hasOption(TIME_ANALYSIS_PARAM);
         
-        String
-        	outStatsFilePath = line.getOptionValue(STATS_OUT_PATH_PARAM_NAME),
-        	listOfExcludedOnesFromResultsFilePath = line.getOptionValue(EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME);
-        if (outStatsFilePath != null) {
-        	this.statsOutputFile = new File(outStatsFilePath);
-        }
-        if (listOfExcludedOnesFromResultsFilePath != null) {
-            File listOfExcludedOnesFromResultsFile = new File(listOfExcludedOnesFromResultsFilePath);
-            if (        !listOfExcludedOnesFromResultsFile.exists()
-                    ||  !listOfExcludedOnesFromResultsFile.canRead()
-                    ||  !listOfExcludedOnesFromResultsFile.isFile()) {
-                throw new IllegalArgumentException("Unreadable file: " + listOfExcludedOnesFromResultsFilePath);
-            } else {
-            	try {
-            		BufferedReader buRo = new BufferedReader(new FileReader(listOfExcludedOnesFromResultsFile));
-					String excluActi = buRo.readLine();
-					this.activitiesToExcludeFromResult = new ArrayList<String>();
-					while (excluActi != null) {
-						this.activitiesToExcludeFromResult.add(excluActi);
-						excluActi = buRo.readLine();
-					}
-					buRo.close();
-				} catch (IOException e) {
-					throw new IllegalArgumentException("Unreadable file: " + listOfExcludedOnesFromResultsFilePath);
+       	this.statsOutputFile = openOutputFile(line, STATS_OUT_PATH_PARAM_NAME);
+
+        File listOfExcludedOnesFromResultsFile = openInputFile(line, EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME);
+        if (listOfExcludedOnesFromResultsFile != null) {
+        	try {
+        		BufferedReader buRo = new BufferedReader(new FileReader(listOfExcludedOnesFromResultsFile));
+				String excluActi = buRo.readLine();
+				this.activitiesToExcludeFromResult = new ArrayList<String>();
+				while (excluActi != null) {
+					this.activitiesToExcludeFromResult.add(excluActi);
+					excluActi = buRo.readLine();
 				}
-            }
+				buRo.close();
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Unreadable file: " + line.getOptionValue(EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME));
+			}
         }
     }
     

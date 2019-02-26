@@ -1,13 +1,16 @@
 package minerful.utils;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.params.SystemCmdParameters;
 
 public class MessagePrinter {
@@ -15,6 +18,8 @@ public class MessagePrinter {
 	
 	static DecimalFormat df = new DecimalFormat("0");
 	static { df.setMaximumFractionDigits(16); }
+
+	public static final String ARRAY_TOKENISER_SEPARATOR = ":";
 
     public static void configureLogging(SystemCmdParameters.DebugLevel debugLevel) {
     	String threshold = "ALL";
@@ -60,6 +65,56 @@ public class MessagePrinter {
 	
 	public static MessagePrinter getInstance(Class<?> invokingClass) {
 		return new MessagePrinter(invokingClass);
+	}
+	
+	public static String printValues(Object... values) {
+        StringBuilder valuesStringBuilder = new StringBuilder();
+
+        if (values.length > 1) {
+        	valuesStringBuilder.append("{");
+        }
+
+        for (int i = 0; i < values.length; i++) {
+            valuesStringBuilder.append("'");
+            valuesStringBuilder.append(fromEnumValueToString(values[i]));
+            valuesStringBuilder.append("'");
+            if (i < values.length -1) {
+                valuesStringBuilder.append(",");
+            }
+        }
+
+        if (values.length > 1) {
+        	valuesStringBuilder.append("}");
+        }
+
+        return valuesStringBuilder.toString();
+    }
+	
+	public static String[] tokenise(String arrayStringOfTokens) {
+		if (arrayStringOfTokens == null)
+			return null;
+
+		StringTokenizer strTok = new StringTokenizer(arrayStringOfTokens, ARRAY_TOKENISER_SEPARATOR);
+		String[] tokens = new String[strTok.countTokens()];
+		int i = 0;
+		
+		while (strTok.hasMoreTokens())
+			tokens[i++] = strTok.nextToken();
+		
+		return tokens;
+	}
+	
+	public static String fromEnumValuesToTokenJoinedString(Object... tokens) {
+		String[] tokenStrings = new String[tokens.length];
+		int i = 0;
+		for (Object token : tokens) {
+			tokenStrings[i++] = fromEnumValueToString(token);
+		}
+		return StringUtils.join(tokenStrings, ARRAY_TOKENISER_SEPARATOR);
+	}
+	
+	public static String fromEnumValueToString(Object token) {
+		return token.toString().trim().toLowerCase().replace("_", "-");
 	}
 
 	public static void printlnOut(String s) {

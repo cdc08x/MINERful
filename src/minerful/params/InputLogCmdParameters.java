@@ -68,15 +68,8 @@ public class InputLogCmdParameters extends ParamsManager {
 
 	@Override
 	protected void setup(CommandLine line) {
-        String inputFilePath = line.getOptionValue(INPUT_LOGFILE_PATH_PARAM_NAME);
-        if (inputFilePath != null) {
-            this.inputLogFile = new File(inputFilePath);
-            if (        !this.inputLogFile.exists()
-                    ||  !this.inputLogFile.canRead()
-                    ||  !this.inputLogFile.isFile()) {
-                throw new IllegalArgumentException("Unreadable file: " + inputFilePath);
-            }
-        }
+		this.inputLogFile = openInputFile(line, INPUT_LOGFILE_PATH_PARAM_NAME);
+
         this.inputLanguage = InputEncoding.valueOf(
                 line.getOptionValue(
                     INPUT_ENCODING_PARAM_NAME,

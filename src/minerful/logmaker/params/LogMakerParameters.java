@@ -9,6 +9,7 @@ import org.apache.commons.cli.Options;
 
 import minerful.params.ParamsManager;
 import minerful.stringsmaker.params.StringTracesMakerCmdParameters;
+import minerful.utils.MessagePrinter;
 
 
 public class LogMakerParameters extends ParamsManager {
@@ -108,7 +109,7 @@ public class LogMakerParameters extends ParamsManager {
 	protected void setup(CommandLine line) {
         this.minEventsPerTrace =
         		Integer.valueOf(
-        				line.getOptionValue(MIN_LEN_PARAM_NAME,this.minEventsPerTrace.toString()));
+        				line.getOptionValue(MIN_LEN_PARAM_NAME, this.minEventsPerTrace.toString()));
         this.maxEventsPerTrace =
         		Integer.valueOf(
         				line.getOptionValue(MAX_LEN_PARAM_NAME, this.maxEventsPerTrace.toString()));
@@ -117,9 +118,7 @@ public class LogMakerParameters extends ParamsManager {
         this.outputEncoding = Encoding.valueOf(
         		line.getOptionValue(OUT_ENC_PARAM_NAME, this.outputEncoding.toString())
 		);
-        if (line.hasOption(OUTPUT_FILE_PARAM_NAME)) {
-        	this.outputLogFile = new File(line.getOptionValue(StringTracesMakerCmdParameters.OUTPUT_FILE_PARAM_NAME));
-        }
+       	this.outputLogFile = openOutputFile(line, OUTPUT_FILE_PARAM_NAME);
 	}
     
 	@Override
