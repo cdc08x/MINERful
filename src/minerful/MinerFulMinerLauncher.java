@@ -98,6 +98,7 @@ public class MinerFulMinerLauncher {
 				!inputParams.subLogLength.equals(InputLogCmdParameters.WHOLE_LOG_LENGTH);
 		switch (inputParams.inputLanguage) {
 		case xes:
+		case mxml:
 			ClassificationType evtClassi = MinerFulMinerLauncher.fromInputParamToXesLogClassificationType(inputParams.eventClassification);
 			try {
 				if (doAnalyseSubLog) {

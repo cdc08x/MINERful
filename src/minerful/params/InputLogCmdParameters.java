@@ -15,10 +15,10 @@ public class InputLogCmdParameters extends ParamsManager {
 	public static final EventClassification DEFAULT_EVENT_CLASSIFICATION = EventClassification.name;
 	public static final InputEncoding DEFAULT_INPUT_ENCODING = InputEncoding.xes;
 	public static final String INPUT_LOGFILE_PATH_PARAM_NAME = "iLF";
-    public static final String INPUT_ENCODING_PARAM_NAME = "iE";
+    public static final String INPUT_LOG_ENCODING_PARAM_NAME = "iLE";
 	public static final String EVENT_CLASSIFICATION_PARAM_NAME = "eC";
 	public static final String INPUT_LOGFILE_PATH_LONG_PARAM_NAME = "in-log";
-    public static final String INPUT_ENC_PARAM_LONG_NAME = "in-enc";
+    public static final String INPUT_ENC_PARAM_LONG_NAME = "in-log-enc";
 	public static final String EVENT_CLASSIFICATION_LONG_PARAM_NAME = "evt-class";
 	public static final String START_FROM_TRACE_PARAM_NAME = "tStart";
 	public static final Integer FIRST_TRACE_NUM = 0;
@@ -26,7 +26,18 @@ public class InputLogCmdParameters extends ParamsManager {
 	public static final Integer WHOLE_LOG_LENGTH = 0;
 
 	public enum InputEncoding {
-		xes, strings;
+		/**
+		 * For XES logs (also compressed)
+		 */
+		xes,
+		/**
+		 * For MXML logs (also compressed)
+		 */
+		mxml,
+		/**
+		 * For string-encoded traces, where each character is assumed to be a task symbol
+		 */
+		strings;
 	}
 	
 	public enum EventClassification {
@@ -72,7 +83,7 @@ public class InputLogCmdParameters extends ParamsManager {
 
         this.inputLanguage = InputEncoding.valueOf(
                 line.getOptionValue(
-                    INPUT_ENCODING_PARAM_NAME,
+                    INPUT_LOG_ENCODING_PARAM_NAME,
                     this.inputLanguage.toString()
                 )
             );
@@ -118,7 +129,7 @@ public class InputLogCmdParameters extends ParamsManager {
                 .withDescription("input encoding language " + printValues(InputEncoding.values()) 
                 		+ printDefault(fromEnumValueToString(DEFAULT_INPUT_ENCODING)))
                 .withType(new String())
-                .create(INPUT_ENCODING_PARAM_NAME)
+                .create(INPUT_LOG_ENCODING_PARAM_NAME)
         );
         options.addOption(
                 OptionBuilder

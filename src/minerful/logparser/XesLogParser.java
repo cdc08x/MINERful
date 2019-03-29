@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.deckfour.xes.in.XMxmlGZIPParser;
+import org.deckfour.xes.in.XMxmlParser;
+import org.deckfour.xes.in.XParser;
 import org.deckfour.xes.in.XesXmlGZIPParser;
 import org.deckfour.xes.in.XesXmlParser;
 import org.deckfour.xes.model.XLog;
@@ -15,7 +18,7 @@ import minerful.concept.TaskCharArchive;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public class XesLogParser extends AbstractLogParser implements LogParser {
-    protected XesXmlParser parser;
+    protected XParser parser;
     protected XesEventClassifier xesEventClassifier;
     protected List<XLog> xLogs = null;
     
@@ -24,7 +27,7 @@ public class XesLogParser extends AbstractLogParser implements LogParser {
 			List<LogTraceParser> traceParsers,
 			Integer startingTrace,
 			Integer subLogLength,
-			XesXmlParser parser,
+			XParser parser,
 			XesEventClassifier xesEventClassifier,
 			List<XLog> xLogs) {
 		super(taChaEncoDeco, taskCharArchive, traceParsers, startingTrace, subLogLength);
@@ -60,7 +63,13 @@ public class XesLogParser extends AbstractLogParser implements LogParser {
         if (!this.parser.canParse(xesFile)) {
         	this.parser = new XesXmlGZIPParser();
         	if (!this.parser.canParse(xesFile)) {
-        		throw new IllegalArgumentException("Unparsable log file: " + xesFile.getAbsolutePath());
+        		this.parser = new XMxmlParser();
+            	if (!this.parser.canParse(xesFile)) {
+            		this.parser = new XMxmlGZIPParser();
+                	if (!this.parser.canParse(xesFile)) {
+                		throw new IllegalArgumentException("Unparsable log file: " + xesFile.getAbsolutePath());
+                	}
+            	}
         	}
         }
 
