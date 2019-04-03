@@ -7,6 +7,7 @@ import java.util.NavigableSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -89,6 +90,9 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
         if (!this.bag.containsKey(character)) {
             return false;
         }
+        if (this.bag.get(character) == null) {
+        	return false;
+        }
         if (this.bag.get(character).remove(c)) {
         	c.deleteObserver(this);
         	return true;
@@ -99,9 +103,11 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
     public boolean remove(Constraint c) {
     	boolean removed = false;
     	for(TaskChar tCh : c.base.getTaskCharsArray()) {
-	        if (this.bag.get(tCh).remove(c)) {
-	        	removed = removed || true;
-	        }
+    		if (this.bag.get(tCh) != null) {
+		        if (this.bag.get(tCh).remove(c)) {
+		        	removed = removed || true;
+		        }
+    		}
     	}
         return removed;
     }
@@ -115,7 +121,7 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 	public int eraseConstraintsOf(TaskChar taskChar) {
 		int constraintsRemoved = 0;
 		if (this.bag.containsKey(taskChar)) {
-			for (Constraint c : this.bag.get(taskChar)) {
+			for (Constraint c : this.getConstraintsOf(taskChar)) {
 				c.deleteObserver(this);
 				constraintsRemoved++;
 			}
@@ -170,10 +176,13 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
     	if (!this.bag.containsKey(character)) {
     		return null;
     	}
-    	if (!this.bag.get(character).contains(searched)) {
+    	TreeSet<Constraint> cnsOf = this.bag.get(character);
+    	if (cnsOf == null)
+    		return null;
+    	if (!cnsOf.contains(searched)) {
     		return null;
     	}
-    	NavigableSet<Constraint> srCnss = this.bag.get(character).headSet(searched, true);
+    	NavigableSet<Constraint> srCnss = cnsOf.headSet(searched, true);
     	if (srCnss.isEmpty()) {
     		return null;
     	}
@@ -204,7 +213,7 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
     public Object clone() {
         ConstraintsBag clone = new ConstraintsBag(this.taskChars);
         for (TaskChar chr : this.taskChars) {
-            for (Constraint c: this.bag.get(chr)) {
+            for (Constraint c: this.getConstraintsOf(chr)) {
                 clone.add(chr, c);
             }
         }
@@ -237,7 +246,7 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
         ConstraintsBag nuBag =
                 (ConstraintsBag) this.clone();
         for (TaskChar key : this.taskChars) {
-            for (Constraint con : this.bag.get(key)) {
+            for (Constraint con : this.getConstraintsOf(key)) {
             	if (con.hasSufficientSupport(supportThreshold)) {
 					nuBag.remove(key, con);
 				}
@@ -250,7 +259,7 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 	public int howManyConstraints() {
 		int numberOfConstraints = 0;
 		for (TaskChar tCh : this.getTaskChars()) {
-			numberOfConstraints += this.bag.get(tCh).size();
+			numberOfConstraints += (this.bag.get(tCh) == null ? 0 : this.bag.get(tCh).size());
 		}
 		return numberOfConstraints;
 	}
@@ -310,12 +319,14 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 		Constraint auxCon = null;
 		int markedConstraintsRemoved = 0;
 		for (TaskChar tChar : this.taskChars) {
-			Iterator<Constraint> constraIter = this.getConstraintsOf(tChar).iterator();
-			while (constraIter.hasNext()) {
-				auxCon = constraIter.next();
-				if (auxCon.isMarkedForExclusion()) {
-					constraIter.remove();
-					markedConstraintsRemoved++;
+			if (this.bag.get(tChar) != null) {
+				Iterator<Constraint> constraIter = this.bag.get(tChar).iterator();
+				while (constraIter.hasNext()) {
+					auxCon = constraIter.next();
+					if (auxCon.isMarkedForExclusion()) {
+						constraIter.remove();
+						markedConstraintsRemoved++;
+					}
 				}
 			}
 		}
@@ -334,14 +345,14 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 
 	public Set<Constraint> getAllConstraints() {
 		Set<Constraint> constraints = new TreeSet<Constraint>(); 
-		for (TaskChar tCh : this.getTaskChars()) { constraints.addAll(this.bag.get(tCh)); }
+		for (TaskChar tCh : this.getTaskChars()) { constraints.addAll(this.getConstraintsOf(tCh)); }
 		return constraints;
 	}
 	
 	public Collection<Constraint> getOnlyFullySupportedConstraints() {
 		Collection<Constraint> constraints = new TreeSet<Constraint>(); 
 		for (TaskChar tCh : this.getTaskChars()) { 
-			for (Constraint cns : this.bag.get(tCh)) {
+			for (Constraint cns : this.getConstraintsOf(tCh)) {
 				if (cns.hasMaximumSupport()) {
 					constraints.add(cns);
 				}
@@ -353,7 +364,7 @@ public class ConstraintsBag extends Observable implements Cloneable, Observer {
 	public ConstraintsBag getOnlyFullySupportedConstraintsInNewBag() {
 		ConstraintsBag clone = (ConstraintsBag) this.clone();
 		for (TaskChar tCh : clone.getTaskChars()) { 
-			for (Constraint cns : this.bag.get(tCh)) {
+			for (Constraint cns : this.getConstraintsOf(tCh)) {
 				if (!cns.hasMaximumSupport()) {
 					clone.remove(tCh, cns);
 				}
