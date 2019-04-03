@@ -1,7 +1,7 @@
 MINERful
 =========================
 
-MINERful is a fast process mining tool for discovering declarative process models out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
+MINERful is a fast process mining tool for discovering declarative process models out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files or text documents with strings (every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
 
 For updated info on the installation, usage, etc., please refer to the [**Wiki**](https://github.com/cdc08x/MINERful/wiki)!
 
@@ -27,7 +27,7 @@ Selected publications about MINERful and presentation slides:
 
   - Retaining only non-vacuously satisfied (read: relevant) constraints:
   
-    Claudio Di Ciccio, Fabrizio Maria Maggi, Marco Montali, JanMendling: On the relevance of a business constraint to an event log. Inf. Syst. 78: 144-161 (2018)
+    Claudio Di Ciccio, Fabrizio Maria Maggi, Marco Montali, Jan Mendling: On the relevance of a business constraint to an event log. Inf. Syst. 78: 144-161 (2018)
     - DOI: [10.1016/j.is.2018.01.011](https://doi.org/10.1016/j.is.2018.01.011)
     - Presentation: [https://www.slideshare.net/cdc08x/semantical-vacuity-detection-in-declarative-process-mining](https://www.slideshare.net/cdc08x/semantical-vacuity-detection-in-declarative-process-mining)
     
