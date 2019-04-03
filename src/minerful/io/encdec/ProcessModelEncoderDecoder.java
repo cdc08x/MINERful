@@ -15,9 +15,12 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
 import minerful.concept.ProcessModel;
+import minerful.concept.TaskChar;
+import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.io.encdec.json.JsonPojoEncoderDecoder;
 import minerful.io.encdec.pojo.ProcessModelPojo;
+import minerful.logparser.LogParser;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -29,6 +32,22 @@ import com.google.gson.JsonSyntaxException;
  *
  */
 public class ProcessModelEncoderDecoder {
+	/**
+	 * Changes the identifier of the
+	 * {@link TaskChar TaskChar}
+	 * elements in the given process model according to the encoding of the event log.
+	 * Notice that it does so as a side effect on the original process model passed in input and on the
+	 * {@link TaskChar TaskChar} elements themselves.
+	 * @param processModel A process model
+	 * @param logPar An event log parser
+	 * @return The process model having the {@link TaskChar TaskChar} re-encoded according to the event log identifiers
+	 */
+	public ProcessModel reEncodeTaskCharsAccordingToEventLog(ProcessModel processModel, LogParser logPar) {
+		logPar.getEventEncoderDecoder().mergeWithConstraintsAndUpdateTheirParameters(
+				processModel.getAllConstraints().toArray(new Constraint[processModel.howManyConstraints()]));
+		return processModel;
+	}
+	
 	public ProcessModel unmarshalProcessModel(File procSchmInFile) throws JAXBException, PropertyException, FileNotFoundException,
 			IOException {
 		String pkgName = ProcessModel.class.getCanonicalName().toString();

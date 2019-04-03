@@ -23,7 +23,7 @@ public class MinerFulFitnessCheckLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulFitnessCheckLauncher.class);
 			
 	private ProcessModel processSpecification;
-	private LogParser eventLog;
+	private LogParser eventLogParser;
 	private CheckingCmdParameters chkParams;
 	
 	private MinerFulFitnessCheckLauncher(CheckingCmdParameters chkParams) {
@@ -33,13 +33,13 @@ public class MinerFulFitnessCheckLauncher {
 	public MinerFulFitnessCheckLauncher(AssignmentModel declareMapModel, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
 		this.processSpecification = new ProcessModelLoader().loadProcessModel(declareMapModel);
-		this.eventLog = inputLog;
+		this.eventLogParser = inputLog;
 	}
 
 	public MinerFulFitnessCheckLauncher(ProcessModel minerFulProcessModel, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
 		this.processSpecification = minerFulProcessModel;
-		this.eventLog = inputLog;
+		this.eventLogParser = inputLog;
 	}
 
 	public MinerFulFitnessCheckLauncher(InputModelParameters inputParams, PostProcessingCmdParameters preProcParams,
@@ -53,12 +53,14 @@ public class MinerFulFitnessCheckLauncher {
 		// Load the process specification from the file
 		this.processSpecification = 
 				new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage, inputParams.inputFile);
+
 		// Apply some preliminary pruning
 		MinerFulPruningCore pruniCore = new MinerFulPruningCore(this.processSpecification, preProcParams);
 		this.processSpecification.bag = pruniCore.massageConstraints();
 
-		this.eventLog = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputLogParams);
+		this.eventLogParser = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputLogParams);
 
+		// Notice that the merging of event log codification of TaskChars with the given model’s one happens only late (at checking time)
 		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 
@@ -66,15 +68,15 @@ public class MinerFulFitnessCheckLauncher {
 		return processSpecification;
 	}
 
-	public LogParser getEventLog() {
-		return eventLog;
+	public LogParser getEventLogParser() {
+		return eventLogParser;
 	}
 	
 	public ModelFitnessEvaluation check() {
 		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
-				this.eventLog.getEventEncoderDecoder(), this.processSpecification);
+				this.eventLogParser.getEventEncoderDecoder(), this.processSpecification);
 
-		ModelFitnessEvaluation evalon = evalor.evaluateOnLog(this.eventLog);
+		ModelFitnessEvaluation evalon = evalor.evaluateOnLog(this.eventLogParser);
 		
 		reportOnEvaluation(evalon);
 		
@@ -83,7 +85,7 @@ public class MinerFulFitnessCheckLauncher {
 
 	public ModelFitnessEvaluation check(LogTraceParser trace) {
 		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
-				this.eventLog.getEventEncoderDecoder(), this.processSpecification);
+				this.eventLogParser.getEventEncoderDecoder(), this.processSpecification);
 		
 		ModelFitnessEvaluation evalon = evalor.evaluateOnTrace(trace);
 		
