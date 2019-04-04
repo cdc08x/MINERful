@@ -14,7 +14,8 @@ public class ModHierarchyBasedComparator extends ModularConstraintsComparator {
 
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
-		int result = Integer.valueOf(o1.getHierarchyLevel()).compareTo(Integer.valueOf(o1.getHierarchyLevel()));
+		// Sort from the most restricting one, to the least restricting one
+		int result = Integer.valueOf(o1.getHierarchyLevel()).compareTo(Integer.valueOf(o2.getHierarchyLevel())) * -1;
 		return (
 				(result == 0)
 					?	super.compare(o1, o2)

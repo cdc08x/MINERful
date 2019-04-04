@@ -68,8 +68,9 @@ public class ProcessModelEncoderDecoder {
 		
 		return proMod;
 	}
-
-	public void marshalProcessModel(ProcessModel processModel, File procSchmOutFile) 	throws JAXBException, PropertyException, FileNotFoundException, IOException {
+	
+	public StringBuffer marshalProcessModel(ProcessModel processModel)
+			throws JAXBException, PropertyException, FileNotFoundException, IOException {
 		String pkgName = processModel.getClass().getCanonicalName().toString();
 		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
 		JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
@@ -79,7 +80,13 @@ public class ProcessModelEncoderDecoder {
 		marsh.marshal(processModel, strixWriter);
 		strixWriter.flush();
 		StringBuffer strixBuffer = strixWriter.getBuffer();
+		
+		return strixBuffer;
+	}
 
+	public void marshalProcessModel(ProcessModel processModel, File procSchmOutFile)
+			throws JAXBException, PropertyException, FileNotFoundException, IOException {
+		StringBuffer strixBuffer = this.marshalProcessModel(processModel);
 		// OINK
 //		strixBuffer.replace(
 //				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),

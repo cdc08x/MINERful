@@ -1,11 +1,16 @@
 package minerful.postprocessing.pruning;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+
+import dk.brics.automaton.Automaton;
+import dk.brics.automaton.RegExp;
 import minerful.automaton.AutomatonFactory;
 import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
@@ -16,11 +21,6 @@ import minerful.index.LinearConstraintsIndexFactory;
 import minerful.index.ModularConstraintsSorter;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
-
-import org.apache.log4j.Logger;
-
-import dk.brics.automaton.Automaton;
-import dk.brics.automaton.RegExp;
 
 public class ConflictAndRedundancyResolver {
 	public static final String CONFLICT_REDUNDANCY_CHECK_CODE = "'CR-check'";

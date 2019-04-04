@@ -96,9 +96,9 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 }
 
-	public static final String ANALYSIS_TYPE_PARAM_NAME = "ppAT";
-	public static final String RANKING_POLICY_PARAM_NAME = "ppPP";
-	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP";
+	public static final String ANALYSIS_TYPE_PARAM_NAME = "prune";
+	public static final String RANKING_POLICY_PARAM_NAME = "pruneRnk";
+//	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP"; // TODO One day
 	public static final String KEEP_CONSTRAINTS_PARAM_NAME = "keep";
 	public static final char SUPPORT_THRESHOLD_PARAM_NAME = 's';
 	public static final char INTEREST_THRESHOLD_PARAM_NAME = 'i';
@@ -237,7 +237,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("type")
-                .withLongOpt("post-processing")
+                .withLongOpt("prune-with")
                 .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values())
                 		+ printDefault(fromEnumValueToString(DEFAULT_POST_PROCESSING_ANALYSIS_TYPE)))
                 .withType(new String())
@@ -246,7 +246,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("policy")
-                .withLongOpt("post-processing-rank")
+                .withLongOpt("prune-ranking-by")
                 .withDescription("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
                 		+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_PRIORITY_POLICIES)))
                 .withType(new String())

@@ -15,16 +15,17 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class OutputModelParameters extends ParamsManager {
-	public static final String SAVE_AS_CONDEC_PARAM_NAME = "condec";
+	public static final String SAVE_AS_CONDEC_PARAM_NAME = "ConDec";
 	public static final String SAVE_AS_CSV_PARAM_NAME = "CSV";
-	public static final String SAVE_AS_XML_PARAM_NAME = "oMF";
+	public static final String SAVE_AS_XML_PARAM_NAME = "XML";
 	public static final String SAVE_AS_JSON_PARAM_NAME = "JSON";
-	public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "pA";
-	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "pTSML";
-	public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "pSAF";
-	public static final String SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "pXWA";
-	public static final String SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "pXsWA";
-	public static final String FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "pXWSAF";
+	public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "autoDOT";
+//	public static final String SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME = "dotCond"; // TODO To be done, one day
+	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "autoTSML";
+	public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "subautosDOT";
+	public static final String SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "autoReplayXML";
+	public static final String SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "autoReplayTrimXML";
+	public static final String FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "subautosReplayXML";
 
 	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveConstraintsAsCSV;
@@ -34,6 +35,8 @@ public class OutputModelParameters extends ParamsManager {
 	public File fileToSaveTsmlFileForAutomaton;
 	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveDotFileForAutomaton;
+//	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton in which multiple transitions are collapsed into one with many labels, for readability reasons. Keep it equal to <code>null</code> for avoiding such print-out. */
+//	public File fileToSaveDotFileForCondensedAutomaton; // TODO One day
 	/** File in which the discovered process model is saved as a Declare XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
 	public File fileToSaveAsConDec;
 	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Keep it equal to <code>null</code> for avoiding such print-out. */
@@ -54,6 +57,7 @@ public class OutputModelParameters extends ParamsManager {
     	this.folderToSaveDotFilesForPartialAutomata = null;
     	this.fileToSaveTsmlFileForAutomaton = null;
     	this.fileToSaveDotFileForAutomaton = null;
+//    	this.fileToSaveDotFileForCondensedAutomaton = null; // TODO One day
     	this.fileToSaveAsConDec = null;
     	this.fileToSaveXmlFileForAutomaton = null;
     	this.fileToSaveSkimmedXmlFileForAutomaton = null;
@@ -83,6 +87,8 @@ public class OutputModelParameters extends ParamsManager {
         this.folderToSaveDotFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
 
         this.fileToSaveDotFileForAutomaton = openOutputFile(line, SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME);
+        
+//        this.fileToSaveDotFileForCondensedAutomaton = openOutputFile(line, SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME); // TODO One day
         
 		this.fileToSaveTsmlFileForAutomaton = openOutputFile(line, SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
         
@@ -132,13 +138,23 @@ public class OutputModelParameters extends ParamsManager {
         options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("save-automaton")
+        		.withLongOpt("save-automaton-dot")
         		.withDescription(
-        				"write a Graphviz DOT format of a finite state automaton representing the mined process on the given file"
+        				"write a Graphviz DOT format of a finite state automaton representing the declarative process"
         		)
         		.withType(new String())
         		.create(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
         		);
+//        options.addOption( // TODO One day
+//        		OptionBuilder
+//        		.hasArg().withArgName("path")
+//        		.withLongOpt("save-cond-automaton-dot")
+//        		.withDescription(
+//        				"write a Graphviz DOT format of a condensed, more readable finite state automaton representing the declarative process"
+//        		)
+//        		.withType(new String())
+//        		.create(SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME)
+//        		);
         options.addOption(
         		OptionBuilder
         		.hasArg().withArgName("path")
@@ -173,7 +189,7 @@ public class OutputModelParameters extends ParamsManager {
         		);
         options.addOption(OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("print-weighted-autom")
+        		.withLongOpt("print-replay-autom")
         		.withDescription(
         				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. The weight is computed based on the number of times the event log replay traverses the transition.")
         		)
@@ -182,7 +198,7 @@ public class OutputModelParameters extends ParamsManager {
         		);        
         options.addOption(OptionBuilder
         		.hasArg().withArgName("path")
-        		.withLongOpt("print-skimmed-weighted-autom")
+        		.withLongOpt("print-replay-trim-autom")
         		.withDescription(
         				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. Remove the transitions (and states) that have weight 0. The weight is computed based on the number of times the event log replay traverses the transition.")
         		)
@@ -193,7 +209,8 @@ public class OutputModelParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("path")
         		.withLongOpt("xml-subautom-folder")
-        		.withDescription("write the weighted automaton XML format of activities' finite state sub-automata on separate files, within the given folder")
+        		.withDescription(
+        				attachInstabilityWarningToDescription("write the weighted automaton XML format of activities' finite state sub-automata on separate files, within the given folder"))
         		.withType(new String())
         		.create(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME)
         		);

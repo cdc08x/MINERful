@@ -166,7 +166,7 @@ public class LogMakerParameters extends ParamsManager {
         options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("encoding")
-                .withLongOpt("out-enc")
+                .withLongOpt("out-log-enc")
                 .withDescription("encoding language for the output log " + printValues(LogMakerParameters.Encoding.values())
                 	+ printDefault(fromEnumValueToString(DEFAULT_OUTPUT_ENCODING)))
                 .withType(new String())
@@ -175,7 +175,7 @@ public class LogMakerParameters extends ParamsManager {
        options.addOption(
                 OptionBuilder
                 .hasArg().withArgName("file path")
-                .withLongOpt("out-log")
+                .withLongOpt("out-log-file")
                 .withDescription("path of the file in which the log should be written")
                 .withType(new String())
                 .create(OUTPUT_FILE_PARAM_NAME)

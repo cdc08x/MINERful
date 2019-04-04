@@ -4,12 +4,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.util.Map;
 import java.util.NavigableMap;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javassist.convert.Transformer;
 import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
@@ -135,6 +146,42 @@ public class MinerFulOutputManagementLauncher {
 				e.printStackTrace();
 			}
         }
+
+		/* TODO To be completed, one day
+		if (outParams.fileToSaveDotFileForCondensedAutomaton != null) {
+			outputFile = this.retrieveFile(outParams.fileToSaveDotFileForCondensedAutomaton);
+			try {
+				StringBuffer xmlBuff = // <create-XML-automaton-here>
+
+	        	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	        	DocumentBuilder builder = factory.newDocumentBuilder();
+	        	Document document = builder.parse(new InputSource(new StringReader(xmlBuff.toString())));
+	        	
+	        	TransformerFactory tFactory = TransformerFactory.newInstance();
+	        	StreamSource stylesource = // <load the stylesheet here>
+	        	Transformer transformer = tFactory.newTransformer(stylesource);
+	        	
+			} catch (PropertyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        */
 
 		if (outParams.fileToSaveTsmlFileForAutomaton != null) {
 			outputFile = this.retrieveFile(outParams.fileToSaveTsmlFileForAutomaton);

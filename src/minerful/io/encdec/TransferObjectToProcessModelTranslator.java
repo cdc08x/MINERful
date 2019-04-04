@@ -28,9 +28,6 @@ public class TransferObjectToProcessModelTranslator {
 		for(DeclareConstraintTransferObject conTO : proModTO.constraints) {
 			bag.add(conTranslator.createConstraint(conTO));
 		}
-for (TaskChar tCh : bag.getTaskChars()) {
-System.err.println(bag.getConstraintsOf(tCh));
-}
 		
 		return new ProcessModel(taskCharArchive, bag, proModTO.name);
 	}

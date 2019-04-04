@@ -26,13 +26,13 @@ public class MinerFulCmdParameters extends ParamsManager {
 		POSITIVE, NEGATIVE
 	}
 	
-	public static final String STATS_OUT_PATH_PARAM_NAME = "statXML";
+	public static final String STATS_OUT_PATH_PARAM_NAME = "statsXML";
 	public static final String OUT_BRANCHING_LIMIT_PARAM_NAME = "b";
-	public static final String FORESEE_DISTANCES_PARAM_NAME = "fD";
-	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "sMS";
-	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "xF";
-	public static final char KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = 'p';
-	public static final String QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = "pQ";
+	public static final String FORESEE_DISTANCES_PARAM_NAME = "withDist";
+	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "showMem";
+	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "exclTasks";
+	public static final String KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = "para";
+	public static final String QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = "paraQ";
 //	public static final String TIME_ANALYSIS_PARAM_NAME = "time";
 
 	public static final Integer MINIMUM_BRANCHING_LIMIT = 1;
@@ -151,7 +151,7 @@ public class MinerFulCmdParameters extends ParamsManager {
         		OptionBuilder
         		.hasArg().withArgName("path")
         		.withLongOpt("stats-XML-out")
-        		.withDescription("path in which to write the statistics kept in the MINERful knowledge base (say, task A occurs but B does not for N times, etc.); the file is saved in an XML format")
+        		.withDescription("path of the file in which the statistics kept in the MINERful knowledge base (say, that task A occurs but B does not for N times, etc.) should be saved; the file is stored in an XML format")
         		.withType(new String())
         		.create(STATS_OUT_PATH_PARAM_NAME)
         		);
@@ -214,7 +214,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 //        		);
         options.addOption(
         		OptionBuilder
-        		.withLongOpt("show-mem")
+        		.withLongOpt("show-mem-peak")
         		.withDescription("show the memory consumption peak (could slow down the overall computation)")
         		.create(SHOW_MEMSPACE_USED_PARAM_NAME)
         		);

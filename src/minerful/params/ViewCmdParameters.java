@@ -9,9 +9,9 @@ public class ViewCmdParameters extends ParamsManager {
 		type, support, interest;
 	}
 
-	public static final String MACHINE_READABLE_RESULTS_PARAM_NAME = "mR";
-	public static final String CONSTRAINTS_SORTING_TYPE_PARAM_NAME = "cS";
-	public static final String CONSTRAINTS_NO_FOLDING_PARAM_NAME = "noCF";
+	public static final String MACHINE_READABLE_RESULTS_PARAM_NAME = "machine";
+	public static final String CONSTRAINTS_SORTING_TYPE_PARAM_NAME = "sort";
+	public static final String CONSTRAINTS_NO_FOLDING_PARAM_NAME = "noFold";
 	public static final String SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME = "shush";
 	
 	public static final Boolean DEFAULT_DO_MACHINE_READABLE_RESULTS = false;
@@ -80,7 +80,7 @@ public class ViewCmdParameters extends ParamsManager {
         		);
         options.addOption(
         		OptionBuilder
-        		.withLongOpt("nofolding")
+        		.withLongOpt("no-folding")
         		.withDescription("avoid the discovered constraints to be folded under activation tasks" + 
         				printDefault(DEFAULT_DO_CONSTRAINTS_NO_FOLDING))
         		.create(CONSTRAINTS_NO_FOLDING_PARAM_NAME)
