@@ -2,6 +2,7 @@ package minerful.io;
 
 import java.io.File;
 
+import minerful.concept.TaskCharArchive;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import minerful.concept.ProcessModel;
@@ -47,6 +48,39 @@ public class ProcessModelLoader {
 					+ ". Check the file path or the specified encoding.", e);
 		}
 	
+		return inputProcess;
+	}
+
+	/**
+	 * Load a process model from a file with the assurance to respect the given encoding-mapping
+	 *
+	 * @param inputLanguage
+	 * @param inputFile
+	 * @param alphabet encoding-mapping
+	 * @return
+	 */
+	public ProcessModel loadProcessModel(InputModelParameters.InputEncoding inputLanguage, File inputFile, TaskCharArchive alphabet) {
+		ProcessModel inputProcess = null;
+
+		try {
+			switch (inputLanguage) {
+			case MINERFUL:
+				inputProcess = new ProcessModelEncoderDecoder().unmarshalProcessModel(inputFile);
+				break;
+			case JSON:
+				inputProcess = new ProcessModelEncoderDecoder().readFromJsonFile(inputFile, alphabet);
+				break;
+			case DECLARE_MAP:
+				inputProcess = new DeclareMapEncoderDecoder(inputFile.getAbsolutePath()).createMinerFulProcessModel();
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			MessagePrinter.getInstance(this).error("Unreadable process model from file: " + inputFile.getAbsolutePath()
+					+ ". Check the file path or the specified encoding.", e);
+		}
+
 		return inputProcess;
 	}
 

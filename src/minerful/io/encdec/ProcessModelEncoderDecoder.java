@@ -15,6 +15,7 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
 import minerful.concept.ProcessModel;
+import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
@@ -104,6 +105,24 @@ public class ProcessModelEncoderDecoder {
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
 		TransferObjectToProcessModelTranslator translator = new TransferObjectToProcessModelTranslator();
 		return translator.createProcessModel(proModTO);
+	}
+
+	/**
+	 * read a process model from a Json file with the guaranties to respect the given encoding-mapping
+	 *
+	 * @param processModelJsonFile
+	 * @param alphabet encoding-mapping
+	 * @return
+	 * @throws JsonSyntaxException
+	 * @throws JsonIOException
+	 * @throws FileNotFoundException
+	 */
+	public ProcessModel readFromJsonFile(File processModelJsonFile, TaskCharArchive alphabet) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
+		ProcessModelPojo pojo = jsonPojoMgr.fromJsonToProcessModelPojo(processModelJsonFile);
+		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
+		TransferObjectToProcessModelTranslator translator = new TransferObjectToProcessModelTranslator();
+		return translator.createProcessModel(proModTO, alphabet);
 	}
 
 	public void writeToJsonFile(ProcessModel processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
