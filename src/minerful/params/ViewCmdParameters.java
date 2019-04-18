@@ -9,10 +9,10 @@ public class ViewCmdParameters extends ParamsManager {
 		type, support, interest;
 	}
 
-	public static final String MACHINE_READABLE_RESULTS_PARAM_NAME = "machine";
-	public static final String CONSTRAINTS_SORTING_TYPE_PARAM_NAME = "sort";
-	public static final String CONSTRAINTS_NO_FOLDING_PARAM_NAME = "noFold";
-	public static final String SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME = "shush";
+	public static final String MACHINE_READABLE_RESULTS_PARAM_NAME = "vMachine";
+	public static final String CONSTRAINTS_SORTING_TYPE_PARAM_NAME = "vSort";
+	public static final String CONSTRAINTS_NO_FOLDING_PARAM_NAME = "vNoFold";
+	public static final String SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME = "vShush";
 	
 	public static final Boolean DEFAULT_DO_MACHINE_READABLE_RESULTS = false;
 	public static final ConstraintsSorting DEFAULT_CONSTRAINTS_SORTING_TYPE = ConstraintsSorting.type;

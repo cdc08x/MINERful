@@ -165,8 +165,8 @@ public class LogMakerParameters extends ParamsManager {
         );
         options.addOption(
                 OptionBuilder
-                .hasArg().withArgName("encoding")
-                .withLongOpt("out-log-enc")
+                .hasArg().withArgName("language")
+                .withLongOpt("out-log-encoding")
                 .withDescription("encoding language for the output log " + printValues(LogMakerParameters.Encoding.values())
                 	+ printDefault(fromEnumValueToString(DEFAULT_OUTPUT_ENCODING)))
                 .withType(new String())

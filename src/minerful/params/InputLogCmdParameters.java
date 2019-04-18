@@ -18,11 +18,11 @@ public class InputLogCmdParameters extends ParamsManager {
     public static final String INPUT_LOG_ENCODING_PARAM_NAME = "iLE";
 	public static final String EVENT_CLASSIFICATION_PARAM_NAME = "iLClassif";
 	public static final String INPUT_LOGFILE_PATH_LONG_PARAM_NAME = "in-log-file";
-    public static final String INPUT_ENC_PARAM_LONG_NAME = "in-log-enc";
+    public static final String INPUT_ENC_PARAM_LONG_NAME = "in-log-encoding";
 	public static final String EVENT_CLASSIFICATION_LONG_PARAM_NAME = "in-log-evt-classifier";
-	public static final String START_FROM_TRACE_PARAM_NAME = "tStart";
+	public static final String START_FROM_TRACE_PARAM_NAME = "iLStartAt";
 	public static final Integer FIRST_TRACE_NUM = 0;
-	public static final String SUB_LOG_SIZE_PARAM_NAME = "subL";
+	public static final String SUB_LOG_SIZE_PARAM_NAME = "iLSubLen";
 	public static final Integer WHOLE_LOG_LENGTH = 0;
 
 	public enum InputEncoding {

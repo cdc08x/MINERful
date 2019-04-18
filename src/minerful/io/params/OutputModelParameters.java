@@ -15,10 +15,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class OutputModelParameters extends ParamsManager {
-	public static final String SAVE_AS_CONDEC_PARAM_NAME = "ConDec";
-	public static final String SAVE_AS_CSV_PARAM_NAME = "CSV";
-	public static final String SAVE_AS_XML_PARAM_NAME = "XML";
-	public static final String SAVE_AS_JSON_PARAM_NAME = "JSON";
+	public static final String SAVE_AS_CONDEC_PARAM_NAME = "oConDec";
+	public static final String SAVE_AS_CSV_PARAM_NAME = "oCSV";
+	public static final String SAVE_AS_XML_PARAM_NAME = "oXML";
+	public static final String SAVE_AS_JSON_PARAM_NAME = "oJSON";
 	public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "autoDOT";
 //	public static final String SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME = "dotCond"; // TODO To be done, one day
 	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "autoTSML";
