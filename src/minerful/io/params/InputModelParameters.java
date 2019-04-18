@@ -15,7 +15,7 @@ import org.apache.commons.cli.Options;
 
 public class InputModelParameters extends ParamsManager {
 	public static final String INPUT_MODELFILE_PATH_PARAM_NAME = "iMF";
-	public static final String INPUT_MODELFILE_PATH_PARAM_LONG_NAME = "input-model";
+	public static final String INPUT_MODELFILE_PATH_PARAM_LONG_NAME = "input-model-file";
     public static final String INPUT_MODEL_ENC_PARAM_NAME = "iME";
     public static final String INPUT_MODEL_ENC_PARAM_LONG_NAME = "input-model-encoding";
 	
