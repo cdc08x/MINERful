@@ -15,7 +15,6 @@ import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class MinerFulCmdParameters extends ParamsManager {
@@ -148,86 +147,85 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("stats-XML-out")
-        		.withDescription("path of the file in which the statistics kept in the MINERful knowledge base (say, that task A occurs but B does not for N times, etc.) should be saved; the file is stored in an XML format")
-        		.withType(new String())
-        		.create(STATS_OUT_PATH_PARAM_NAME)
+				Option.builder(STATS_OUT_PATH_PARAM_NAME)
+						.hasArg().argName("path")
+						.longOpt("stats-XML-out")
+						.desc("path of the file in which the statistics kept in the MINERful knowledge base (say, that task A occurs but B does not for N times, etc.) should be saved; the file is stored in an XML format")
+						.type(String.class)
+						.build()
         		);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("path")
-                .withLongOpt("exclude-results-in")
-                .withDescription("path of the file where the tasks to exclude from the result are listed")
-                .withType(new String())
-                .create(EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME)
+                Option.builder(EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME)
+						.hasArg().argName("path")
+						.longOpt("exclude-results-in")
+						.desc("path of the file where the tasks to exclude from the result are listed")
+						.type(String.class)
+						.build()
     	);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("number")
-        		.withLongOpt("out-branch")
-        		.withDescription("out-branching maximum level for discovered constraints (must be greater than or equal to "
+        		Option.builder(OUT_BRANCHING_LIMIT_PARAM_NAME)
+						.hasArg().argName("number")
+						.longOpt("out-branch")
+						.desc("out-branching maximum level for discovered constraints (must be greater than or equal to "
 						+ (MINIMUM_BRANCHING_LIMIT)
 						+ ")"
 						+ printDefault(DEFAULT_OUT_BRANCHING_LIMIT))
-        		.withType(new Integer(0))
-        		.create(OUT_BRANCHING_LIMIT_PARAM_NAME)
+						.type(String.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("number")
-        		.withLongOpt("kb-ll-threads")
-        		.withDescription("threads for log-processing parallel execution (must be greater than or equal to "
+        		Option.builder(KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+						.hasArg().argName("number")
+						.longOpt("kb-ll-threads")
+						.desc("threads for log-processing parallel execution (must be greater than or equal to "
 						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
 						+ ")"
 						+ printDefault(MINIMUM_PARALLEL_EXECUTION_THREADS))
-        		.withType(new Integer(0))
-        		.create(KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+						.type(String.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("number")
-        		.withLongOpt("q-ll-threads")
-        		.withDescription("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
+        		Option.builder(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+						.hasArg().argName("number")
+						.longOpt("q-ll-threads")
+						.desc("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
 						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
 						+ ")"
 						+ printDefault(MINIMUM_PARALLEL_EXECUTION_THREADS))
-        		.withType(new Integer(0))
-        		.create(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+						.type(String.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("foresee-distances")
-        		.withDescription(
-        				attachInstabilityWarningToDescription("compute the foreseen confidence interval for the expected distance between tasks in relation constraints")
-        		)
-        		.create(FORESEE_DISTANCES_PARAM_NAME)
+        		Option.builder(FORESEE_DISTANCES_PARAM_NAME)
+						.longOpt("foresee-distances")
+						.desc(
+						attachInstabilityWarningToDescription("compute the foreseen confidence interval for the expected distance between tasks in relation constraints")
+				)
+						.build()
         		);
 //        options.addOption(
-//        		OptionBuilder
-//        		.withLongOpt("time-aware")
-//        		.withDescription(
+//        		Option.builder(TIME_ANALYSIS_PARAM)
+//        		.longOpt("time-aware")
+//        		.desc(
 //        				attachInstabilityWarningToDescription("include the analysis of event timestamps into discovery")
 //        		)
-//        		.create(TIME_ANALYSIS_PARAM)
 //        		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("show-mem-peak")
-        		.withDescription("show the memory consumption peak (could slow down the overall computation)")
-        		.create(SHOW_MEMSPACE_USED_PARAM_NAME)
+        		Option.builder(SHOW_MEMSPACE_USED_PARAM_NAME)
+						.longOpt("show-mem-peak")
+						.desc("show the memory consumption peak (could slow down the overall computation)")
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("number")
-        		.withLongOpt("q-ll-threads")
-        		.withDescription("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
+        		Option.builder(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+						.hasArg().argName("number")
+						.longOpt("q-ll-threads")
+						.desc("threads for querying parallel execution of the knowledge base (must be greater than or equal to "
 						+ (MINIMUM_PARALLEL_EXECUTION_THREADS)
 						+ ")"
 						+ printDefault(MINIMUM_PARALLEL_EXECUTION_THREADS))
-        		.withType(new Integer(0))
-        		.create(QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
+						.type(String.class)
+						.build()
         		);
         return options;
 	}

@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import minerful.params.ParamsManager;
@@ -78,20 +77,23 @@ public class CheckingCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("type")
-                .withLongOpt("checking-strictness")
-                .withDescription("level of strictness of the checking analysis over constraints. It can be one of the following: " + printValues(StrictnessPolicy.values())
+				Option.builder(STRICTNESS_POLICY_PARAM_NAME)
+                .hasArg().argName("type")
+                .longOpt("checking-strictness")
+                .desc("level of strictness of the checking analysis over constraints. It can be one of the following: " + printValues(StrictnessPolicy.values())
                 		+ printDefault(fromEnumValueToString(DEFAULT_STRICTNESS_POLICY)))
-                .withType(new String())
-                .create(STRICTNESS_POLICY_PARAM_NAME)
+                .type(String.class)
+				.build()
+//                .create(STRICTNESS_POLICY_PARAM_NAME)
     	);
-        options.addOption(OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-check-as-csv")
-        		.withDescription("print results in CSV format into the specified file")
-        		.withType(new String())
-        		.create(SAVE_AS_CSV_PARAM_NAME)
+        options.addOption(
+				Option.builder(SAVE_AS_CSV_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("save-check-as-csv")
+        		.desc("print results in CSV format into the specified file")
+        		.type(String.class)
+				.build()
+//        		.create(SAVE_AS_CSV_PARAM_NAME)
         		);
         return options;
 	}

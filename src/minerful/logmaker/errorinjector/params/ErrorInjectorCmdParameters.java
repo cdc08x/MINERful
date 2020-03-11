@@ -7,7 +7,6 @@ import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 
@@ -90,49 +89,49 @@ public class ErrorInjectorCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("policy")
-                .withLongOpt("err-spread-policy")
-                .withDescription("policy for the distribution of the errors. Possible values are:\n" +
-                		"'" + ErrorInjector.SpreadingPolicy.collection + "'\n to spread the errors over the whole collection of traces [DEFAULT];\n" +
-                		"'" + ErrorInjector.SpreadingPolicy.string + "'\n to inject the errors in every trace")
-                .withType(new Integer(0))
-                .create(ErrorInjectorCmdParameters.ERROR_SPREADING_POLICY_PARAM_NAME)
+                Option.builder(ErrorInjectorCmdParameters.ERROR_SPREADING_POLICY_PARAM_NAME)
+						.hasArg().argName("policy")
+						.longOpt("err-spread-policy")
+						.desc("policy for the distribution of the errors. Possible values are:\n" +
+						"'" + ErrorInjector.SpreadingPolicy.collection + "'\n to spread the errors over the whole collection of traces [DEFAULT];\n" +
+						"'" + ErrorInjector.SpreadingPolicy.string + "'\n to inject the errors in every trace")
+						.type(Integer.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("type")
-                .withLongOpt("err-type")
-                .withDescription("type of the errors to inject. Possible values are:\n" +
-                		"'" + ErrorInjector.ErrorType.ins + "'\n suppression of the target task;\n" +
-                		"'" + ErrorInjector.ErrorType.del + "'\n insertion of the target task;\n" +
-                		"'" + ErrorInjector.ErrorType.insdel + "'\n mixed (suppressions or insertions, as decided by random) [DEFAULT]")
-                .withType(new Integer(0))
-                .create(ErrorInjectorCmdParameters.ERROR_TYPE_PARAM_NAME)
+                Option.builder(ErrorInjectorCmdParameters.ERROR_TYPE_PARAM_NAME)
+						.hasArg().argName("type")
+						.longOpt("err-type")
+						.desc("type of the errors to inject. Possible values are:\n" +
+						"'" + ErrorInjector.ErrorType.ins + "'\n suppression of the target task;\n" +
+						"'" + ErrorInjector.ErrorType.del + "'\n insertion of the target task;\n" +
+						"'" + ErrorInjector.ErrorType.insdel + "'\n mixed (suppressions or insertions, as decided by random) [DEFAULT]")
+						.type(Integer.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("percent")
-                .withLongOpt("err-percentage")
-                .withDescription("percentage of the errors to be injected (from 0 to 100) [DEFAULT: 0]")
-                .withType(new Integer(0))
-                .create(ErrorInjectorCmdParameters.ERROR_PERCENTAGE_PARAM_NAME)
+                Option.builder(ErrorInjectorCmdParameters.ERROR_PERCENTAGE_PARAM_NAME)
+						.hasArg().argName("percent")
+						.longOpt("err-percentage")
+						.desc("percentage of the errors to be injected (from 0 to 100) [DEFAULT: 0]")
+						.type(Integer.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("char")
-                .withLongOpt("err-target")
-                .withDescription("target task")
-                .withType(new Character('0'))
-                .create(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME)
+                Option.builder(ErrorInjectorCmdParameters.TARGET_CHAR_PARAM_NAME)
+						.hasArg().argName("char")
+						.longOpt("err-target")
+						.desc("target task")
+						.type(Character.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("file path")
-                .withLongOpt("err-out-log")
-                .withDescription("path to the file in which the error-injected log is stored")
-                .withType(new String())
-                .create(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME)
+                Option.builder(ErrorInjectorCmdParameters.OUTPUT_LOG_PATH_PARAM_NAME)
+						.hasArg().argName("file path")
+						.longOpt("err-out-log")
+						.desc("path to the file in which the error-injected log is stored")
+						.type(String.class)
+						.build()
     	);
 		return options;
 	}

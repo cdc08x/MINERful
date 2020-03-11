@@ -8,7 +8,6 @@ import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class InputLogCmdParameters extends ParamsManager {
@@ -123,50 +122,50 @@ public class InputLogCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("language")
-                .withLongOpt(INPUT_ENC_PARAM_LONG_NAME)
-                .withDescription("input encoding language " + printValues(InputEncoding.values()) 
-                		+ printDefault(fromEnumValueToString(DEFAULT_INPUT_ENCODING)))
-                .withType(new String())
-                .create(INPUT_LOG_ENCODING_PARAM_NAME)
+                Option.builder(INPUT_LOG_ENCODING_PARAM_NAME)
+						.hasArg().argName("language")
+						.longOpt(INPUT_ENC_PARAM_LONG_NAME)
+						.desc("input encoding language " + printValues(InputEncoding.values())
+						+ printDefault(fromEnumValueToString(DEFAULT_INPUT_ENCODING)))
+						.type(String.class)
+				.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("class")
-                .withLongOpt(EVENT_CLASSIFICATION_LONG_PARAM_NAME)
-                .withDescription("event classification (resp., by activity name, or according to the log-specified pattern) " + printValues(EventClassification.values())
-                		+ printDefault(fromEnumValueToString(DEFAULT_EVENT_CLASSIFICATION)))
-                .withType(new String())
-                .create(EVENT_CLASSIFICATION_PARAM_NAME)
+                Option.builder(EVENT_CLASSIFICATION_PARAM_NAME)
+						.hasArg().argName("class")
+						.longOpt(EVENT_CLASSIFICATION_LONG_PARAM_NAME)
+						.desc("event classification (resp., by activity name, or according to the log-specified pattern) " + printValues(EventClassification.values())
+						+ printDefault(fromEnumValueToString(DEFAULT_EVENT_CLASSIFICATION)))
+						.type(String.class)
+				.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("path")
+                Option.builder(INPUT_LOGFILE_PATH_PARAM_NAME)
+						.hasArg().argName("path")
 //                .isRequired(true) // Causing more problems than not
-                .withLongOpt(INPUT_LOGFILE_PATH_LONG_PARAM_NAME)
-                .withDescription("path to read the log file from")
-                .withType(new String())
-                .create(INPUT_LOGFILE_PATH_PARAM_NAME)
+						.longOpt(INPUT_LOGFILE_PATH_LONG_PARAM_NAME)
+						.desc("path to read the log file from")
+						.type(String.class)
+				.build()
     	);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("number")
-        		.withLongOpt("start-from-trace")
-        		.withDescription("ordinal number of the trace from which the analysed sub-log should start"
+        		Option.builder(START_FROM_TRACE_PARAM_NAME)
+						.hasArg().argName("number")
+						.longOpt("start-from-trace")
+						.desc("ordinal number of the trace from which the analysed sub-log should start"
 						+ printDefault(FIRST_TRACE_NUM))
-        		.withType(new Long(0))
-        		.create(START_FROM_TRACE_PARAM_NAME)
+						.type(Long.class)
+				.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("length")
-        		.withLongOpt("sub-log-size")
-        		.withDescription("number of traces to be analysed in the sub-log. To have the entire log analysed, leave the default value"
+        		Option.builder(SUB_LOG_SIZE_PARAM_NAME)
+						.hasArg().argName("length")
+						.longOpt("sub-log-size")
+						.desc("number of traces to be analysed in the sub-log. To have the entire log analysed, leave the default value"
 						+ printDefault(WHOLE_LOG_LENGTH))
-        		.withType(new Long(0))
-        		.create(SUB_LOG_SIZE_PARAM_NAME)
-        		);
+						.type(Long.class)
+				.build()
+				);
         return options;
 	}
 }

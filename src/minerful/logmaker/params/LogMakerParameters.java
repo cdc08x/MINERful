@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import minerful.params.ParamsManager;
@@ -137,48 +136,48 @@ public class LogMakerParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
          options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("min-length")
-                .withLongOpt("minlen")
-                .withDescription("minimum length of the generated traces. It must be greater than or equal to 0"
-                		+ printDefault(DEFAULT_MIN_TRACE_LENGTH))
-                .withType(new Integer(0))
-                .create(MIN_LEN_PARAM_NAME)
+                Option.builder(MIN_LEN_PARAM_NAME)
+						.hasArg().argName("min-length")
+						.longOpt("minlen")
+						.desc("minimum length of the generated traces. It must be greater than or equal to 0"
+						+ printDefault(DEFAULT_MIN_TRACE_LENGTH))
+						.type(Integer.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("max-length")
-                .withLongOpt("maxlen")
-                .withDescription("maximum length of the generated traces. It must be greater than or equal to 0"
-                		+ printDefault(DEFAULT_MAX_TRACE_LENGTH))
-                .withType(new Integer(0))
-                .create(MAX_LEN_PARAM_NAME)
+                Option.builder(MAX_LEN_PARAM_NAME)
+						.hasArg().argName("max-length")
+						.longOpt("maxlen")
+						.desc("maximum length of the generated traces. It must be greater than or equal to 0"
+						+ printDefault(DEFAULT_MAX_TRACE_LENGTH))
+						.type(Integer.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("number of traces")
-                .withLongOpt("size")
-                .withDescription("number of traces to simulate"
-                		+ printDefault(DEFAULT_SIZE))
-                .withType(new Long(0))
-                .create(SIZE_PARAM_NAME)
+                Option.builder(SIZE_PARAM_NAME)
+						.hasArg().argName("number of traces")
+						.longOpt("size")
+						.desc("number of traces to simulate"
+						+ printDefault(DEFAULT_SIZE))
+						.type(Long.class)
+						.build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("language")
-                .withLongOpt("out-log-encoding")
-                .withDescription("encoding language for the output log " + printValues(LogMakerParameters.Encoding.values())
-                	+ printDefault(fromEnumValueToString(DEFAULT_OUTPUT_ENCODING)))
-                .withType(new String())
-                .create(OUT_ENC_PARAM_NAME)
+                Option.builder(OUT_ENC_PARAM_NAME)
+						.hasArg().argName("language")
+						.longOpt("out-log-encoding")
+						.desc("encoding language for the output log " + printValues(LogMakerParameters.Encoding.values())
+						+ printDefault(fromEnumValueToString(DEFAULT_OUTPUT_ENCODING)))
+						.type(String.class)
+						.build()
     	);
        options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("file path")
-                .withLongOpt("out-log-file")
-                .withDescription("path of the file in which the log should be written")
-                .withType(new String())
-                .create(OUTPUT_FILE_PARAM_NAME)
+                Option.builder(OUTPUT_FILE_PARAM_NAME)
+						.hasArg().argName("file path")
+						.longOpt("out-log-file")
+						.desc("path of the file in which the log should be written")
+						.type(String.class)
+						.build()
     	);
         
         return options;

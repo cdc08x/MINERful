@@ -3,7 +3,7 @@ package minerful.params;
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class SlidingCmdParameters extends ParamsManager {
@@ -63,26 +63,26 @@ public class SlidingCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("num")
-        		.withLongOpt("slide-by")
-        		.withDescription("sliding window step, in number of traces (must be higher than 0)" + printDefault(DEFAULT_SLIDING_STEP))
-        		.withType(new Integer(0))
-        		.create(SLIDING_STEP_PARAM_NAME)
+        		Option.builder(SLIDING_STEP_PARAM_NAME)
+						.hasArg().argName("num")
+						.longOpt("slide-by")
+						.desc("sliding window step, in number of traces (must be higher than 0)" + printDefault(DEFAULT_SLIDING_STEP))
+						.type(Integer.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("stick-tail")
-        		.withDescription("block the tail and slide only the head (increasing the window length at every step)" + printDefault(DEFAULT_STICKY_TAIL_POLICY))
-        		.create(STICK_TAIL_PARAM_NAME)
+        		Option.builder(STICK_TAIL_PARAM_NAME)
+						.longOpt("stick-tail")
+						.desc("block the tail and slide only the head (increasing the window length at every step)" + printDefault(DEFAULT_STICKY_TAIL_POLICY))
+						.build()
         		);
        options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("file")
-                .isRequired(true)
-        		.withLongOpt("sliding-results-out")
-        		.withDescription("path of the file in which the values of constraints' measures are written")
-        		.create(INTERMEDIATE_OUTPUT_PARAM_NAME)
+        		Option.builder(INTERMEDIATE_OUTPUT_PARAM_NAME)
+						.hasArg().argName("file")
+						.required(true)
+						.longOpt("sliding-results-out")
+						.desc("path of the file in which the values of constraints' measures are written")
+						.build()
         		);
        return options;
 	}

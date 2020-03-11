@@ -1,7 +1,7 @@
 package minerful.params;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 public class ViewCmdParameters extends ParamsManager {
@@ -70,34 +70,34 @@ public class ViewCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("type")
-        		.withLongOpt("sort-constraints")
-        		.withDescription("Sorting policy for constraints of the discovered process: " + printValues(ConstraintsSorting.values()) + 
-        				printDefault(DEFAULT_CONSTRAINTS_SORTING_TYPE))
-        		.withType(new String())
-        		.create(CONSTRAINTS_SORTING_TYPE_PARAM_NAME)
+        		Option.builder(CONSTRAINTS_SORTING_TYPE_PARAM_NAME)
+						.hasArg().argName("type")
+						.longOpt("sort-constraints")
+						.desc("Sorting policy for constraints of the discovered process: " + printValues(ConstraintsSorting.values()) +
+						printDefault(DEFAULT_CONSTRAINTS_SORTING_TYPE))
+						.type(String.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("no-folding")
-        		.withDescription("avoid the discovered constraints to be folded under activation tasks" + 
-        				printDefault(DEFAULT_DO_CONSTRAINTS_NO_FOLDING))
-        		.create(CONSTRAINTS_NO_FOLDING_PARAM_NAME)
+        		Option.builder(CONSTRAINTS_NO_FOLDING_PARAM_NAME)
+						.longOpt("no-folding")
+						.desc("avoid the discovered constraints to be folded under activation tasks" +
+						printDefault(DEFAULT_DO_CONSTRAINTS_NO_FOLDING))
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("machine-readable")
-        		.withDescription("print a machine-readable list of supports, for each constraint template and constrained activities in the print-out" + 
-        				printDefault(DEFAULT_DO_MACHINE_READABLE_RESULTS))
-        		.create(MACHINE_READABLE_RESULTS_PARAM_NAME)
+        		Option.builder(MACHINE_READABLE_RESULTS_PARAM_NAME)
+						.longOpt("machine-readable")
+						.desc("print a machine-readable list of supports, for each constraint template and constrained activities in the print-out" +
+						printDefault(DEFAULT_DO_MACHINE_READABLE_RESULTS))
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("no-screen-print-out")
-        		.withDescription("suppresses the print-out of constraints on screen" + 
-        				printDefault(DEFAULT_DO_SUPPRESS_SCREEN_PRINT_OUT))
-        		.create(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME)
+        		Option.builder(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME)
+						.longOpt("no-screen-print-out")
+						.desc("suppresses the print-out of constraints on screen" +
+						printDefault(DEFAULT_DO_SUPPRESS_SCREEN_PRINT_OUT))
+						.build()
         		);
        return options;
 	}
