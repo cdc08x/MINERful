@@ -1,3 +1,0 @@
-digraph DeclarativeActivityAutomaton {
-node [shape="circle", label=""]
-initial [shape="plaintext", label=""]
