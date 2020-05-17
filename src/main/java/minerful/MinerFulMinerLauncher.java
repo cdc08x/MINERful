@@ -139,4 +139,9 @@ public class MinerFulMinerLauncher {
 
 		return logParser;
 	}
+	
+	public LogParser getLogParser() {
+		return logParser;
+	}
+	
 }

@@ -4,88 +4,111 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>MINERful</groupId>
 	<artifactId>MINERful</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<build>
+		<finalName>MINERful</finalName>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>11</source>
 					<target>11</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<includeSystemScope>true</includeSystemScope>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.1</version>
+
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+
+			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/cdc08x/MINERful</url>
+		</repository>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.deckfour</groupId>
 			<artifactId>xes</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/OpenXES-20181205.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.processmining.plugins</groupId>
-			<artifactId>declareminer</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/DeclareVisualizer.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google</groupId>
 			<artifactId>gson</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/gson-2.7.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google</groupId>
 			<artifactId>common</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/guava-16.0.1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.processmining.plugins</groupId>
+			<artifactId>declareminer</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.paukov</groupId>
 			<artifactId>combinatorics</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/combinatoricslib-2.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.jgraph</groupId>
 			<artifactId>layout</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/jgraph.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/reflections-0.9.8.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>nl.flotsam</groupId>
 			<artifactId>xeger</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/xeger-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/xstream-1.3.1.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>javassist.convert</groupId>
 			<artifactId>convert</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/javassist-3.12.1.GA.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.deckfour</groupId>
+			<artifactId>spex</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
