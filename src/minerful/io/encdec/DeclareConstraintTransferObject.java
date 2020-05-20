@@ -77,8 +77,10 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 	}
 	
 	public DeclareConstraintTransferObject(ConstraintPojo pojo) {
-		/* Search within all possible MINERFul templates */
-		Class<? extends Constraint> givenMinerFulTemplate = StringToLowerCaseAlphanumToTemplateTranslator.translateTemplateName(pojo.template);
+		/* Search within all possible MINERFul templates */		
+		Class<? extends Constraint> givenMinerFulTemplate =
+				StringToLowerCaseAlphanumToTemplateTranslator.translateTemplateName(
+						pojo.template);
 		if (givenMinerFulTemplate != null) {
 			this.minerFulTemplate = givenMinerFulTemplate;
 			this.declareMapTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.minerFulTemplate);

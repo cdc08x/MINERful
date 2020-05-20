@@ -2,16 +2,14 @@ package minerful.miner.core;
 
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
 import minerful.concept.TaskCharArchive;
 import minerful.logparser.LogParser;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.OccurrencesStatsBuilder;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
-import org.apache.log4j.PropertyConfigurator;
 
 public class MinerFulKBCore implements Callable<GlobalStatsTable> {
 	public static final String KNOWLEDGE_BASE_BUILDING_CODE = "'M-KB'";

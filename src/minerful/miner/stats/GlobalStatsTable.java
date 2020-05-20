@@ -1,13 +1,8 @@
-/*
-* To change this template, choose Tools | Templates
-* and open the template in the editor.
-*/
 package minerful.miner.stats;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +18,11 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
 
+/**
+ * This class wraps all the information, activity per activity, on its statistics as per the mined event log.
+ * The information includes, for all activities, the total amount of occurrences, and the interplay with other activities.
+ * @author Claudio Di Ciccio <dc.claudio@gmail.com>
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalStatsTable {

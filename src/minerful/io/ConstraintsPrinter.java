@@ -192,7 +192,7 @@ public class ConstraintsPrinter {
 	}
 
 	public String printUnfoldedBag() {
-		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraints(this.processModel.bag));
+		return printConstraintsCollection(this.processModel.getAllConstraints());
 	}
 
 	public String printUnfoldedBagOrderedBySupport() {
@@ -204,7 +204,7 @@ public class ConstraintsPrinter {
 	}
 
 	public int computePaddingForConstraintNames() {
-		return computePaddingForConstraintNames(LinearConstraintsIndexFactory.getAllConstraints(this.processModel.bag));
+		return computePaddingForConstraintNames(this.processModel.getAllConstraints());
 	}
 	
 	public int computePaddingForConstraintNames(Collection<Constraint> constraintsSet) {

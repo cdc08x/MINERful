@@ -1,20 +1,15 @@
 package minerful.miner;
 
-import java.util.Collection;
 import java.util.Set;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
+import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Participation;
-import minerful.concept.constraint.existence.AtMostOne;
-import minerful.concept.constraint.relation.NotChainSuccession;
-import minerful.concept.constraint.relation.NotSuccession;
-import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 

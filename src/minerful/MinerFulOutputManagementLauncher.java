@@ -4,23 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.util.Map;
 import java.util.NavigableMap;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javassist.convert.Transformer;
 import minerful.concept.ProcessModel;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;

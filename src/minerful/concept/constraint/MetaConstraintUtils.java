@@ -38,8 +38,6 @@ import minerful.concept.constraint.relation.Succession;
 
 import org.reflections.Reflections;
 
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
-
 public class MetaConstraintUtils {
 	public static Collection<Class<? extends Constraint>> ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES = getAllDiscoverableConstraintTemplates();
 	public static Collection<Class<? extends Constraint>> ALL_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES = getRelationConstraintTemplates(ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES);
