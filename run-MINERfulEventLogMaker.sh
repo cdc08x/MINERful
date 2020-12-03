@@ -29,4 +29,4 @@ MAINCLASS="minerful.MinerFulLogMakerStarter"
 ## Global variables
 
 ## Run!
-java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS $*
+java -Xmx$MEMORY_MAX -cp MINERful.jar:$LIBS $MAINCLASS $*

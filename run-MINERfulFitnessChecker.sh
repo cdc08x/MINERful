@@ -33,4 +33,4 @@ clear
 MAINCLASS="minerful.MinerFulFitnessCheckStarter"
 
 ## Run!
-java -Xmx$MEMORY_MAX -cp MINERful.jar $MAINCLASS $* # -d $DEBUGLEVEL -t $THRESHOLD
+java -Xmx$MEMORY_MAX -cp MINERful.jar:$LIBS $MAINCLASS $* # -d $DEBUGLEVEL -t $THRESHOLD
