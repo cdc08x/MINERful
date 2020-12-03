@@ -14,7 +14,7 @@ Selected publications about MINERful and presentation slides:
     - DOI: [10.1145/2629447](http://doi.acm.org/10.1145/2629447)
     - Presentation: [https://www.slideshare.net/cdc08x/automated-discovery-of-declarative-process-models](https://www.slideshare.net/cdc08x/automated-discovery-of-declarative-process-models)
     
-  - Discovery of more target-branched (read: more complex) declarative models:
+  - Discovery of target-branched (read: more complex) declarative models:
   
     Claudio Di Ciccio, Fabrizio Maria Maggi, Jan Mendling: Efficient discovery of Target-Branched Declare constraints. Inf. Syst. 56: 258-283 (2016)
     - DOI: [10.1016/j.is.2015.06.009](https://doi.org/10.1016/j.is.2015.06.009)
