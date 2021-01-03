@@ -47,6 +47,7 @@ public class MetaConstraintUtils {
 	public static Map<String, Class<? extends Constraint>> ALL_CONSTRAINT_TEMPLATE_NAMES_MAP = getAllConstraintTemplateNamesMap();
 	public static Collection<Class<? extends Constraint>> ALL_RELATION_CONSTRAINT_TEMPLATES = getRelationConstraintTemplates(ALL_CONSTRAINT_TEMPLATES);
 	public static Collection<Class<? extends Constraint>> ALL_EXISTENCE_CONSTRAINT_TEMPLATES = getExistenceConstraintTemplates(ALL_CONSTRAINT_TEMPLATES);
+	
 	public static int NUMBER_OF_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES = ALL_DISCOVERABLE_RELATION_CONSTRAINT_TEMPLATES.size();
 	public static int NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES = ALL_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES.size();
 	public static int NUMBER_OF_RELATION_CONSTRAINT_TEMPLATES = ALL_RELATION_CONSTRAINT_TEMPLATES.size();

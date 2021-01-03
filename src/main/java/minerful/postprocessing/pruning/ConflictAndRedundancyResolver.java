@@ -23,6 +23,9 @@ import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 
 public class ConflictAndRedundancyResolver {
+
+	private static Logger logger = Logger.getLogger(ConflictAndRedundancyResolver.class.getCanonicalName());
+	
 	public static final String CONFLICT_REDUNDANCY_CHECK_CODE = "'CR-check'";
 
 	public static final int MAXIMUM_VISIBLE_CONSTRAINTS_FOR_REDUNDANCY_CHECK = 24;
@@ -41,21 +44,19 @@ public class ConflictAndRedundancyResolver {
 	private TreeSet<Constraint> blackboard;
 	
 	private long secondPassStartTime = -1;
-
-	private static Logger logger = Logger.getLogger(ConflictAndRedundancyResolver.class.getCanonicalName());
 	
-	private Set<Constraint>
-		originalHierarchyUnredundantConstraints,
-		notSurelySafeProcessConstraints,
-		conflictingConstraintsInOriginalNonRedundantModel,
-		conflictingConstraintsInOriginalModel,
-		conflictingConstraints,
-		redundantConstraints,
-		redundantConstraintsAtSecondPass,
-		redundantConstraintsInOriginalModel;
-	private int
-		conflictChecksPerformed,
-		redundancyChecksPerformed;
+	private Set<Constraint> originalHierarchyUnredundantConstraints;
+	private Set<Constraint> notSurelySafeProcessConstraints;
+	private Set<Constraint> conflictingConstraintsInOriginalNonRedundantModel;
+	private Set<Constraint> conflictingConstraintsInOriginalModel;
+	private Set<Constraint> conflictingConstraints;
+	private Set<Constraint> redundantConstraints;
+	private Set<Constraint> redundantConstraintsAtSecondPass;
+	private Set<Constraint> redundantConstraintsInOriginalModel;
+	
+	private int conflictChecksPerformed;
+	private int redundancyChecksPerformed;
+	
 	private ConstraintSortingPolicy[] rankingPolicies;
 	
 	public ConflictAndRedundancyResolver(ProcessModel process, PostProcessingCmdParameters params) {
@@ -333,7 +334,7 @@ public class ConflictAndRedundancyResolver {
 	}
 	
 	public Set<Constraint> getConflictingConstraintsInOriginalUnredundantModel() {
-		if (checking == true) {
+		if (checking) {
 			throw new IllegalStateException("Check in progress");
 		}
 		if (conflictingConstraintsInOriginalNonRedundantModel == null) {
@@ -349,7 +350,7 @@ public class ConflictAndRedundancyResolver {
 	}
 
 	public Set<Constraint> getConflictingConstraintsInOriginalModel() {
-		if (checking == true) {
+		if (checking) {
 			throw new IllegalStateException("Check in progress");
 		}
 		if (conflictingConstraintsInOriginalModel == null) {
@@ -365,7 +366,7 @@ public class ConflictAndRedundancyResolver {
 	}
 
 	public Set<Constraint> getRedundantConstraintsInOriginalModel() {
-		if (checking == true) {
+		if (checking) {
 			throw new IllegalStateException("Check in progress");
 		}
 		if (redundantConstraintsInOriginalModel == null) {
@@ -381,7 +382,7 @@ public class ConflictAndRedundancyResolver {
 	}
 
 	public Set<Constraint> getRedundantConstraintsInOriginalUnredundantModel() {
-		if (checking == true) {
+		if (checking) {
 			throw new IllegalStateException("Check in progress");
 		}
 		if (redundantConstraintsInOriginalModel == null) {
@@ -409,14 +410,14 @@ public class ConflictAndRedundancyResolver {
 	}
 	
 	public int howManyPerformedConflictChecks() {
-		if (checking == true) {
+		if (checking) {
 			throw new IllegalStateException("Conflict check in progress");
 		}
 		return this.conflictChecksPerformed;
 	}
 	
 	public int howManyPerformedRedundancyChecks() {
-		if (checking == true) {
+		if (checking) {
 			throw new IllegalStateException("Conflict check in progress");
 		}
 		return this.redundancyChecksPerformed;

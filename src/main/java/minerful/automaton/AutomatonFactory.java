@@ -30,14 +30,29 @@ import org.apache.log4j.Logger;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 
+/**
+ * 
+ */
 public class AutomatonFactory {
-	public static final int NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA = 0;
-	public static final int NO_TRACE_LENGTH_CONSTRAINT = 0;
+	
 	private static Logger logger = Logger.getLogger(AutomatonFactory.class
 			.getCanonicalName());
+	
+	public static final int NO_LIMITS_IN_ACTIONS_FOR_SUBAUTOMATA = 0;
+	public static final int NO_TRACE_LENGTH_CONSTRAINT = 0;
 	public static final int THREAD_MAX = 8;
 	public static final Character WILD_CARD = TaskCharEncoderDecoder.WILDCARD_CHAR;
+	
+	private AutomatonFactory() {
+		// private constructor
+	}
 
+	/**
+	 * 
+	 * @param regExpsMap
+	 * @param alphabet
+	 * @return
+	 */
 	public static Collection<SubAutomaton> subAutomataFromRegularExpressionsInMultiThreading(
 			NavigableMap<Character, Collection<String>> regExpsMap,
 			Collection<Character> alphabet) {
@@ -48,11 +63,13 @@ public class AutomatonFactory {
 	public static Collection<SubAutomaton> subAutomataFromRegularExpressionsInMultiThreading(
 			NavigableMap<Character, Collection<String>> regExpsMap,
 			Collection<Character> alphabet, int maxActions) {
+		
 		Collection<String> regExps = null;
 		Collection<DimensionalityHeuristicBasedCallableSubAutomataMaker> autoMakers = new ArrayList<DimensionalityHeuristicBasedCallableSubAutomataMaker>(
 				regExpsMap.size());
 		Collection<SubAutomaton> partialAutomata = new ArrayList<SubAutomaton>(
 				alphabet.size());
+		
 		ExecutorService executor = Executors.newFixedThreadPool(THREAD_MAX);
 
 		for (Character tIdChr : regExpsMap.keySet()) {
@@ -86,6 +103,12 @@ public class AutomatonFactory {
 		return partialAutomata;
 	}
 
+	/**
+	 * 
+	 * @param regExpsMap
+	 * @param alphabet
+	 * @return
+	 */
 	public static Automaton fromRegularExpressionsByDimensionalityHeuristicInMultiThreading(
 			AbstractMap<Character, Collection<String>> regExpsMap,
 			Collection<Character> alphabet) {
@@ -112,6 +135,15 @@ public class AutomatonFactory {
 		return processAutomaton;
 	}
 	
+	/**
+	 * 
+	 * @param regExps
+	 * @param basicAlphabet
+	 * @param withWildCard
+	 * @param minLen
+	 * @param maxLen
+	 * @return
+	 */
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
 			Collection<Character> basicAlphabet, boolean withWildCard, int minLen, int maxLen) {
 		boolean traceLengthLimitSet = (minLen != NO_TRACE_LENGTH_CONSTRAINT || maxLen != NO_TRACE_LENGTH_CONSTRAINT);
@@ -129,16 +161,37 @@ public class AutomatonFactory {
 		return new CallableAutomataMaker(regularExpressions).makeAutomaton();
 	}
 	
+	/**
+	 * 
+	 * @param regExps
+	 * @param basicAlphabet
+	 * @param minLen
+	 * @param maxLen
+	 * @return
+	 */
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
 			Collection<Character> basicAlphabet, int minLen, int maxLen) {
 		return fromRegularExpressions(regExps, basicAlphabet, false, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
 	}
 
+	/**
+	 * 
+	 * @param regExps
+	 * @param basicAlphabet
+	 * @return
+	 */
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
 			Collection<Character> basicAlphabet) {
 		return fromRegularExpressions(regExps, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
 	}
 
+	/**
+	 * 
+	 * @param regExps
+	 * @param basicAlphabet
+	 * @param withWildCard
+	 * @return
+	 */
 	public static Automaton fromRegularExpressions(Collection<String> regExps,
 			Collection<Character> basicAlphabet, boolean withWildCard) {
 		return fromRegularExpressions(regExps, basicAlphabet, withWildCard, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT);
@@ -194,20 +247,49 @@ public class AutomatonFactory {
 		return processAutomaton;
 	}
 
-
+	/**
+	 * 
+	 * @param bag
+	 * @param basicAlphabet
+	 * @return
+	 */
 	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet) {
 		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT, new Constraint[0]);
 	}
 
+	/**
+	 * 
+	 * @param bag
+	 * @param basicAlphabet
+	 * @param excludedConstraints
+	 * @return
+	 */
 	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet, Constraint... excludedConstraints) {
 		return buildAutomaton(bag, basicAlphabet, NO_TRACE_LENGTH_CONSTRAINT, NO_TRACE_LENGTH_CONSTRAINT, excludedConstraints);
 	}
 
+	/**
+	 * 
+	 * @param bag
+	 * @param basicAlphabet
+	 * @param minLen
+	 * @param maxLen
+	 * @return
+	 */
 	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet,
 			int minLen, int maxLen) {
 		return buildAutomaton(bag, basicAlphabet, minLen, maxLen, new Constraint[0]);
 	}
 
+	/**
+	 * 
+	 * @param bag
+	 * @param basicAlphabet
+	 * @param minLen
+	 * @param maxLen
+	 * @param excludedConstraints
+	 * @return
+	 */
 	public static Automaton buildAutomaton(ConstraintsBag bag, Collection<Character> basicAlphabet,
 			int minLen, int maxLen, Constraint... excludedConstraints) {
 		Collection<String> regularExpressions = null;
@@ -238,6 +320,11 @@ public class AutomatonFactory {
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, basicAlphabet);
 	}
 
+	/**
+	 * 
+	 * @param constraint
+	 * @return
+	 */
 	public static Automaton buildAutomatonWithWildcard(Constraint constraint) {
 		return fromRegularExpressions(Arrays.asList(constraint.getRegularExpression()),constraint.getInvolvedTaskCharIdentifiers(),true);
 	}

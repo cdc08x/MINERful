@@ -8,20 +8,20 @@ public enum ConstraintFamily implements Comparable<ConstraintFamily> {
 	public static interface ConstraintSubFamily {
 	}
 	
-    public static enum RelationConstraintSubFamily implements ConstraintSubFamily {
+    public enum RelationConstraintSubFamily implements ConstraintSubFamily {
     	COUPLING,
     	SINGLE_ACTIVATION,
     	NEGATIVE,
     	NONE,
     }
 
-    public static enum ExistenceConstraintSubFamily implements ConstraintSubFamily {
+    public enum ExistenceConstraintSubFamily implements ConstraintSubFamily {
     	POSITION,
     	NUMEROSITY,
     	NONE,
     }
 
-    public static enum ConstraintImplicationVerse {
+    public enum ConstraintImplicationVerse {
     	BOTH,
     	FORWARD,
     	BACKWARD

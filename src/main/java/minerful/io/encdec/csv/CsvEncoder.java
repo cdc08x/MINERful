@@ -26,7 +26,7 @@ public class CsvEncoder {
 		public String toString() {
 			return this.label;
 		}
-	};
+	}
 
 	/**
 	 * Prints the CSV format of the constraints bag. The columns appearing in the file can be customised.
@@ -35,9 +35,9 @@ public class CsvEncoder {
 	 * @return A CSV string containing the constraints bag.
 	 */
 	public String printAsCsv(Collection<PRINT_OUT_ELEMENT> columns, ProcessModel proMod) {
-		StringBuilder
-	        	superSbuf = new StringBuilder(),
-	        	sottoSbuf = new StringBuilder();
+		StringBuilder superSbuf = new StringBuilder();
+	    StringBuilder sottoSbuf = new StringBuilder();
+	    
 		for (PRINT_OUT_ELEMENT col : columns) {
 			if (columns.contains(col)) {
 				sottoSbuf.append("';'");
