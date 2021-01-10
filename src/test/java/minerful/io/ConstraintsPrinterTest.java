@@ -1,6 +1,6 @@
 package minerful.io;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,14 +26,14 @@ class ConstraintsPrinterTest {
 	@Test
 	void testPrintBag() {
 		ConstraintsPrinter constPrinter = new ConstraintsPrinter(defaultProcessModel);
-		Assert.assertTrue(constPrinter.printBag().contains("100.000% AtMostOne(a)    conf.:   0.000;  int'f:   0.000;"));
-		Assert.assertTrue(constPrinter.printBag().contains("100.000% End(a)          conf.:   0.000;  int'f:   0.000;"));
+		Assertions.assertTrue(constPrinter.printBag().contains("100.000% AtMostOne(a)    conf.:   0.000;  int'f:   0.000;"));
+		Assertions.assertTrue(constPrinter.printBag().contains("100.000% End(a)          conf.:   0.000;  int'f:   0.000;"));
 	}
 	
 	@Test
 	void testPrintBagAsMachineReadable() {
 		ConstraintsPrinter constPrinter = new ConstraintsPrinter(defaultProcessModel);
-		Assert.assertEquals("Machine-readable results: \r\n"
+		Assertions.assertEquals("Machine-readable results: \r\n"
 				+ "Legend: 1;2;3;4\r\n"
 				+ "'AtMostOne(a)';;;'End(a)';;;'Init(a)';;;'Participation(a)';;\r\n"
 				+ "'Support';'Confidence';'InterestF';'Support';'Confidence';'InterestF';'Support';'Confidence';'InterestF';'Support';'Confidence';'InterestF'\r\n"
@@ -43,8 +43,8 @@ class ConstraintsPrinterTest {
 	@Test
 	void testPrintConstraintsCollection() {
 		ConstraintsPrinter constPrinter = new ConstraintsPrinter(defaultProcessModel);
-		Assert.assertTrue(constPrinter.printUnfoldedBag().contains("100.000% AtMostOne(a)    conf.:   0.000;  int'f:   0.000;"));
-		Assert.assertTrue(constPrinter.printUnfoldedBag().contains("100.000% End(a)          conf.:   0.000;  int'f:   0.000;"));
+		Assertions.assertTrue(constPrinter.printUnfoldedBag().contains("100.000% AtMostOne(a)    conf.:   0.000;  int'f:   0.000;"));
+		Assertions.assertTrue(constPrinter.printUnfoldedBag().contains("100.000% End(a)          conf.:   0.000;  int'f:   0.000;"));
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package minerful.concept.xmlenc;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,12 +18,12 @@ class CharAdapterTest {
 	
 	@Test
 	void testMarshal_positive() throws Exception {
-		Assert.assertEquals("a",charAdapter.marshal('a'));
+		Assertions.assertEquals("a",charAdapter.marshal('a'));
 	}
 
 	@Test
 	void testUnmarshal_positive() throws Exception {
-		Assert.assertEquals(Character.valueOf('a'),charAdapter.unmarshal("a"));
+		Assertions.assertEquals(Character.valueOf('a'),charAdapter.unmarshal("a"));
 	}
 
 }

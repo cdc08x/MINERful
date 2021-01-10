@@ -1,10 +1,9 @@
 package minerful.concept.xmlenc;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import minerful.concept.AbstractTaskClass;
 import minerful.logparser.CharTaskClass;
 import minerful.logparser.StringTaskClass;
 
@@ -22,12 +21,12 @@ class TaskClassAdapterTest {
 	
 	@Test
 	void testMarshal_positive() throws Exception {
-		Assert.assertEquals("a",taskClassAdapter.marshal(new CharTaskClass('a')));
+		Assertions.assertEquals("a",taskClassAdapter.marshal(new CharTaskClass('a')));
 	}
 
 	@Test
 	void testUnmarshal_positive() throws Exception {
-		Assert.assertEquals(new StringTaskClass("a"),taskClassAdapter.unmarshal("a"));
+		Assertions.assertEquals(new StringTaskClass("a"),taskClassAdapter.unmarshal("a"));
 	}
 
 }

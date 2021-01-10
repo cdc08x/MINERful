@@ -3,7 +3,7 @@ package minerful.concept.constraint;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import minerful.concept.TaskChar;
@@ -26,9 +26,9 @@ class ConstraintsBagTest {
 		Constraint c2 = new End(tCh1);
 		constraintsBag.add(tCh1, c1);
 		constraintsBag.add(tCh1, c2);
-		Assert.assertEquals(2, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(2, constraintsBag.getConstraintsOf(tCh1).size());
-		Assert.assertEquals(0, constraintsBag.getConstraintsOf(tCh2).size());
+		Assertions.assertEquals(2, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(2, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(0, constraintsBag.getConstraintsOf(tCh2).size());
 	}
 
 	@Test
@@ -39,9 +39,9 @@ class ConstraintsBagTest {
 		TaskCharSet tChSet = new TaskCharSet(Arrays.asList(tCh1, tCh2));
 		Constraint c1 = new AtMostOne(tCh1);
 		constraintsBag.add(tChSet, c1);
-		Assert.assertEquals(1, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(1, constraintsBag.getConstraintsOf(tCh1).size());
-		Assert.assertEquals(0, constraintsBag.getConstraintsOf(tCh2).size());
+		Assertions.assertEquals(1, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(1, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(0, constraintsBag.getConstraintsOf(tCh2).size());
 	}
 
 	@Test
@@ -49,9 +49,9 @@ class ConstraintsBagTest {
 		ConstraintsBag constraintsBag = new ConstraintsBag();
 		TaskChar tCh1 = new TaskChar('a');
 		constraintsBag.add(tCh1);
-		Assert.assertEquals(0, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(0, constraintsBag.getConstraintsOf(tCh1).size());
-		Assert.assertEquals(1, constraintsBag.getTaskChars().size());
+		Assertions.assertEquals(0, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(0, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(1, constraintsBag.getTaskChars().size());
 	}
 
 	@Test
@@ -61,8 +61,8 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1);
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
-		Assert.assertEquals(2, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(2, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(2, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(2, constraintsBag.getConstraintsOf(tCh1).size());
 	}
 
 	@Test
@@ -73,8 +73,8 @@ class ConstraintsBagTest {
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
 		constraintsBag.remove(tCh1, c1);
-		Assert.assertEquals(1, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(1, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(1, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(1, constraintsBag.getConstraintsOf(tCh1).size());
 	}
 
 	@Test
@@ -85,8 +85,8 @@ class ConstraintsBagTest {
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
 		constraintsBag.remove(c1);
-		Assert.assertEquals(1, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(1, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(1, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(1, constraintsBag.getConstraintsOf(tCh1).size());
 	}
 
 	@Test
@@ -97,8 +97,8 @@ class ConstraintsBagTest {
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
 		constraintsBag.eraseConstraintsOf(tCh1);
-		Assert.assertEquals(0, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(0, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(0, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(0, constraintsBag.getConstraintsOf(tCh1).size());
 	}
 
 	@Test
@@ -108,9 +108,9 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1);
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
-		Assert.assertEquals(2, constraintsBag.wipeOutConstraints());
-		Assert.assertEquals(0, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(0, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(2, constraintsBag.wipeOutConstraints());
+		Assertions.assertEquals(0, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(0, constraintsBag.getConstraintsOf(tCh1).size());
 	}
 
 	@Test
@@ -122,9 +122,9 @@ class ConstraintsBagTest {
 		Constraint c3 = new ExactlyOne(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
 
-		Assert.assertEquals(c1, constraintsBag.get(tCh1, c1));
-		Assert.assertEquals(c2, constraintsBag.get(tCh1, c2));
-		Assert.assertNull(constraintsBag.get(tCh1, c3));
+		Assertions.assertEquals(c1, constraintsBag.get(tCh1, c1));
+		Assertions.assertEquals(c2, constraintsBag.get(tCh1, c2));
+		Assertions.assertNull(constraintsBag.get(tCh1, c3));
 	}
 
 	@Test
@@ -135,8 +135,8 @@ class ConstraintsBagTest {
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1));
 
-		Assert.assertEquals(c1, constraintsBag.getOrAdd(tCh1, c1));
-		Assert.assertEquals(c2, constraintsBag.getOrAdd(tCh1, c2));
+		Assertions.assertEquals(c1, constraintsBag.getOrAdd(tCh1, c1));
+		Assertions.assertEquals(c2, constraintsBag.getOrAdd(tCh1, c2));
 	}
 
 	@Test
@@ -145,7 +145,7 @@ class ConstraintsBagTest {
 		TaskChar tCh1 = new TaskChar('a');
 		Constraint c1 = new AtMostOne(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1));
-		Assert.assertEquals("ConstraintsBag [bag={a=[AtMostOne(a)]}, taskChars=[a]]", constraintsBag.toString());
+		Assertions.assertEquals("ConstraintsBag [bag={a=[AtMostOne(a)]}, taskChars=[a]]", constraintsBag.toString());
 	}
 
 	@Test
@@ -155,7 +155,7 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1));
 		ConstraintsBag clonedConstraintsBag = (ConstraintsBag) constraintsBag.clone();
-		Assert.assertEquals(c1, clonedConstraintsBag.get(tCh1, c1));
+		Assertions.assertEquals(c1, clonedConstraintsBag.get(tCh1, c1));
 	}
 
 	@Test
@@ -165,8 +165,8 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1));
 		ConstraintsBag clonedConstraintsBag = (ConstraintsBag) constraintsBag.createEmptyIndexedCopy();
-		Assert.assertEquals(1, clonedConstraintsBag.getTaskChars().size());
-		Assert.assertEquals(0, clonedConstraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(1, clonedConstraintsBag.getTaskChars().size());
+		Assertions.assertEquals(0, clonedConstraintsBag.getAllConstraints().size());
 	}
 
 	@Test
@@ -178,8 +178,8 @@ class ConstraintsBagTest {
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
 		ConstraintsBag clonedConstraintsBag = (ConstraintsBag) constraintsBag
 				.createComplementOfCopyPrunedByThreshold(1.0);
-		Assert.assertEquals(1, clonedConstraintsBag.getTaskChars().size());
-		Assert.assertEquals(1, clonedConstraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(1, clonedConstraintsBag.getTaskChars().size());
+		Assertions.assertEquals(1, clonedConstraintsBag.getAllConstraints().size());
 	}
 
 	@Test
@@ -189,9 +189,9 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1, 0.5);
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
-		Assert.assertEquals(2, constraintsBag.howManyConstraints());
-		Assert.assertEquals(2, constraintsBag.howManyUnmarkedConstraints());
-		Assert.assertEquals(Long.valueOf(2), constraintsBag.howManyExistenceConstraints());
+		Assertions.assertEquals(2, constraintsBag.howManyConstraints());
+		Assertions.assertEquals(2, constraintsBag.howManyUnmarkedConstraints());
+		Assertions.assertEquals(Long.valueOf(2), constraintsBag.howManyExistenceConstraints());
 	}
 
 	@Test
@@ -199,7 +199,7 @@ class ConstraintsBagTest {
 		ConstraintsBag constraintsBag = new ConstraintsBag();
 		TaskChar tCh1 = new TaskChar('a');
 		constraintsBag.setAlphabet(Arrays.asList(tCh1));
-		Assert.assertEquals(1, constraintsBag.getTaskChars().size());
+		Assertions.assertEquals(1, constraintsBag.getTaskChars().size());
 	}
 
 	@Test
@@ -209,7 +209,7 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1, 0.5);
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
-		Assert.assertEquals(1, constraintsBag.getOnlyFullySupportedConstraints().size());
+		Assertions.assertEquals(1, constraintsBag.getOnlyFullySupportedConstraints().size());
 	}
 
 	@Test
@@ -219,7 +219,7 @@ class ConstraintsBagTest {
 		Constraint c1 = new AtMostOne(tCh1, 0.5);
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
-		Assert.assertEquals(1, constraintsBag.getOnlyFullySupportedConstraintsInNewBag().getAllConstraints().size());
+		Assertions.assertEquals(1, constraintsBag.getOnlyFullySupportedConstraintsInNewBag().getAllConstraints().size());
 	}
 
 	@Test
@@ -230,7 +230,7 @@ class ConstraintsBagTest {
 		c1.setRedundant(true);
 		Constraint c2 = new End(tCh1);
 		constraintsBag.addAll(tCh1, Arrays.asList(c1, c2));
-		Assert.assertEquals(1, constraintsBag.removeMarkedConstraints());
+		Assertions.assertEquals(1, constraintsBag.removeMarkedConstraints());
 	}
 	
 	@Test
@@ -242,13 +242,13 @@ class ConstraintsBagTest {
 		Constraint c2 = new End(tCh1);
 		constraintsBag.add(tCh1, c1);
 		constraintsBag.add(tCh1, c2);
-		Assert.assertEquals(2, constraintsBag.getAllConstraints().size());
-		Assert.assertEquals(2, constraintsBag.getConstraintsOf(tCh1).size());
-		Assert.assertEquals(0, constraintsBag.getConstraintsOf(tCh2).size());
+		Assertions.assertEquals(2, constraintsBag.getAllConstraints().size());
+		Assertions.assertEquals(2, constraintsBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(0, constraintsBag.getConstraintsOf(tCh2).size());
 		
 		ConstraintsBag slicedConstraintBag = constraintsBag.slice(new TreeSet<TaskChar> (Arrays.asList(tCh1)));
-		Assert.assertEquals(1, slicedConstraintBag.getTaskChars().size());
-		Assert.assertEquals(2, slicedConstraintBag.getConstraintsOf(tCh1).size());
+		Assertions.assertEquals(1, slicedConstraintBag.getTaskChars().size());
+		Assertions.assertEquals(2, slicedConstraintBag.getConstraintsOf(tCh1).size());
 
 	}
 

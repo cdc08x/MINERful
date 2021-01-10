@@ -2,7 +2,7 @@ package minerful.io.encdec.csv;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class CsvEncoderTest {
 	@Test
 	void testPrintBag() {
 		CsvEncoder csvEncoder = new CsvEncoder();
-		Assert.assertEquals("'Constraint';'Template';'Activation';'Target';'Support';'Confidence level';'Interest factor'\n"
+		Assertions.assertEquals("'Constraint';'Template';'Activation';'Target';'Support';'Confidence level';'Interest factor'\n"
 				+ "'AtMostOne(a)';'AtMostOne';'a';;1.000;0.000;0.000\n"
 				+ "'End(a)';'End';'a';;1.000;0.000;0.000\n", csvEncoder.printAsCsv(Arrays.asList(CsvEncoder.PRINT_OUT_ELEMENT.values()), defaultProcessModel));
 	}
