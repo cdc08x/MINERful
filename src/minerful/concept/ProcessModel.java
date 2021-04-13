@@ -25,8 +25,8 @@ import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
 import minerful.index.LinearConstraintsIndexFactory;
+import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
 import org.apache.log4j.Logger;
 

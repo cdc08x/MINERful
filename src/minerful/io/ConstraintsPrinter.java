@@ -30,6 +30,7 @@ import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.io.encdec.csv.CsvEncoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
+import minerful.io.encdec.nusmv.NuSMVEncoder;
 import minerful.logparser.LogParser;
 import dk.brics.automaton.Automaton;
 
@@ -264,6 +265,11 @@ public class ConstraintsPrinter {
     public void saveAsConDecModel(File outFile) throws IOException {
     	DeclareMapEncoderDecoder deMapEnDec = new DeclareMapEncoderDecoder(processModel);
     	DeclareMapReaderWriter.marshal(outFile.getCanonicalPath(), deMapEnDec.createDeclareMap());
+    }
+    
+    public String printNuSMV() {
+    	NuSMVEncoder nuSmvDec = new NuSMVEncoder(processModel);
+    	return nuSmvDec.printAsNuSMV();
     }
     
     public String printWeightedXmlAutomaton(LogParser logParser, boolean skimIt) throws JAXBException {

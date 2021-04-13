@@ -12,11 +12,16 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class End extends Participation {
+public class End extends AtLeastOne {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return ".*[%1$s]";
 	}
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return super.getLTLpfExpressionTemplate(); // To be defined. Using the method inherited by the superclass for now.
+    }
 
 	protected End() {
     	super();
@@ -42,7 +47,7 @@ public class End extends Participation {
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return new Participation(this.base);
+		return new AtLeastOne(this.base);
 	}
 
 	@Override

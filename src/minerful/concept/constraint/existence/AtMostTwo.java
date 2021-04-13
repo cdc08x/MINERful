@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package minerful.concept.constraint.existence;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,58 +8,53 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class Init extends AtLeastOne {
+public class AtMostTwo extends ExistenceConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[%1$s].*";
+		return "[^%1$s]*([%1$s][^%1$s]*){0,2}[^%1$s]*";
 	}
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "%1$s"; // a
+    	return "G( %1$s -> X(G( %1$s -> X(G(!%1$s)) )) )"; // G( a -> X(G( a -> X(G(!a)) )) )
     }
-	
-    protected Init() {
+    
+	protected AtMostTwo() {
     	super();
     }
 
-    public Init(TaskChar param1, double support) {
+	public AtMostTwo(TaskChar param1, double support) {
 		super(param1, support);
 	}
-	public Init(TaskChar param1) {
-        super(param1);
-    }
-	public Init(TaskCharSet param1, double support) {
+	public AtMostTwo(TaskChar param1) {
+		super(param1);
+	}
+	public AtMostTwo(TaskCharSet param1, double support) {
 		super(param1, support);
 	}
-	public Init(TaskCharSet param1) {
+	public AtMostTwo(TaskCharSet param1) {
 		super(param1);
 	}
 
 	@Override
-    public int getHierarchyLevel() {
-        return super.getHierarchyLevel() + 1;
-    }
-
-	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return new AtLeastOne(this.base);
+		return null;
 	}
 
 	@Override
 	public ExistenceConstraintSubFamily getSubFamily() {
-		return ExistenceConstraintSubFamily.POSITION;
+		return ExistenceConstraintSubFamily.NUMEROSITY;
 	}
 
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
-		super.checkParams(taskChars);	// check that parameters are OK
-		return new Init(taskChars[0]);
+		super.checkParams(taskChars);
+		return new AtMostTwo(taskChars[0]);
 	}
 
 	@Override
 	public Constraint copy(TaskCharSet... taskCharSets) {
-		super.checkParams(taskCharSets);	// check that parameters are OK
-		return new Init(taskCharSets[0]);
+		super.checkParams(taskCharSets);
+		return new AtMostTwo(taskCharSets[0]);
 	}
 }

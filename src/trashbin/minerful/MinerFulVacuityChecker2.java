@@ -17,7 +17,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.AtLeastOne;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -64,7 +64,7 @@ public class MinerFulVacuityChecker2 {
 //			new SequenceResponse21(a,b,x),
 //			new SequenceResponse22(a,b,x,y),
 //			new SequenceResponse32(a,b,c,x,y),
-			new Participation(a),	// a.k.a. Existence(1, a)
+			new AtLeastOne(a),	// a.k.a. Existence(1, a)
 			new AtMostOne(a),	// a.k.a. Absence(2, a)
 			new Init(a),
 			new End(a),

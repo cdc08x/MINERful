@@ -13,7 +13,12 @@ public class AtMostOne extends ExistenceConstraint {
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*([%1$s][^%1$s]*){0,1}[^%1$s]*";
 	}
-
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G(%1$s -> X(G(!%1$s)))"; // G(a -> X(G(!a)))
+    }
+    
 	protected AtMostOne() {
     	super();
     }
@@ -33,7 +38,7 @@ public class AtMostOne extends ExistenceConstraint {
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return null;
+		return null;  // return AtMostTwo(base);
 	}
 
 	@Override

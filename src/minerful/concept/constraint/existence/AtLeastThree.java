@@ -8,32 +8,40 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class Participation extends ExistenceConstraint {
+public class AtLeastThree extends ExistenceConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*([%1$s][^%1$s]*){1,}[^%1$s]*";
+		return "[^%1$s]*([%1$s][^%1$s]*){3,}[^%1$s]*";
 	}
-
-    protected Participation() {
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "F(%1$s & X(F(%1$s & X(F(%1$s)))))"; // F(a & X(F(a & X(F(a)))))
+    }
+ 
+    protected AtLeastThree() {
     	super();
     }
 	
-	public Participation(TaskChar param1, double support) {
+	public AtLeastThree(TaskChar param1, double support) {
 		super(param1, support);
 	}
-	public Participation(TaskChar param1) {
+
+	public AtLeastThree(TaskChar param1) {
 		super(param1);
 	}
-	public Participation(TaskCharSet param1, double support) {
+
+	public AtLeastThree(TaskCharSet param1, double support) {
 		super(param1, support);
 	}
-	public Participation(TaskCharSet param1) {
+
+	public AtLeastThree(TaskCharSet param1) {
 		super(param1);
 	}
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return null;
+		return new AtLeastTwo(this.base);
 	}
 
 	@Override
@@ -44,12 +52,14 @@ public class Participation extends ExistenceConstraint {
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
 		super.checkParams(taskChars);	// check that parameters are OK
-		return new Participation(taskChars[0]);
+		return new AtLeastThree(taskChars[0]);
 	}
 
 	@Override
 	public Constraint copy(TaskCharSet... taskCharSets) {
 		super.checkParams(taskCharSets);	// check that parameters are OK
-		return new Participation(taskCharSets[0]);
+		return new AtLeastThree(taskCharSets[0]);
 	}
+	
+	
 }

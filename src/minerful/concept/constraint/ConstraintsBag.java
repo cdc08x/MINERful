@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
-import minerful.concept.constraint.xmlenc.ConstraintsBagAdapter;
+import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
 import org.apache.log4j.Logger;
 

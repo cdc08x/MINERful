@@ -1,4 +1,4 @@
-package minerful.concept.constraint.xmlenc;
+package minerful.io.encdec.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;

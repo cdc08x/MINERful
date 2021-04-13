@@ -56,7 +56,6 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		this.minerFulTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.declareMapTemplate);
 		this.parameters = new ArrayList<Set<String>>();
 		
-		Collection<Parameter> params = declareMapConstraint.getParameters();
 		Set<String> auxParamSet = null;
 		for(Parameter p : declareMapConstraint.getParameters()){
 			auxParamSet = new TreeSet<String>();

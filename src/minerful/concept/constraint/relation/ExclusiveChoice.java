@@ -11,31 +11,31 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
 @XmlRootElement
-public class NotCoExistence extends NotSuccession {
+public class ExclusiveChoice extends MutualRelationConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?";
+		return "([^%2$s]*[%1$s][^%2$s]*) | ([^%1$s]*[%2$s][^%1$s]*)"; //  ([^b]*[a][^b]*) | ([^a]*[b][^a]*)
 	}
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G((%1$s -> !(X(F(%2$s)) | Y(O(%2$s)))) & (%2$s -> !(X(F(%1$s)) | Y(O(%1$s)))))"; // G((a -> !(X(F(b)) | Y(O(b)))) & (b -> !(X(F(a)) | Y(O(a)))))
+    	return "G( (F(%1$s) | O(%1$s)) <-> !(F(%2$s) | O(%2$s)) )"; // G( (F(a) | O(a)) <-> !(F(b) | O(b)) )
     }
   	
-	protected NotCoExistence() {
+	protected ExclusiveChoice() {
 		super();
 	}
 
-    public NotCoExistence(TaskChar param1, TaskChar param2, double support) {
+    public ExclusiveChoice(TaskChar param1, TaskChar param2, double support) {
         super(param1, param2, support);
     }
-    public NotCoExistence(TaskChar param1, TaskChar param2) {
+    public ExclusiveChoice(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public NotCoExistence(TaskCharSet param1, TaskCharSet param2, double support) {
+    public ExclusiveChoice(TaskCharSet param1, TaskCharSet param2, double support) {
 		super(param1, param2, support);
 	}
-	public NotCoExistence(TaskCharSet param1, TaskCharSet param2) {
+	public ExclusiveChoice(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}
 
@@ -44,30 +44,20 @@ public class NotCoExistence extends NotSuccession {
         return super.getHierarchyLevel()+1;
     }
 
-    @Override
-    public void setOpposedTo(RelationConstraint opposedTo) {
-        super.setOpponent(opposedTo, CoExistence.class);
-    }
-
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return new NotSuccession(base, implied);
-	}
-
-	@Override
-	public Constraint getSupposedOpponentConstraint() {
-		return new CoExistence(base, implied);
+		return new NotCoExistence(base, implied);
 	}
 	
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
 		super.checkParams(taskChars);
-		return new NotCoExistence(taskChars[0], taskChars[1]);
+		return new ExclusiveChoice(taskChars[0], taskChars[1]);
 	}
 
 	@Override
 	public Constraint copy(TaskCharSet... taskCharSets) {
 		super.checkParams(taskCharSets);
-		return new NotCoExistence(taskCharSets[0], taskCharSets[1]);
+		return new ExclusiveChoice(taskCharSets[0], taskCharSets[1]);
 	}
 }

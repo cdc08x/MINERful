@@ -16,6 +16,11 @@ public class AlternateSuccession extends Succession {
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s%2$s]*([%1$s][^%1$s%2$s]*[%2$s][^%1$s%2$s]*)*[^%1$s%2$s]*";
 	}
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G((%1$s -> X(!%1$s U %2$s)) & (%2$s -> Y(!%2$s S %1$s)))"; // G((a -> X(!a U b)) & (b -> Y(!b S a)))
+    }
 	
 	protected AlternateSuccession() {
 		super();

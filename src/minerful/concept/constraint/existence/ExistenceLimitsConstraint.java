@@ -9,7 +9,7 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
 /**
- * Substituted by {@link Participation}
+ * Substituted by {@link AtLeastOne}
  * @author cdc
  */
 @Deprecated

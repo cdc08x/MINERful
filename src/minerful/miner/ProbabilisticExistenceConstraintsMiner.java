@@ -9,7 +9,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.AtLeastOne;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
@@ -81,7 +81,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         }
         double oppositeSupport =
                 (double) zeroAppearances / (double) testbedSize;
-        return new Participation(base, Constraint.complementSupport(oppositeSupport));
+        return new AtLeastOne(base, Constraint.complementSupport(oppositeSupport));
     }
 
     @Override

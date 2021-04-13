@@ -7,7 +7,7 @@ import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.AtLeastOne;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
@@ -22,7 +22,7 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	protected Constraint discoverParticipationConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
 	    for (int num: localStats.repetitions.keySet()) {
 	        if (num > 0)
-	            return new Participation(base);
+	            return new AtLeastOne(base);
 	    }
 		return null;
 	}

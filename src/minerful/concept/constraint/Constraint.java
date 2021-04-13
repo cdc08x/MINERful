@@ -435,6 +435,22 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 		return this.base;
 	}
 	
+	/**
+	 * Returns the target parameter of this relation constraint. 
+	 * @return The target parameter of this relation constraint.
+	 */
+	public TaskCharSet getTarget() {
+		return this.getBase();
+	}
+
+	/**
+	 * Returns the activation parameter of this relation constraint. 
+	 * @return The activation parameter of this relation constraint.
+	 */
+	public TaskCharSet getActivator() {
+		return null;
+	}
+
 	public List<TaskCharSet> getParameters() {
 		return parameters;
 	}
@@ -451,10 +467,21 @@ public abstract class Constraint extends Observable implements Comparable<Constr
 	public String getRegularExpression() {
 		return String.format(this.getRegularExpressionTemplate(), this.base.toPatternString(true));
 	}
+
+	/**
+	 * Returns the LTLpf expression (in NuSMV syntax) representing the semantics of this constraint.
+	 * @return The rLTLpf expression (in NuSMV syntax) representing the semantics of this constraint.
+	 * @see Constraint#getLTLpfExpressionTemplate() getLTLpfExpressionTemplate()
+	 */
+	public String getLTLpfExpression() {
+		return String.format(this.getLTLpfExpressionTemplate(), this.base.toLTLpfString());
+	}
 	
 	public abstract TaskCharSet getImplied();
 
 	public abstract String getRegularExpressionTemplate();
+	
+	public abstract String getLTLpfExpressionTemplate();
 
 	public boolean isBranched() {
 		return	(this.getBase() != null && this.getBase().size() > 1)

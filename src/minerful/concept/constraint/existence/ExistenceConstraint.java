@@ -27,7 +27,7 @@ public abstract class ExistenceConstraint extends Constraint {
 		super(param1);
 	}
 
-	public static String toExistenceQuantifiersString(Participation least, AtMostOne atMost) {
+	public static String toExistenceQuantifiersString(AtLeastOne least, AtMostOne atMost) {
         String min = "0",
                 max = "*";
         if (least != null) {

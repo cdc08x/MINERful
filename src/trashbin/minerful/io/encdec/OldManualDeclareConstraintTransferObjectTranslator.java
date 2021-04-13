@@ -6,7 +6,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.AtLeastOne;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -148,7 +148,7 @@ public class OldManualDeclareConstraintTransferObjectTranslator {
 			);
 			break;
 		case Existence:
-			minerFulConstraint = new Participation(
+			minerFulConstraint = new AtLeastOne(
 					this.taskCharSetFactory.createSetFromTaskStrings(conTO.parameters.get(0))
 			);
 			break;

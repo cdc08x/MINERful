@@ -7,7 +7,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.AtLeastOne;
 import minerful.concept.constraint.existence.AtMostOne;
 import minerful.concept.constraint.relation.*;
 
@@ -29,7 +29,7 @@ public class OldConDecEncoder {
 	static {
 //		NAME_CONVERTER.put(End.class, "end");
 		NAME_CONVERTER.put(Init.class, "init");
-		NAME_CONVERTER.put(Participation.class, "existence");
+		NAME_CONVERTER.put(AtLeastOne.class, "existence");
 		NAME_CONVERTER.put(AtMostOne.class, "absence2");
 		// Relation
 		NAME_CONVERTER.put(RespondedExistence.class, "responded existence");
@@ -51,7 +51,7 @@ public class OldConDecEncoder {
 
 //		LTL_CONVERTER.put(End.class, "end");
 		LTL_CONVERTER.put(Init.class, "( ( \"A.started\" \\/ \"A.cancelled\" ) W \"A\" )");
-		LTL_CONVERTER.put(Participation.class, "<> ( \"A\" )");
+		LTL_CONVERTER.put(AtLeastOne.class, "<> ( \"A\" )");
 		LTL_CONVERTER.put(AtMostOne.class, "! ( <> ( ( \"A\" /\\ X(<>(\"A\")) ) ) )");
 		// Relation
 		LTL_CONVERTER.put(RespondedExistence.class, "( <>(\"A\") -> <>( \"B\" ) )");

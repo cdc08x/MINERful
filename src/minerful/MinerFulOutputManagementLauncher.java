@@ -69,7 +69,7 @@ public class MinerFulOutputManagementLauncher {
         }
         if (outParams.fileToSaveConstraintsAsCSV != null) {
         	outputFile = this.retrieveFile(outParams.fileToSaveConstraintsAsCSV);
-			logger.info("Saving discovered constraints in CSV format as " + outputFile + "...");
+			logger.info("Saving the discovered constraints in CSV format into " + outputFile + "...");
 
         	try {
     				outWriter = new PrintWriter(outputFile);
@@ -83,13 +83,27 @@ public class MinerFulOutputManagementLauncher {
         }
         if (outParams.fileToSaveAsConDec != null) {
         	outputFile = this.retrieveFile(outParams.fileToSaveAsConDec);
-        	logger.info("Saving discovered process model in ConDec/Declare-map XML format as " + outputFile + "...");
+        	logger.info("Saving the discovered process specification in ConDec/Declare-map XML format into " + outputFile + "...");
         	try {
 				printer.saveAsConDecModel(outputFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        }
+        if (outParams.fileToSaveAsNuSMV != null) {
+        	outputFile = this.retrieveFile(outParams.fileToSaveAsNuSMV);
+        	logger.info("Saving the discovered process specification in NuSMV format into " + outputFile + "...");
+
+        	try {
+    				outWriter = new PrintWriter(outputFile);
+    	        	outWriter.print(printer.printNuSMV());
+    	        	outWriter.flush();
+    	        	outWriter.close();
+    			} catch (FileNotFoundException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
         }
         
         ConstraintsBag bagClone = null;

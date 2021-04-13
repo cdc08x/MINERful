@@ -19,9 +19,14 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 public class Precedence extends RespondedExistence {  
     @Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*([%2$s].*[%1$s])*[^%1$s]*";
+		return "[^%1$s]*([%2$s].*[%1$s])*[^%1$s]*"; // [^b]*([a].*[b])*[^b]*
     }
-
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G(%1$s -> Y(O(%2$s)))"; // G(b -> Y(O(a)))
+    }
+ 
     protected Precedence() {
     	super();
     }

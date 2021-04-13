@@ -8,31 +8,32 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class ExactlyOne extends ExistenceConstraint {
+public class ExactlyTwo extends ExistenceConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*([%1$s][^%1$s]*){1,1}[^%1$s]*";
+		return "[^%1$s]*([%1$s][^%1$s]*){2,2}[^%1$s]*";
 	}
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G((F(%1$s) | O(%1$s)) & (%1$s -> X(G(!%1$s))))"; // G((F(a) | O(a)) & (a -> X(G(!a))))
+    	return "G( ( F(%1$s & X(F(%1$s))) | O(%1$s & Y(O(%1$s))) ) & ( %1$s -> X(G( %1$s -> X(G(!%1$s)) )) ) )";
+    		// G( ( F(a & X(F(a))) | O(a & Y(O(a))) ) & ( a -> X(G( a -> X(G(!a)) )) ) )
     }
 
-	protected ExactlyOne() {
+	protected ExactlyTwo() {
     	super();
     }
 
-	public ExactlyOne(TaskChar param1, double support) {
+	public ExactlyTwo(TaskChar param1, double support) {
 		super(param1, support);
 	}
-	public ExactlyOne(TaskChar param1) {
+	public ExactlyTwo(TaskChar param1) {
 		super(param1);
 	}
-	public ExactlyOne(TaskCharSet param1, double support) {
+	public ExactlyTwo(TaskCharSet param1, double support) {
 		super(param1, support);
 	}
-	public ExactlyOne(TaskCharSet param1) {
+	public ExactlyTwo(TaskCharSet param1) {
 		super(param1);
 	}
 
@@ -68,12 +69,12 @@ public class ExactlyOne extends ExistenceConstraint {
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
 		super.checkParams(taskChars);
-		return new ExactlyOne(taskChars[0]);
+		return new ExactlyTwo(taskChars[0]);
 	}
 
 	@Override
 	public Constraint copy(TaskCharSet... taskCharSets) {
 		super.checkParams(taskCharSets);
-		return new ExactlyOne(taskCharSets[0]);
+		return new ExactlyTwo(taskCharSets[0]);
 	}
 }
