@@ -3,7 +3,7 @@ package minerful.postprocessing.params;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
@@ -235,56 +235,56 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("type")
-                .withLongOpt("prune-with")
-                .withDescription("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values())
-                		+ printDefault(fromEnumValueToString(DEFAULT_POST_PROCESSING_ANALYSIS_TYPE)))
-                .withType(new String())
-                .create(ANALYSIS_TYPE_PARAM_NAME)
+                Option.builder(ANALYSIS_TYPE_PARAM_NAME)
+						.hasArg().argName("type")
+						.longOpt("prune-with")
+						.desc("type of post-processing analysis over constraints. It can be one of the following: " + printValues(PostProcessingAnalysisType.values())
+						+ printDefault(fromEnumValueToString(DEFAULT_POST_PROCESSING_ANALYSIS_TYPE)))
+						.type(String.class)
+						.build()
     	);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("policy")
-                .withLongOpt("prune-ranking-by")
-                .withDescription("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
-                		+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_PRIORITY_POLICIES)))
-                .withType(new String())
-                .create(RANKING_POLICY_PARAM_NAME)
+                Option.builder(RANKING_POLICY_PARAM_NAME)
+						.hasArg().argName("policy")
+						.longOpt("prune-ranking-by")
+						.desc("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
+						+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_PRIORITY_POLICIES)))
+						.type(String.class)
+						.build()
     	);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("threshold")
-                .withLongOpt("support")
-                .withDescription("threshold for support (reliability); it must be a real value ranging from 0.0 to 1.0"
-                		+ printDefault(DEFAULT_SUPPORT_THRESHOLD))
-                .withType(new Double(0))
-                .create(SUPPORT_THRESHOLD_PARAM_NAME)
+                Option.builder(String.valueOf(SUPPORT_THRESHOLD_PARAM_NAME))
+						.hasArg().argName("threshold")
+						.longOpt("support")
+						.desc("threshold for support (reliability); it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_SUPPORT_THRESHOLD))
+						.type(Double.class)
+						.build()
         );
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("threshold")
-        		.withLongOpt("confidence")
-        		.withDescription("threshold for confidence level (relevance); it must be a real value ranging from 0.0 to 1.0"
-        				+ printDefault(DEFAULT_CONFIDENCE_THRESHOLD))
-        		.withType(new Double(0))
-        		.create(CONFIDENCE_THRESHOLD_PARAM_NAME)
+        		Option.builder(String.valueOf(CONFIDENCE_THRESHOLD_PARAM_NAME))
+						.hasArg().argName("threshold")
+						.longOpt("confidence")
+						.desc("threshold for confidence level (relevance); it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_CONFIDENCE_THRESHOLD))
+						.type(Double.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("threshold")
-        		.withLongOpt("interest-factor")
-        		.withDescription("threshold for interest factor (relevance); it must be a real value ranging from 0.0 to 1.0"
-        				+ printDefault(DEFAULT_INTEREST_FACTOR_THRESHOLD))
-        		.withType(new Double(0))
-        		.create(INTEREST_THRESHOLD_PARAM_NAME)
+        		Option.builder(String.valueOf(INTEREST_THRESHOLD_PARAM_NAME))
+						.hasArg().argName("threshold")
+						.longOpt("interest-factor")
+						.desc("threshold for interest factor (relevance); it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_INTEREST_FACTOR_THRESHOLD))
+						.type(Double.class)
+						.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.withLongOpt("keep-constraints")
-        		.withDescription("do not physically remove the redundant or inconsistent constraints from the model")
-        		.withType(new Boolean(false))
-        		.create(KEEP_CONSTRAINTS_PARAM_NAME)
+        		Option.builder(KEEP_CONSTRAINTS_PARAM_NAME)
+						.longOpt("keep-constraints")
+						.desc("do not physically remove the redundant or inconsistent constraints from the model")
+						.type(Boolean.class)
+						.build()
         		);
         return options;
 	}

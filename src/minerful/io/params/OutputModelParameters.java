@@ -11,7 +11,6 @@ import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class OutputModelParameters extends ParamsManager {
@@ -126,107 +125,114 @@ public class OutputModelParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-as-xml")
-        		.withDescription("path of the file in which to save the discovered process model as XML")
-        		.withType(new String())
-        		.create(SAVE_AS_XML_PARAM_NAME)
+        		Option.builder(SAVE_AS_XML_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("save-as-xml")
+        		.desc("path of the file in which to save the discovered process model as XML")
+        		.type(String.class)
+        		.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-as-json")
-        		.withDescription("path of the file in which to save the discovered process model as JSON")
-        		.withType(new String())
-        		.create(SAVE_AS_JSON_PARAM_NAME)
+        		Option.builder(SAVE_AS_JSON_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("save-as-json")
+        		.desc("path of the file in which to save the discovered process model as JSON")
+        		.type(String.class)
+        		.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-automaton-dot")
-        		.withDescription(
+        		Option.builder(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("save-automaton-dot")
+        		.desc(
         				"write a Graphviz DOT format of a finite state automaton representing the declarative process"
         		)
-        		.withType(new String())
-        		.create(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
+        		.type(String.class)
+        		.build()
         		);
 //        options.addOption( // TODO One day
-//        		OptionBuilder
-//        		.hasArg().withArgName("path")
-//        		.withLongOpt("save-cond-automaton-dot")
-//        		.withDescription(
+//        		Option.builder(SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME)
+//        		.hasArg().argName("path")
+//        		.longOpt("save-cond-automaton-dot")
+//        		.desc(
 //        				"write a Graphviz DOT format of a condensed, more readable finite state automaton representing the declarative process"
 //        		)
-//        		.withType(new String())
+//        		.type(String.class)
 //        		.create(SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME)
 //        		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-automaton-tsml")
-        		.withDescription(
+        		Option.builder(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("save-automaton-tsml")
+        		.desc(
         				"write a TSML format of a finite state automaton representing the mined process on the given file"
         		)
-        		.withType(new String())
-        		.create(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME)
+        		.type(String.class)
+        		.build()
         		);
         options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("subautom-folder")
-        		.withDescription("write the Graphviz DOT format of activities' finite state sub-automata on separate files, within the given folder")
-        		.withType(new String())
-        		.create(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME)
+        		Option.builder(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("subautom-folder")
+        		.desc("write the Graphviz DOT format of activities' finite state sub-automata on separate files, within the given folder")
+        		.type(String.class)
+        		.build()
         		);
-        options.addOption(OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-as-csv")
-        		.withDescription("print results in CSV format into the specified file")
-        		.withType(new String())
-        		.create(SAVE_AS_CSV_PARAM_NAME)
+        options.addOption(
+				Option.builder(SAVE_AS_CSV_PARAM_NAME)
+				.hasArg().argName("path")
+				.longOpt("save-as-csv")
+				.desc("print results in CSV format into the specified file")
+				.type(String.class)
+				.build()
         		);
-        options.addOption(OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-as-condec")
-        		.withDescription("print the discovered process as a Declare map (ConDec) into the specified file")
-        		.withType(new String())
-        		.create(SAVE_AS_CONDEC_PARAM_NAME)
+		options.addOption(
+				Option.builder(SAVE_AS_CONDEC_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("save-as-condec")
+        		.desc("print the discovered process as a Declare map (ConDec) into the specified file")
+        		.type(String.class)
+        		.build()
         		);
-        options.addOption(OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("save-as-nusmv")
-        		.withDescription("print the discovered process as an input script for NuSMV into the specified file")
-        		.withType(new String())
-        		.create(SAVE_AS_NUSMV_PARAM_NAME)
-        		);
-        options.addOption(OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("print-replay-autom")
-        		.withDescription(
+  options.addOption(
+        Option.builder(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
+        .hasArg().argName("path")
+            .longOpt("print-replay-autom")
+            .desc(
         				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. The weight is computed based on the number of times the event log replay traverses the transition.")
         		)
-        		.withType(new String())
-        		.create(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
-        		);        
-        options.addOption(OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("print-replay-trim-autom")
-        		.withDescription(
+        		.type(String.class)
+        		.build()
+        		);
+  options.addOption(
+        Option.builder(SAVE_AS_NUSMV_PARAM_NAME)
+        .hasArg().argName("path")
+            .longOpt("print-replay-autom")
+            .desc("print the discovered process as an input script for NuSMV into the specified file")
+        		.type(String.class)
+        		.build()
+        		);
+		options.addOption(
+				Option.builder(SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
+				.hasArg().argName("path")
+        		.longOpt("print-replay-trim-autom")
+        		.desc(
         				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. Remove the transitions (and states) that have weight 0. The weight is computed based on the number of times the event log replay traverses the transition.")
         		)
-        		.withType(new String())
-        		.create(SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
+        		.type(String.class)
+        		.build()
         		);
-        options.addOption(
-        		OptionBuilder
-        		.hasArg().withArgName("path")
-        		.withLongOpt("xml-subautom-folder")
-        		.withDescription(
+
+		options.addOption(
+				Option.builder(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME)
+        		.hasArg().argName("path")
+        		.longOpt("xml-subautom-folder")
+        		.desc(
         				attachInstabilityWarningToDescription("write the weighted automaton XML format of activities' finite state sub-automata on separate files, within the given folder"))
-        		.withType(new String())
-        		.create(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME)
+        		.type(String.class)
+        		.build()
         		);
-       return options;
+
+		return options;
 	}
 }

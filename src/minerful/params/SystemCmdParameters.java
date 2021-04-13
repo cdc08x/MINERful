@@ -6,7 +6,6 @@ package minerful.params;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class SystemCmdParameters extends ParamsManager {
@@ -69,20 +68,20 @@ public class SystemCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .withLongOpt("help")
-                .withDescription("print help")
-                .create(SystemCmdParameters.HELP_PARAM_NAME)
-        );
+				Option.builder(String.valueOf(SystemCmdParameters.HELP_PARAM_NAME))
+						.longOpt("help")
+						.desc("print help")
+        		.build()
+		);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("debug_level")
-                .withLongOpt("debug")
-                .withDescription("debug level " + printValues(DebugLevel.values())
-                		+ printDefault(fromEnumValueToString(DEFAULT_DEBUG_LEVEL))
-                )
-                .withType(new Integer(0))
-                .create(SystemCmdParameters.DEBUG_PARAM_NAME)
+				Option.builder(String.valueOf(SystemCmdParameters.DEBUG_PARAM_NAME))
+						.hasArg().argName("debug_level")
+						.longOpt("debug")
+						.desc("debug level " + printValues(DebugLevel.values())
+								+ printDefault(fromEnumValueToString(DEFAULT_DEBUG_LEVEL))
+				)
+						.type(Integer.class)
+						.build()
         );
         return options;
 	}

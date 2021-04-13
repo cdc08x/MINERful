@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import minerful.params.ParamsManager;
@@ -90,30 +90,30 @@ public class XesLogSorterParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("criteria")
-                .withLongOpt("traces-sorting-criteria")
-                .withDescription("The criteria according to which traces should be sorted in the event log.\n" + 
-                		"The order in which they are given impacts the respective priority. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(SortingCriterion.values())
-                		+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_TRACES_SORTING_CRITERIA)))
-                .withType(new String())
-                .create(TRACES_SORTING_CRITERIA_PARAM_NAME)
+                Option.builder(TRACES_SORTING_CRITERIA_PARAM_NAME)
+						.hasArg().argName("criteria")
+						.longOpt("traces-sorting-criteria")
+						.desc("The criteria according to which traces should be sorted in the event log.\n" +
+						"The order in which they are given impacts the respective priority. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(SortingCriterion.values())
+						+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_TRACES_SORTING_CRITERIA)))
+						.type(String.class)
+						.build()
     	);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("file path")
-                .withLongOpt("out-xes-log")
-                .withDescription("path of the file in which the XES log should be written.")
-                .withType(new String())
-                .create(OUTPUT_XES_PARAM_NAME)
+                Option.builder(OUTPUT_XES_PARAM_NAME)
+						.hasArg().argName("file path")
+						.longOpt("out-xes-log")
+						.desc("path of the file in which the XES log should be written.")
+						.type(String.class)
+						.build()
     	);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("file path")
-                .withLongOpt("in-xes-log")
-                .withDescription("path of the file from which the XES log should be read.")
-                .withType(new String())
-                .create(INPUT_XES_PARAM_NAME)
+                Option.builder(INPUT_XES_PARAM_NAME)
+						.hasArg().argName("file path")
+						.longOpt("in-xes-log")
+						.desc("path of the file from which the XES log should be read.")
+						.type(String.class)
+						.build()
     	);
         
         return options;

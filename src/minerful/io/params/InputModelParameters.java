@@ -10,7 +10,6 @@ import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class InputModelParameters extends ParamsManager {
@@ -83,20 +82,22 @@ public class InputModelParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("language")
-                .withLongOpt(INPUT_MODEL_ENC_PARAM_LONG_NAME)
-                .withDescription("input model encoding language " + printValues(InputEncoding.values()) + " (default: " + printValues(DEFAULT_INPUT_MODEL_ENC) + ")")
-                .withType(new String())
-                .create(INPUT_MODEL_ENC_PARAM_NAME)
+				Option.builder(INPUT_MODEL_ENC_PARAM_NAME)
+                .hasArg().argName("language")
+                .longOpt(INPUT_MODEL_ENC_PARAM_LONG_NAME)
+                .desc("input model encoding language " + printValues(InputEncoding.values()) + " (default: " + printValues(DEFAULT_INPUT_MODEL_ENC) + ")")
+                .type(String.class)
+                .build()
+//						.create(INPUT_MODEL_ENC_PARAM_NAME)
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("path")
-                .withLongOpt(INPUT_MODELFILE_PATH_PARAM_LONG_NAME)
-                .withDescription("path of the file from which the process model should be read")
-                .withType(new String())
-                .create(INPUT_MODELFILE_PATH_PARAM_NAME)
+				Option.builder(INPUT_MODELFILE_PATH_PARAM_NAME)
+                .hasArg().argName("path")
+                .longOpt(INPUT_MODELFILE_PATH_PARAM_LONG_NAME)
+                .desc("path of the file from which the process model should be read")
+                .type(String.class)
+                .build()
+//						 .create(INPUT_MODELFILE_PATH_PARAM_NAME)
     	);
         return options;
 	}

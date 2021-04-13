@@ -12,7 +12,6 @@ import minerful.params.ParamsManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 public class StringTracesMakerCmdParameters extends ParamsManager {
@@ -122,59 +121,59 @@ public class StringTracesMakerCmdParameters extends ParamsManager {
 	public static Options parseableOptions() {
 		Options options = new Options();
         options.addOption(
-                OptionBuilder
-                .hasArgs().withArgName("reg exp list")
-                .withLongOpt("regexp")
-                .withDescription("unbound regular expressions list generating the strings (in conjunction)")
-                .withType(new String[0])
-                .create(StringTracesMakerCmdParameters.REG_EXPS_PARAM_NAME)
+                Option.builder(String.valueOf(StringTracesMakerCmdParameters.REG_EXPS_PARAM_NAME))
+                        .hasArgs().argName("reg exp list")
+                        .longOpt("regexp")
+                        .desc("unbound regular expressions list generating the strings (in conjunction)")
+                        .type(String.class)
+                        .build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("alphabet")
-                .withLongOpt("alphabet")
-                .withDescription("\"" + ALPHABET_CHARACTERS_SEPARATOR + "\"-separated list of characters in the alphabet (e.g., a:b:c)")
-                .create(StringTracesMakerCmdParameters.ALPHABET_PARAM_NAME)
+                Option.builder(String.valueOf(StringTracesMakerCmdParameters.ALPHABET_PARAM_NAME))
+                        .hasArg().argName("alphabet")
+                        .longOpt("alphabet")
+                        .desc("\"" + ALPHABET_CHARACTERS_SEPARATOR + "\"-separated list of characters in the alphabet (e.g., a:b:c)")
+                        .build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("min_length")
-                .withLongOpt("minlen")
-                .withDescription("minimum length of the generated strings")
-                .withType(new Integer(0))
-                .create(StringTracesMakerCmdParameters.MIN_LEN_PARAM_NAME)
+                Option.builder(String.valueOf(StringTracesMakerCmdParameters.MIN_LEN_PARAM_NAME))
+                        .hasArg().argName("min_length")
+                        .longOpt("minlen")
+                        .desc("minimum length of the generated strings")
+                        .type(Integer.class)
+                        .build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("max_length")
-                .withLongOpt("maxlen")
-                .withDescription("maximum length of the generated strings")
-                .withType(new Integer(0))
-                .create(StringTracesMakerCmdParameters.MAX_LEN_PARAM_NAME)
+                Option.builder(String.valueOf(StringTracesMakerCmdParameters.MAX_LEN_PARAM_NAME))
+                        .hasArg().argName("max_length")
+                        .longOpt("maxlen")
+                        .desc("maximum length of the generated strings")
+                        .type(Integer.class)
+                        .build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("number of strings")
-                .withLongOpt("size")
-                .withDescription("number of strings to run on")
-                .withType(new Double(0))
-                .create(StringTracesMakerCmdParameters.SIZE_PARAM_NAME)
+                Option.builder(String.valueOf(StringTracesMakerCmdParameters.SIZE_PARAM_NAME))
+                        .hasArg().argName("number of strings")
+                        .longOpt("size")
+                        .desc("number of strings to run on")
+                        .type(Double.class)
+                        .build()
         );
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("file path")
-                .withLongOpt("out-log")
-                .withDescription("path to the file to write the log in")
-                .withType(new String())
-                .create(StringTracesMakerCmdParameters.OUTPUT_FILE_PARAM_NAME)
+                Option.builder(StringTracesMakerCmdParameters.OUTPUT_FILE_PARAM_NAME)
+                        .hasArg().argName("file path")
+                        .longOpt("out-log")
+                        .desc("path to the file to write the log in")
+                        .type(String.class)
+                        .build()
     	);
         options.addOption(
-                OptionBuilder
-                .hasArg().withArgName("encoding")
-                .withLongOpt("out-enc")
-                .withDescription("encoding language for output log " + printValues(LogMakerParameters.Encoding.values()))
-                .withType(new String())
-                .create(StringTracesMakerCmdParameters.OUT_ENC_PARAM_NAME)
+                Option.builder(StringTracesMakerCmdParameters.OUT_ENC_PARAM_NAME)
+                        .hasArg().argName("encoding")
+                        .longOpt("out-enc")
+                        .desc("encoding language for output log " + printValues(LogMakerParameters.Encoding.values()))
+                        .type(String.class)
+                        .build()
     	);
         
         return options;
