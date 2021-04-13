@@ -36,7 +36,7 @@ public enum DeclareMapTemplate {
 		try {
 			mapTemplate = DeclareMapTemplate.valueOf(name);
 		} catch (IllegalArgumentException e) {
-			MessagePrinter.printlnError("The " + name + " template is not yet defined in MINERful import library.");
+			MessagePrinter.printlnError("The " + name + " template is not yet defined in the MINERful import library.");
 		}
 		
 		return mapTemplate;

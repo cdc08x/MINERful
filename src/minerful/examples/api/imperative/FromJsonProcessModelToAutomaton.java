@@ -5,13 +5,14 @@ import java.io.IOException;
 
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessModel;
+import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.XesLogParser;
 
 public class FromJsonProcessModelToAutomaton {
-	public static final File OUTPUT_DOT_FILE = new File("/home/claudio/example-process-automaton.dot");
+	public static final File OUTPUT_DOT_FILE = new File("/home/cdc08x/example-process-automaton.dot");
 
 	public static void main(String[] args) throws IOException {
 		// This is a JSON string with the definition of a process. It is not case sensitive, and allows for some extra spaces, dashes, etc. in the template names. */
@@ -28,7 +29,7 @@ public class FromJsonProcessModelToAutomaton {
 		ProcessModel proMod =
 			new ProcessModelEncoderDecoder()
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
-//			.readFromJsonFile(new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.json"));
+//			.readFromJsonFile(new File("/home/cdc08x/Code/MINERful/temp/BPIC2012-disco.json"));
 //		/* Alternative 2: load from a (minimal) string version of the JSON model. Uncomment the following line to use this method. */ 
 			.readFromJsonString(processJsonMin);
 		
@@ -38,7 +39,13 @@ public class FromJsonProcessModelToAutomaton {
 		OutputModelParameters outParams = new OutputModelParameters();
 		outParams.fileToSaveDotFileForAutomaton = OUTPUT_DOT_FILE;
 		
+		// With the following command, the DOT file is stored directly in the output file.
 		new MinerFulOutputManagementLauncher().manageOutput(proMod, outParams);
+		
+		// If you prefer to retain the DOT string in memory:
+		ConstraintsPrinter cPrin = new ConstraintsPrinter(proMod);
+		String dotString = cPrin.printDotAutomaton();
+		System.out.println(dotString);  // Prints out the whole DOT file
 		
 		System.exit(0);
 	}

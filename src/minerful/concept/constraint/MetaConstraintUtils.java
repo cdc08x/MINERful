@@ -30,11 +30,18 @@ import minerful.concept.constraint.relation.AlternateSuccession;
 import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
+import minerful.concept.constraint.relation.Choice;
 import minerful.concept.constraint.relation.CoExistence;
+import minerful.concept.constraint.relation.ExclusiveChoice;
 import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
+import minerful.concept.constraint.relation.NotChainPrecedence;
+import minerful.concept.constraint.relation.NotChainResponse;
 import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.concept.constraint.relation.NotCoExistence;
+import minerful.concept.constraint.relation.NotPrecedence;
+import minerful.concept.constraint.relation.NotRespondedExistence;
+import minerful.concept.constraint.relation.NotResponse;
 import minerful.concept.constraint.relation.NotSuccession;
 import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RelationConstraint;
@@ -219,7 +226,10 @@ public class MetaConstraintUtils {
 
 	public static Collection<Class<? extends Constraint>> getAllMutualRelationConstraintTemplates() {
 		// TODO Change it if new definitions of not yet discoverable templates are given
-		return getAllDiscoverableMutualRelationConstraintTemplates();
+		Collection<Class<? extends Constraint>> mutualConstraintTemplates = getAllDiscoverableMutualRelationConstraintTemplates();
+		mutualConstraintTemplates.add(Choice.class);
+		mutualConstraintTemplates.add(ExclusiveChoice.class);
+		return mutualConstraintTemplates;
 	}
 	public static Collection<Class<? extends Constraint>> getAllDiscoverableMutualRelationConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(4);
@@ -234,6 +244,12 @@ public class MetaConstraintUtils {
 
 	public static Collection<Class<? extends Constraint>> getAllNegativeRelationConstraintTemplates() {
 		// TODO Change it if new definitions of not yet discoverable templates are given
+		Collection<Class<? extends Constraint>> negativeConstraintTemplates = getAllDiscoverableNegativeRelationConstraintTemplates();
+		negativeConstraintTemplates.add(NotChainPrecedence.class);
+		negativeConstraintTemplates.add(NotChainResponse.class);
+		negativeConstraintTemplates.add(NotPrecedence.class);
+		negativeConstraintTemplates.add(NotRespondedExistence.class);
+		negativeConstraintTemplates.add(NotResponse.class);
 		return getAllDiscoverableNegativeRelationConstraintTemplates();
 	}
 	public static Collection<Class<? extends Constraint>> getAllDiscoverableNegativeRelationConstraintTemplates() {
