@@ -120,4 +120,10 @@ public class SequenceResponse22 extends Constraint {
 		
 		return autom;
 	}
+
+	@Override
+	public String getLTLpfExpressionTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

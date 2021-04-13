@@ -5,19 +5,30 @@ import java.util.HashMap;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.AtMostTwo;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.ExactlyOne;
+import minerful.concept.constraint.existence.ExactlyTwo;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.AtLeastOne;
+import minerful.concept.constraint.existence.AtLeastThree;
+import minerful.concept.constraint.existence.AtLeastTwo;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
 import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
 import minerful.concept.constraint.relation.ChainSuccession;
+import minerful.concept.constraint.relation.Choice;
 import minerful.concept.constraint.relation.CoExistence;
+import minerful.concept.constraint.relation.ExclusiveChoice;
+import minerful.concept.constraint.relation.NotChainPrecedence;
+import minerful.concept.constraint.relation.NotChainResponse;
 import minerful.concept.constraint.relation.NotChainSuccession;
 import minerful.concept.constraint.relation.NotCoExistence;
+import minerful.concept.constraint.relation.NotPrecedence;
+import minerful.concept.constraint.relation.NotRespondedExistence;
+import minerful.concept.constraint.relation.NotResponse;
 import minerful.concept.constraint.relation.NotSuccession;
 import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RespondedExistence;
@@ -41,7 +52,7 @@ public class DeclareMapToMinerFulTemplatesTranslator {
 	static {
 		MINERFUL_2_DECLARE_MAP.put(Init.class, DeclareMapTemplate.Init);
 		MINERFUL_2_DECLARE_MAP.put(End.class, DeclareMapTemplate.Existence); // Declare does not cover the concept of "End"
-		MINERFUL_2_DECLARE_MAP.put(Participation.class, DeclareMapTemplate.Existence);
+		MINERFUL_2_DECLARE_MAP.put(AtLeastOne.class, DeclareMapTemplate.Existence);
 		MINERFUL_2_DECLARE_MAP.put(AtMostOne.class, DeclareMapTemplate.Absence2);
 		// Relation
 		MINERFUL_2_DECLARE_MAP.put(RespondedExistence.class, DeclareMapTemplate.Responded_Existence);
@@ -62,9 +73,13 @@ public class DeclareMapToMinerFulTemplatesTranslator {
 		MINERFUL_2_DECLARE_MAP.put(NotSuccession.class, DeclareMapTemplate.Not_Succession);
 		
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Init, Init.class);
-		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Existence, Participation.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Existence, AtLeastOne.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Absence2, AtMostOne.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Absence3, AtMostTwo.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Exactly1, ExactlyOne.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Exactly2, ExactlyTwo.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Existence2, AtLeastTwo.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Existence3, AtLeastThree.class);
 		// Relation
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Responded_Existence, RespondedExistence.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Response, Response.class);
@@ -78,10 +93,17 @@ public class DeclareMapToMinerFulTemplatesTranslator {
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Succession, Succession.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Alternate_Succession, AlternateSuccession.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Chain_Succession, ChainSuccession.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Choice, Choice.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Exclusive_Choice, ExclusiveChoice.class);
 		// Negation relation
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_CoExistence, NotCoExistence.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Chain_Succession, NotChainSuccession.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Chain_Precedence, NotChainPrecedence.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Chain_Response, NotChainResponse.class);
 		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Succession, NotSuccession.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Precedence, NotPrecedence.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Response, NotResponse.class);
+		DECLARE_2_MINERFUL_MAP.put(DeclareMapTemplate.Not_Responded_Existence, NotRespondedExistence.class);
 	}
 
 	public static DeclareMapTemplate translateTemplateName(Class<? extends Constraint> constraintClass) {

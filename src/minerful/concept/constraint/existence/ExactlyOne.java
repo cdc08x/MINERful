@@ -13,6 +13,11 @@ public class ExactlyOne extends ExistenceConstraint {
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*([%1$s][^%1$s]*){1,1}[^%1$s]*";
 	}
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G((F(%1$s) | O(%1$s)) & (%1$s -> X(G(!%1$s))))"; // G((F(a) | O(a)) & (a -> X(G(!a))))
+    }
 
 	protected ExactlyOne() {
     	super();
@@ -33,7 +38,7 @@ public class ExactlyOne extends ExistenceConstraint {
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return new Participation(getBase());
+		return new AtLeastOne(getBase());
 	}
 	
 	@Override

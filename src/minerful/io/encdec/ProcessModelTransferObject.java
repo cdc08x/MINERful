@@ -35,7 +35,9 @@ public class ProcessModelTransferObject {
 		
 		if (modelPojo.constraints != null) {
 			for (ConstraintPojo conPojo : modelPojo.constraints) {
-				this.constraints.add(new DeclareConstraintTransferObject(conPojo));
+				if (conPojo != null) { // Seems trivial but it may happen if the list of constraints end with a comma in the JSON file
+					this.constraints.add(new DeclareConstraintTransferObject(conPojo));
+				}
 			}
 		}
 	}

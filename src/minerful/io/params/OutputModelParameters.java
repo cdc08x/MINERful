@@ -15,6 +15,7 @@ import org.apache.commons.cli.Options;
 
 public class OutputModelParameters extends ParamsManager {
 	public static final String SAVE_AS_CONDEC_PARAM_NAME = "oConDec";
+	public static final String SAVE_AS_NUSMV_PARAM_NAME = "oNuSMV";
 	public static final String SAVE_AS_CSV_PARAM_NAME = "oCSV";
 	public static final String SAVE_AS_XML_PARAM_NAME = "oXML";
 	public static final String SAVE_AS_JSON_PARAM_NAME = "oJSON";
@@ -26,27 +27,29 @@ public class OutputModelParameters extends ParamsManager {
 	public static final String SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "autoReplayTrimXML";
 	public static final String FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "subautosReplayXML";
 
-	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveConstraintsAsCSV;
-	/** Directory in which the discovered constraints are printed as automata, in separate GraphViz DOT files. Keep it equal to <code>null</code> for avoiding such print-outs. */
+	/** Directory in which the discovered constraints are printed as automata, in separate GraphViz DOT files. Keep it equal to <code>null</code> to disable this functionality. */
 	public File folderToSaveDotFilesForPartialAutomata;
-	/** File in which the discovered process model is printed as a TSML representation of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is printed as a TSML representation of an automaton. Keep it equal to <code>null</code> for avto disable this functionality. */
 	public File fileToSaveTsmlFileForAutomaton;
-	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveDotFileForAutomaton;
-//	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton in which multiple transitions are collapsed into one with many labels, for readability reasons. Keep it equal to <code>null</code> for avoiding such print-out. */
+//	/** File in which the discovered process model is printed as a GraphViz DOT of an automaton in which multiple transitions are collapsed into one with many labels, for readability reasons. Keep it equal to <code>null</code> to disable this functionality. */
 //	public File fileToSaveDotFileForCondensedAutomaton; // TODO One day
-	/** File in which the discovered process model is saved as a Declare XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is saved as a Declare XML file. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveAsConDec;
-	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is saved as a NuSMV file. Keep it equal to <code>null</code> to disable this functionality. */
+	public File fileToSaveAsNuSMV;
+	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveXmlFileForAutomaton;
-	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Transitions that are never traversed are removed. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Transitions that are never traversed are removed. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveSkimmedXmlFileForAutomaton;
-	/** Directory in which the discovered constraints are printed as automata, in separate XML files. Keep it equal to <code>null</code> for avoiding such print-outs. */
+	/** Directory in which the discovered constraints are printed as automata, in separate XML files. Keep it equal to <code>null</code> to disable this functionality. */
 	public File folderToSaveXmlFilesForPartialAutomata;
-	/** File in which the discovered process model is saved as an XML file. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is saved as an XML file. Keep it equal to <code>null</code> to disable this functionality. */
     public File fileToSaveAsXML;
-	/** File in which the discovered process model is saved as a JSON file. Keep it equal to <code>null</code> for avoiding such print-out. */
+	/** File in which the discovered process model is saved as a JSON file. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveAsJSON;
 	/** Columns to be printed if constraints are printed in CSV format. Notice that this attribute is not associated to a command-line parameter. */
 	public CsvEncoder.PRINT_OUT_ELEMENT[] csvColumnsToPrint = CsvEncoder.PRINT_OUT_ELEMENT.values();
@@ -58,6 +61,7 @@ public class OutputModelParameters extends ParamsManager {
     	this.fileToSaveDotFileForAutomaton = null;
 //    	this.fileToSaveDotFileForCondensedAutomaton = null; // TODO One day
     	this.fileToSaveAsConDec = null;
+    	this.fileToSaveAsNuSMV = null;
     	this.fileToSaveXmlFileForAutomaton = null;
     	this.fileToSaveSkimmedXmlFileForAutomaton = null;
     	this.folderToSaveXmlFilesForPartialAutomata = null;
@@ -92,8 +96,10 @@ public class OutputModelParameters extends ParamsManager {
 		this.fileToSaveTsmlFileForAutomaton = openOutputFile(line, SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
         
         this.fileToSaveConstraintsAsCSV = openOutputFile(line, SAVE_AS_CSV_PARAM_NAME);
-        
+
         this.fileToSaveAsConDec = openOutputFile(line, SAVE_AS_CONDEC_PARAM_NAME);
+        
+        this.fileToSaveAsNuSMV = openOutputFile(line, SAVE_AS_NUSMV_PARAM_NAME);
         
         this.fileToSaveXmlFileForAutomaton = openOutputFile(line, SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
 
@@ -188,14 +194,21 @@ public class OutputModelParameters extends ParamsManager {
         		.type(String.class)
         		.build()
         		);
-
-		options.addOption(
-				Option.builder(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
-				.hasArg().argName("path")
-        		.longOpt("print-replay-autom")
-        		.desc(
+  options.addOption(
+        Option.builder(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
+        .hasArg().argName("path")
+            .longOpt("print-replay-autom")
+            .desc(
         				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. The weight is computed based on the number of times the event log replay traverses the transition.")
         		)
+        		.type(String.class)
+        		.build()
+        		);
+  options.addOption(
+        Option.builder(SAVE_AS_NUSMV_PARAM_NAME)
+        .hasArg().argName("path")
+            .longOpt("print-replay-autom")
+            .desc("print the discovered process as an input script for NuSMV into the specified file")
         		.type(String.class)
         		.build()
         		);

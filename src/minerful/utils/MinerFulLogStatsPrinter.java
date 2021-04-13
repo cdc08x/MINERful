@@ -5,7 +5,6 @@ import org.apache.commons.cli.Options;
 
 import minerful.AbstractMinerFulStarter;
 import minerful.MinerFulMinerLauncher;
-import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.logparser.LogParser;
 import minerful.miner.params.MinerFulCmdParameters;

@@ -1,4 +1,4 @@
-package minerful.concept.xmlenc;
+package minerful.io.encdec.xml;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

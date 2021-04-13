@@ -24,8 +24,8 @@ public abstract class RelationConstraint extends Constraint {
 		BACKWARD,
 		BOTH
 	}
+
 	@XmlIDREF
-//	@XmlTransient
 	protected TaskCharSet implied;
 	
 	protected RelationConstraint() {
@@ -146,6 +146,11 @@ public abstract class RelationConstraint extends Constraint {
 	public String getRegularExpression() {
 		return String.format(this.getRegularExpressionTemplate(), base.toPatternString(), implied.toPatternString());
 	}
+
+	@Override
+	public String getLTLpfExpression() {
+		return String.format(this.getLTLpfExpressionTemplate(), base.toLTLpfString(), implied.toLTLpfString());
+	}
 	
 	public abstract ConstraintImplicationVerse getImplicationVerse();
 	
@@ -239,19 +244,15 @@ public abstract class RelationConstraint extends Constraint {
 		return true;
 	}
 	
-	/**
-	 * Returns the target parameter of this relation constraint. 
-	 * @return The target parameter of this relation constraint.
-	 */
+	
+	@Override
 	public TaskCharSet getTarget() {
-		return this.getImplied();
+		return getImplied();
 	}
 
-	/**
-	 * Returns the activation parameter of this relation constraint. 
-	 * @return The activation parameter of this relation constraint.
-	 */
-	public TaskCharSet getActivation() {
-		return this.getBase();
+	@Override
+	public TaskCharSet getActivator() {
+		return getBase();
 	}
+
 }

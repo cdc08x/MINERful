@@ -7,7 +7,6 @@ package minerful;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-import jdk.nashorn.internal.ir.CallNode.EvalArgs;
 import minerful.checking.params.CheckingCmdParameters;
 import minerful.checking.relevance.dao.ModelFitnessEvaluation;
 import minerful.concept.ProcessModel;

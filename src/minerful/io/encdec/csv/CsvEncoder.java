@@ -7,6 +7,10 @@ import minerful.concept.ProcessModel;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 
+/**
+ * Encodes a declarative process specification into a CSV format.
+ * @author cdc08x
+ */
 public class CsvEncoder {
 	
 	public enum PRINT_OUT_ELEMENT implements Comparable<PRINT_OUT_ELEMENT> {

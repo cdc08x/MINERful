@@ -14,10 +14,16 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.AtMostTwo;
 import minerful.concept.constraint.existence.End;
+import minerful.concept.constraint.existence.ExactlyOne;
+import minerful.concept.constraint.existence.ExactlyTwo;
 import minerful.concept.constraint.existence.ExistenceConstraint;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.Participation;
+import minerful.concept.constraint.existence.Absence;
+import minerful.concept.constraint.existence.AtLeastOne;
+import minerful.concept.constraint.existence.AtLeastThree;
+import minerful.concept.constraint.existence.AtLeastTwo;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -37,8 +43,6 @@ import minerful.concept.constraint.relation.Response;
 import minerful.concept.constraint.relation.Succession;
 
 import org.reflections.Reflections;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 public class MetaConstraintUtils {
 	public static Collection<Class<? extends Constraint>> ALL_DISCOVERABLE_CONSTRAINT_TEMPLATES = getAllDiscoverableConstraintTemplates();
@@ -164,14 +168,21 @@ public class MetaConstraintUtils {
 
 	public static Collection<Class<? extends Constraint>> getAllExistenceConstraintTemplates() {
 		// TODO Change it if new definitions of not yet discoverable templates are given
-		return getAllDiscoverableExistenceConstraintTemplates();
+		Collection<Class<? extends Constraint>> existenceConstraintTemplates = getAllDiscoverableExistenceConstraintTemplates();
+		existenceConstraintTemplates.add(AtLeastTwo.class);
+		existenceConstraintTemplates.add(AtLeastThree.class);
+		existenceConstraintTemplates.add(AtMostTwo.class);
+		existenceConstraintTemplates.add(ExactlyOne.class);
+		existenceConstraintTemplates.add(ExactlyTwo.class);
+		existenceConstraintTemplates.add(Absence.class);
+		return existenceConstraintTemplates;
 	}
 	public static Collection<Class<? extends Constraint>> getAllDiscoverableExistenceConstraintTemplates() {
 		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(4);
 		// Existence
 		constraintTemplates.add(End.class);
 		constraintTemplates.add(Init.class);
-		constraintTemplates.add(Participation.class);
+		constraintTemplates.add(AtLeastOne.class);
 		constraintTemplates.add(AtMostOne.class);
 		
 		return constraintTemplates;

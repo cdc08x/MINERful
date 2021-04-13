@@ -20,6 +20,11 @@ public class Response extends RespondedExistence {
 		// [^a]*(a.*b)*[^a]*
     }
     
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G(%1$s -> X(F(%2$s)))"; // G(a -> X(F(b)))
+    }
+    
     protected Response() {
     	super();
     }

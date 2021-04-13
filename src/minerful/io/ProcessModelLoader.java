@@ -27,7 +27,7 @@ public class ProcessModelLoader {
 	 */
 	public ProcessModel loadProcessModel(InputModelParameters.InputEncoding inputLanguage, File inputFile) {
 		ProcessModel inputProcess = null;
-
+		
 		try {
 			switch (inputLanguage) {
 			case MINERFUL:

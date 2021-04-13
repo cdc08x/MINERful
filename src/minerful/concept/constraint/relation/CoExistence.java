@@ -17,6 +17,11 @@ public class CoExistence extends MutualRelationConstraint {
 		return "[^%1$s%2$s]*(([%1$s].*[%2$s].*)|([%2$s].*[%1$s].*))*[^%1$s%2$s]*";
     }
     
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G((%1$s -> (X(F(%2$s)) | Y(O(%2$s)))) & (%2$s -> (X(F(%1$s)) | Y(O(%1$s)))))"; // G((a -> (X(F(b)) | Y(O(b)))) & (b -> (X(F(a)) | Y(O(a)))))
+    }
+    
     protected CoExistence() {
     	super();
     }

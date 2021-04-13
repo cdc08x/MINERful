@@ -10,10 +10,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import minerful.concept.xmlenc.CharAdapter;
+import minerful.io.encdec.xml.CharAdapter;
+import minerful.io.encdec.xml.TaskClassAdapter;
 import minerful.logparser.CharTaskClass;
-
-import minerful.concept.xmlenc.TaskClassAdapter;
 
 /**
  * Class associating tasks to single-character identifiers and event classes as per the event log.

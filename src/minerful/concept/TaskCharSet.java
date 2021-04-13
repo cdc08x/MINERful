@@ -16,9 +16,10 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import minerful.concept.xmlenc.CharAdapter;
-
 import org.apache.commons.lang3.StringUtils;
+
+import minerful.io.encdec.nusmv.NuSMVEncoder;
+import minerful.io.encdec.xml.CharAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,6 +51,28 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 			this.refreshListOfIdentifiers();
 		}
 	}
+	
+	/**
+	 * Creates a new instance of TaskCharSet as the join of the input taskCharSets.
+	 * If a TaskChar occurs in more than one input TaskCharSet, it will not be recur in the constructed TaskCharSet instance.
+	 * @param taskCharSets Instances of TaskCharSet objects
+	 */
+	public TaskCharSet(TaskCharSet... taskCharSets) {
+		if (taskCharSets.length < 1) {
+			this.taskChars = new TaskChar[]{};
+			this.listOfIdentifiers = new ArrayList<Character>(0);
+			this.joinedStringOfIdentifiers = "";
+		} else {
+			Set<TaskChar> taChaSet = new TreeSet<TaskChar>();
+			taChaSet.addAll(taskCharSets[0].getTaskCharsList());
+			for (int i = 1; i < taskCharSets.length; i++) {
+				taChaSet.addAll(taskCharSets[i].getTaskCharsList());
+			}
+			this.taskChars = taChaSet.toArray(new TaskChar[taChaSet.size()]);
+			this.refreshListOfIdentifiers();
+		}
+	}
+
 	public TaskCharSet(SortedSet<TaskChar> taskChars) {
 		this(taskChars.toArray(new TaskChar[taskChars.size()]));
 	}
@@ -191,7 +214,6 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		return new TaskCharSet(arrayOfTaskChars);
 	}
 
-
 	public String toPatternString() {
 		return this.toPatternString(true);
 	}
@@ -200,10 +222,20 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 		if (this.size() == 1)
 			return this.taskChars[0].identifier.toString();
 		if (positive) {
-			return StringUtils.join(this.joinedStringOfIdentifiers, "");
+			return this.joinedStringOfIdentifiers;
 		} else { // FIXME Cannot work, really
 			return "^" + this.joinedStringOfIdentifiers;
 		}
+	}
+
+	public String toLTLpfString() {
+		if (this.size() == 1)
+			return this.taskChars[0].identifier.toString();
+		String disjunctionOfLiterals = "";
+		for (int i = 0; i < this.taskChars.length; i++) {
+			disjunctionOfLiterals = disjunctionOfLiterals.concat(NuSMVEncoder.OR).concat(taskChars[i].identifier.toString());
+		}
+		return disjunctionOfLiterals.substring(1);	
 	}
 
 	public boolean isPrefixOf(TaskCharSet other) {

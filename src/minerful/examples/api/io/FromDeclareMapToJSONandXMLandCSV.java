@@ -34,12 +34,14 @@ public class FromDeclareMapToJSONandXMLandCSV {
 		 */
 		ProcessModel proMod =
 				new DeclareMapEncoderDecoder(
-						"/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075-model-s075_CONDEC.xml"
+//						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap3.xml"
+						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap2.xml"
+//						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap1.xml"
 				).createMinerFulProcessModel();
 
-		outParams.fileToSaveAsXML = new File("/home/claudio/MINERful-declarative-model.xml");
-		outParams.fileToSaveAsJSON = new File("/home/claudio/MINERful-declarative-model.json");
-		outParams.fileToSaveConstraintsAsCSV = new File("/home/claudio/MINERful-declarative-model.csv");
+		outParams.fileToSaveAsXML = new File("/home/cdc08x/MINERful-declarative-model.xml");
+		outParams.fileToSaveAsJSON = new File("/home/cdc08x/MINERful-declarative-model.json");
+		outParams.fileToSaveConstraintsAsCSV = new File("/home/cdc08x/MINERful-declarative-model.csv");
 		outParams.csvColumnsToPrint = new CsvEncoder.PRINT_OUT_ELEMENT[]{
 				CsvEncoder.PRINT_OUT_ELEMENT.FULL_NAME, // ("Constraint"),
 				CsvEncoder.PRINT_OUT_ELEMENT.TEMPLATE_NAME, //("Template"),

@@ -16,8 +16,13 @@ public class Succession extends CoExistence {
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s%2$s]*([%1$s].*[%2$s])*[^%1$s%2$s]*";
 	}
-	
-	protected Succession() {
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+    	return "G((%1$s -> X(F(%2$s))) & (%2$s -> Y(O(%1$s))))"; // G((a -> X(F(b))) & (b -> Y(O(a))))
+    }
+  
+    protected Succession() {
 		super();
 	}
 
