@@ -1,9 +1,10 @@
 package minerful.examples.api.discovery;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 import minerful.MinerFulMinerLauncher;
 import minerful.MinerFulOutputManagementLauncher;
@@ -28,7 +29,7 @@ import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessing
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  * 
  */
-public class MinerFulObserverInvokerOnXesFile implements Observer {
+public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener {
 
 	public static void main(String[] args) {
 //////////////////////////////////////////////////////////////////
@@ -48,7 +49,7 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 		PostProcessingCmdParameters postParams =
 				new PostProcessingCmdParameters();
 		
-		inputParams.inputLogFile = new File("/home/claudio/Code/MINERful/logs/BPIC2012/financial_log.xes.gz");
+		inputParams.inputLogFile = new File(MinerFulObserverInvokerOnXesFile.class.getClassLoader().getResource("examples/running-example.xes").getFile());
 		postParams.supportThreshold = 0.9;
 		postParams.confidenceThreshold = 0.25;
 		postParams.interestFactorThreshold = 0.125;
@@ -80,7 +81,7 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 		// Start observing changes in the model
 		System.out.println("Starting to observe the changes in the process model...");
 		
-		processModel.addObserver(new MinerFulObserverInvokerOnXesFile());
+		processModel.addPropertyChangeListener(new MinerFulObserverInvokerOnXesFile());
 		
 //////////////////////////////////////////////////////////////////
 //		Simplification phase
@@ -109,12 +110,15 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 		// To do so, the
 		//		postParams.cropRedundantAndInconsistentConstraints = false;
 		// directive was given. By leaving the default value (true), the model does NOT contain the redundant/conflicting/below-the-thresholds constraints.
-		outParams.fileToSaveAsXML = new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco-minerful.xml");
+		String pathToExampleOutput = Paths.get("").toAbsolutePath().getParent().toString() + "/example-output";
+		new File(Paths.get("").toAbsolutePath().getParent().toString() + "/example-output").mkdirs();
+
+		outParams.fileToSaveAsXML = new File(pathToExampleOutput +"/BPIC2012-disco-minerful.xml");
 		// Please notice that NONE of the Declare-map XML-, JSON-, or CSV-formatted copies contain the redundant/conflicting/below-the-thresholds constraints.
-		outParams.fileToSaveAsConDec = new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco-declaremap.xml");
-		outParams.fileToSaveAsJSON = new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.json");
-		outParams.fileToSaveConstraintsAsCSV = new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.csv");
-		
+		outParams.fileToSaveAsConDec = new File(pathToExampleOutput + "/BPIC2012-disco-declaremap.xml");
+		outParams.fileToSaveAsJSON = new File(pathToExampleOutput + "/BPIC2012-disco.json");
+		outParams.fileToSaveConstraintsAsCSV = new File(pathToExampleOutput +"/BPIC2012-disco.csv");
+
 		System.out.println("Saving...");
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
@@ -141,7 +145,7 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 //		Saving again...
 //////////////////////////////////////////////////////////////////
 
-		outParams.fileToSaveAsXML = new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco-minerful-min.xml");
+		outParams.fileToSaveAsXML = new File(pathToExampleOutput + "/running-examples2.xml");
 
 		System.out.println("Saving...");
 		
@@ -154,25 +158,26 @@ public class MinerFulObserverInvokerOnXesFile implements Observer {
 	}
 
 	/**
-	 * Just a simple implementation of the method to implement for observers on the process model.
+	 * Just a simple implementation of the method to implement for PropertyListener on the process model.
 	 * It prints what happened.
 	 */
 	@Override
-	public void update(Observable o, Object arg) {
+	public void propertyChange(PropertyChangeEvent evt) {
 		// Just to check whether "o", namely the notifier, is a process model.
 		// Until a new Observer-observable framework is not provided for other objects of MINERful, this check is basically useless.
-		if (ProcessModel.class.isAssignableFrom(o.getClass())) {
-			ConstraintChange change = (ConstraintChange) arg;
-			System.out.println("Change detected! "
-					+ "Constraint "
-					+ change.constraint
-					+ " has updated its " 
-					+ change.property
-					+ " to the new value of "
-					+ change.value);
-			// The following line is used to show that one can access all properties of the modified constraint.
-			System.out.println("\tIs it suitable for elimination? "
-					+ change.constraint.isMarkedForExclusion());
-		}
+		Constraint constraint = (Constraint) evt.getSource();
+
+		System.out.println("Change detected! "
+				+ "Constraint "
+				+ constraint.toString()
+				+ " has updated its " 
+				+ evt.getPropertyName()
+				+ " to the new value of "
+				+ evt.getNewValue());
+		// The following line is used to show that one can access all properties of the modified constraint.
+		System.out.println("\tIs it suitable for elimination? "
+				+ constraint.isMarkedForExclusionOrForbidden());
+
 	}
+
 }

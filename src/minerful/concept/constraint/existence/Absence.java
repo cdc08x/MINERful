@@ -5,10 +5,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
-import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class Absence extends ExistenceConstraint {
+public class Absence extends AtMost1 {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s]*";
@@ -39,11 +38,6 @@ public class Absence extends ExistenceConstraint {
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
 		return null;
-	}
-
-	@Override
-	public ExistenceConstraintSubFamily getSubFamily() {
-		return ExistenceConstraintSubFamily.NUMEROSITY;
 	}
 
 	@Override

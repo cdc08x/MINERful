@@ -72,7 +72,7 @@ public class ConstraintsPrinter {
             sBld.append("] => {\n"
                     + "\t\t");
             for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
-            	if (!c.isMarkedForExclusion()) {
+            	if (!c.isMarkedForExclusionOrForbidden()) {
 	        		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
 	                sBld.append("\n\t\t");
             	}
@@ -180,7 +180,7 @@ public class ConstraintsPrinter {
 			i = 0;
 				
         for (Constraint c : constraintsCollection) {
-        	if (!c.isMarkedForExclusion()) {
+        	if (!c.isMarkedForExclusionOrForbidden()) {
 	        	i++;
 	        	sBld.append("\n\t");
 	    		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));

@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import minerful.io.encdec.xml.CharAdapter;
@@ -22,6 +23,12 @@ import minerful.logparser.CharTaskClass;
 @XmlRootElement(name="task")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaskChar implements Comparable<TaskChar> {
+	/**
+	 * Used in {{@link #getNumericId getNumericId()}.
+	 */
+	@XmlTransient
+	public static final String TASK_NUM_PREFIX = "t";
+	
 	/**
 	 * Character identifier for this event class.
 	 */
@@ -89,6 +96,14 @@ public class TaskChar implements Comparable<TaskChar> {
 	 */
     public String getName() {
     	return this.taskClass.toString();
+    }
+
+	/**
+	 * Returns a string version (though not human-readable) of this instance.
+	 * In particular, it is the juxtaposition of {@link #TASK_NUM_PREFIX TASK_NUM_PREFIX} and the UTF-8 code of {@link #identifier this.identifier}.
+	 */
+    public String getTaskNumericId() {
+    	return TASK_NUM_PREFIX.concat(String.valueOf((int)this.identifier));
     }
 
 }

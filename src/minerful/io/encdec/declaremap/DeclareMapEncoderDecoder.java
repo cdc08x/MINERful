@@ -88,7 +88,7 @@ public class DeclareMapEncoderDecoder {
 			auxConstraints = process.bag.getConstraintsOf(tChar);
 			for (Constraint auxCon : auxConstraints) {
 				// Only the mininmal content is saved: redundant, conflicting, or below-the-thresholds constraints are not included in the output.
-				if (!auxCon.isMarkedForExclusion()) {
+				if (!auxCon.isMarkedForExclusionOrForbidden()) {
 					auxDeclareConstraintTO = new DeclareConstraintTransferObject(auxCon);
 					if (auxDeclareConstraintTO.declareMapTemplate != null) {
 						this.constraintTOs.add(auxDeclareConstraintTO);

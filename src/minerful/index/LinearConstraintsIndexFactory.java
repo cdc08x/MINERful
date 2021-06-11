@@ -128,21 +128,21 @@ public class LinearConstraintsIndexFactory {
 		return map;
 	}
 
-	public static Collection<Constraint> getAllUnmarkedConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(
+	public static Collection<Constraint> getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(
 			ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag, true);
 		
-		return getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
+		return getAllConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
 	}
 	
 	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag, false);
-		return getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
+		return getAllConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
 	}
 
-	private static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied) {
+	private static Collection<Constraint> getAllConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied) {
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
 				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(mapOfConstraintsIndexedByImplyingAndImplied));
 		Collection<Constraint> constraints = new ArrayList<Constraint>();

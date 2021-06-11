@@ -19,7 +19,7 @@ public class NotPrecedence extends NotChainPrecedence {
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G(%2$s -> !Y(O(%1$s)))"; // G((a -> !X(F(b))) & (b -> !Y(O(a))))
+    	return "G(%2$s -> !Y(H(%1$s)))"; // G(b -> !Y(H(a)))
     }
 	
 	protected NotPrecedence() {

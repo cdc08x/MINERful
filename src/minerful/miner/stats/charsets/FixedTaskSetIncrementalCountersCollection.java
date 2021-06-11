@@ -44,7 +44,8 @@ public class FixedTaskSetIncrementalCountersCollection extends TaskSetCountersCo
 		Map<Integer, SortedSet<TaskChar>> reversedMap = new TreeMap<Integer, SortedSet<TaskChar>>();
 		// Temporary variable, storing those numeric values that are associated to characters
 		int auxSum = 0;
-		// This variable will come into play later. Please wait... By now, just remind that it's meant to record the numeric values acting as keys in reversedMap, in ascending order
+		// This variable will come into play later. Please wait...
+		// By now, just remind that it's meant to record the numeric values acting as keys in reversedMap, in ascending order
 		Set<Integer> sortedSums = new TreeSet<Integer>();
 		// The "local" alphabet of characters
 		SortedSet<TaskChar> alphaList = new TreeSet<TaskChar>();

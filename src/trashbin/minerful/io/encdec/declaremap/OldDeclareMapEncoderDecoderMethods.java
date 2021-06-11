@@ -11,9 +11,9 @@ import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
-import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.AtMost1;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.AtLeastOne;
+import minerful.concept.constraint.existence.AtLeast1;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -264,7 +264,7 @@ public class OldDeclareMapEncoderDecoderMethods {
 						params.add(ad.getName());
 					}
 				}
-				AtLeastOne minerConstr = new AtLeastOne(taskCharArchive.getTaskChar(params.get(0)),support);
+				AtLeast1 minerConstr = new AtLeast1(taskCharArchive.getTaskChar(params.get(0)),support);
 				minerConstr.setConfidence(confidence);
 				minerConstr.setInterestFactor(interestFact);
 				minerFulConstraints.add(minerConstr);
@@ -274,7 +274,7 @@ public class OldDeclareMapEncoderDecoderMethods {
 						params.add(ad.getName());
 					}
 				}
-				AtMostOne minerConstr = new AtMostOne(taskCharArchive.getTaskChar(params.get(0)),support);
+				AtMost1 minerConstr = new AtMost1(taskCharArchive.getTaskChar(params.get(0)),support);
 				minerConstr.setConfidence(confidence);
 				minerConstr.setInterestFactor(interestFact);
 				minerFulConstraints.add(minerConstr);

@@ -1,0 +1,61 @@
+package minerful.concept.constraint.existence;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import minerful.concept.TaskChar;
+import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
+
+@XmlRootElement
+public class Exactly2 extends AtLeast2 { // Multiple inheritance is not allowed in Java, but there should be AtMostTwo too, here
+	@Override
+	public String getRegularExpressionTemplate() {
+		return "[^%1$s]*([%1$s][^%1$s]*){2,2}[^%1$s]*";
+	}
+    
+    @Override
+    public String getLTLpfExpressionTemplate() {
+//    	return "G( ( F(%1$s & X(F(%1$s))) | O(%1$s & Y(O(%1$s))) ) & ( %1$s -> X(G( %1$s -> X(G(!%1$s)) )) ) )";
+    	return "!%1$s U (%1$s & X(!%1$s U (%1$s & X(G(!%1$s))))"; // !a U (a & X(!a U (a & X(G(!a)))))
+    }
+
+	protected Exactly2() {
+    	super();
+    }
+
+	public Exactly2(TaskChar param1, double support) {
+		super(param1, support);
+	}
+	public Exactly2(TaskChar param1) {
+		super(param1);
+	}
+	public Exactly2(TaskCharSet param1, double support) {
+		super(param1, support);
+	}
+	public Exactly2(TaskCharSet param1) {
+		super(param1);
+	}
+
+	@Override
+	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
+		return new AtLeast2(getBase());
+	}
+
+	@Override
+	public ExistenceConstraintSubFamily getSubFamily() {
+		return ExistenceConstraintSubFamily.NUMEROSITY;
+	}
+
+	@Override
+	public Constraint copy(TaskChar... taskChars) {
+		super.checkParams(taskChars);
+		return new Exactly2(taskChars[0]);
+	}
+
+	@Override
+	public Constraint copy(TaskCharSet... taskCharSets) {
+		super.checkParams(taskCharSets);
+		return new Exactly2(taskCharSets[0]);
+	}
+}

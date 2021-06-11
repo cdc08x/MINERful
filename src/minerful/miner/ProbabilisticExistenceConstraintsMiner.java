@@ -6,10 +6,15 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.AtMost1;
+import minerful.concept.constraint.existence.AtMost2;
+import minerful.concept.constraint.existence.AtMost3;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.AtLeastOne;
+import minerful.concept.constraint.existence.Absence;
+import minerful.concept.constraint.existence.AtLeast1;
+import minerful.concept.constraint.existence.AtLeast3;
+import minerful.concept.constraint.existence.AtLeast2;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 
@@ -30,26 +35,28 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         for (TaskChar pivot: tasksToQueryFor) {
         	localStats = this.globalStats.statsTable.get(pivot);
 
-        	// Avoid the famous rule: EX FALSO QUOD LIBET! Meaning: if you have no occurrence of a character, each constraint is potentially valid on it.
-        	// Thus, it is perfectly useless to indagate over it!
         	if (localStats.getTotalAmountOfOccurrences() > 0) {
-	        	Constraint participation = this.discoverParticipationConstraint(pivot, localStats, this.globalStats.logSize);
-	        	pivotParticipationFraction = participation.getSupport();
+	        	Constraint[] minMultiCns = this.discoverMinMultiplicityConstraints(pivot, localStats, this.globalStats.logSize);
+	        	pivotParticipationFraction = minMultiCns[0].getSupport();
 
-	        	updateConstraint(constraintsBag, pivot, participation, participation.getSupport(), pivotParticipationFraction);
+	        	for (Constraint minMultiCn : minMultiCns) {
+	        		updateConstraint(constraintsBag, pivot, minMultiCn, minMultiCn.getSupport(), pivotParticipationFraction);
+	        		if (hasValuesAboveThresholds(minMultiCn)) this.computedConstraintsAboveThresholds++;
+	        	}	
 
-	        	Constraint atMostOne = this.discoverAtMostOnceConstraint(pivot, localStats, this.globalStats.logSize);
-	        	updateConstraint(constraintsBag, pivot, atMostOne, atMostOne.getSupport(), pivotParticipationFraction);
+	        	Constraint[] maxMultiCns = this.discoverMaxMultiplicityConstraints(pivot, localStats, this.globalStats.logSize);
+
+	        	for (Constraint maxMultiCn : maxMultiCns) {
+	        		updateConstraint(constraintsBag, pivot, maxMultiCn, maxMultiCn.getSupport(), pivotParticipationFraction);
+	        		if (hasValuesAboveThresholds(maxMultiCn)) this.computedConstraintsAboveThresholds++;
+	        	}	
 	            
 	        	Constraint init = this.discoverInitConstraint(pivot, localStats, this.globalStats.logSize);
 	        	updateConstraint(constraintsBag, pivot, init, init.getSupport(), pivotParticipationFraction);
+	            if (hasValuesAboveThresholds(init)) this.computedConstraintsAboveThresholds++;
 	            
 	            Constraint end = this.discoverEndConstraint(pivot, localStats, this.globalStats.logSize);
 	        	updateConstraint(constraintsBag, pivot, end, end.getSupport(), pivotParticipationFraction);
-	            
-	            if (hasValuesAboveThresholds(participation)) this.computedConstraintsAboveThresholds++;
-	            if (hasValuesAboveThresholds(atMostOne)) this.computedConstraintsAboveThresholds++;
-	            if (hasValuesAboveThresholds(init)) this.computedConstraintsAboveThresholds++;
 	            if (hasValuesAboveThresholds(end)) this.computedConstraintsAboveThresholds++;
         	}
         }
@@ -73,30 +80,48 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     }
 
     @Override
-    protected Constraint discoverParticipationConstraint(TaskChar base,
+    protected Constraint[] discoverMinMultiplicityConstraints(TaskChar base,
             LocalStatsWrapper localStats, long testbedSize) {
-        long zeroAppearances = 0;
+        long zeroOccurrences = 0, singleOrNoOccurrences = 0, upToTwoOccurrences = 0;
         if (localStats.repetitions.containsKey(0)) {
-            zeroAppearances += localStats.repetitions.get(0);
+            zeroOccurrences = localStats.repetitions.get(0);
         }
-        double oppositeSupport =
-                (double) zeroAppearances / (double) testbedSize;
-        return new AtLeastOne(base, Constraint.complementSupport(oppositeSupport));
+        if (localStats.repetitions.containsKey(1)) {
+        	singleOrNoOccurrences = zeroOccurrences + localStats.repetitions.get(1);
+        }	else singleOrNoOccurrences = zeroOccurrences;
+        if (localStats.repetitions.containsKey(2)) {
+        	upToTwoOccurrences = singleOrNoOccurrences + localStats.repetitions.get(2);
+        }	else upToTwoOccurrences = singleOrNoOccurrences;
+        
+        return new Constraint[] {
+        		new AtLeast1(base, Constraint.complementSupport((double) zeroOccurrences / (double) testbedSize)),
+        		new AtLeast2(base, Constraint.complementSupport((double) singleOrNoOccurrences / (double) testbedSize)),
+        		new AtLeast3(base, Constraint.complementSupport((double) upToTwoOccurrences / (double) testbedSize)),
+        };
     }
 
     @Override
-    protected Constraint discoverAtMostOnceConstraint(TaskChar base,
+    protected Constraint[] discoverMaxMultiplicityConstraints(TaskChar base,
             LocalStatsWrapper localStats, long testbedSize) {
-        long appearancesAsUpToOne = 0;
+    	long zeroOccurrences = 0, singleOrNoOccurrences = 0, upToTwoOccurrences = 0, upToThreeOccurrences = 0;
+    	if (localStats.repetitions.containsKey(0)) {
+    		zeroOccurrences = localStats.repetitions.get(0);
+    	}
         if (localStats.repetitions.containsKey(1)) {
-            appearancesAsUpToOne += localStats.repetitions.get(1);
-            if (localStats.repetitions.containsKey(0)) {
-                appearancesAsUpToOne += localStats.repetitions.get(0);
-               }
-        }
-        double support =
-                (double) appearancesAsUpToOne / (double) testbedSize;
-        return new AtMostOne(base, support);
+        	singleOrNoOccurrences = zeroOccurrences + localStats.repetitions.get(1);
+        }	else singleOrNoOccurrences = zeroOccurrences;
+        if (localStats.repetitions.containsKey(2)) {
+        	upToTwoOccurrences = singleOrNoOccurrences + localStats.repetitions.get(2);
+        }	else upToTwoOccurrences = singleOrNoOccurrences;
+        if (localStats.repetitions.containsKey(3)) {
+        	upToThreeOccurrences = upToTwoOccurrences + localStats.repetitions.get(3);
+        }	else upToThreeOccurrences = upToTwoOccurrences;
+        return new Constraint[] {
+        		new Absence(base, ((double) zeroOccurrences / (double) testbedSize)),
+        		new AtMost1(base, ((double) singleOrNoOccurrences / (double) testbedSize)),
+        		new AtMost2(base, ((double) upToTwoOccurrences / (double) testbedSize)),
+        		new AtMost3(base, ((double) upToThreeOccurrences / (double) testbedSize)),
+        };
     }
 
     @Override

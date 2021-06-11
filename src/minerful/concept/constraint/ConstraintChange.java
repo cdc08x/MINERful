@@ -16,6 +16,7 @@ public class ConstraintChange {
 		BELOW_FITNESS_THRESHOLD,
 		REDUNDANT,
 		CONFLICTING,
+		FORBIDDEN,
 		EVALUATED_ON_LOG,
 	}
 

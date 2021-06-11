@@ -20,7 +20,7 @@ public class FromJsonProcessModelToLog {
 	public static final Integer MAX_EVENTS_PER_TRACE = 45;
 	public static final Long TRACES_IN_LOG = (long)50;
 	public static final Encoding OUTPUT_ENCODING = Encoding.xes;
-	public static final File OUTPUT_LOG = new File("/home/claudio/Desktop/log-from-JSON.xes");
+	public static final File OUTPUT_LOG = new File("/home/cdc08x/Desktop/log-from-JSON.xes");
 
 	public static void main(String[] args) throws IOException {
 		// This is a JSON string with the minimal definition of a process. It is not case sensitive, and allows for some extra spaces, dashes, etc. in the template names. */
@@ -28,7 +28,7 @@ public class FromJsonProcessModelToLog {
 				"{constraints: [" 
 				+ "{template: Succession, parameters: [[A],[B]]}," 
 				+ "{template: resPOnse, parameters: [[B],[C]]}," 
-				+ "{template: EnD, parameters: [[D]]}," 
+				+ "{template: End, parameters: [[D]]}," 
 				+ "{template: existence, parameters: [[D]]}," 
 				+ "{template: \"not chain-succession\", parameters: [[A],[B,D]]}" 
 				+ "] }";

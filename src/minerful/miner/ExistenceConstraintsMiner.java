@@ -4,6 +4,7 @@
  */
 package minerful.miner;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import minerful.concept.TaskChar;
@@ -27,12 +28,12 @@ public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner
             LocalStatsWrapper localStats = this.globalStats.statsTable.get(task);
             TaskChar base = task;
 
-            Constraint uniqueness = this.discoverAtMostOnceConstraint(base, localStats, this.globalStats.logSize);
+            Constraint[] uniqueness = this.discoverMaxMultiplicityConstraints(base, localStats, this.globalStats.logSize);
             if (uniqueness != null)
-            	constraintsBag.add(base, uniqueness);
-            Constraint participation = this.discoverParticipationConstraint(base, localStats, this.globalStats.logSize);
+            	constraintsBag.addAll(base, Arrays.asList(uniqueness));
+            Constraint[] participation = this.discoverMinMultiplicityConstraints(base, localStats, this.globalStats.logSize);
             if (participation != null)
-            	constraintsBag.add(base, participation);
+            	constraintsBag.addAll(base, Arrays.asList(participation));
             
             Constraint init = this.discoverEndConstraint(base, localStats, this.globalStats.logSize);
             if (init != null)
@@ -49,10 +50,10 @@ public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner
 		return MetaConstraintUtils.NUMBER_OF_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES * tasksToQueryFor.size();
 	}
 
-	protected abstract Constraint discoverParticipationConstraint(TaskChar base,
+	protected abstract Constraint[] discoverMinMultiplicityConstraints(TaskChar base,
 			LocalStatsWrapper localStats, long testbedSize);
 
-	protected abstract Constraint discoverAtMostOnceConstraint(TaskChar base,
+	protected abstract Constraint[] discoverMaxMultiplicityConstraints(TaskChar base,
 			LocalStatsWrapper localStats, long testbedSize);
 
 	protected abstract Constraint discoverInitConstraint(TaskChar base,

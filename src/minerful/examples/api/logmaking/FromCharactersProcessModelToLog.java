@@ -10,7 +10,7 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.existence.End;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.AtLeastOne;
+import minerful.concept.constraint.existence.AtLeast1;
 import minerful.concept.constraint.relation.Precedence;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.logmaker.MinerFulLogMaker;
@@ -54,7 +54,7 @@ public class FromCharactersProcessModelToLog {
 		// it has two tasks assigned to the first parameter, instead of one as usual!
 		bag.add(new Precedence(new TaskCharSet(a, b), new TaskCharSet(c)));
 		bag.add(new Init(a));
-		bag.add(new AtLeastOne(b));
+		bag.add(new AtLeast1(b));
 		bag.add(new End(e));
 
 		// Create the process model on the basis of the archive of tasks, and the constraints expressed thereupon

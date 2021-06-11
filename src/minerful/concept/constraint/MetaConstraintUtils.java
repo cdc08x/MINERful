@@ -13,17 +13,18 @@ import java.util.TreeSet;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
-import minerful.concept.constraint.existence.AtMostOne;
-import minerful.concept.constraint.existence.AtMostTwo;
+import minerful.concept.constraint.existence.AtMost1;
+import minerful.concept.constraint.existence.AtMost2;
+import minerful.concept.constraint.existence.AtMost3;
 import minerful.concept.constraint.existence.End;
-import minerful.concept.constraint.existence.ExactlyOne;
-import minerful.concept.constraint.existence.ExactlyTwo;
+import minerful.concept.constraint.existence.Exactly1;
+import minerful.concept.constraint.existence.Exactly2;
 import minerful.concept.constraint.existence.ExistenceConstraint;
 import minerful.concept.constraint.existence.Init;
 import minerful.concept.constraint.existence.Absence;
-import minerful.concept.constraint.existence.AtLeastOne;
-import minerful.concept.constraint.existence.AtLeastThree;
-import minerful.concept.constraint.existence.AtLeastTwo;
+import minerful.concept.constraint.existence.AtLeast1;
+import minerful.concept.constraint.existence.AtLeast3;
+import minerful.concept.constraint.existence.AtLeast2;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
 import minerful.concept.constraint.relation.AlternateSuccession;
@@ -176,12 +177,8 @@ public class MetaConstraintUtils {
 	public static Collection<Class<? extends Constraint>> getAllExistenceConstraintTemplates() {
 		// TODO Change it if new definitions of not yet discoverable templates are given
 		Collection<Class<? extends Constraint>> existenceConstraintTemplates = getAllDiscoverableExistenceConstraintTemplates();
-		existenceConstraintTemplates.add(AtLeastTwo.class);
-		existenceConstraintTemplates.add(AtLeastThree.class);
-		existenceConstraintTemplates.add(AtMostTwo.class);
-		existenceConstraintTemplates.add(ExactlyOne.class);
-		existenceConstraintTemplates.add(ExactlyTwo.class);
-		existenceConstraintTemplates.add(Absence.class);
+		existenceConstraintTemplates.add(Exactly1.class);
+		existenceConstraintTemplates.add(Exactly2.class);
 		return existenceConstraintTemplates;
 	}
 	public static Collection<Class<? extends Constraint>> getAllDiscoverableExistenceConstraintTemplates() {
@@ -189,8 +186,13 @@ public class MetaConstraintUtils {
 		// Existence
 		constraintTemplates.add(End.class);
 		constraintTemplates.add(Init.class);
-		constraintTemplates.add(AtLeastOne.class);
-		constraintTemplates.add(AtMostOne.class);
+		constraintTemplates.add(AtLeast1.class);
+		constraintTemplates.add(AtLeast2.class);
+		constraintTemplates.add(AtLeast3.class);
+		constraintTemplates.add(AtMost3.class);
+		constraintTemplates.add(AtMost2.class);
+		constraintTemplates.add(AtMost1.class);
+		constraintTemplates.add(Absence.class);
 		
 		return constraintTemplates;
 	}

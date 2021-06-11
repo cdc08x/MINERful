@@ -12,7 +12,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class End extends AtLeastOne {
+public class End extends AtLeast1 {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return ".*[%1$s]";
@@ -20,7 +20,7 @@ public class End extends AtLeastOne {
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return super.getLTLpfExpressionTemplate(); // To be defined. Using the method inherited by the superclass for now.
+    	return "G(F(%1$s))"; // "G(F(a))"
     }
 
 	protected End() {
@@ -47,7 +47,7 @@ public class End extends AtLeastOne {
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return new AtLeastOne(this.base);
+		return new AtLeast1(this.base);
 	}
 
 	@Override

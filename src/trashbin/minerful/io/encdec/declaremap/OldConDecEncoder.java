@@ -7,8 +7,8 @@ import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.existence.Init;
-import minerful.concept.constraint.existence.AtLeastOne;
-import minerful.concept.constraint.existence.AtMostOne;
+import minerful.concept.constraint.existence.AtLeast1;
+import minerful.concept.constraint.existence.AtMost1;
 import minerful.concept.constraint.relation.*;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -29,8 +29,8 @@ public class OldConDecEncoder {
 	static {
 //		NAME_CONVERTER.put(End.class, "end");
 		NAME_CONVERTER.put(Init.class, "init");
-		NAME_CONVERTER.put(AtLeastOne.class, "existence");
-		NAME_CONVERTER.put(AtMostOne.class, "absence2");
+		NAME_CONVERTER.put(AtLeast1.class, "existence");
+		NAME_CONVERTER.put(AtMost1.class, "absence2");
 		// Relation
 		NAME_CONVERTER.put(RespondedExistence.class, "responded existence");
 		NAME_CONVERTER.put(Response.class, "response");
@@ -51,8 +51,8 @@ public class OldConDecEncoder {
 
 //		LTL_CONVERTER.put(End.class, "end");
 		LTL_CONVERTER.put(Init.class, "( ( \"A.started\" \\/ \"A.cancelled\" ) W \"A\" )");
-		LTL_CONVERTER.put(AtLeastOne.class, "<> ( \"A\" )");
-		LTL_CONVERTER.put(AtMostOne.class, "! ( <> ( ( \"A\" /\\ X(<>(\"A\")) ) ) )");
+		LTL_CONVERTER.put(AtLeast1.class, "<> ( \"A\" )");
+		LTL_CONVERTER.put(AtMost1.class, "! ( <> ( ( \"A\" /\\ X(<>(\"A\")) ) ) )");
 		// Relation
 		LTL_CONVERTER.put(RespondedExistence.class, "( <>(\"A\") -> <>( \"B\" ) )");
 		LTL_CONVERTER.put(Response.class, "[]( ( \"A\" -> <>( \"B\" ) ) )");

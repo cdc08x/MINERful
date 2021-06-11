@@ -230,10 +230,10 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 
 	public String toLTLpfString() {
 		if (this.size() == 1)
-			return this.taskChars[0].identifier.toString();
+			return this.taskChars[0].getTaskNumericId();
 		String disjunctionOfLiterals = "";
 		for (int i = 0; i < this.taskChars.length; i++) {
-			disjunctionOfLiterals = disjunctionOfLiterals.concat(NuSMVEncoder.OR).concat(taskChars[i].identifier.toString());
+			disjunctionOfLiterals = disjunctionOfLiterals.concat(NuSMVEncoder.OR).concat(taskChars[i].getTaskNumericId());
 		}
 		return disjunctionOfLiterals.substring(1);	
 	}

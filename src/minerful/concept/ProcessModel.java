@@ -1,11 +1,12 @@
 package minerful.concept;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NavigableMap;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -19,6 +20,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.log4j.Logger;
+
+import dk.brics.automaton.Automaton;
 import minerful.automaton.AutomatonFactory;
 import minerful.automaton.SubAutomaton;
 import minerful.automaton.utils.AutomatonUtils;
@@ -28,15 +32,15 @@ import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
-import org.apache.log4j.Logger;
-
-import dk.brics.automaton.Automaton;
-
 @XmlRootElement(name="processModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessModel extends Observable implements Observer {
+public class ProcessModel implements PropertyChangeListener {
 	@XmlTransient
 	private static Logger logger = Logger.getLogger(ProcessModel.class.getCanonicalName());
+	
+	@XmlTransient
+	private PropertyChangeSupport pcs;
+	
 	@XmlTransient
 	public static String DEFAULT_NAME = "Discovered model";
 
@@ -68,7 +72,8 @@ public class ProcessModel extends Observable implements Observer {
 		this.taskCharArchive = taskCharArchive;
 		this.bag = bag;
 		this.name = name;
-		this.bag.addObserver(this);
+		this.pcs = new PropertyChangeSupport(this);
+		this.bag.addPropertyChangeListener(this);
 	}
 
 	public String getName() {
@@ -126,7 +131,7 @@ public class ProcessModel extends Observable implements Observer {
 	 */
 	protected Automaton buildAutomatonByBondHeuristic() {
 		Collection<String> regularExpressions = null;
-		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(this.bag);
+		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(this.bag);
 		regularExpressions = new ArrayList<String>(constraints.size());
 		for (Constraint con : constraints) {
 			regularExpressions.add(con.getRegularExpression());
@@ -224,11 +229,18 @@ public class ProcessModel extends Observable implements Observer {
 			}
 		}
 	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        pcs.addPropertyChangeListener(pcl);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        pcs.removePropertyChangeListener(pcl);
+    }
 
 	@Override
-	public void update(Observable o, Object arg) {
-		this.setChanged();
-		this.notifyObservers(arg);
-		this.clearChanged();
+	public void propertyChange(PropertyChangeEvent evt) {
+		pcs.firePropertyChange(evt);
 	}
+	
 }

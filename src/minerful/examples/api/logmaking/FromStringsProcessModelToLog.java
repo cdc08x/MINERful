@@ -59,7 +59,7 @@ public class FromStringsProcessModelToLog {
 		// Add new constraints to the bag. The first one is a target-branched constraint:
 		// it has two tasks assigned to the first parameter, instead of one as usual!
 		bag.add(new AlternatePrecedence(new TaskCharSet(a0, a0a1), new TaskCharSet(b0b1b2b0)));
-		bag.add(new AtLeastOne(b0b1b2b0));
+		bag.add(new AtLeast1(b0b1b2b0));
 
 		// Create the process model on the basis of the archive of tasks, and the constraints expressed thereupon
 		ProcessModel proMod = new ProcessModel(taChaAr, bag);

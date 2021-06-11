@@ -12,7 +12,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
 @XmlRootElement
-public class Init extends AtLeastOne {
+public class Init extends AtLeast1 {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[%1$s].*";
@@ -47,7 +47,7 @@ public class Init extends AtLeastOne {
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
-		return new AtLeastOne(this.base);
+		return new AtLeast1(this.base);
 	}
 
 	@Override
