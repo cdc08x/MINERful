@@ -54,7 +54,13 @@ public class DeclareMapToMinerFulTemplatesTranslator {
 		MINERFUL_2_DECLARE_MAP.put(Init.class, DeclareMapTemplate.Init);
 		MINERFUL_2_DECLARE_MAP.put(End.class, DeclareMapTemplate.Existence); // Declare does not cover the concept of "End"
 		MINERFUL_2_DECLARE_MAP.put(AtLeast1.class, DeclareMapTemplate.Existence);
+		MINERFUL_2_DECLARE_MAP.put(Absence.class, DeclareMapTemplate.Absence);
 		MINERFUL_2_DECLARE_MAP.put(AtMost1.class, DeclareMapTemplate.Absence2);
+		MINERFUL_2_DECLARE_MAP.put(AtMost2.class, DeclareMapTemplate.Absence3);
+		MINERFUL_2_DECLARE_MAP.put(AtLeast2.class, DeclareMapTemplate.Existence2);
+		MINERFUL_2_DECLARE_MAP.put(AtLeast3.class, DeclareMapTemplate.Existence3);
+		MINERFUL_2_DECLARE_MAP.put(Exactly1.class, DeclareMapTemplate.Exactly1);
+		MINERFUL_2_DECLARE_MAP.put(Exactly2.class, DeclareMapTemplate.Exactly2);
 		// Relation
 		MINERFUL_2_DECLARE_MAP.put(RespondedExistence.class, DeclareMapTemplate.Responded_Existence);
 		MINERFUL_2_DECLARE_MAP.put(Response.class, DeclareMapTemplate.Response);

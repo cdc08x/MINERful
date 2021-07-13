@@ -12,11 +12,11 @@ import org.apache.log4j.Logger;
 public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 	private static Logger logger = Logger.getLogger(ProcessModel.class.getCanonicalName());
 	
-	private final boolean forOutBrancing;
+	private final boolean forOutBranching;
 	
-	public ConstraintIndexHassePruner(boolean isForOutBrancing, ConstraintIndexHasseDiagram hasseDiagram) {
+	public ConstraintIndexHassePruner(boolean isForOutBranching, ConstraintIndexHasseDiagram hasseDiagram) {
 		super(hasseDiagram);
-		this.forOutBrancing = isForOutBrancing;
+		this.forOutBranching = isForOutBranching;
 	}
 
 	public void prune() {
@@ -45,7 +45,7 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 	}
 
 	private void labelRedundancyWrtSetContainment() {
-		if (this.forOutBrancing) {
+		if (this.forOutBranching) {
 			/*
 			 *  E.g.,
 			 *  support ( Response(a, {b, c}) ) <= support ( Response(a, {b, c, d}) )

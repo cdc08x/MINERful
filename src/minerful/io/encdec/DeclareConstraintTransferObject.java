@@ -147,9 +147,13 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 	public int compareTo(DeclareConstraintTransferObject o) {
 		int result = 0;
 		
-		result = this.declareMapTemplate.compareTo(o.declareMapTemplate);
+		if (this.declareMapTemplate != null && o.declareMapTemplate != null) {
+			result = this.declareMapTemplate.compareTo(o.declareMapTemplate);
+		}
 		if (result == 0) {
-			result = this.minerFulTemplate.getName().compareTo(o.minerFulTemplate.getName());
+			if (this.minerFulTemplate != null && o.minerFulTemplate != null) {
+				result = this.minerFulTemplate.getName().compareTo(o.minerFulTemplate.getName());
+			}
 			if (result == 0) {
 				/* Compare the parameters' sizes */
 	    		for (int i = 0; i < this.parameters.size() && result == 0; i++) {
