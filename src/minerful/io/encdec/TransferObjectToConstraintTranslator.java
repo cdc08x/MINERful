@@ -23,12 +23,18 @@ public class TransferObjectToConstraintTranslator {
 				);
 			if (conTO.support != null) {
 				minerFulConstraint.setSupport(conTO.support);
+			} else {
+				minerFulConstraint.setSupport(Constraint.MAX_SUPPORT);
 			}
 			if (conTO.confidence != null) {
 				minerFulConstraint.setConfidence(conTO.confidence);
+			} else {
+				minerFulConstraint.setConfidence(Constraint.MAX_CONFIDENCE);
 			}
 			if (conTO.interestFactor != null) {
 				minerFulConstraint.setInterestFactor(conTO.interestFactor);
+			} else {
+				minerFulConstraint.setInterestFactor(Constraint.MAX_INTEREST_FACTOR);
 			}
 			return minerFulConstraint;
 		}
