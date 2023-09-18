@@ -22,14 +22,8 @@ public class Absence extends AtMost1 {
     	super();
     }
 
-	public Absence(TaskChar param1, double support) {
-		super(param1, support);
-	}
 	public Absence(TaskChar param1) {
 		super(param1);
-	}
-	public Absence(TaskCharSet param1, double support) {
-		super(param1, support);
 	}
 	public Absence(TaskCharSet param1) {
 		super(param1);

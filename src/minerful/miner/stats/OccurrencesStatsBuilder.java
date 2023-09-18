@@ -49,6 +49,7 @@ public class OccurrencesStatsBuilder {
     
     public GlobalStatsTable checkThisOut(LogParser logParser) {
         this.statsTable.logSize += logParser.length();
+        this.statsTable.numOfEvents += logParser.numberOfEvents();
         this.checkThisOut(logParser, ONWARDS);
         this.checkThisOut(logParser, BACKWARDS, true);
         return this.statsTable;
@@ -97,9 +98,9 @@ public class OccurrencesStatsBuilder {
                     	auxTaskChar = this.statsTable.taskCharArchive.getTaskCharByEvent(auxEvent);
     	                // record the occurrence of this chr in the current string
     	                occurredEvents.add(auxTaskChar);
-    	                for (TaskChar appChr : occurredEvents) {
-    	                    // for each already appeared chr, register the new occurrence of the current in its own stats table, at the proper distance.
-    	                	this.statsTable.statsTable.get(appChr).newAtPosition(
+    	                for (TaskChar occurredEvt : occurredEvents) {
+    	                    // for every already occurred chr, register the new occurrence of the current in its own stats table, at the proper distance.
+    	                	this.statsTable.statsTable.get(occurredEvt).newAtPosition(
     	                			auxEvent, 
     	                            (   onwards
     	                                ?   positionCursor
@@ -116,7 +117,7 @@ public class OccurrencesStatsBuilder {
                 if (auxTaskChar != null)
                     this.statsTable.statsTable.get(auxTaskChar).occurrencesAsLast += 1;
                 /* Record which character did not ever appear in the local stats tables! */
-                this.setNeverAppearedStuffAtThisStep(occurredEvents);
+                this.registerNeverOccurredTasksAtThisStep(occurredEvents);
             }
             /*
              * Reset local stats table counters,
@@ -153,17 +154,17 @@ public class OccurrencesStatsBuilder {
         }
     }
     
-    private void setNeverAppearedStuffAtThisStep(Set<TaskChar> appearedTasks) {
-        List<TaskChar> differenceStuff = new ArrayList<TaskChar>(this.taskCharArchive.size());
+    private void registerNeverOccurredTasksAtThisStep(Set<TaskChar> occurredTasks) {
+        List<TaskChar> difference = new ArrayList<TaskChar>(this.taskCharArchive.size());
         for (TaskChar task : this.taskCharArchive.getTaskChars()) {
-            differenceStuff.add(task);
+            difference.add(task);
         }
-        Set<TaskChar> neverAppearedStuff = new HashSet<TaskChar>(differenceStuff);
-        neverAppearedStuff.removeAll(appearedTasks);
+        Set<TaskChar> neverOccurredTasks = new HashSet<TaskChar>(difference);
+        neverOccurredTasks.removeAll(occurredTasks);
         
-        if (neverAppearedStuff.size() > 0) {
-            for (TaskChar appearedChr : appearedTasks) {
-            	this.statsTable.statsTable.get(appearedChr).setAsNeverAppeared(neverAppearedStuff);
+        if (neverOccurredTasks.size() > 0) {
+            for (TaskChar occurredChr : occurredTasks) {
+            	this.statsTable.statsTable.get(occurredChr).setAsNeverCooccurred(neverOccurredTasks);
             }
         }
     }

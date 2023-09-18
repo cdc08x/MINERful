@@ -138,7 +138,7 @@ public class ConstraintsFitnessEvaluator {
 		for (Constraint constraint : constraints) {
 			if (constraint.isBranched()) {
 				// FIXME Relevance check to be added for branched Declare
-				throw new UnsupportedOperationException("Branched Declare not yet considered");
+				throw new UnsupportedOperationException("Branched Declare not yet supported");
 			}
 			charParameters = new ArrayList<Character>();
 			for (TaskCharSet param : constraint.getParameters()) {
@@ -343,13 +343,13 @@ public class ConstraintsFitnessEvaluator {
 
 	private void updateConstraintsFitness(ConstraintsFitnessEvaluationsMap logEvalsMap, LogTraceParser loTraParser) {
 		for (Constraint con : this.checkedConstraints) {
-			con.setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), loTraParser));
+			con.getEventBasedMeasures().setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), loTraParser));
 		}
 	}
 
 	public void updateConstraintsFitness(ConstraintsFitnessEvaluationsMap logEvalsMap, LogParser logParser) {
 		for (Constraint con : this.checkedConstraints) {
-			con.setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), logParser));
+			con.getEventBasedMeasures().setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), logParser));
 		}
 	}
 	

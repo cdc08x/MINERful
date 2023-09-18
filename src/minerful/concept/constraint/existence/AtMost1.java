@@ -22,14 +22,8 @@ public class AtMost1 extends AtMost2 {
     	super();
     }
 
-	public AtMost1(TaskChar param1, double support) {
-		super(param1, support);
-	}
 	public AtMost1(TaskChar param1) {
 		super(param1);
-	}
-	public AtMost1(TaskCharSet param1, double support) {
-		super(param1, support);
 	}
 	public AtMost1(TaskCharSet param1) {
 		super(param1);

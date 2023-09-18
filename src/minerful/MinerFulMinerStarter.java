@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
@@ -121,7 +121,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessModel processModel = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
+		ProcessSpecification processModel = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
 
 		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
 	}
@@ -138,26 +138,26 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		return true;
 	}
 
-	public ProcessModel mine(LogParser logParser,
+	public ProcessSpecification mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams,
 			PostProcessingCmdParameters postParams, Character[] alphabet) {
 		return this.mine(logParser, null, minerFulParams, postParams, alphabet);
 	}
 
-	public ProcessModel mine(LogParser logParser,
+	public ProcessSpecification mine(LogParser logParser,
 			InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams,
 			PostProcessingCmdParameters postParams, Character[] alphabet) {
 		TaskCharArchive taskCharArchive = new TaskCharArchive(alphabet);
 		return this.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
 	}
 
-	public ProcessModel mine(LogParser logParser,
+	public ProcessSpecification mine(LogParser logParser,
 			MinerFulCmdParameters minerFulParams, 
 			PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive) {
 		return this.mine(logParser, null, minerFulParams, postParams, taskCharArchive);
 	}
 
-	public ProcessModel mine(LogParser logParser,
+	public ProcessSpecification mine(LogParser logParser,
 			InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive) {
 		GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
 		globalStatsTable = computeKB(logParser, minerFulParams,
@@ -165,7 +165,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		System.gc();
 
-		ProcessModel proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
+		ProcessSpecification proMod = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
 		
 		proMod.setName(makeDiscoveredProcessName(inputParams));
 
@@ -292,8 +292,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		return bag;
 	}
 
-	protected ProcessModel pruneConstraints(
-			ProcessModel processModel,
+	protected ProcessSpecification pruneConstraints(
+			ProcessSpecification processModel,
 			MinerFulCmdParameters minerFulParams,
 			PostProcessingCmdParameters postPrarams) {
 //		int coreNum = 0;

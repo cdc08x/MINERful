@@ -3,7 +3,7 @@ package minerful.examples.api.io;
 import java.io.File;
 
 import minerful.MinerFulOutputManagementLauncher;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.csv.CsvEncoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
@@ -32,7 +32,7 @@ public class FromDeclareMapToJSONandXMLandCSV {
 		 * The first one is used here, and reads an XML representation of the Declare map.
 		 * The second one can be used to pass in-memory representations of the Declare map.
 		 */
-		ProcessModel proMod =
+		ProcessSpecification proMod =
 				new DeclareMapEncoderDecoder(
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap3.xml"
 						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap2.xml"

@@ -8,8 +8,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import minerful.checking.params.CheckingCmdParameters;
-import minerful.checking.relevance.dao.ModelFitnessEvaluation;
-import minerful.concept.ProcessModel;
+import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
+import minerful.concept.ProcessSpecification;
 import minerful.io.params.InputModelParameters;
 import minerful.io.params.OutputModelParameters;
 import minerful.params.InputLogCmdParameters;
@@ -100,8 +100,8 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
         }
         MinerFulFitnessCheckLauncher miFuCheLa = new MinerFulFitnessCheckLauncher(inpuModlParams, preProcParams, inputLogParams, chkParams, systemParams);
         
-        ModelFitnessEvaluation evaluationOutput = miFuCheLa.check();
-        ProcessModel processModel = miFuCheLa.getProcessSpecification();
+        SpecificationFitnessEvaluation evaluationOutput = miFuCheLa.check();
+        ProcessSpecification processModel = miFuCheLa.getProcessSpecification();
 
         new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams);
     }

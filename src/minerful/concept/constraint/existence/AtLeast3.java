@@ -23,18 +23,9 @@ public class AtLeast3 extends AtLeast2 {
     	super();
     }
 	
-	public AtLeast3(TaskChar param1, double support) {
-		super(param1, support);
-	}
-
 	public AtLeast3(TaskChar param1) {
 		super(param1);
 	}
-
-	public AtLeast3(TaskCharSet param1, double support) {
-		super(param1, support);
-	}
-
 	public AtLeast3(TaskCharSet param1) {
 		super(param1);
 	}

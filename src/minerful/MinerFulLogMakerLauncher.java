@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.ProcessModelLoader;
 import minerful.io.params.InputModelParameters;
 import minerful.logmaker.MinerFulLogMaker;
@@ -18,7 +18,7 @@ import minerful.utils.MessagePrinter;
 public class MinerFulLogMakerLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulLogMakerLauncher.class);
 			
-	private ProcessModel inputProcess;
+	private ProcessSpecification inputProcess;
 	private LogMakerParameters logMakParams;
 	
 	private MinerFulLogMakerLauncher(LogMakerParameters logMakParams) {
@@ -31,7 +31,7 @@ public class MinerFulLogMakerLauncher {
 		this.inputProcess = new ProcessModelLoader().loadProcessModel(declareMapModel);
 	}
 
-	public MinerFulLogMakerLauncher(ProcessModel minerFulProcessModel, LogMakerParameters logMakParams) {
+	public MinerFulLogMakerLauncher(ProcessSpecification minerFulProcessModel, LogMakerParameters logMakParams) {
 		this(logMakParams);
 
 		this.inputProcess = minerFulProcessModel;

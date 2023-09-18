@@ -64,7 +64,7 @@ public class ConstraintsFitnessEvaluationsMap {
 			sBuil.append(';');
 			sBuil.append(con);
 			sBuil.append(';');
-			sBuil.append(con.getFitness());
+			sBuil.append(con.getEventBasedMeasures().getFitness());
 			sBuil.append(';');
 			sBuil.append(this.evaluationsOnLog.get(con).printCSV());
 			sBuil.append('\n');

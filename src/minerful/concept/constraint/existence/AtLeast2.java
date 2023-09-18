@@ -22,19 +22,9 @@ public class AtLeast2 extends AtLeast1 {
     protected AtLeast2() {
     	super();
     }
-	
-	public AtLeast2(TaskChar param1, double support) {
-		super(param1, support);
-	}
-
 	public AtLeast2(TaskChar param1) {
 		super(param1);
 	}
-
-	public AtLeast2(TaskCharSet param1, double support) {
-		super(param1, support);
-	}
-
 	public AtLeast2(TaskCharSet param1) {
 		super(param1);
 	}

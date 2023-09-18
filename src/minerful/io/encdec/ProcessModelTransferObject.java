@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.io.encdec.pojo.ConstraintPojo;
@@ -42,7 +42,7 @@ public class ProcessModelTransferObject {
 		}
 	}
 	
-	public ProcessModelTransferObject(ProcessModel proMod) {
+	public ProcessModelTransferObject(ProcessSpecification proMod) {
 		this.name = proMod.getName();
 		this.tasks = new HashSet<String>(proMod.howManyTasks(), (float)1.0);
 		for (TaskChar taskChar: proMod.getTasks()) {

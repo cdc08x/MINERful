@@ -5,6 +5,7 @@ import java.util.Set;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintMeasuresManager;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.miner.stats.GlobalStatsTable;
@@ -26,16 +27,4 @@ public abstract class RelationConstraintsMiner extends AbstractConstraintsMiner 
 
     protected abstract Set<? extends Constraint> discoverRelationConstraints(TaskChar taskChUnderAnalysis,
     				ConstraintsBag constraintsBag);
-
-	protected double computeParticipationFraction(TaskChar base, LocalStatsWrapper localStats,
-			long testbedSize) {
-			    long zeroAppearances = 0;
-			    if (localStats.repetitions.containsKey(0)) {
-			        zeroAppearances += localStats.repetitions.get(0);
-			    }
-			    double oppositeSupport =
-			            (double) zeroAppearances / (double) testbedSize;
-			    return Constraint.complementSupport(oppositeSupport);
-			}
-    
 }

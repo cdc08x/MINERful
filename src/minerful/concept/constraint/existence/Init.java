@@ -27,15 +27,9 @@ public class Init extends AtLeast1 {
     	super();
     }
 
-    public Init(TaskChar param1, double support) {
-		super(param1, support);
-	}
 	public Init(TaskChar param1) {
         super(param1);
     }
-	public Init(TaskCharSet param1, double support) {
-		super(param1, support);
-	}
 	public Init(TaskCharSet param1) {
 		super(param1);
 	}

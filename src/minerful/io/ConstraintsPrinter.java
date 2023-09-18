@@ -21,7 +21,7 @@ import minerful.automaton.encdec.AutomatonDotPrinter;
 import minerful.automaton.encdec.TsmlEncoder;
 import minerful.automaton.encdec.WeightedAutomatonFactory;
 import minerful.concept.AbstractTaskClass;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
@@ -45,15 +45,15 @@ public class ConstraintsPrinter {
 //	private static final int HALF_NUMBER_OF_BARS = 10;
 	// FIXME Make it user-customisable
 	private static final boolean PRINT_ONLY_IF_ADDITIONAL_INFO_IS_GIVEN = false;
-	private ProcessModel processModel;
+	private ProcessSpecification processModel;
 	private Automaton processAutomaton;
 	private NavigableMap<Constraint, String> additionalCnsIndexedInfo;
 
-	public ConstraintsPrinter(ProcessModel processModel) {
+	public ConstraintsPrinter(ProcessSpecification processModel) {
 		this(processModel, null);
 	}
 	
-	public ConstraintsPrinter(ProcessModel processModel,
+	public ConstraintsPrinter(ProcessSpecification processModel,
 			NavigableMap<Constraint, String> additionalCnsIndexedInfo) {
 		this.processModel = processModel;
 		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
@@ -105,21 +105,26 @@ public class ConstraintsPrinter {
         			sBuffIndex.append(';');
     			}
     			sBufLegend.append('\'');
-    			// BUG-FIX: there is no reason why we have to flatten all non-word characters into "_".
-    			// This creates tremendous issues with logs like BPIC 2012, where we have both
-    			// "A_ACCEPTED" and "W_Completeren aanvraag"
-    			sBufLegend.append(c.toString().replace("'", "\\'")); //.replaceAll("\\W", " ").trim().replaceAll(" ", "_"));
+    			sBufLegend.append(c.toString().replace("'", "\\'"));
     			sBufLegend.append('\'');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getSupport() * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getEventBasedMeasures().getSupport() * 100));
     			sBuffValues.append(';');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getConfidence() * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getEventBasedMeasures().getConfidence() * 100));
     			sBuffValues.append(';');
     			sBufLegend.append(';');
-    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getInterestFactor() * 100));
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getEventBasedMeasures().getCoverage() * 100));
     			sBuffValues.append(';');
-    			
+    			sBufLegend.append(';');
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getTraceBasedMeasures().getSupport() * 100));
+    			sBuffValues.append(';');
+    			sBufLegend.append(';');
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getTraceBasedMeasures().getConfidence() * 100));
+    			sBuffValues.append(';');
+    			sBufLegend.append(';');
+    			sBuffValues.append(String.format(Locale.ENGLISH, "%.9f", c.getTraceBasedMeasures().getCoverage() * 100));
+    			sBuffValues.append(';');    			
     			i++;
         	}
         }
@@ -137,9 +142,9 @@ public class ConstraintsPrinter {
         	superSbuf.append(sBufLegend.substring(0, sBufLegend.length() -1));
         	superSbuf.append("\r\n");
         	if (i > 0)
-        		superSbuf.append("'Support';'Confidence';'InterestF'");
+        		superSbuf.append("'Support';'Confidence';'Coverage';'Trace support';'Trace confidence';'Trace coverage'");
 	        for (int j = 1; j < i; j++) {
-	        	superSbuf.append(";'Support';'Confidence';'InterestF'");
+	        	superSbuf.append(";'Support';'Confidence';'Coverage';'Trace support';'Trace confidence';'Trace coverage'");
 	        }
 	        superSbuf.append("\r\n");
         }
@@ -234,7 +239,6 @@ public class ConstraintsPrinter {
 //    	int barsCounter = -halfNumberOfBars;
 //        double relativeSupport = constraint.getRelativeSupport(supportThreshold);
 
-        sBld.append(String.format(Locale.ENGLISH, "%7.3f%% ", constraint.getSupport() * 100));
         sBld.append(String.format("%-" + maxPadding + "s", constraint.toString()));
 //        sBld.append(String.format(Locale.ENGLISH, "%8.3f%% ", relativeSupport * 100));
 
@@ -250,10 +254,14 @@ public class ConstraintsPrinter {
 //        for (; barsCounter <= halfNumberOfBars; barsCounter++) {
 //        	sBld.append(' ');
 //        }
-        sBld.append(String.format(Locale.ENGLISH, " conf.: %7.3f; ", constraint.getConfidence()));
-        sBld.append(String.format(Locale.ENGLISH, " int'f: %7.3f; ", constraint.getInterestFactor()));
-        if (constraint.getFitness() != null) {
-        	sBld.append(String.format(Locale.ENGLISH, " fit: %7.3f; ", constraint.getFitness()));
+        sBld.append(String.format(Locale.ENGLISH, "conf.: %4.3f; ", constraint.getEventBasedMeasures().getConfidence()));
+        sBld.append(String.format(Locale.ENGLISH, " covr.: %4.3f; ", constraint.getEventBasedMeasures().getCoverage()));
+        sBld.append(String.format(Locale.ENGLISH, " supp.: %4.3f; ", constraint.getEventBasedMeasures().getSupport()));
+        sBld.append(String.format(Locale.ENGLISH, " tr.conf.: %4.3f; ", constraint.getTraceBasedMeasures().getConfidence()));
+        sBld.append(String.format(Locale.ENGLISH, " tr.covr.: %4.3f; ", constraint.getTraceBasedMeasures().getCoverage()));
+        sBld.append(String.format(Locale.ENGLISH, " tr.supp.: %4.3f; ", constraint.getTraceBasedMeasures().getSupport()));
+        if (constraint.getEventBasedMeasures().getFitness() != null) {
+        	sBld.append(String.format(Locale.ENGLISH, " fit: %7.3f; ", constraint.getEventBasedMeasures().getFitness()));
         }
         
        	if (additionalInfo != null)
@@ -292,7 +300,7 @@ public class ConstraintsPrinter {
 
 		// OINK
 		strixBuffer.replace(strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3), strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-				" xmlns=\"" + ProcessModel.MINERFUL_XMLNS + "\"");
+				" xmlns=\"" + ProcessSpecification.MINERFUL_XMLNS + "\"");
 		
 		return strixWriter.toString();
     }
@@ -324,7 +332,7 @@ public class ConstraintsPrinter {
 
 				// OINK
 				strixBuffer.replace(strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3), strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-						" xmlns=\"" + ProcessModel.MINERFUL_XMLNS + "\"");
+						" xmlns=\"" + ProcessSpecification.MINERFUL_XMLNS + "\"");
 				partialAutomataXmls.put(idsNamesMap.get(partialAuto.basingCharacter).getName(), strixWriter.toString());
 			}
 		}

@@ -129,9 +129,9 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 
         // search for existence constraints
         ConstraintsMiner exiConMiner = new ProbabilisticExistenceConstraintsMiner(statsTable, taskCharArchive, tasksToQueryFor);
-        exiConMiner.setSupportThreshold(postPrarams.supportThreshold);
-        exiConMiner.setConfidenceThreshold(postPrarams.confidenceThreshold);
-        exiConMiner.setInterestFactorThreshold(postPrarams.interestFactorThreshold);
+        exiConMiner.setSupportThreshold(postPrarams.evtSupportThreshold);
+        exiConMiner.setConfidenceThreshold(postPrarams.evtConfidenceThreshold);
+        exiConMiner.setCoverageThreshold(postPrarams.evtCoverageThreshold);
 //        ConstraintsBag updatedBag = 
         exiConMiner.discoverConstraints(this.bag);
 
@@ -157,9 +157,9 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         } else {
         	relaConMiner = new ProbabilisticRelationBranchedConstraintsMiner(statsTable, taskCharArchive, tasksToQueryFor, minerFulParams.branchingLimit);
         }
-        relaConMiner.setSupportThreshold(postPrarams.supportThreshold);
-        relaConMiner.setConfidenceThreshold(postPrarams.confidenceThreshold);
-        relaConMiner.setInterestFactorThreshold(postPrarams.interestFactorThreshold);
+        relaConMiner.setSupportThreshold(postPrarams.evtSupportThreshold);
+        relaConMiner.setConfidenceThreshold(postPrarams.evtConfidenceThreshold);
+        relaConMiner.setCoverageThreshold(postPrarams.evtCoverageThreshold);
 
 //        updatedBag = relaConMiner.discoverConstraints(updatedBag);
         relaConMiner.discoverConstraints(this.bag);

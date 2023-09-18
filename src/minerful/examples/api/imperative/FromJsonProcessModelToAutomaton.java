@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import minerful.MinerFulOutputManagementLauncher;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
@@ -26,7 +26,7 @@ public class FromJsonProcessModelToAutomaton {
 				+ "{template: notcoexistence, parameters: [['Accept paper'],['Reject paper']]}"
 				+ "] }";
 
-		ProcessModel proMod =
+		ProcessSpecification proMod =
 			new ProcessModelEncoderDecoder()
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
 //			.readFromJsonFile(new File("/home/cdc08x/Code/MINERful/temp/BPIC2012-disco.json"));

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskCharFactory;
@@ -62,7 +62,7 @@ public class FromStringsProcessModelToLog {
 		bag.add(new AtLeast1(b0b1b2b0));
 
 		// Create the process model on the basis of the archive of tasks, and the constraints expressed thereupon
-		ProcessModel proMod = new ProcessModel(taChaAr, bag);
+		ProcessSpecification proMod = new ProcessSpecification(taChaAr, bag);
 		
 //////////////////////////////////////////////////////////////////
 // Creation of the log...

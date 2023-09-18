@@ -2,12 +2,12 @@ package minerful.io.encdec.nusmv;
 
 import java.util.Iterator;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 
 public class NuSMVEncoder {
-	ProcessModel processModel = null;
+	ProcessSpecification processModel = null;
 	
 	public static String OR = "|";
 	
@@ -22,7 +22,7 @@ public class NuSMVEncoder {
 	 * Constructor of this class
 	 * @param processModel
 	 */
-	public NuSMVEncoder(ProcessModel processModel) {
+	public NuSMVEncoder(ProcessSpecification processModel) {
 		this.processModel = processModel;
 	}
 

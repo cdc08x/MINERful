@@ -2,7 +2,7 @@ package minerful;
 
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.ProcessModelLoader;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
@@ -15,7 +15,7 @@ import minerful.utils.MessagePrinter;
 public class MinerFulSimplificationLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulSimplificationLauncher.class);
 			
-	private ProcessModel inputProcess;
+	private ProcessSpecification inputProcess;
 	private PostProcessingCmdParameters postParams;
 	
 	private MinerFulSimplificationLauncher(PostProcessingCmdParameters postParams) {
@@ -28,7 +28,7 @@ public class MinerFulSimplificationLauncher {
 		this.inputProcess = new ProcessModelLoader().loadProcessModel(declareMapModel);
 	}
 
-	public MinerFulSimplificationLauncher(ProcessModel minerFulProcessModel, PostProcessingCmdParameters postParams) {
+	public MinerFulSimplificationLauncher(ProcessSpecification minerFulProcessModel, PostProcessingCmdParameters postParams) {
 		this(postParams);
 
 		this.inputProcess = minerFulProcessModel;
@@ -47,11 +47,11 @@ public class MinerFulSimplificationLauncher {
 		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 	
-	public ProcessModel simplify() {
+	public ProcessSpecification simplify() {
 	    MinerFulPruningCore miFuPruNi = new MinerFulPruningCore(inputProcess, postParams);
 	    miFuPruNi.massageConstraints();
 
-	    ProcessModel outputProcess = miFuPruNi.getProcessModel();
+	    ProcessSpecification outputProcess = miFuPruNi.getProcessModel();
 
 	    return outputProcess;
 	}

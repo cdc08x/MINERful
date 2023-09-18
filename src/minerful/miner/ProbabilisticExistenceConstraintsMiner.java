@@ -1,10 +1,13 @@
 package minerful.miner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintMeasuresManager;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.existence.AtMost1;
 import minerful.concept.constraint.existence.AtMost2;
@@ -30,59 +33,70 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             constraintsBag = new ConstraintsBag(this.tasksToQueryFor);
         }
         LocalStatsWrapper localStats = null;
-        double pivotParticipationFraction = 0.0;
+        Constraint[] minMultiCns = {}, maxMultiCns = {};
+        Constraint init = null, end = null;
+        		
 
         for (TaskChar pivot: tasksToQueryFor) {
         	localStats = this.globalStats.statsTable.get(pivot);
 
         	if (localStats.getTotalAmountOfOccurrences() > 0) {
-	        	Constraint[] minMultiCns = this.discoverMinMultiplicityConstraints(pivot, localStats, this.globalStats.logSize);
-	        	pivotParticipationFraction = minMultiCns[0].getSupport();
+	        	minMultiCns = this.discoverMinMultiplicityConstraints(pivot, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
 
 	        	for (Constraint minMultiCn : minMultiCns) {
-	        		updateConstraint(constraintsBag, pivot, minMultiCn, minMultiCn.getSupport(), pivotParticipationFraction);
+	        		this.updateConstraintInBag(constraintsBag, pivot, minMultiCn);
 	        		if (hasValuesAboveThresholds(minMultiCn)) this.computedConstraintsAboveThresholds++;
 	        	}	
 
-	        	Constraint[] maxMultiCns = this.discoverMaxMultiplicityConstraints(pivot, localStats, this.globalStats.logSize);
+	        	maxMultiCns = this.discoverMaxMultiplicityConstraints(pivot, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
 
 	        	for (Constraint maxMultiCn : maxMultiCns) {
-	        		updateConstraint(constraintsBag, pivot, maxMultiCn, maxMultiCn.getSupport(), pivotParticipationFraction);
+	        		this.updateConstraintInBag(constraintsBag, pivot, maxMultiCn);
 	        		if (hasValuesAboveThresholds(maxMultiCn)) this.computedConstraintsAboveThresholds++;
 	        	}	
 	            
-	        	Constraint init = this.discoverInitConstraint(pivot, localStats, this.globalStats.logSize);
-	        	updateConstraint(constraintsBag, pivot, init, init.getSupport(), pivotParticipationFraction);
+	        	init = this.discoverInitConstraint(pivot, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
+	        	this.updateConstraintInBag(constraintsBag, pivot, init);
 	            if (hasValuesAboveThresholds(init)) this.computedConstraintsAboveThresholds++;
 	            
-	            Constraint end = this.discoverEndConstraint(pivot, localStats, this.globalStats.logSize);
-	        	updateConstraint(constraintsBag, pivot, end, end.getSupport(), pivotParticipationFraction);
+	            end = this.discoverEndConstraint(pivot, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
+	        	this.updateConstraintInBag(constraintsBag, pivot, end);
 	            if (hasValuesAboveThresholds(end)) this.computedConstraintsAboveThresholds++;
         	}
         }
         return constraintsBag;
     }
-
-	protected Constraint updateConstraint(ConstraintsBag constraintsBag,
-			TaskChar indexingParam, Constraint searchedCon,
-			double support, double pivotParticipationFraction) {
-		Constraint con = constraintsBag.getOrAdd(indexingParam, searchedCon);
-		con.setSupport(support);
+    
+	protected Constraint updateConstraintInBag(ConstraintsBag constraintsBag,
+			TaskChar indexingParam, Constraint discoveredCon) {
+		Constraint con = constraintsBag.getOrAdd(indexingParam, discoveredCon);       
+        con.getEventBasedMeasures().setConfidence(discoveredCon.getEventBasedMeasures().getConfidence());
+		refineByComputingOtherMetricsThanEventBasedConfidence(con);
 		con.setEvaluatedOnLog(true);
-		refineByComputingRelevanceMetrics(con, pivotParticipationFraction);
 		return con;
 	}
 
-    public static Constraint refineByComputingRelevanceMetrics(Constraint con, double pivotParticipationFraction) {
-    	con.setConfidence(con.getSupport() * pivotParticipationFraction);
-    	con.setInterestFactor(con.getSupport() * pivotParticipationFraction * pivotParticipationFraction);
-    	return con;
+	/**
+	 * Enriches the con constraint with support and coverage measures.
+	 * Notice that we take existence constraints as if their activator is the trace-start event.
+	 * Therefore, confidence is the same as support, and coverage is equal to 1.
+	 * @param con The constraint to assign additional measures to.
+	 * @return The updated constraint
+	 */
+    public static Constraint refineByComputingOtherMetricsThanEventBasedConfidence(Constraint con) {
+    	con.getEventBasedMeasures().setCoverage(1.0); // coverage includes all traces in which the activator occurred at least once. So, always.
+    	con.getTraceBasedMeasures().setConfidence(con.getEventBasedMeasures().getConfidence()); // because we consider existence constraints as activated by the start of the trace, which occurs —suprirse surprise!— once per trace 
+    	con.getTraceBasedMeasures().setSupport(con.getEventBasedMeasures().getConfidence()); // because we consider existence constraints as activated by the start of the trace, which occurs —suprirse surprise!— once per trace 
+    	con.getTraceBasedMeasures().setCoverage(1.0); // coverage includes all traces in which the activator occurred at least once. So, always.
+        
+        return con;
     }
 
     @Override
     protected Constraint[] discoverMinMultiplicityConstraints(TaskChar base,
-            LocalStatsWrapper localStats, long testbedSize) {
+            LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
         long zeroOccurrences = 0, singleOrNoOccurrences = 0, upToTwoOccurrences = 0;
+
         if (localStats.repetitions.containsKey(0)) {
             zeroOccurrences = localStats.repetitions.get(0);
         }
@@ -92,17 +106,31 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         if (localStats.repetitions.containsKey(2)) {
         	upToTwoOccurrences = singleOrNoOccurrences + localStats.repetitions.get(2);
         }	else upToTwoOccurrences = singleOrNoOccurrences;
+
+        Constraint atLe1 = new AtLeast1(base), atLe2 = new AtLeast2(base), atLe3 = new AtLeast3(base);
         
-        return new Constraint[] {
-        		new AtLeast1(base, Constraint.complementSupport((double) zeroOccurrences / (double) testbedSize)),
-        		new AtLeast2(base, Constraint.complementSupport((double) singleOrNoOccurrences / (double) testbedSize)),
-        		new AtLeast3(base, Constraint.complementSupport((double) upToTwoOccurrences / (double) testbedSize)),
-        };
+        atLe1.getEventBasedMeasures().setConfidence(ConstraintMeasuresManager.complementConfidence((double) zeroOccurrences / (double) testbedSize)); // because we consider existence constraints as activated by the start of the trace, which occurs —suprirse surprise!— once per trace 
+        atLe2.getEventBasedMeasures().setConfidence(ConstraintMeasuresManager.complementConfidence((double) singleOrNoOccurrences / (double) testbedSize));
+        atLe3.getEventBasedMeasures().setConfidence(ConstraintMeasuresManager.complementConfidence((double) upToTwoOccurrences / (double) testbedSize)); // because we consider existence constraints as activated by the start of the trace, which occurs —suprirse surprise!— once per trace 
+
+        atLe1.getEventBasedMeasures().setSupport(((double) (testbedSize - zeroOccurrences) / (double) numOfEventsInLog));
+        atLe2.getEventBasedMeasures().setSupport((double) (testbedSize - singleOrNoOccurrences) / (double) numOfEventsInLog);
+        atLe3.getEventBasedMeasures().setSupport((double) (testbedSize - upToTwoOccurrences) / (double) numOfEventsInLog); 
+        
+        Constraint[] newCons = new Constraint[] {atLe1, atLe2, atLe3};
+
+//
+//        for (Constraint con: newCons) {
+//      System.out.println(con + " => econ " + con.getEventBasedMeasures().getConfidence());
+//      System.out.println(con + " => tsup " + con.getTraceBasedMeasures().getSupport());
+//        }
+
+        return newCons;
     }
 
     @Override
     protected Constraint[] discoverMaxMultiplicityConstraints(TaskChar base,
-            LocalStatsWrapper localStats, long testbedSize) {
+            LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
     	long zeroOccurrences = 0, singleOrNoOccurrences = 0, upToTwoOccurrences = 0, upToThreeOccurrences = 0;
     	if (localStats.repetitions.containsKey(0)) {
     		zeroOccurrences = localStats.repetitions.get(0);
@@ -116,22 +144,35 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         if (localStats.repetitions.containsKey(3)) {
         	upToThreeOccurrences = upToTwoOccurrences + localStats.repetitions.get(3);
         }	else upToThreeOccurrences = upToTwoOccurrences;
-        return new Constraint[] {
-        		new Absence(base, ((double) zeroOccurrences / (double) testbedSize)),
-        		new AtMost1(base, ((double) singleOrNoOccurrences / (double) testbedSize)),
-        		new AtMost2(base, ((double) upToTwoOccurrences / (double) testbedSize)),
-        		new AtMost3(base, ((double) upToThreeOccurrences / (double) testbedSize)),
-        };
+        
+        Constraint abse = new Absence(base), atMo1 = new AtMost1(base), atMo2 = new AtMost2(base), atMo3 = new AtMost3(base);
+        
+        abse.getEventBasedMeasures().setConfidence((double) zeroOccurrences / (double) testbedSize);
+        atMo1.getEventBasedMeasures().setConfidence((double) singleOrNoOccurrences / (double) testbedSize);
+        atMo2.getEventBasedMeasures().setConfidence((double) upToTwoOccurrences / (double) testbedSize);
+        atMo3.getEventBasedMeasures().setConfidence((double) upToTwoOccurrences / (double) testbedSize);
+
+        abse.getEventBasedMeasures().setSupport((double) zeroOccurrences / (double) numOfEventsInLog);
+        atMo1.getEventBasedMeasures().setSupport((double) singleOrNoOccurrences / (double) numOfEventsInLog);
+        atMo2.getEventBasedMeasures().setSupport((double) upToTwoOccurrences / (double) numOfEventsInLog);
+        atMo3.getEventBasedMeasures().setSupport((double) upToTwoOccurrences / (double) numOfEventsInLog);
+        
+        Constraint[] newCons = new Constraint[] {abse, atMo1, atMo2, atMo3};
+        
+        return newCons;
     }
 
     @Override
     protected Constraint discoverInitConstraint(TaskChar base,
-            LocalStatsWrapper localStats, long testbedSize) {
+            LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 //    	if (!(localStats.repetitions.containsKey(0) && (localStats.repetitions.get(0) > 0))) {
-    		if (localStats.getAppearancesAsFirst() >= testbedSize) {
+    		if (localStats.getOccurrencesAsFirst() >= testbedSize) {
                 return new Init(base);
             } else {
-                return new Init(base, ((double) localStats.getAppearancesAsFirst() / (double) testbedSize));
+            	Constraint init = new Init(base);
+            	init.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsFirst() / (double) testbedSize);
+            	init.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
+            	return init;
             }
 //        }
 //        return new Init(base, 0);
@@ -139,12 +180,15 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 
     @Override
     protected Constraint discoverEndConstraint(TaskChar base,
-            LocalStatsWrapper localStats, long testbedSize) {
+            LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 //        if (!(localStats.repetitions.containsKey(0) && localStats.repetitions.get(0) > 0)) {
-            if (localStats.getAppearancesAsLast() >= testbedSize) {
+            if (localStats.getOccurrencesAsLast() >= testbedSize) {
                 return new End(base);
             } else {
-                return new End(base, ((double) localStats.getAppearancesAsLast() / (double) testbedSize));
+            	Constraint end = new End(base);
+            	end.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsLast() / (double) testbedSize);
+            	end.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
+            	return end;
             }
 //        }
 //        return new End(base, 0);

@@ -5,7 +5,7 @@ import java.io.File;
 import minerful.MinerFulFitnessCheckLauncher;
 import minerful.MinerFulMinerLauncher;
 import minerful.checking.params.CheckingCmdParameters;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.logparser.LogParser;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputLogCmdParameters;
@@ -32,9 +32,9 @@ public class FitnessCheckOfDiscoveredProcessModel {
 		inputLogParams.inputLogFile = new File(EXAMPLE_LOG_FILE_1);
 		inputLogParams.eventClassification = EventClassification.name;
 		// Use the one below if you want to classify events not just by their task name!
-		postParams.supportThreshold = 0.95; // For a sure total fit with the event log, this parameter should be set to 1.0
-		postParams.confidenceThreshold = 0.66; // The higher this is, the higher the frequency of occurrence of tasks triggering the returned constraints
-		postParams.interestFactorThreshold = 0.5; // The higher this is, the higher the frequency of occurrence of tasks involved in the returned constraints
+		postParams.evtSupportThreshold = 0.95; // For a sure total fit with the event log, this parameter should be set to 1.0
+		postParams.evtConfidenceThreshold = 0.66; // The higher this is, the higher the frequency of occurrence of tasks triggering the returned constraints
+		postParams.evtCoverageThreshold = 0.5; // The higher this is, the higher the frequency of occurrence of tasks involved in the returned constraints
 		
 		// Remove redundant constraints. WARNING: this may take some time.
 		// The language of the model remains completely unchanged. What changes is the number of constraints in it.
@@ -46,7 +46,7 @@ public class FitnessCheckOfDiscoveredProcessModel {
 		System.out.println("Running the discovery algorithm...");
 		
 		MinerFulMinerLauncher miFuMiLa = new MinerFulMinerLauncher(inputLogParams, minerFulParams, postParams, systemParams);
-		ProcessModel processModel = miFuMiLa.mine();
+		ProcessSpecification processModel = miFuMiLa.mine();
 		
 		System.out.println("...Done");
 

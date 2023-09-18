@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
 @XmlRootElement
 public class NotChainPrecedence extends NegativeRelationConstraint {
@@ -27,19 +28,13 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
     	super();
     }
 
-    public NotChainPrecedence(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
     public NotChainPrecedence(TaskChar param1, TaskChar param2) {
-        super(param1, param2);
+        super(param2, param1);
+        super.reverseOrderOfParams();
     }
-    public NotChainPrecedence(TaskCharSet param1, TaskCharSet param2,
-			double support) {
-		super(param1, param2, support);
-	}
-
 	public NotChainPrecedence(TaskCharSet param1, TaskCharSet param2) {
-		super(param1, param2);
+		super(param2, param1);
+        super.reverseOrderOfParams();
 	}
 
 	@Override
@@ -60,7 +55,12 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
 	public Constraint getSupposedOpponentConstraint() {
 		return new ChainPrecedence(implied, base);
 	}
-	
+
+	@Override
+    public ConstraintImplicationVerse getImplicationVerse() {
+        return ConstraintImplicationVerse.BACKWARD;
+    }
+
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
 		super.checkParams(taskChars);

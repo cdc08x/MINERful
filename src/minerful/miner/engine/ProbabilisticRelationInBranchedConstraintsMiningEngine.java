@@ -38,7 +38,7 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		if (searchedAppearances < 1)
 			return nuConstraint;
 
-		double support = 0;
+		double confidence = 0, support = 0, coverage = 0;
 		int negativeOccurrences = 0;
 
 		LocalStatsWrapperForCharsets extSearchedLocalStats = (LocalStatsWrapperForCharsets) searchedLocalStats;
@@ -59,12 +59,17 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			negativeOccurrences += alternationBeforeCharSet.getCounter();
 		}
 
-		support = 1.0 - (double)negativeOccurrences / (double)searchedAppearances;
+		confidence = 1.0 - (double)negativeOccurrences / (double)searchedAppearances;
+		support = 1.0 - (double)negativeOccurrences / (double)this.globalStats.numOfEvents;
+		coverage = searchedAppearances / (double)this.globalStats.numOfEvents;
 
 		nuConstraint = new AlternatePrecedence(
 				new TaskCharSet(searched),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setConfidence(confidence);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
+		nuConstraint.getEventBasedMeasures().setCoverage(coverage);
+		// TODO All measures are now well defined for target-branched Declare too. Go on with the replacements!
 
 		return nuConstraint;
 	}
@@ -81,8 +86,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskCharsArray()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).betweenOnwards;
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverOccurredOnwards();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).inBetweenRepsOnwards;
 			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
@@ -90,8 +95,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new AlternateResponse(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 		
 		return nuConstraint;
@@ -119,8 +124,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskCharsArray()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).betweenOnwards;
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverOccurredOnwards();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).inBetweenRepsOnwards;
 			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		neverAppearedBeforeCharSets =
@@ -140,8 +145,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new AlternateSuccession(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 	
 		return nuConstraint;
@@ -169,8 +174,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		support = (double) positiveOccurrences / (double) searchedAppearances;
 		nuConstraint = new ChainPrecedence(
 				new TaskCharSet(searched),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 		return nuConstraint;
 	}
 
@@ -197,8 +202,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = (double) positiveOccurrences / (double) denominator;
 			nuConstraint = new ChainResponse(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 		return nuConstraint;
 	}
@@ -234,8 +239,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		nuConstraint = new ChainSuccession(
 				comboToAnalyze,
-				new TaskCharSet(searched),
-				support);
+				new TaskCharSet(searched));
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 	
 	
 		return nuConstraint;
@@ -261,7 +266,7 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskCharsArray()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedAtAll();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverOccurredAtAll();
 			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		neverAppearedCharSets =
@@ -276,8 +281,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = 1.0 - (double)negativeOccurrences / (double)denominator;
 			nuConstraint = new CoExistence(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 		
 		return nuConstraint;
@@ -305,16 +310,16 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		if (neverBeforeAppearedCharSets.size() == 0) {
 			nuConstraint = new Precedence(
 					new TaskCharSet(searched),
-					comboToAnalyze,
-					1.0);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(1.0);
 		} else {
 			for (TasksSetCounter neverAppearedAfterCharSet : neverBeforeAppearedCharSets) {
 				negativeOccurrences += neverAppearedAfterCharSet.getCounter();
 				support = 1.0 - (double)negativeOccurrences / (double)searchedAppearances;
 				nuConstraint = new Precedence(
 						new TaskCharSet(searched),
-						comboToAnalyze,
-						support);
+						comboToAnalyze);
+				nuConstraint.getEventBasedMeasures().setSupport(support);
 			}
 		}
 		return nuConstraint;
@@ -332,7 +337,7 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskCharsArray()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedAtAll();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverOccurredAtAll();
 			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
@@ -340,8 +345,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new RespondedExistence(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 		
 		return nuConstraint;
@@ -359,7 +364,7 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskCharsArray()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverOccurredOnwards();
 			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
@@ -367,8 +372,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new Response(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 		
 		return nuConstraint;
@@ -394,7 +399,7 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 		
 		for (TaskChar pivot : comboToAnalyze.getTaskCharsArray()) {
 			pivotStatsWrapper = globalStats.statsTable.get(pivot);
-			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverAppearedOnwards();
+			negativeOccurrences += pivotStatsWrapper.interplayStatsTable.get(searched.identifier).howManyTimesItNeverOccurredOnwards();
 			denominator += pivotStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		neverAppearedCharSets =
@@ -409,8 +414,8 @@ public class ProbabilisticRelationInBranchedConstraintsMiningEngine {
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new Succession(
 					comboToAnalyze,
-					new TaskCharSet(searched),
-					support);
+					new TaskCharSet(searched));
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 	
 		return nuConstraint;

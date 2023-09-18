@@ -33,23 +33,11 @@ public class Precedence extends RespondedExistence {
 
 	public Precedence(TaskChar param1, TaskChar param2) {
         super(param2, param1);
-        this.invertOrderOfParams();
+        super.reverseOrderOfParams();
     }
-	public Precedence(TaskChar param1, TaskChar param2, double support) {
-		super(param2, param1, support);
-		this.invertOrderOfParams();
-	}
-    public Precedence(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param2, param1, support);
-		this.invertOrderOfParams();
-	}
 	public Precedence(TaskCharSet param1, TaskCharSet param2) {
 		super(param2, param1);
-		this.invertOrderOfParams();
-	}
-	
-	protected void invertOrderOfParams() {
-		Collections.reverse(this.parameters);
+		super.reverseOrderOfParams();
 	}
 
 	@Override

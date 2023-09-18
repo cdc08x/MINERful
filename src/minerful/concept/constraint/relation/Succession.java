@@ -29,19 +29,9 @@ public class Succession extends CoExistence {
     public Succession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
         super(forwardConstraint, backwardConstraint);
     }
-    public Succession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint, double support) {
-        super(forwardConstraint, backwardConstraint, support);
-    }
-
     public Succession(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public Succession(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
-    public Succession(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param1, param2, support);
-	}
 	public Succession(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

@@ -5,7 +5,9 @@
 package minerful.miner.stats;
 
 import java.util.NavigableMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,6 +20,12 @@ import org.apache.log4j.Logger;
 
 import minerful.miner.stats.xmlenc.DistancesMapAdapter;
 
+/**
+ * Wraps the information about co-occurrences with <em>other</em> tasks,
+ * considering a pivot is given. Its internal business logic is kept to a
+ * minimum. Updates and values to store are for the largest part computed in
+ * {@link LocalStatsWrapper #LocalStatsWrapper}.
+ */
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StatsCell implements Cloneable {
@@ -34,14 +42,34 @@ public class StatsCell implements Cloneable {
     @XmlJavaTypeAdapter(value=DistancesMapAdapter.class)
     public NavigableMap<Integer, Integer> distances;
     @XmlElement(name="repetitionsInBetweenOnwards")
-    public int betweenOnwards;
+    public int inBetweenRepsOnwards;
     @XmlElement(name="repetitionsInBetweenBackwards")
-    public int betweenBackwards;
+    public int inBetweenRepsBackwards;
+ 
+    // The following three attributes cover the trace-based analysis.
+    // The amounts are derived only during the finalisation step,
+    // as they add 1 to their counters rather than the number of occurrences
+    // of the pivot task they relate to. Indeed, they count frequencies from traces,
+    // not events.
+    @XmlJavaTypeAdapter(value=DistancesMapAdapter.class)
+    public NavigableMap<Integer, Integer> distancesPerTrace;
+    @XmlElement(name="tracesWithRepetitionsInBetweenOnwards")
+    public int tracesWithInBetweenRepsOnwards;
+    @XmlElement(name="tracesWithRepetitionsInBetweenBackwards")
+    public int tracesWithInBetweenRepsBackwards;
+    @XmlTransient
+    private SortedSet<Integer> newDistancesInTrace;
 
     public StatsCell() {
         this.distances = new TreeMap<Integer, Integer>();
-        this.betweenOnwards = 0;
-        this.betweenBackwards = 0;
+        this.inBetweenRepsOnwards = 0;
+        this.inBetweenRepsBackwards = 0;
+
+        this.distancesPerTrace = new TreeMap<Integer, Integer>();
+        this.tracesWithInBetweenRepsOnwards = 0;
+        this.tracesWithInBetweenRepsBackwards = 0;
+        
+        this.newDistancesInTrace = new TreeSet<Integer>();
     }
 
     void newAtDistance(int distance) {
@@ -52,25 +80,32 @@ public class StatsCell implements Cloneable {
     	Integer distanceCounter = this.distances.get(distance);
         distanceCounter = (distanceCounter == null ? quantity : distanceCounter + quantity);
     	this.distances.put(distance, distanceCounter);
+    	this.newDistancesInTrace.add(distance);
     }
     
-    void setAsNeverAppeared(int quantity) {
+    void setAsNeverCooccurred(int quantity) {
         this.newAtDistance(NEVER_EVER, quantity);
     }
 
-    void setAsNeverAppearedAnyMore(int quantity, boolean onwards) {
+    void setAsNeverCooccurredAnyMore(int quantity, boolean onwards) {
         this.newAtDistance(
                 (onwards ? NEVER_ONWARDS : NEVER_BACKWARDS),
                 quantity
         );
     }
     
-    /**
-     * It does nothing, at this stage of the implementation!
-     * @param onwards
-     * @param secondPass 
-     */
+    protected void countOneMoreTraceWithDistance(int distance) {
+    	Integer distanceCounter = this.distancesPerTrace.get(distance);
+        distanceCounter = (distanceCounter == null ? 1 : distanceCounter + 1);
+    	this.distancesPerTrace.put(distance, distanceCounter);
+    }
+    
     void finalizeAnalysisStep(boolean onwards, boolean secondPass) {
+    	// Record the distances observed in this trace (including NEVER_EVER, NEVER_ONWARDS and NEVER_BACKWARDS)
+    	for (Integer distance: this.newDistancesInTrace) {
+    		this.countOneMoreTraceWithDistance(distance);
+    	}
+    	this.newDistancesInTrace = new TreeSet<Integer>();
     }
 
     @Override
@@ -99,13 +134,21 @@ public class StatsCell implements Cloneable {
 
             sBuf.append(", "
                     + this.distances.get(key)
-                    + ">");
+                    + " in "
+                    + this.distancesPerTrace.get(key)
+                    + " tr's>");
         }
         sBuf.append("} time(/s)");
         sBuf.append(", alternating: {onwards = ");
-        sBuf.append(this.betweenOnwards);
+        sBuf.append(this.inBetweenRepsOnwards);
+        sBuf.append(" in ");
+        sBuf.append(this.tracesWithInBetweenRepsOnwards);
+        sBuf.append(" tr's");
         sBuf.append(", backwards = ");
-        sBuf.append(this.betweenBackwards);
+        sBuf.append(this.inBetweenRepsBackwards);
+        sBuf.append(" in ");
+        sBuf.append(this.tracesWithInBetweenRepsBackwards);
+        sBuf.append(" tr's");
         sBuf.append("} time(/s)\n");
         return "{" + sBuf.substring(2);
     }
@@ -118,27 +161,47 @@ public class StatsCell implements Cloneable {
     }
     
     
-    public double howManyTimesItNeverAppearedBackwards() {
+    public double howManyTimesItNeverOccurredBackwards() {
         if (this.distances.containsKey(NEVER_BACKWARDS))
             return this.distances.get(NEVER_BACKWARDS);
         return 0;
     }
     
-    public double howManyTimesItNeverAppearedOnwards() {
+    public double howManyTimesItNeverOccurredOnwards() {
         if (this.distances.containsKey(NEVER_ONWARDS))
             return this.distances.get(NEVER_ONWARDS);
         return 0;
     }
     
-    public double howManyTimesItNeverAppearedAtAll() {
+    public double howManyTimesItNeverOccurredAtAll() {
         if (this.distances.containsKey(NEVER_EVER))
             return this.distances.get(NEVER_EVER);
         return 0;
     }
+    
+    public double inHowManyTracesItNeverOccurredBackwards() {
+        if (this.distancesPerTrace.containsKey(NEVER_BACKWARDS))
+            return this.distancesPerTrace.get(NEVER_BACKWARDS);
+        return 0;
+    }
+    
+    public double inHowManyTracesItNeverOccurredOnwards() {
+        if (this.distancesPerTrace.containsKey(NEVER_ONWARDS))
+            return this.distancesPerTrace.get(NEVER_ONWARDS);
+        return 0;
+    }
+    
+    public double inHowManyTracesItNeverOccurredAtAll() {
+        if (this.distancesPerTrace.containsKey(NEVER_EVER))
+            return this.distancesPerTrace.get(NEVER_EVER);
+        return 0;
+    }
 
 	public void mergeAdditively(StatsCell other) {
-		this.betweenBackwards += other.betweenBackwards;
-		this.betweenOnwards += other.betweenOnwards;
+		this.inBetweenRepsBackwards += other.inBetweenRepsBackwards;
+		this.inBetweenRepsOnwards += other.inBetweenRepsOnwards;
+		this.tracesWithInBetweenRepsBackwards += other.tracesWithInBetweenRepsBackwards;
+		this.tracesWithInBetweenRepsOnwards += other.tracesWithInBetweenRepsOnwards;
 		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {
@@ -151,11 +214,25 @@ public class StatsCell implements Cloneable {
 				this.distances.put(distance, other.distances.get(distance));
 			}
 		}
+		
+		for (Integer distance : this.distancesPerTrace.keySet()) {
+			if (other.distancesPerTrace.containsKey(distance)) {
+				this.distancesPerTrace.put(distance, this.distancesPerTrace.get(distance) + other.distancesPerTrace.get(distance));
+			}
+		}
+		
+		for (Integer distance : other.distancesPerTrace.keySet()) {
+			if (!this.distancesPerTrace.containsKey(distance)) {
+				this.distancesPerTrace.put(distance, other.distancesPerTrace.get(distance));
+			}
+		}
 	}
 
 	public void mergeSubtractively(StatsCell other) {
-		this.betweenBackwards -= other.betweenBackwards;
-		this.betweenOnwards -= other.betweenOnwards;
+		this.inBetweenRepsBackwards -= other.inBetweenRepsBackwards;
+		this.inBetweenRepsOnwards -= other.inBetweenRepsOnwards;
+		this.tracesWithInBetweenRepsBackwards -= other.tracesWithInBetweenRepsBackwards;
+		this.tracesWithInBetweenRepsOnwards -= other.tracesWithInBetweenRepsOnwards;
 		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {
@@ -165,6 +242,18 @@ public class StatsCell implements Cloneable {
 		
 		for (Integer distance : other.distances.keySet()) {
 			if (!this.distances.containsKey(distance)) {
+				logger.warn("Trying to merge subtractively distance stats that were not included for " + distance);
+			}
+		}
+		
+		for (Integer distance : this.distancesPerTrace.keySet()) {
+			if (other.distancesPerTrace.containsKey(distance)) {
+				this.distancesPerTrace.put(distance, this.distancesPerTrace.get(distance) - other.distancesPerTrace.get(distance));
+			}
+		}
+		
+		for (Integer distance : other.distancesPerTrace.keySet()) {
+			if (!this.distancesPerTrace.containsKey(distance)) {
 				logger.warn("Trying to merge subtractively distance stats that were not included for " + distance);
 			}
 		}

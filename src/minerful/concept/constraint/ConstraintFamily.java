@@ -9,7 +9,7 @@ public enum ConstraintFamily implements Comparable<ConstraintFamily> {
 	}
 	
     public enum RelationConstraintSubFamily implements ConstraintSubFamily {
-    	COUPLING,
+    	MUTUAL,
     	SINGLE_ACTIVATION,
     	NEGATIVE,
     	NONE,

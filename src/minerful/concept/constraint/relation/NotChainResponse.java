@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
 @XmlRootElement
 public class NotChainResponse extends NegativeRelationConstraint {
@@ -27,17 +28,9 @@ public class NotChainResponse extends NegativeRelationConstraint {
     	super();
     }
 
-    public NotChainResponse(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
     public NotChainResponse(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public NotChainResponse(TaskCharSet param1, TaskCharSet param2,
-			double support) {
-		super(param1, param2, support);
-	}
-
 	public NotChainResponse(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}
@@ -60,7 +53,12 @@ public class NotChainResponse extends NegativeRelationConstraint {
 	public Constraint getSupposedOpponentConstraint() {
 		return new ChainResponse(base, implied);
 	}
-	
+
+	@Override
+    public ConstraintImplicationVerse getImplicationVerse() {
+        return ConstraintImplicationVerse.FORWARD;
+    }
+
 	@Override
 	public Constraint copy(TaskChar... taskChars) {
 		super.checkParams(taskChars);

@@ -22,13 +22,13 @@ public class TransferObjectToConstraintTranslator {
 					)
 				);
 			if (conTO.support != null) {
-				minerFulConstraint.setSupport(conTO.support);
+				minerFulConstraint.getEventBasedMeasures().setSupport(conTO.support);
 			}
 			if (conTO.confidence != null) {
-				minerFulConstraint.setConfidence(conTO.confidence);
+				minerFulConstraint.getEventBasedMeasures().setConfidence(conTO.confidence);
 			}
 			if (conTO.interestFactor != null) {
-				minerFulConstraint.setInterestFactor(conTO.interestFactor);
+				minerFulConstraint.getEventBasedMeasures().setCoverage(conTO.interestFactor);
 			}
 			return minerFulConstraint;
 		}

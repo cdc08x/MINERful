@@ -3,7 +3,7 @@ package minerful.examples.api.logmaking;
 import java.io.File;
 import java.io.IOException;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logmaker.MinerFulLogMaker;
 import minerful.logmaker.params.LogMakerParameters;
@@ -31,7 +31,7 @@ public class FromDeclareMapToLog {
 		 * The first one is used here, and reads an XML representation of the Declare map.
 		 * The second one can be used to pass in-memory representations of the Declare map.
 		 */
-		ProcessModel proMod =
+		ProcessSpecification proMod =
 				new DeclareMapEncoderDecoder(
 						"/home/claudio/model.xml"
 				).createMinerFulProcessModel();

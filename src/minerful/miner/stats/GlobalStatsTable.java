@@ -37,6 +37,8 @@ public class GlobalStatsTable {
 	@XmlAttribute
     public long logSize;
 	@XmlAttribute
+    public long numOfEvents;
+	@XmlAttribute
 	public final Integer maximumBranchingFactor;
 	
 	private GlobalStatsTable() {
@@ -44,18 +46,19 @@ public class GlobalStatsTable {
 		this.taskCharArchive = new TaskCharArchive();
 	}
 
-	public GlobalStatsTable(TaskCharArchive taskCharArchive, long testbedDimension, Integer maximumBranchingFactor) {
+	public GlobalStatsTable(TaskCharArchive taskCharArchive, long testbedDimension, long numOfEvents, Integer maximumBranchingFactor) {
 		this.taskCharArchive = taskCharArchive;
 		this.logSize = testbedDimension;
 		this.maximumBranchingFactor = maximumBranchingFactor;
+		this.numOfEvents = numOfEvents;
 		this.initGlobalStatsTable();
 	}
 
     public GlobalStatsTable(TaskCharArchive taskCharArchive) {
-        this(taskCharArchive, 0, null);
+        this(taskCharArchive, 0, 0, null);
     }
     public GlobalStatsTable(TaskCharArchive taskCharArchive, Integer maximumBranchingFactor) {
-    	this(taskCharArchive, 0, maximumBranchingFactor);
+    	this(taskCharArchive, 0, 0, maximumBranchingFactor);
     }
 
     private void initGlobalStatsTable() {
@@ -97,8 +100,10 @@ public class GlobalStatsTable {
                     + (aggregateAppearancesBuffer.length() > 0 ? aggregateAppearancesBuffer.substring(2) : "")
                     + "}, for a total amount of "
                     + statsWrapper.getTotalAmountOfOccurrences()
-                    + " time(/s)\n");
-            sBuf.append("\t as the first for " + statsWrapper.getAppearancesAsFirst() + ",");   
+                    + " time(/s) in "
+                    + statsWrapper.totalAmountOfTracesWithOccurrence
+                    + " trace(/s) \n");
+            sBuf.append("\t as the first for " + statsWrapper.getOccurrencesAsFirst() + ",");   
             sBuf.append(" as the last for " + statsWrapper.occurrencesAsLast + " time(/s)");
             sBuf.append("\t]\n");
             sBuf.append(statsWrapper.toString());

@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.io.ConstraintsPrinter;
 import minerful.io.params.OutputModelParameters;
@@ -16,7 +16,7 @@ import minerful.miner.core.MinerFulQueryingCore;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.params.InputLogCmdParameters;
-import minerful.params.SlidingCmdParameters;
+import minerful.params.SlidingMiningCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -29,7 +29,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 	public Options setupOptions() {
 		Options cmdLineOptions = super.setupOptions();
 		
-		Options slidingOptions = SlidingCmdParameters.parseableOptions();
+		Options slidingOptions = SlidingMiningCmdParameters.parseableOptions();
 		
     	for (Object opt: slidingOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
@@ -42,8 +42,8 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		MinerFulMinerSlider minerMinaSlider = new MinerFulMinerSlider();
 		Options cmdLineOptions = minerMinaSlider.setupOptions();
 
-		SlidingCmdParameters slideParams =
-				new SlidingCmdParameters(
+		SlidingMiningCmdParameters slideParams =
+				new SlidingMiningCmdParameters(
 						cmdLineOptions,
 						args);
 		InputLogCmdParameters inputParams =
@@ -92,15 +92,15 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		MinerFulOutputManagementLauncher minerFulOutputMgr = new MinerFulOutputManagementLauncher();
 		
-		ProcessModel processModel = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
+		ProcessSpecification processModel = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
 	}
 
-	public ProcessModel slideAndMine(LogParser logParser, SlidingCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
+	public ProcessSpecification slideAndMine(LogParser logParser, SlidingMiningCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
 		PostProcessingCmdParameters noPostProcParams = PostProcessingCmdParameters.makeParametersForNoPostProcessing();
-		ProcessModel proMod = null;
+		ProcessSpecification proMod = null;
 		int from = 0, to = 0;
 
-		proMod = ProcessModel.generateNonEvaluatedBinaryModel(taskCharArchive);
+		proMod = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
 		proMod.setName(makeDiscoveredProcessName(inputParams));
 		
 		GlobalStatsTable
@@ -225,7 +225,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 	}
 
 
-	public PrintWriter setUpCSVPrintWriter(SlidingCmdParameters slideParams) {
+	public PrintWriter setUpCSVPrintWriter(SlidingMiningCmdParameters slideParams) {
 		PrintWriter outWriter = null;
     	try {
     		outWriter = new PrintWriter(slideParams.intermediateOutputCsvFile);

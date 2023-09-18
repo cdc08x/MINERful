@@ -47,7 +47,7 @@ public class MinerFulCmdParameters extends ParamsManager {
     /** Ignore this */
 	public Boolean memSpaceShowingRequested;
     /** Collection of task names to exclude from the discovery */
-    public Collection<String> activitiesToExcludeFromResult;
+    public Collection<String> tasksToBeExcludedFromResult;
     /** Number of parallel threads to use while running the knowledge-base discovery phase of the algorithm (must be greater than or equal to {@link #MINIMUM_PARALLEL_EXECUTION_THREADS MINIMUM_PARALLEL_EXECUTION_THREADS}, the default) */ 
 	public Integer kbParallelProcessingThreads;
     /** Number of parallel threads to use while running the knowledge-base discovery phase of the algorithm (must be greater than or equal to {@link #MINIMUM_PARALLEL_EXECUTION_THREADS MINIMUM_PARALLEL_EXECUTION_THREADS}, the default) */ 
@@ -119,9 +119,9 @@ public class MinerFulCmdParameters extends ParamsManager {
         	try {
         		BufferedReader buRo = new BufferedReader(new FileReader(listOfExcludedOnesFromResultsFile));
 				String excluActi = buRo.readLine();
-				this.activitiesToExcludeFromResult = new ArrayList<String>();
+				this.tasksToBeExcludedFromResult = new ArrayList<String>();
 				while (excluActi != null) {
-					this.activitiesToExcludeFromResult.add(excluActi);
+					this.tasksToBeExcludedFromResult.add(excluActi);
 					excluActi = buRo.readLine();
 				}
 				buRo.close();

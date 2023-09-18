@@ -32,12 +32,6 @@ public class Response extends RespondedExistence {
     public Response(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public Response(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
-    public Response(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param1, param2, support);
-	}
 	public Response(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

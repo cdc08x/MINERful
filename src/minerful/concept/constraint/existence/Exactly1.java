@@ -24,14 +24,8 @@ public class Exactly1 extends AtLeast1 { // Multiple inheritance is not allowed 
     	super();
     }
 
-	public Exactly1(TaskChar param1, double support) {
-		super(param1, support);
-	}
 	public Exactly1(TaskChar param1) {
 		super(param1);
-	}
-	public Exactly1(TaskCharSet param1, double support) {
-		super(param1, support);
 	}
 	public Exactly1(TaskCharSet param1) {
 		super(param1);

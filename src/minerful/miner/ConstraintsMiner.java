@@ -18,15 +18,15 @@ public interface ConstraintsMiner {
 
 	boolean hasValuesAboveThresholds(Constraint c);
 
-	boolean hasSufficientInterestFactor(Constraint c);
+	boolean hasSufficientEvtCoverage(Constraint c);
 
-	boolean hasSufficientConfidence(Constraint c);
+	boolean hasSufficientEvtConfidence(Constraint c);
 
-	boolean hasSufficientSupport(Constraint c);
+	boolean hasSufficientEvtSupport(Constraint c);
 
-	void setInterestFactorThreshold(Double interestFactorThreshold);
+	void setCoverageThreshold(Double coverageThreshold);
 
-	Double getInterestFactorThreshold();
+	Double getCoverageThreshold();
 
 	void setConfidenceThreshold(Double confidenceThreshold);
 
@@ -37,4 +37,22 @@ public interface ConstraintsMiner {
 	Double getSupportThreshold();
 
 	Set<TaskChar> getTasksToQueryFor();
+
+	boolean hasSufficientTrcSupport(Constraint c);
+
+	boolean hasSufficientTrcConfidence(Constraint c);
+
+	boolean hasSufficientTrcCoverage(Constraint c);
+
+	Double getTrcSupportThreshold();
+
+	void setTrcSupportThreshold(Double trcSupportThreshold);
+
+	Double getTrcConfidenceThreshold();
+
+	void setTrcConfidenceThreshold(Double trcConfidenceThreshold);
+
+	Double getTrcCoverageThreshold();
+
+	void setTrcCoverageThreshold(Double trcCoverageThreshold);
 }

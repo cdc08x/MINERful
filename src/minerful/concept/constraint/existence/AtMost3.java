@@ -23,14 +23,8 @@ public class AtMost3 extends ExistenceConstraint {
     	super();
     }
 
-	public AtMost3(TaskChar param1, double support) {
-		super(param1, support);
-	}
 	public AtMost3(TaskChar param1) {
 		super(param1);
-	}
-	public AtMost3(TaskCharSet param1, double support) {
-		super(param1, support);
 	}
 	public AtMost3(TaskCharSet param1) {
 		super(param1);

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import minerful.MinerFulMinerLauncher;
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.MinerFulSimplificationLauncher;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintChange;
 import minerful.io.params.OutputModelParameters;
@@ -50,15 +50,15 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 				new PostProcessingCmdParameters();
 		
 		inputParams.inputLogFile = new File(MinerFulObserverInvokerOnXesFile.class.getClassLoader().getResource("examples/running-example.xes").getFile());
-		postParams.supportThreshold = 0.9;
-		postParams.confidenceThreshold = 0.25;
-		postParams.interestFactorThreshold = 0.125;
+		postParams.evtSupportThreshold = 0.9;
+		postParams.evtConfidenceThreshold = 0.25;
+		postParams.evtCoverageThreshold = 0.125;
 		
 		// Optionally, exclude some tasks from the analysis.
-		minerFulParams.activitiesToExcludeFromResult = new ArrayList<String>();
-		minerFulParams.activitiesToExcludeFromResult.add("W_Wijzigen contractgegevens");
-		minerFulParams.activitiesToExcludeFromResult.add("W_Valideren aanvraag");
-		minerFulParams.activitiesToExcludeFromResult.add("W_Completeren aanvraag");
+		minerFulParams.tasksToBeExcludedFromResult = new ArrayList<String>();
+		minerFulParams.tasksToBeExcludedFromResult.add("W_Wijzigen contractgegevens");
+		minerFulParams.tasksToBeExcludedFromResult.add("W_Valideren aanvraag");
+		minerFulParams.tasksToBeExcludedFromResult.add("W_Completeren aanvraag");
 		
 		// With the following option set up to "false", redundant/inconsistent/below-thresholds constraints are retained in the model, although marked as redundant/inconsistent/below-thresholds
 		postParams.cropRedundantAndInconsistentConstraints = false;
@@ -70,7 +70,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		System.out.println("Running the discovery algorithm...");
 		
 		MinerFulMinerLauncher miFuMiLa = new MinerFulMinerLauncher(inputParams, minerFulParams, postParams, systemParams);
-		ProcessModel processModel = miFuMiLa.mine();
+		ProcessSpecification processModel = miFuMiLa.mine();
 		
 		System.out.println("...Done");
 
@@ -88,9 +88,9 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 //////////////////////////////////////////////////////////////////
 
 		// Set up the new options for the simplification tool. Beware that untouched options stay the same, of course.
-		postParams.supportThreshold = 0.9;
-		postParams.confidenceThreshold = 0.5;
-		postParams.interestFactorThreshold = 0.25;
+		postParams.evtSupportThreshold = 0.9;
+		postParams.evtConfidenceThreshold = 0.5;
+		postParams.evtCoverageThreshold = 0.25;
 		postParams.postProcessingAnalysisType = PostProcessingAnalysisType.HIERARCHYCONFLICTREDUNDANCYDOUBLE;
 		
 		// Run the simplification algorithm

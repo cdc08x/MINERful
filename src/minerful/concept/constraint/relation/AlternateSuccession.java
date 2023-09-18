@@ -26,23 +26,12 @@ public class AlternateSuccession extends Succession {
 		super();
 	}
 
-    public AlternateSuccession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint, double support) {
-        super(forwardConstraint, backwardConstraint, support);
-    }
-
     public AlternateSuccession(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
         super(forwardConstraint, backwardConstraint);
     }
     public AlternateSuccession(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public AlternateSuccession(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
-    public AlternateSuccession(TaskCharSet param1, TaskCharSet param2,
-			double support) {
-		super(param1, param2, support);
-	}
 	public AlternateSuccession(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

@@ -4,7 +4,7 @@ import java.io.File;
 
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.MinerFulSimplificationLauncher;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.io.params.InputModelParameters;
 import minerful.io.params.InputModelParameters.InputEncoding;
@@ -20,8 +20,8 @@ import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessing
  */
 public class MinerFulSimplificationInvokerOnDeclareMapFile {
 
-	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/cdc08x/Desktop/example-model.xml";
-	private static final String EXAMPLE_INPUT_PROCESS_MODEL_FILE = "/home/cdc08x/Code/MINERful-dev/models/mined/bpi_challenge_2013_closed_problems-model-s09-c05-i0125.xml";
+	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/claudio/Desktop/example-model.xml";
+	private static final String EXAMPLE_INPUT_PROCESS_MODEL_FILE = "/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075.xml";
 
 	public static void main(String[] args) {
 		InputModelParameters inputParams = new InputModelParameters();
@@ -36,7 +36,7 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		postParams.sortingPolicies = new ConstraintSortingPolicy[]{
 			ConstraintSortingPolicy.ACTIVATIONTARGETBONDS,
 			ConstraintSortingPolicy.FAMILYHIERARCHY,
-			ConstraintSortingPolicy.SUPPORTCONFIDENCEINTERESTFACTOR
+			ConstraintSortingPolicy.SUPPORTCONFIDENCECOVERAGE
 		};
 
 		// Specifies the input file where the model is stored
@@ -52,7 +52,7 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		 * MinerFulSimplificationLauncher(ProcessModel minerFulProcessModel, PostProcessingCmdParameters postParams)
 		 */
 		
-		ProcessModel processModel = miFuSimpLa.simplify();
+		ProcessSpecification processModel = miFuSimpLa.simplify();
 		
 		// To store the simplified process model file somewhere. Please mind that the process model can also be stored as a Declare map. See the specification of minerful.io.params.OutputModelParameters
 		outParams.fileToSaveAsXML = new File(EXAMPLE_OUTPUT_PROCESS_MODEL_FILE);

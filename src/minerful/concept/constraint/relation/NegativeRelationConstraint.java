@@ -21,17 +21,9 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
     protected NegativeRelationConstraint() {
     	super();
     }
-    
-    public NegativeRelationConstraint(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
     public NegativeRelationConstraint(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public NegativeRelationConstraint(TaskCharSet param1, TaskCharSet param2,
-			double support) {
-		super(param1, param2, support);
-	}
 	public NegativeRelationConstraint(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}
@@ -60,7 +52,7 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
     public boolean isMoreReliableThanTheOpponent() {
         if (!this.hasOpponent())
             throw new IllegalStateException("No opponent constraint is set");
-        return this.support > opponent.getSupport();
+        return this.evtBasedMeasures.support > opponent.getEventBasedMeasures().getSupport();
     }
     
     public boolean hasOpponent() {

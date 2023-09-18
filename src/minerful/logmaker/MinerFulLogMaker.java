@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import minerful.automaton.AutomatonRandomWalker;
 import minerful.automaton.utils.AutomatonUtils;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.logmaker.params.LogMakerParameters;
 import minerful.utils.MessagePrinter;
@@ -88,7 +88,7 @@ public class MinerFulLogMaker {
 	 * @param processModel The process model that the generated event log complies to
 	 * @return The generated event log
 	 */
-	public XLog createLog(ProcessModel processModel) {
+	public XLog createLog(ProcessSpecification processModel) {
 		XFactory xFactory = new XFactoryBufferedImpl();
 		this.log = xFactory.createLog();
 		

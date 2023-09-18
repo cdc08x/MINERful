@@ -83,16 +83,16 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
             if (!other.equals(taskChUnderAnalysis)) {
                 auxStatsCell = localStats.interplayStatsTable.get(other);
                // Did it ever happen to the analyzed character NOT to appear WHENEVER the base character occurred?
-                never = (auxStatsCell.howManyTimesItNeverAppearedAtAll() > 0);
+                never = (auxStatsCell.howManyTimesItNeverOccurredAtAll() > 0);
                 // If not, probably it's a RespondedExistence
                 if (!never) {
                     // If a RespondedExistence holds, is it a Response? To know this, you should check whether it NEVER happened to the analyzed character NOT to appear AFTER the base character occurred
-                    neverAfter = (auxStatsCell.howManyTimesItNeverAppearedOnwards() > 0);
+                    neverAfter = (auxStatsCell.howManyTimesItNeverOccurredOnwards() > 0);
                     // If it is always true that AFTER the base character occurs, the analyzed one appears in the trace as well, then...
                     if (!neverAfter) {
                         // ... the AlternateResponse holds if and only if it NEVER happens that the base character appears in the middle of the subtrace between itself and the analyzed one AFTER
                         alwaysNeverAlternatingAfter = (
-                                auxStatsCell.betweenOnwards == 0
+                                auxStatsCell.inBetweenRepsOnwards == 0
                                 );
                         if (alwaysNeverAlternatingAfter) {
                             // ... the ChainResponse holds if and only if the number of appearances of the analyzed character falling one step AFTER the base one is equal to or greater than the total amount of occurrences of the base character
@@ -103,12 +103,12 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                         }
                     }
                     // If a RespondedExistence holds, is it a Precedence? To know this, you should check whether it NEVER happened to the analyzed character NOT to appear BEFORE the base character occurred
-                    neverBefore = (auxStatsCell.howManyTimesItNeverAppearedBackwards() > 0);
+                    neverBefore = (auxStatsCell.howManyTimesItNeverOccurredBackwards() > 0);
                     // If it is always true that BEFORE the base character occurs, the analyzed one appears in the trace as well, then...
                     if (!neverBefore) {
                         // ... the AlternateResponse holds if and only if it NEVER happens that the OTHER character appears in the middle of the subtrace between itself and the analyzed one BEFORE
                         alwaysNeverAlternatingBefore = (
-                                auxStatsCell.betweenOnwards == 0
+                                auxStatsCell.inBetweenRepsOnwards == 0
                                 );
                         if (alwaysNeverAlternatingBefore) {
                             // ... the ChainPrecedence holds if and only if the number of appearances of the analyzed character falling one step BEFORE the base one is equal to or greater than the total amount of occurrences of the base character
@@ -120,10 +120,10 @@ public class DeterministicRelationConstraintsMiner extends RelationConstraintsMi
                     }
                 }
                 // NotCoExistence(a, b)
-                alwaysNever = (auxStatsCell.howManyTimesItNeverAppearedAtAll() == localStats.getTotalAmountOfOccurrences());
+                alwaysNever = (auxStatsCell.howManyTimesItNeverOccurredAtAll() == localStats.getTotalAmountOfOccurrences());
                 if (!alwaysNever) {
                     // NotSuccession
-                    alwaysNeverAfter = auxStatsCell.howManyTimesItNeverAppearedOnwards() == localStats.getTotalAmountOfOccurrences();
+                    alwaysNeverAfter = auxStatsCell.howManyTimesItNeverOccurredOnwards() == localStats.getTotalAmountOfOccurrences();
                     if (!alwaysNeverAfter) {
                         // NotChainSuccession
                         alwaysNeverOneStepAfter = auxStatsCell.distances.get(1) == null || auxStatsCell.distances.get(1) < 1;

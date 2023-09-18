@@ -8,36 +8,44 @@ import java.util.Iterator;
 import java.util.NavigableMap;
 import java.util.Set;
 
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.log4j.Logger;
+
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
-import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
-import minerful.concept.constraint.relation.AlternateSuccession;
 import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
-import minerful.concept.constraint.relation.ChainSuccession;
-import minerful.concept.constraint.relation.CoExistence;
-import minerful.concept.constraint.relation.NotChainSuccession;
-import minerful.concept.constraint.relation.NotCoExistence;
-import minerful.concept.constraint.relation.NotSuccession;
+import minerful.concept.constraint.relation.NotChainPrecedence;
+import minerful.concept.constraint.relation.NotChainResponse;
+import minerful.concept.constraint.relation.NotPrecedence;
+import minerful.concept.constraint.relation.NotRespondedExistence;
+import minerful.concept.constraint.relation.NotResponse;
 import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
-import minerful.concept.constraint.relation.Succession;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 import minerful.miner.stats.StatsCell;
 
-import org.apache.commons.math3.distribution.TDistribution;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
 public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMiner {
+	/**
+	 * The measures with which constraint interestingness is assessed.
+	 */
+	public static class ConstraintMeasures {
+		public double support;
+		public double confidence;
+		public double coverage;
+	}
+
+	private static Logger logger = Logger.getLogger(ProbabilisticRelationConstraintsMiner.class.getCanonicalName());
+	
 	private final boolean foreseeingDistances;
 
     public ProbabilisticRelationConstraintsMiner(GlobalStatsTable globalStats, TaskCharArchive taskCharArchive, Set<TaskChar> tasksToQueryFor) {
@@ -52,7 +60,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     
     @Override
     public ConstraintsBag discoverConstraints(ConstraintsBag constraintsBag) {
-        // Inizialisation
+        // Initialisation
         if (constraintsBag == null) {
             constraintsBag = new ConstraintsBag(tasksToQueryFor);
         }
@@ -84,112 +92,57 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
     // Very very rough: a little statistical analysis on the trend would be better
     @Override
     public Set<? extends Constraint> discoverRelationConstraints(TaskChar pivotTask, ConstraintsBag constraintsBag) {
-        double	supportForRespondedExistence = 0.0,
-                supportForResponse = 0.0,
-                supportForAlternateResponse = 0.0,
-                supportForChainResponse = 0.0,
-                supportForPrecedence = 0.0,
-                supportForAlternatePrecedence = 0.0,
-                supportForChainPrecedence = 0.0,
-                supportForCoExistence = 0.0,
-                supportForSuccession = 0.0,
-                supportForAlternateSuccession = 0.0,
-                supportForChainSuccession = 0.0,
-                supportForNotCoExistence = 0.0,
-                supportForNotSuccession = 0.0,
-                supportForNotChainSuccession = 0.0,
-
-		        pivotParticipationFraction = 0.0,
+        double	pivotParticipationFraction = 0.0,
 		        searchedParticipationFraction = 0.0;
         StatsCell   interplayStats = null,
                     reversedInterplayStats = null;
-        Set<Constraint>
-        	relaCons = //super.makeTemporarySet(
-//        		MetaConstraintUtils.howManyPossibleRelationConstraints(this.tasksToQueryFor.size(), this.taskCharArchive.size())),
-        		super.makeNavigableSet(),
-        	nuRelaCons = super.makeNavigableSet();
+        Set<Constraint> nuRelaCons = super.makeNavigableSet();
+        Constraint[] nuCons = {};
         	
         LocalStatsWrapper
                 pivotLocalStats = globalStats.statsTable.get(pivotTask),
                 searchedLocalStats = null;
-        long   pivotAppearances = pivotLocalStats.getTotalAmountOfOccurrences(),
-                searchedAppearances = 0L;
-
+        long   pivotOccurrences = pivotLocalStats.getTotalAmountOfOccurrences(),
+                searchedOccurrences = 0L;
+        
         // For each other character
         for (TaskChar searchedTask : pivotLocalStats.interplayStatsTable.keySet()) {
         	nuRelaCons = super.makeNavigableSet();
-            pivotParticipationFraction = this.computeParticipationFraction(pivotTask, pivotLocalStats, globalStats.logSize);
+            pivotParticipationFraction = pivotLocalStats.getTotalAmountOfTracesWithOccurrence();
 
             if (!searchedTask.equals(pivotTask)) {
                 searchedLocalStats = globalStats.statsTable.get(searchedTask);
                 interplayStats = pivotLocalStats.interplayStatsTable.get(searchedTask);
                 reversedInterplayStats = searchedLocalStats.interplayStatsTable.get(pivotTask);
-                searchedAppearances = searchedLocalStats.getTotalAmountOfOccurrences();
-                searchedParticipationFraction = this.computeParticipationFraction(searchedTask, searchedLocalStats, globalStats.logSize);
-                supportForRespondedExistence =
-                        computeSupportForRespondedExistence(interplayStats, pivotAppearances);
-                supportForResponse =
-                        computeSupportForResponse(interplayStats, pivotAppearances);
-                supportForAlternateResponse =
-                        computeSupportForAlternateResponse(interplayStats, pivotAppearances);
-                supportForChainResponse =
-                        computeSupportForChainResponse(interplayStats, pivotAppearances);
-                supportForPrecedence =
-                        computeSupportForPrecedence(interplayStats, pivotAppearances);
-                supportForAlternatePrecedence =
-                        computeSupportForAlternatePrecedence(interplayStats, pivotAppearances);
-                supportForChainPrecedence =
-                        computeSupportForChainPrecedence(interplayStats, pivotAppearances);
-                supportForCoExistence =
-                        computeSupportForCoExistence(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                supportForSuccession =
-                        computeSupportForSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                supportForAlternateSuccession =
-                        computeSupportForAlternateSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                supportForChainSuccession =
-                        computeSupportForChainSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                supportForNotCoExistence =
-                        computeSupportForNotCoExistence(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                supportForNotSuccession =
-                        computeSupportForNotSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
-                supportForNotChainSuccession =
-                        computeSupportForNotChainSuccession(interplayStats, reversedInterplayStats, pivotAppearances + searchedAppearances);
 
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new RespondedExistence(pivotTask, searchedTask), supportForRespondedExistence, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new Response(pivotTask, searchedTask), supportForResponse, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new AlternateResponse(pivotTask, searchedTask), supportForAlternateResponse, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new ChainResponse(pivotTask, searchedTask), supportForChainResponse, pivotParticipationFraction, searchedParticipationFraction));
-
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new Precedence(searchedTask, pivotTask), supportForPrecedence, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new AlternatePrecedence(searchedTask, pivotTask), supportForAlternatePrecedence, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new ChainPrecedence(searchedTask, pivotTask), supportForChainPrecedence, pivotParticipationFraction, searchedParticipationFraction));
-
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new CoExistence(pivotTask, searchedTask), supportForCoExistence, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new Succession(pivotTask, searchedTask), supportForSuccession, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new AlternateSuccession(pivotTask, searchedTask), supportForAlternateSuccession, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new ChainSuccession(pivotTask, searchedTask), supportForChainSuccession, pivotParticipationFraction, searchedParticipationFraction));
-
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new NotCoExistence(pivotTask, searchedTask), supportForNotCoExistence, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new NotSuccession(pivotTask, searchedTask), supportForNotSuccession, pivotParticipationFraction, searchedParticipationFraction));
-                nuRelaCons.add(this.updateConstraint(constraintsBag, pivotTask, new NotChainSuccession(pivotTask, searchedTask), supportForNotChainSuccession, pivotParticipationFraction, searchedParticipationFraction));
-
-//                precedo.setConstraintWhichThisIsBasedUpon(responExi);
-//                altPrecedo.setConstraintWhichThisIsBasedUpon(precedo);
-//                chainPrecedo.setConstraintWhichThisIsBasedUpon(altPrecedo);
-//                respo.setConstraintWhichThisIsBasedUpon(responExi);
-//                altRespo.setConstraintWhichThisIsBasedUpon(respo);
-//                chainRespo.setConstraintWhichThisIsBasedUpon(altRespo);
-//                
-//                successio.setConstraintWhichThisIsBasedUpon(coExi);
-//                altSuccessio.setConstraintWhichThisIsBasedUpon(successio);
-//                chainSuccessio.setConstraintWhichThisIsBasedUpon(altSuccessio);
-//                
-//                notSuccessio.setConstraintWhichThisIsBasedUpon(notChainSuccessio);
-//                notCoExi.setConstraintWhichThisIsBasedUpon(notSuccessio);
-//                
-//                notCoExi.setOpposedTo(coExi);
-//                notSuccessio.setOpposedTo(successio);
-//                notChainSuccessio.setOpposedTo(chainSuccessio);
+                // TODO Make this customisable
+                nuCons = new Constraint[]{
+                		constraintsBag.getOrAdd(pivotTask, new RespondedExistence(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new Response(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new AlternateResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new ChainResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new Precedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(pivotTask, new AlternatePrecedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(pivotTask, new ChainPrecedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(pivotTask, new NotRespondedExistence(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new NotResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new NotChainResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(pivotTask, new NotPrecedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(pivotTask, new NotChainPrecedence(searchedTask, pivotTask)),
+                };
+                
+                for (Constraint nuCon : nuCons) {
+                	nuRelaCons.add(
+                			this.measureConstraint(
+	                					nuCon,
+	                					pivotLocalStats,
+	                					interplayStats,
+	                					searchedLocalStats,
+	                					globalStats.numOfEvents,
+	                					globalStats.logSize)
+                			);
+                	nuCon.setEvaluatedOnLog(true);
+                }
             }
 
             Iterator<Constraint> constraintsIterator = nuRelaCons.iterator();
@@ -205,178 +158,114 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
             	
             	if (hasValuesAboveThresholds(currentConstraint)) this.computedConstraintsAboveThresholds++;
             }
-            
-            relaCons.addAll(nuRelaCons);
-        }
-        return relaCons;
-    }
 
-	protected Constraint updateConstraint(ConstraintsBag constraintsBag,
-			TaskChar indexingParam, Constraint searchedCon,
-			double support, double pivotParticipationFraction, double searchedParticipationFraction) {
-		Constraint con = constraintsBag.getOrAdd(indexingParam, searchedCon);
-		con.setSupport(support);
-		con.setEvaluatedOnLog(true);
-		refineByComputingRelevanceMetrics(con, pivotParticipationFraction, searchedParticipationFraction);
-		return con;
+        }
+        return nuRelaCons;
+    }
+	
+	private Constraint measureConstraint(
+			Constraint nuCon,
+			LocalStatsWrapper pivotLocalStats,
+			StatsCell interplayStats,
+			LocalStatsWrapper searchedLocalStats,
+			long numOfEventsInLog,
+			long numOfTracesInLog) {
+		Class<? extends Constraint> conClass = nuCon.getClass();
+		double	satEvtNum = 0.0,
+				satTrcNum = 0.0;
+		long	pivotOccurrences = pivotLocalStats.getTotalAmountOfOccurrences(),
+				tracesWithPivot = pivotLocalStats.getTotalAmountOfTracesWithOccurrence();
+		if (conClass.equals(RespondedExistence.class)) {
+			satEvtNum = pivotLocalStats.getTotalAmountOfOccurrences() - interplayStats.howManyTimesItNeverOccurredAtAll();
+			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredAtAll();
+		}
+		else if (conClass.equals(Response.class)) {
+			satEvtNum = pivotOccurrences - interplayStats.howManyTimesItNeverOccurredOnwards();
+			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredOnwards();
+		}
+		else if (conClass.equals(AlternateResponse.class)) {
+			satEvtNum = pivotOccurrences - interplayStats.howManyTimesItNeverOccurredOnwards() - interplayStats.inBetweenRepsOnwards;
+			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredOnwards() - interplayStats.tracesWithInBetweenRepsOnwards;
+		}
+		else if (conClass.equals(ChainResponse.class)) {
+			if (interplayStats.distances.get(1) != null) {
+				satEvtNum = interplayStats.distances.get(1);
+			}
+			if (interplayStats.distancesPerTrace.get(1) != null) {
+				satTrcNum = interplayStats.distancesPerTrace.get(1);
+			}
+		}
+		else if (conClass.equals(Precedence.class)) {
+			satEvtNum = pivotOccurrences - interplayStats.howManyTimesItNeverOccurredBackwards();
+			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredBackwards();
+		}
+		else if (conClass.equals(AlternatePrecedence.class)) {
+			satEvtNum = pivotOccurrences - interplayStats.howManyTimesItNeverOccurredBackwards() - interplayStats.inBetweenRepsBackwards;
+			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredBackwards() - interplayStats.tracesWithInBetweenRepsBackwards;
+		}
+		else if (conClass.equals(ChainPrecedence.class)) {
+			if (interplayStats.distances.get(-1) != null) {
+				satEvtNum = interplayStats.distances.get(-1);
+			}
+			if (interplayStats.distancesPerTrace.get(-1) != null) {
+				satTrcNum = interplayStats.distancesPerTrace.get(-1);
+			}
+		}
+		else if (conClass.equals(NotRespondedExistence.class)) {
+			satEvtNum = interplayStats.howManyTimesItNeverOccurredAtAll();
+			satTrcNum = interplayStats.inHowManyTracesItNeverOccurredAtAll();
+		}
+		else if (conClass.equals(NotResponse.class)) {
+			satEvtNum = interplayStats.howManyTimesItNeverOccurredOnwards();
+			satTrcNum = interplayStats.inHowManyTracesItNeverOccurredOnwards();
+		}
+		else if (conClass.equals(NotChainResponse.class)) {
+			satEvtNum = pivotOccurrences;
+			satTrcNum = tracesWithPivot;
+			if (interplayStats.distances.get(1) != null) {
+				satEvtNum -= interplayStats.distances.get(1);
+			}
+			if (interplayStats.distancesPerTrace.get(1) != null) {
+				satTrcNum -= interplayStats.distancesPerTrace.get(1);
+			}
+		}
+		else if (conClass.equals(NotPrecedence.class)) {
+			satEvtNum = interplayStats.howManyTimesItNeverOccurredBackwards();
+			satTrcNum = interplayStats.inHowManyTracesItNeverOccurredBackwards();
+		}
+		else if (conClass.equals(NotChainPrecedence.class)) {
+			satEvtNum = pivotOccurrences;
+			satTrcNum = tracesWithPivot;
+			if (interplayStats.distances.get(-1) != null) {
+				satEvtNum -= interplayStats.distances.get(-1);
+			}
+			if (interplayStats.distancesPerTrace.get(-1) != null) {
+				satTrcNum -= interplayStats.distancesPerTrace.get(-1);
+			}
+		}
+		else {
+			throw new IllegalArgumentException("The computation of interestingness measures for the given class (" + conClass.getSimpleName() + ") is not (yet!) possible");
+		}
+		
+//		logger.trace(String.format("There are %2$f satisfying occurrences for %1$s. The support is thus %2$f / %3$d = %4$f",
+//				constraint, satOccurs, numOfEventsInLog, satOccurs / numOfEventsInLog));
+		nuCon.getEventBasedMeasures().setSupport(satEvtNum / numOfEventsInLog);
+		nuCon.getTraceBasedMeasures().setSupport(satTrcNum / numOfTracesInLog);
+//		logger.trace(String.format("There are %2$f satisfying occurrences for %1$s. The confidence is thus %2$f / %3$d = %4$f",
+//				constraint, satOccurs, pivotOccurrences, satOccurs / pivotOccurrences));
+		nuCon.getEventBasedMeasures().setConfidence(satEvtNum / pivotOccurrences);
+		nuCon.getTraceBasedMeasures().setConfidence(satTrcNum / tracesWithPivot);
+//		logger.trace(String.format("The pivot participation fraction for %1$s is %3$f. The interest factor is thus %2$f * %3$f = %4$f",
+//				constraint, constraint.getConfidence(), pivotParticipationFraction, constraint.getConfidence() * pivotParticipationFraction));
+		nuCon.getEventBasedMeasures().setCoverage((double)pivotOccurrences / numOfEventsInLog);
+		nuCon.getTraceBasedMeasures().setCoverage((double)tracesWithPivot / numOfTracesInLog);
+		
+		return nuCon;
 	}
-
-	private double computeSupportForNotChainSuccession(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        return Constraint.complementSupport(
-                this.computeSupportForChainSuccession(
-                interplayStats, reversedInterplayStats, sumOfAppearances));
-    }
-
-    private double computeSupportForNotSuccession(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        return Constraint.complementSupport(
-                this.computeSupportForSuccession(
-                interplayStats, reversedInterplayStats, sumOfAppearances));
-    }
-
-    private double computeSupportForNotCoExistence(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        return Constraint.complementSupport(
-                this.computeSupportForCoExistence(
-                interplayStats, reversedInterplayStats, sumOfAppearances));
-    }
-
-    private double computeSupportForChainSuccession(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        if (interplayStats.distances.get(1) != null && reversedInterplayStats.distances.get(-1) != null) {
-            double support = interplayStats.distances.get(1);
-            support += reversedInterplayStats.distances.get(-1);
-            support /= sumOfAppearances;
-            return support;
-        } else {
-            return 0;
-        }
-    }
-
-    private double computeSupportForAlternateSuccession(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        double antiSupport = interplayStats.betweenOnwards;
-        antiSupport += interplayStats.howManyTimesItNeverAppearedOnwards();
-        antiSupport += reversedInterplayStats.betweenBackwards;
-        antiSupport += reversedInterplayStats.howManyTimesItNeverAppearedBackwards();
-        antiSupport /= sumOfAppearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForSuccession(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        double antiSupport = interplayStats.howManyTimesItNeverAppearedOnwards();
-        antiSupport += reversedInterplayStats.howManyTimesItNeverAppearedBackwards();
-        antiSupport /= sumOfAppearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForCoExistence(
-            StatsCell interplayStats, StatsCell reversedInterplayStats, long sumOfAppearances) {
-        double antiSupport = interplayStats.howManyTimesItNeverAppearedAtAll();
-        antiSupport += reversedInterplayStats.howManyTimesItNeverAppearedAtAll();
-        antiSupport /= sumOfAppearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForChainPrecedence(
-            StatsCell interplayStats, long appearances) {
-        if (interplayStats.distances.get(-1) != null) {
-            double support = interplayStats.distances.get(-1);
-            support /= appearances;
-            return support;
-        } else {
-            return 0;
-        }
-    }
-
-    private double computeSupportForAlternatePrecedence(
-            StatsCell interplayStats, long appearances) {
-        double antiSupport = interplayStats.betweenBackwards;
-        antiSupport += interplayStats.howManyTimesItNeverAppearedBackwards();
-        antiSupport /= appearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForPrecedence(
-            StatsCell interplayStats, long appearances) {
-        double antiSupport = interplayStats.howManyTimesItNeverAppearedBackwards();
-        antiSupport /= appearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForChainResponse(
-            StatsCell interplayStats, long appearances) {
-        if (interplayStats.distances.get(1) != null) {
-            double support = interplayStats.distances.get(1);
-            support /= appearances;
-            return support;
-        } else {
-            return 0;
-        }
-    }
-
-    private double computeSupportForAlternateResponse(
-            StatsCell interplayStats, long appearances) {
-        double antiSupport = interplayStats.betweenOnwards;
-        antiSupport += interplayStats.howManyTimesItNeverAppearedOnwards();
-        antiSupport /= appearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForResponse(
-            StatsCell interplayStats, long appearances) {
-        double antiSupport = interplayStats.howManyTimesItNeverAppearedOnwards();
-        antiSupport /= appearances;
-        return Constraint.complementSupport(antiSupport);
-    }
-
-    private double computeSupportForRespondedExistence(
-            StatsCell interplayStats, long appearances) {
-        double antiSupport = interplayStats.howManyTimesItNeverAppearedAtAll();
-        antiSupport /= appearances;
-        return Constraint.complementSupport(antiSupport);
-    }
 
     @Override
     protected Set<Constraint> refineRelationConstraints(Set<Constraint> setOfConstraints) {
         return null;
-    }
-    
-    public static RelationConstraint refineByComputingConfidenceLevel(RelationConstraint relCon, double pivotParticipationFraction, double searchedParticipationFraction) {
-    	if (relCon.getSubFamily() == RelationConstraintSubFamily.COUPLING || relCon.getSubFamily() == RelationConstraintSubFamily.NEGATIVE) {
-    		relCon.setConfidence(relCon.getSupport() * (pivotParticipationFraction < searchedParticipationFraction ? pivotParticipationFraction : searchedParticipationFraction));
-    	} else if (relCon.getImplicationVerse() == ConstraintImplicationVerse.BACKWARD) {
-    		relCon.setConfidence(relCon.getSupport() * searchedParticipationFraction);
-    	} else {
-    		relCon.setConfidence(relCon.getSupport() * pivotParticipationFraction);
-    	}
-		return relCon;
-    }
-    
-    public static RelationConstraint refineByComputingRelevanceMetrics(Constraint con, double pivotParticipationFraction, double searchedParticipationFraction) {
-    	RelationConstraint relCon = (RelationConstraint) con;
-    	relCon = refineByComputingConfidenceLevel(relCon, pivotParticipationFraction, searchedParticipationFraction);
-    	if (relCon.getSubFamily() != RelationConstraintSubFamily.NEGATIVE || relCon instanceof NotChainSuccession || relCon instanceof NotSuccession) {
-    		relCon.setInterestFactor(
-    				relCon.getSupport()
-    				*
-    				pivotParticipationFraction
-    				*
-    				searchedParticipationFraction
-    		);
-    	} else {
-    		relCon.setInterestFactor(
-    				relCon.getSupport()
-    				*
-    				( pivotParticipationFraction > searchedParticipationFraction
-    					?	pivotParticipationFraction * (1.0 - searchedParticipationFraction)
-    					:	searchedParticipationFraction * (1.0 - pivotParticipationFraction)
-    				)
-    		);
-    	}
-    	return relCon;
     }
 
     private static RelationConstraint refineByComputingDistances(

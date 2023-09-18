@@ -2,7 +2,7 @@ package minerful.miner.core;
 
 import java.util.Collection;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 public class MinerFulPruningCore {
 	protected static Logger logger;
-	protected ProcessModel processModel;
+	protected ProcessSpecification processModel;
 	protected Collection<TaskChar> tasksToQueryFor; 
 	protected PostProcessingCmdParameters postProcParams;
 	protected SubsumptionHierarchyMarker subMarker;
@@ -27,14 +27,14 @@ public class MinerFulPruningCore {
         }
 	}
 	
-	public MinerFulPruningCore(ProcessModel processModel,
+	public MinerFulPruningCore(ProcessSpecification processModel,
 			PostProcessingCmdParameters postProcParams) {
 		this(	processModel,
 				processModel.getProcessAlphabet(),
 				postProcParams);
 	}
 	
-	public MinerFulPruningCore(ProcessModel processModel,
+	public MinerFulPruningCore(ProcessSpecification processModel,
 			Collection<TaskChar> tasksToQueryFor,
 			PostProcessingCmdParameters postProcParams) {
 		this.processModel = processModel;
@@ -72,9 +72,12 @@ public class MinerFulPruningCore {
 		long beforeThresholdsPruning = System.currentTimeMillis();
 		
 		this.processModel.bag = this.threshMarker.markConstraintsBelowThresholds(
-				this.postProcParams.supportThreshold,
-				this.postProcParams.confidenceThreshold,
-				this.postProcParams.interestFactorThreshold);
+				this.postProcParams.evtSupportThreshold,
+				this.postProcParams.evtConfidenceThreshold,
+				this.postProcParams.evtCoverageThreshold,
+				this.postProcParams.trcSupportThreshold,
+				this.postProcParams.trcConfidenceThreshold,
+				this.postProcParams.trcCoverageThreshold);
 
 		long afterThresholdsPruning = System.currentTimeMillis();
     	
@@ -140,7 +143,7 @@ public class MinerFulPruningCore {
 	    return this.processModel.bag;
 	}
 
-	public ProcessModel getProcessModel() {
+	public ProcessSpecification getProcessModel() {
 		return this.processModel;
 	}
 }

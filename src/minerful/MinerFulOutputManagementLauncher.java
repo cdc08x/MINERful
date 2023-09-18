@@ -10,7 +10,7 @@ import java.util.NavigableMap;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
@@ -53,7 +53,7 @@ public class MinerFulOutputManagementLauncher {
 		);
 	}
 
-	public void manageOutput(ProcessModel processModel, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputModelParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
+	public void manageOutput(ProcessSpecification processModel, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputModelParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
 		ConstraintsPrinter printer = new ConstraintsPrinter(processModel, additionalCnsIndexedInfo);
 		PrintWriter outWriter = null;
 		File outputFile = null;
@@ -337,22 +337,22 @@ public class MinerFulOutputManagementLauncher {
 		}
 	}
 
-	public void manageOutput(ProcessModel processModel,
+	public void manageOutput(ProcessSpecification processModel,
 			ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams,
 			LogParser logParser) {
 		this.manageOutput(processModel, null, outParams, viewParams, systemParams, logParser);
 	}
 
-	public void manageOutput(ProcessModel processModel,
+	public void manageOutput(ProcessSpecification processModel,
 			ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
 		this.manageOutput(processModel, null, outParams, viewParams, systemParams, null);
 	}
 	
-	public void manageOutput(ProcessModel processModel, OutputModelParameters outParams) {
+	public void manageOutput(ProcessSpecification processModel, OutputModelParameters outParams) {
 		this.manageOutput(processModel, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null);
 	}
 	
-	public void manageOutput(ProcessModel processModel, OutputModelParameters outParams, LogParser logParser) {
+	public void manageOutput(ProcessSpecification processModel, OutputModelParameters outParams, LogParser logParser) {
 		this.manageOutput(processModel, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser);
 	}
 }

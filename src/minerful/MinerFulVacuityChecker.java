@@ -10,8 +10,8 @@ import java.util.Iterator;
 import minerful.checking.ConstraintsFitnessEvaluator;
 import minerful.checking.ProcessSpecificationFitnessEvaluator;
 import minerful.checking.relevance.dao.ConstraintsFitnessEvaluationsMap;
-import minerful.checking.relevance.dao.ModelFitnessEvaluation;
-import minerful.concept.ProcessModel;
+import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharFactory;
 import minerful.concept.constraint.Constraint;
@@ -34,6 +34,9 @@ import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
 import minerful.concept.constraint.relation.Succession;
+import minerful.interestingness.test.constraint.SequenceResponse21;
+import minerful.interestingness.test.constraint.SequenceResponse22;
+import minerful.interestingness.test.constraint.SequenceResponse32;
 import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
@@ -44,9 +47,6 @@ import minerful.logparser.LogTraceParser;
 import minerful.logparser.StringLogParser;
 import minerful.logparser.XesLogParser;
 import minerful.params.SystemCmdParameters.DebugLevel;
-import minerful.relevance.test.constraint.SequenceResponse21;
-import minerful.relevance.test.constraint.SequenceResponse22;
-import minerful.relevance.test.constraint.SequenceResponse32;
 import minerful.utils.MessagePrinter;
 
 public class MinerFulVacuityChecker {
@@ -155,13 +155,13 @@ public class MinerFulVacuityChecker {
 			Double fitnessThreshold = Double.valueOf(args[1]);
 
 			for (Constraint con : evalor.getCheckedConstraints()) {
-				if (con.getFamily() != null && con.getFitness() >= fitnessThreshold) {
+				if (con.getFamily() != null && con.getEventBasedMeasures().getFitness() >= fitnessThreshold) {
 					nuStandardConstraints.add(con);
 				}
 			}
 
 			ConstraintsBag coBag = new ConstraintsBag(loPar.getTaskCharArchive().getTaskChars(), nuStandardConstraints);
-			ProcessModel model = new ProcessModel(loPar.getTaskCharArchive(), coBag);
+			ProcessSpecification model = new ProcessSpecification(loPar.getTaskCharArchive(), coBag);
 			DeclareMapReaderWriter.marshal(args[2], new DeclareMapEncoderDecoder(model).createDeclareMap());
 			
 			logger.debug("Done.");

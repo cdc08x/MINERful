@@ -78,7 +78,7 @@ public class ConstraintIndexHasseNode implements Comparable<ConstraintIndexHasse
 //			if (!constraint.redundant) {
 				sBuil.append(constraint);
 				sBuil.append(" => ");
-				sBuil.append(constraint.getSupport());
+				sBuil.append(constraint.getEventBasedMeasures().getSupport());
 				if (constraint.isRedundant())
 					sBuil.append(" (redundant)");
 				sBuil.append("\n");

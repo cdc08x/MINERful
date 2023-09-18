@@ -26,30 +26,14 @@ public class CoExistence extends MutualRelationConstraint {
     	super();
     }
     
-    public CoExistence(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint, double support) {
-        this(forwardConstraint.getBase(), forwardConstraint.getImplied(), support);
-        if (!this.ckeckConsistency(forwardConstraint, backwardConstraint)) {
-            throw new IllegalArgumentException("Illegal constraints combination: provided " + forwardConstraint + " and " + backwardConstraint + " resp. as forward and backward constraints of " + this);
-        }
-        this.forwardConstraint = forwardConstraint;
-        this.backwardConstraint = backwardConstraint;
-    }
-    
     public CoExistence(RespondedExistence forwardConstraint, RespondedExistence backwardConstraint) {
         this(forwardConstraint.getBase(), forwardConstraint.getImplied());
         this.forwardConstraint = forwardConstraint;
         this.backwardConstraint = backwardConstraint;
     }
 
-    
-    public CoExistence(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param1, param2, support);
-	}
 	public CoExistence(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
-	}
-	public CoExistence(TaskChar param1, TaskChar param2, double support) {
-		super(param1, param2, support);
 	}
 	public CoExistence(TaskChar param1, TaskChar param2) {
 		super(param1, param2);

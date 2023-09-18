@@ -5,7 +5,7 @@ import java.io.File;
 import minerful.concept.TaskCharArchive;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.InputModelParameters;
@@ -23,11 +23,11 @@ public class ProcessModelLoader {
 	 * 
 	 * @param inputLanguage The input file formatting language
 	 * @param inputFile The input file
-	 * @return A {@link ProcessModel ProcessModel} instance read from <code>inputFile</code>,
+	 * @return A {@link ProcessSpecification ProcessModel} instance read from <code>inputFile</code>,
 	 * or <code>null</code> if such file does not exist or is not properly formatted
 	 */
-	public ProcessModel loadProcessModel(InputModelParameters.InputEncoding inputLanguage, File inputFile) {
-		ProcessModel inputProcess = null;
+	public ProcessSpecification loadProcessModel(InputModelParameters.InputEncoding inputLanguage, File inputFile) {
+		ProcessSpecification inputProcess = null;
 		
 		try {
 			switch (inputLanguage) {
@@ -59,8 +59,8 @@ public class ProcessModelLoader {
 	 * @param alphabet encoding-mapping
 	 * @return
 	 */
-	public ProcessModel loadProcessModel(InputModelParameters.InputEncoding inputLanguage, File inputFile, TaskCharArchive alphabet) {
-		ProcessModel inputProcess = null;
+	public ProcessSpecification loadProcessModel(InputModelParameters.InputEncoding inputLanguage, File inputFile, TaskCharArchive alphabet) {
+		ProcessSpecification inputProcess = null;
 
 		try {
 			switch (inputLanguage) {
@@ -84,7 +84,7 @@ public class ProcessModelLoader {
 		return inputProcess;
 	}
 
-	public ProcessModel loadProcessModel(AssignmentModel declareMapModel) {
+	public ProcessSpecification loadProcessModel(AssignmentModel declareMapModel) {
 		return new DeclareMapEncoderDecoder(declareMapModel).createMinerFulProcessModel();
 	}
 }

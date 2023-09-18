@@ -7,8 +7,8 @@ import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import minerful.checking.ProcessSpecificationFitnessEvaluator;
 import minerful.checking.params.CheckingCmdParameters;
-import minerful.checking.relevance.dao.ModelFitnessEvaluation;
-import minerful.concept.ProcessModel;
+import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
+import minerful.concept.ProcessSpecification;
 import minerful.io.ProcessModelLoader;
 import minerful.io.params.InputModelParameters;
 import minerful.logparser.LogParser;
@@ -22,7 +22,7 @@ import minerful.utils.MessagePrinter;
 public class MinerFulFitnessCheckLauncher {
 	public static MessagePrinter logger = MessagePrinter.getInstance(MinerFulFitnessCheckLauncher.class);
 			
-	private ProcessModel processSpecification;
+	private ProcessSpecification processSpecification;
 	private LogParser eventLogParser;
 	private CheckingCmdParameters chkParams;
 	
@@ -36,7 +36,7 @@ public class MinerFulFitnessCheckLauncher {
 		this.eventLogParser = inputLog;
 	}
 
-	public MinerFulFitnessCheckLauncher(ProcessModel minerFulProcessModel, LogParser inputLog, CheckingCmdParameters chkParams) {
+	public MinerFulFitnessCheckLauncher(ProcessSpecification minerFulProcessModel, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
 		this.processSpecification = minerFulProcessModel;
 		this.eventLogParser = inputLog;
@@ -64,7 +64,7 @@ public class MinerFulFitnessCheckLauncher {
 		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 
-	public ProcessModel getProcessSpecification() {
+	public ProcessSpecification getProcessSpecification() {
 		return processSpecification;
 	}
 
@@ -72,29 +72,29 @@ public class MinerFulFitnessCheckLauncher {
 		return eventLogParser;
 	}
 	
-	public ModelFitnessEvaluation check() {
+	public SpecificationFitnessEvaluation check() {
 		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
 				this.eventLogParser.getEventEncoderDecoder(), this.processSpecification);
 
-		ModelFitnessEvaluation evalon = evalor.evaluateOnLog(this.eventLogParser);
+		SpecificationFitnessEvaluation evalon = evalor.evaluateOnLog(this.eventLogParser);
 		
 		reportOnEvaluation(evalon);
 		
 	    return evalon;
 	}
 
-	public ModelFitnessEvaluation check(LogTraceParser trace) {
+	public SpecificationFitnessEvaluation check(LogTraceParser trace) {
 		ProcessSpecificationFitnessEvaluator evalor = new ProcessSpecificationFitnessEvaluator(
 				this.eventLogParser.getEventEncoderDecoder(), this.processSpecification);
 		
-		ModelFitnessEvaluation evalon = evalor.evaluateOnTrace(trace);
+		SpecificationFitnessEvaluation evalon = evalor.evaluateOnTrace(trace);
 		
 		reportOnEvaluation(evalon);
 		
 		return evalon;
 	}
 	
-	private static String printFitnessJsonSummary(ModelFitnessEvaluation evalon) {
+	private static String printFitnessJsonSummary(SpecificationFitnessEvaluation evalon) {
 		return "{\"Avg.fitness\":" 
 				+ MessagePrinter.formatFloatNumForCSV(evalon.avgFitness()) + ";" 
 				+ "\"Trace-fit-ratio\":" 
@@ -102,7 +102,7 @@ public class MinerFulFitnessCheckLauncher {
 				+ "}";
 	}
 
-	private void reportOnEvaluation(ModelFitnessEvaluation evalon) {
+	private void reportOnEvaluation(SpecificationFitnessEvaluation evalon) {
 		if (evalon.isFullyFitting()) {
 			logger.info("Yay! The passed declarative process specification is fully fitting with the input traces! Summary:\n"
 			+ printFitnessJsonSummary(evalon) + "\n");

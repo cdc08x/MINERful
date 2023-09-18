@@ -14,15 +14,9 @@ public abstract class ExistenceConstraint extends Constraint {
     	super();
     }
 	
-	public ExistenceConstraint(TaskChar param1, double support) {
-        super(param1, support);
-    }
     public ExistenceConstraint(TaskChar param1) {
         super(param1);
     }
-    public ExistenceConstraint(TaskCharSet param1, double support) {
-		super(param1, support);
-	}
 	public ExistenceConstraint(TaskCharSet param1) {
 		super(param1);
 	}

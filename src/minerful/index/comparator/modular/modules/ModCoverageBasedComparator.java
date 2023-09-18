@@ -3,20 +3,20 @@ package minerful.index.comparator.modular.modules;
 import minerful.concept.constraint.Constraint;
 import minerful.index.comparator.modular.ModularConstraintsComparator;
 
-public class ModInterestFactorBasedComparator extends ModularConstraintsComparator {
-	public ModInterestFactorBasedComparator() {
+public class ModCoverageBasedComparator extends ModularConstraintsComparator {
+	public ModCoverageBasedComparator() {
 		super();
 	}
 
-	public ModInterestFactorBasedComparator(ModularConstraintsComparator secondLevelComparator) {
+	public ModCoverageBasedComparator(ModularConstraintsComparator secondLevelComparator) {
 		super(secondLevelComparator);
 	}
 
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
 		Double
-			interestOfO1 = o1.getInterestFactor(),
-			interestOfO2 = o2.getInterestFactor();
+			interestOfO1 = o1.getEventBasedMeasures().getCoverage(),
+			interestOfO2 = o2.getEventBasedMeasures().getCoverage();
 		int result = 0;
 		
 		result = interestOfO1.compareTo(interestOfO2);

@@ -30,12 +30,6 @@ public class End extends AtLeast1 {
 	public End(TaskChar param1) {
         super(param1);
     }
-	public End(TaskChar param1, double support) {
-		super(param1, support);
-	}
-	public End(TaskCharSet param1, double support) {
-		super(param1, support);
-	}
 	public End(TaskCharSet param1) {
 		super(param1);
 	}

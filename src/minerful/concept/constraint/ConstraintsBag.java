@@ -3,6 +3,7 @@ package minerful.concept.constraint;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,6 +21,8 @@ import org.apache.log4j.Logger;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
+import minerful.concept.constraint.relation.NegativeRelationConstraint;
+import minerful.concept.constraint.relation.NotPrecedence;
 import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
 /**
@@ -320,7 +323,7 @@ public class ConstraintsBag implements Cloneable, PropertyChangeListener {
 		ConstraintsBag nuBag = (ConstraintsBag) this.clone();
 		for (TaskChar key : this.taskChars) {
 			for (Constraint con : this.getConstraintsOf(key)) {
-				if (con.hasSufficientSupport(supportThreshold)) {
+				if (con.getEventBasedMeasures().hasSufficientSupport(supportThreshold)) {
 					nuBag.remove(key, con);
 				}
 			}
@@ -488,7 +491,8 @@ public class ConstraintsBag implements Cloneable, PropertyChangeListener {
 	}
 
 	/**
-	 * Returns only fully supported constraints of the constraints bag.
+	 * Returns only constraints that are never violated
+	 * (i.e., the confidence of which is maximal).
 	 * 
 	 * @return collection of constraints
 	 */
@@ -496,7 +500,7 @@ public class ConstraintsBag implements Cloneable, PropertyChangeListener {
 		Collection<Constraint> constraints = new TreeSet<Constraint>(); 
 		for (TaskChar tCh : this.getTaskChars()) { 
 			for (Constraint cns : this.getConstraintsOf(tCh)) {
-				if (cns.hasMaximumSupport()) {
+				if (cns.getEventBasedMeasures().hasMaximumSupport()) {
 					constraints.add(cns);
 				}
 			}
@@ -505,16 +509,17 @@ public class ConstraintsBag implements Cloneable, PropertyChangeListener {
 	}
 
 	/**
-	 * Returns only fully supported constraints of the constraints bag in a new
-	 * constraints bag.
+	 * Returns only constraints that are never violated 
+	 * (i.e., the confidence of which is maximal)
+	 * in a new constraint bag.
 	 * 
-	 * @return new constraints bag with all fully supported constraints
+	 * @return new constraint bag with all the constraints that are never violated. 
 	 */
-	public ConstraintsBag getOnlyFullySupportedConstraintsInNewBag() {
+	public ConstraintsBag getNeverViolatedConstraintsInNewBag() {
 		ConstraintsBag clone = (ConstraintsBag) this.clone();
 		for (TaskChar tCh : clone.getTaskChars()) { 
 			for (Constraint cns : this.getConstraintsOf(tCh)) {
-				if (!cns.hasMaximumSupport()) {
+				if (!cns.getEventBasedMeasures().hasMaximumConfidence()) {
 					clone.remove(tCh, cns);
 				}
 			}

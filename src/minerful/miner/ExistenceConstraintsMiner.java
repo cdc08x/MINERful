@@ -28,17 +28,17 @@ public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner
             LocalStatsWrapper localStats = this.globalStats.statsTable.get(task);
             TaskChar base = task;
 
-            Constraint[] uniqueness = this.discoverMaxMultiplicityConstraints(base, localStats, this.globalStats.logSize);
+            Constraint[] uniqueness = this.discoverMaxMultiplicityConstraints(base, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
             if (uniqueness != null)
             	constraintsBag.addAll(base, Arrays.asList(uniqueness));
-            Constraint[] participation = this.discoverMinMultiplicityConstraints(base, localStats, this.globalStats.logSize);
+            Constraint[] participation = this.discoverMinMultiplicityConstraints(base, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
             if (participation != null)
             	constraintsBag.addAll(base, Arrays.asList(participation));
             
-            Constraint init = this.discoverEndConstraint(base, localStats, this.globalStats.logSize);
+            Constraint init = this.discoverEndConstraint(base, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
             if (init != null)
                 constraintsBag.add(base, init);
-            Constraint end = this.discoverInitConstraint(base, localStats, this.globalStats.logSize);
+            Constraint end = this.discoverInitConstraint(base, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
             if (end != null)
                 constraintsBag.add(base, end);
         }
@@ -51,14 +51,14 @@ public abstract class ExistenceConstraintsMiner extends AbstractConstraintsMiner
 	}
 
 	protected abstract Constraint[] discoverMinMultiplicityConstraints(TaskChar base,
-			LocalStatsWrapper localStats, long testbedSize);
+			LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog);
 
 	protected abstract Constraint[] discoverMaxMultiplicityConstraints(TaskChar base,
-			LocalStatsWrapper localStats, long testbedSize);
+			LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog);
 
 	protected abstract Constraint discoverInitConstraint(TaskChar base,
-			LocalStatsWrapper localStats, long testbedSize);
+			LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog);
 
 	protected abstract Constraint discoverEndConstraint(TaskChar base,
-			LocalStatsWrapper localStats, long testbedSize);
+			LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog);
 }

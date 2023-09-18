@@ -111,7 +111,11 @@ public abstract class AbstractLogParser implements LogParser {
 	protected abstract Collection<AbstractTaskClass> parseLog(File logFile) throws Exception;
 
 	protected void updateNumberOfEvents(int numberOfEvents) {
-		this.numberOfEvents += numberOfEvents;
+		if (this.numberOfEvents == UNDEFINED_MAXIMUM_LENGTH) {
+			this.numberOfEvents = numberOfEvents;
+		} else {  // MEMENTO [REMEMBER]: It does not matter how complex your code is. IF statements are the most effective source of bugs that I have ever encountered.
+			this.numberOfEvents += numberOfEvents;
+		}
 	}
 
 	protected void updateMaximumTraceLength(int numberOfEvents) {

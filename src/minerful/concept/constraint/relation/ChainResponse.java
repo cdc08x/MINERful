@@ -29,12 +29,6 @@ public class ChainResponse extends AlternateResponse {
     public ChainResponse(TaskChar param1, TaskChar 	param2) {
         super(param1, param2);
     }
-    public ChainResponse(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
-    public ChainResponse(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param1, param2, support);
-	}
 	public ChainResponse(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

@@ -24,19 +24,9 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 	public MutualRelationConstraint() {
 		super();
 	}
-
-	public MutualRelationConstraint(TaskCharSet param1, TaskCharSet param2,
-			double support) {
-		super(param1, param2, support);
-	}
-
+	
 	public MutualRelationConstraint(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
-	}
-
-	public MutualRelationConstraint(TaskChar param1, TaskChar param2,
-			double support) {
-		super(param1, param2, support);
 	}
 
 	public MutualRelationConstraint(TaskChar param1, TaskChar param2) {
@@ -50,7 +40,7 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 
 	@Override
 	public RelationConstraintSubFamily getSubFamily() {
-	    return RelationConstraintSubFamily.COUPLING;
+	    return RelationConstraintSubFamily.MUTUAL;
 	}
 
 	@Override
@@ -80,21 +70,21 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 	}
 
 	public boolean isAsInformativeAsTheImplyingConstraints() {
-	    return	this.support >= forwardConstraint.getSupport() &&
-	            this.support >= backwardConstraint.getSupport();
+	    return	this.evtBasedMeasures.support >= forwardConstraint.getEventBasedMeasures().getSupport() &&
+	            this.evtBasedMeasures.support >= backwardConstraint.getEventBasedMeasures().getSupport();
 	}
 
 	public boolean isMoreInformativeThanAnyOfImplyingConstraints() {
-	    return	this.support >= forwardConstraint.getSupport() ||
-	            this.support >= backwardConstraint.getSupport();
+	    return	this.evtBasedMeasures.support >= forwardConstraint.getEventBasedMeasures().getSupport() ||
+	            this.evtBasedMeasures.support >= backwardConstraint.getEventBasedMeasures().getSupport();
 	}
 
 	public boolean isMoreInformativeThanForwardConstraint() {
-	    return	this.support >= forwardConstraint.getSupport();
+	    return	this.evtBasedMeasures.support >= forwardConstraint.getEventBasedMeasures().getSupport();
 	}
 
 	public boolean isMoreInformativeThanBackwardConstraints() {
-	    return	this.support >= backwardConstraint.getSupport();
+	    return	this.evtBasedMeasures.support >= backwardConstraint.getEventBasedMeasures().getSupport();
 	}
 
 	protected boolean ckeckConsistency(RelationConstraint forwardConstraint, RelationConstraint backwardConstraint) {

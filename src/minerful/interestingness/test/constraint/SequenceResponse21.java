@@ -1,4 +1,4 @@
-package minerful.relevance.test.constraint;
+package minerful.interestingness.test.constraint;
 
 import java.util.Set;
 import java.util.TreeSet;

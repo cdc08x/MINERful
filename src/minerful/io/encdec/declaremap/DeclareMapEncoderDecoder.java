@@ -32,7 +32,7 @@ import org.processmining.plugins.declareminer.visualizing.XMLBrokerFactory;
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.organic.JGraphOrganicLayout;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskCharFactory;
@@ -76,7 +76,7 @@ public class DeclareMapEncoderDecoder {
 	public static final String DECLARE_XML_TEMPLATE_LIBRARY_URL = "minerful/io/encdec/declaremap/";
 	public static final String DECLARE_XML_TEMPLATE = TEMPLATE_TMP_FILE_BASENAME + TEMPLATE_TEMP_FILE_EXTENSION;
 
-	public DeclareMapEncoderDecoder(ProcessModel process) {
+	public DeclareMapEncoderDecoder(ProcessSpecification process) {
 		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(process.bag.howManyConstraints());
 //		this.unmappedConstraintTOs = new ArrayList<DeclareConstraintTransferObject>();
 		this.taskCharArchive = process.getTaskCharArchive();
@@ -128,7 +128,7 @@ public class DeclareMapEncoderDecoder {
 		}		
 	}
 	
-	public ProcessModel createMinerFulProcessModel() {
+	public ProcessSpecification createMinerFulProcessModel() {
 		Collection<Constraint> minerFulConstraints = new ArrayList<Constraint>(this.constraintTOs.size());
 		TransferObjectToConstraintTranslator miFuConMak = new TransferObjectToConstraintTranslator(this.taskCharArchive);
 		Constraint tmpCon = null;
@@ -143,7 +143,7 @@ public class DeclareMapEncoderDecoder {
 		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(minerFulConstraints));
 		ConstraintsBag constraintsBag = new ConstraintsBag(this.taskCharArchive.getTaskChars(), minerFulConstraints);
 
-		return new ProcessModel(taskCharArchive, constraintsBag, this.processModelName);
+		return new ProcessSpecification(taskCharArchive, constraintsBag, this.processModelName);
 	}
 
 	public List<DeclareConstraintTransferObject> getConstraintTOs() {

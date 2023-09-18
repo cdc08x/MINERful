@@ -3,7 +3,7 @@ package minerful.examples.api.logmaking;
 import java.io.File;
 import java.io.IOException;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskCharSet;
@@ -58,7 +58,7 @@ public class FromCharactersProcessModelToLog {
 		bag.add(new End(e));
 
 		// Create the process model on the basis of the archive of tasks, and the constraints expressed thereupon
-		ProcessModel proMod = new ProcessModel(taChaAr, bag);
+		ProcessSpecification proMod = new ProcessSpecification(taChaAr, bag);
 		
 //////////////////////////////////////////////////////////////////
 //Creation of the log...

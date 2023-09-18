@@ -8,7 +8,7 @@ import minerful.index.comparator.modular.modules.ModConfidenceBasedComparator;
 import minerful.index.comparator.modular.modules.ModDefaultComparator;
 import minerful.index.comparator.modular.modules.ModFamilyBasedComparator;
 import minerful.index.comparator.modular.modules.ModHierarchyBasedComparator;
-import minerful.index.comparator.modular.modules.ModInterestFactorBasedComparator;
+import minerful.index.comparator.modular.modules.ModCoverageBasedComparator;
 import minerful.index.comparator.modular.modules.ModRandomComparator;
 import minerful.index.comparator.modular.modules.ModSupportBasedComparator;
 
@@ -61,8 +61,8 @@ public class ModularConstraintsComparatorFactory {
 			subCompa = new ModHierarchyBasedComparator(nextLevelComparator);
 			compa = new ModFamilyBasedComparator(subCompa);
 			break;
-		case SUPPORTCONFIDENCEINTERESTFACTOR:
-			subCompa = new ModInterestFactorBasedComparator(nextLevelComparator);
+		case SUPPORTCONFIDENCECOVERAGE:
+			subCompa = new ModCoverageBasedComparator(nextLevelComparator);
 			compa = new ModConfidenceBasedComparator(subCompa);
 			subCompa = compa;
 			compa = new ModSupportBasedComparator(subCompa);

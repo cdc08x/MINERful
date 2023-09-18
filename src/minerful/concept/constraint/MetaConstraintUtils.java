@@ -101,7 +101,7 @@ public class MetaConstraintUtils {
 				) {
 				con.setConstraintWhichThisIsBasedUpon(treeConSet.tailSet(constraintWhichThisShouldBeBasedUpon).first());
 			}
-			if (con.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
+			if (con.getSubFamily().equals(RelationConstraintSubFamily.MUTUAL)) {
 				MutualRelationConstraint coReCon = (MutualRelationConstraint) con;
 				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getPossibleForwardConstraint())) {
 					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getPossibleForwardConstraint()).first());
@@ -149,10 +149,9 @@ public class MetaConstraintUtils {
 		// Relation backwards
 		constraintTemplates.addAll(getAllDiscoverableBackwardRelationConstraintTemplates());
 		// Mutual relation
-		constraintTemplates.addAll(getAllDiscoverableMutualRelationConstraintTemplates());
+//		constraintTemplates.addAll(getAllDiscoverableMutualRelationConstraintTemplates());
 		// Negation relation
-		constraintTemplates.addAll(getAllDiscoverableNegativeRelationConstraintTemplates());
-
+		constraintTemplates.addAll(getAllDiscoverableForwardNegativeRelationConstraintTemplates());
 		
 		return constraintTemplates;
 	}
@@ -246,20 +245,27 @@ public class MetaConstraintUtils {
 
 	public static Collection<Class<? extends Constraint>> getAllNegativeRelationConstraintTemplates() {
 		// TODO Change it if new definitions of not yet discoverable templates are given
-		Collection<Class<? extends Constraint>> negativeConstraintTemplates = getAllDiscoverableNegativeRelationConstraintTemplates();
-		negativeConstraintTemplates.add(NotChainPrecedence.class);
-		negativeConstraintTemplates.add(NotChainResponse.class);
-		negativeConstraintTemplates.add(NotPrecedence.class);
-		negativeConstraintTemplates.add(NotRespondedExistence.class);
-		negativeConstraintTemplates.add(NotResponse.class);
-		return getAllDiscoverableNegativeRelationConstraintTemplates();
-	}
-	public static Collection<Class<? extends Constraint>> getAllDiscoverableNegativeRelationConstraintTemplates() {
-		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(3);
-		// Negation relation
+		Collection<Class<? extends Constraint>> constraintTemplates = getAllDiscoverableForwardNegativeRelationConstraintTemplates();
+		constraintTemplates.addAll(getAllDiscoverableBackwardNegativeRelationConstraintTemplates());
 		constraintTemplates.add(NotCoExistence.class);
 		constraintTemplates.add(NotChainSuccession.class);
 		constraintTemplates.add(NotSuccession.class);
+		return constraintTemplates;
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableForwardNegativeRelationConstraintTemplates() {
+		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(5);
+		// Negation relation
+		constraintTemplates.add(NotChainResponse.class);
+		constraintTemplates.add(NotRespondedExistence.class);
+		constraintTemplates.add(NotResponse.class);
+		
+		return constraintTemplates;
+	}
+	public static Collection<Class<? extends Constraint>> getAllDiscoverableBackwardNegativeRelationConstraintTemplates() {
+		ArrayList<Class<? extends Constraint>> constraintTemplates = new ArrayList<Class<? extends Constraint>>(5);
+		// Negation relation
+		constraintTemplates.add(NotChainPrecedence.class);
+		constraintTemplates.add(NotPrecedence.class);
 		
 		return constraintTemplates;
 	}
@@ -358,7 +364,7 @@ public class MetaConstraintUtils {
 		
 		return con;
 	}
-	/* The second coolest method I ever coded! */
+	/* The third coolest method I ever coded! */
 	public static Constraint makeRelationConstraint(Class<? extends Constraint> template, TaskCharSet param1, TaskCharSet param2) {
 		Constraint con = null;
 		Constructor<? extends Constraint> constructor = null;
@@ -372,7 +378,7 @@ public class MetaConstraintUtils {
 		
 		return con;
 	}
-	/* The second coolest method I ever coded! */
+	/* The fourth coolest method I ever coded! */
 	public static Constraint makeExistenceConstraint(Class<? extends Constraint> template, TaskCharSet param) {
 		Constraint con = null;
 		Constructor<? extends Constraint> constructor = null;
@@ -390,28 +396,42 @@ public class MetaConstraintUtils {
 	public static Collection<Constraint> getAllDiscoverableRelationConstraints(TaskChar base, TaskChar implied) {
 		Collection<Constraint> relCons = new ArrayList<Constraint>();
 		Constructor<? extends Constraint> tmpConstructor = null;
+		Constraint newCon = null;
 
 		try {
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableForwardRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
-						TaskChar.class, TaskChar.class, Double.TYPE);
-				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
+						TaskChar.class, TaskChar.class);
+				newCon = tmpConstructor.newInstance(base, implied);
+				newCon.getEventBasedMeasures().setSupport(0.0);
+				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
-						TaskChar.class, TaskChar.class, Double.TYPE);
-				relCons.add(tmpConstructor.newInstance(implied, base, 0.0));
+						TaskChar.class, TaskChar.class);
+				newCon = tmpConstructor.newInstance(implied, base);
+				newCon.getEventBasedMeasures().setSupport(0.0);
+				relCons.add(newCon);
 			}
-			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableNegativeRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableForwardNegativeRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
-						TaskChar.class, TaskChar.class, Double.TYPE);
-				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
+						TaskChar.class, TaskChar.class);
+				newCon = tmpConstructor.newInstance(base, implied);
+				newCon.getEventBasedMeasures().setSupport(0.0);
+				relCons.add(newCon);
 			}
-			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualRelationConstraintTemplates()) {
+			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardNegativeRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
-						TaskChar.class, TaskChar.class, Double.TYPE);
-				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
+						TaskChar.class, TaskChar.class);
+				newCon = tmpConstructor.newInstance(implied, base);
+				newCon.getEventBasedMeasures().setSupport(0.0);
+				relCons.add(newCon);
 			}
+//			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualRelationConstraintTemplates()) {
+//				tmpConstructor = relationConstraintTypeClass.getConstructor(
+//						TaskChar.class, TaskChar.class, Double.TYPE);
+//				relCons.add(tmpConstructor.newInstance(base, implied, 0.0));
+//			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -425,21 +445,22 @@ public class MetaConstraintUtils {
 		// TODO Change it if new definitions of not yet discoverable templates are given
 		return getAllDiscoverableExistenceConstraints(base);
 	}
-	/* The third coolest method I ever coded! */
+	/* The fifth coolest method I ever coded! */
 	public static Collection<Constraint> getAllDiscoverableExistenceConstraints(TaskChar base) {
 		Collection<Constraint> exiCons = new ArrayList<Constraint>();
 
 		Collection<Class<? extends Constraint>> existenceConstraintTypeClasses = ALL_DISCOVERABLE_EXISTENCE_CONSTRAINT_TEMPLATES;
 		Constructor<? extends Constraint> tmpConstructor = null;
+		Constraint newCon = null;
 		
 		for (Class<? extends Constraint> existenceConstraintTypeClass : existenceConstraintTypeClasses) {
 			if (!Modifier.isAbstract(existenceConstraintTypeClass.getModifiers())) {
 				try {
 					tmpConstructor = existenceConstraintTypeClass
-							.getConstructor(TaskChar.class, Double.TYPE);
-					exiCons.add(
-							tmpConstructor
-							.newInstance(base, 0.0));
+							.getConstructor(TaskChar.class);
+					newCon = tmpConstructor.newInstance(base);
+					newCon.getEventBasedMeasures().setSupport(0.0);
+					exiCons.add(newCon);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

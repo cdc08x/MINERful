@@ -26,15 +26,9 @@ public class NotRespondedExistence extends NotSuccession {
 		super();
 	}
 
-    public NotRespondedExistence(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
     public NotRespondedExistence(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public NotRespondedExistence(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param1, param2, support);
-	}
 	public NotRespondedExistence(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

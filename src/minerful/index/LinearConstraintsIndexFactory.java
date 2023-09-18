@@ -18,10 +18,10 @@ import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.index.comparator.allinone.HierarchyBasedComparator;
-import minerful.index.comparator.allinone.InterestConfidenceBasedComparator;
+import minerful.index.comparator.allinone.CoverageConfidenceBasedComparator;
 import minerful.index.comparator.allinone.SupportBasedComparator;
-import minerful.index.comparator.allinone.SupportConfidenceInterestFactorBasedComparator;
-import minerful.index.comparator.allinone.SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator;
+import minerful.index.comparator.allinone.SupportConfidenceCoverageBasedComparator;
+import minerful.index.comparator.allinone.SupportFamilyConfidenceCoverageHierarchyLevelBasedComparator;
 
 public class LinearConstraintsIndexFactory {
 	public static ConstraintsBag createConstraintsBagCloneIndexedByTaskCharAndSupport(ConstraintsBag bag) {
@@ -52,7 +52,7 @@ public class LinearConstraintsIndexFactory {
 		ConstraintsBag bagCopy = (ConstraintsBag) bag.clone();
 		TreeSet<Constraint> reindexed = null;
 		for (TaskChar key : bagCopy.getTaskChars()) {
-			reindexed = new TreeSet<Constraint>(new InterestConfidenceBasedComparator());
+			reindexed = new TreeSet<Constraint>(new CoverageConfidenceBasedComparator());
 			reindexed.addAll(bagCopy.getConstraintsOf(key));
 			bagCopy.eraseConstraintsOf(key);
 		}
@@ -128,21 +128,21 @@ public class LinearConstraintsIndexFactory {
 		return map;
 	}
 
-	public static Collection<Constraint> getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(
+	public static Collection<Constraint> getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(
 			ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag, true);
 		
-		return getAllConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
+		return getAllConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
 	}
 	
-	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
+	public static Collection<Constraint> getAllConstraintsSortedByBoundsSupportFamilyConfidenceCoverageHierarchyLevel(ConstraintsBag bag) {
 		Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied =
 				LinearConstraintsIndexFactory.indexByImplyingAndImplied(bag, false);
-		return getAllConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
+		return getAllConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(mapOfConstraintsIndexedByImplyingAndImplied);
 	}
 
-	private static Collection<Constraint> getAllConstraintsSortedByBondsSupportFamilyConfidenceInterestFactorHierarchyLevel(Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied) {
+	private static Collection<Constraint> getAllConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(Map<TaskChar, Map<TaskChar, NavigableSet<Constraint>>> mapOfConstraintsIndexedByImplyingAndImplied) {
 		List<TaskChar> taskCharsSortedByNumberOfConnections =
 				getTaskCharsSortedByNumberOfConnections(createMapOfConnections(mapOfConstraintsIndexedByImplyingAndImplied));
 		Collection<Constraint> constraints = new ArrayList<Constraint>();
@@ -161,7 +161,7 @@ public class LinearConstraintsIndexFactory {
 			// For every target activity
 			for (TaskChar tChRev : taskCharsReverse) {
 				if (subMap.containsKey(tChRev) && subMap.get(tChRev) != null && subMap.get(tChRev).size() > 0) {
-					tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
+					tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceCoverageHierarchyLevelBasedComparator());
 					tmpReorderingSet.addAll(subMap.get(tChRev));
 					constraints.addAll(tmpReorderingSet);
 					subMap.put(tChRev, null);
@@ -169,7 +169,7 @@ public class LinearConstraintsIndexFactory {
 				if (mapOfConstraintsIndexedByImplyingAndImplied.containsKey(tChRev)) {
 					subMapReverse = mapOfConstraintsIndexedByImplyingAndImplied.get(tChRev);
 					if (subMapReverse.containsKey(tCh) && subMapReverse.get(tCh) != null && subMapReverse.get(tCh).size() > 0) {
-						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
+						tmpReorderingSet = new TreeSet<Constraint>(new SupportFamilyConfidenceCoverageHierarchyLevelBasedComparator());
 						tmpReorderingSet.addAll(subMapReverse.get(tCh));
 						constraints.addAll(tmpReorderingSet);
 						subMapReverse.put(tCh, null);
@@ -248,8 +248,8 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedBySupportConfidenceInterestFactor(ConstraintsBag bag) {
-		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportConfidenceInterestFactorBasedComparator());
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportConfidenceCoverage(ConstraintsBag bag) {
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportConfidenceCoverageBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);
@@ -258,8 +258,8 @@ public class LinearConstraintsIndexFactory {
 		return allConstraints;
 	}
 	
-	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceInterestFactorHierarchyLevel(ConstraintsBag bag) {
-		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportFamilyConfidenceInterestFactorHierarchyLevelBasedComparator());
+	public static SortedSet<Constraint> getAllConstraintsSortedBySupportFamilyConfidenceCoverageHierarchyLevel(ConstraintsBag bag) {
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new SupportFamilyConfidenceCoverageHierarchyLevelBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);
@@ -269,7 +269,7 @@ public class LinearConstraintsIndexFactory {
 	}
 	
 	public static SortedSet<Constraint> getAllConstraintsSortedByInterest(ConstraintsBag bag) {
-		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new InterestConfidenceBasedComparator());
+		SortedSet<Constraint> allConstraints = new TreeSet<Constraint>(new CoverageConfidenceBasedComparator());
 		for (TaskChar tChr : bag.getTaskChars()) {
 			for (Constraint con : bag.getConstraintsOf(tChr)) {
 				allConstraints.add(con);

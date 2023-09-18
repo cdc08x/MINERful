@@ -97,7 +97,7 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
             }
         }
         for (Constraint con : auxCons) {
-        	RelationConstraint relCon = (RelationConstraint)con;// come on, I know it can only be a Relation Constraint!
+        	RelationConstraint relCon = (RelationConstraint)con;  // come on, I know it can only be a Relation Constraint!
         	if (relCon.isActivationBranched())
         		constraintsBag.add(relCon.getImplied(), relCon);
         	else
@@ -418,16 +418,14 @@ public class ProbabilisticRelationBranchedConstraintsMiner extends RelationConst
 		discoveredConstraints.addAll(outPruner.nonRedundantConstraints());
 		discoveredConstraints.addAll(inPruner.nonRedundantConstraints());
 		
-		double participationFraction = super.computeParticipationFraction(taskChUnderAnalysis, tChUnderAnalysisLocalStats, globalStats.logSize);
+		double participationFraction = tChUnderAnalysisLocalStats.getTotalAmountOfTracesWithOccurrence(); // super.computeParticipationFraction(taskChUnderAnalysis, tChUnderAnalysisLocalStats, globalStats.logSize);
 		discoveredConstraints = refineByComputingConfidenceLevel(discoveredConstraints, participationFraction);
 		
 		return discoveredConstraints;
 	}
     
     public Set<Constraint> refineByComputingConfidenceLevel(Set<Constraint> discoveredConstraints, double participationFraction) {
-		for (Constraint relCon : discoveredConstraints) {
-			relCon.setConfidence(relCon.getSupport() * participationFraction);
-		}
+		// FIXME To be revised
 		return discoveredConstraints;
     }
 

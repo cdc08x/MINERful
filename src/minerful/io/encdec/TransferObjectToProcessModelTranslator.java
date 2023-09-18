@@ -3,7 +3,7 @@ package minerful.io.encdec;
 import java.util.Set;
 import java.util.TreeSet;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskCharFactory;
@@ -18,7 +18,7 @@ public class TransferObjectToProcessModelTranslator {
 	 * @param alphabet encoding-mapping
 	 * @return
 	 */
-	public ProcessModel createProcessModel(ProcessModelTransferObject proModTO, TaskCharArchive alphabet) {
+	public ProcessSpecification createProcessModel(ProcessModelTransferObject proModTO, TaskCharArchive alphabet) {
 		TaskCharEncoderDecoder alphabetEncoder= new TaskCharEncoderDecoder();
 		alphabetEncoder.encode(alphabet.getTaskChars());
 		/* Create/update the TaskCharArchive */
@@ -37,10 +37,10 @@ public class TransferObjectToProcessModelTranslator {
 			bag.add(conTranslator.createConstraint(conTO));
 		}
 
-		return new ProcessModel(taskCharArchive, bag, proModTO.name);
+		return new ProcessSpecification(taskCharArchive, bag, proModTO.name);
 	}
 
-	public ProcessModel createProcessModel(ProcessModelTransferObject proModTO) {
+	public ProcessSpecification createProcessModel(ProcessModelTransferObject proModTO) {
 		/* Create/update the TaskCharArchive */
 		TaskCharFactory taskCharFactory = new TaskCharFactory();
 		Set<TaskChar> taskChars = new TreeSet<TaskChar>();
@@ -57,6 +57,6 @@ public class TransferObjectToProcessModelTranslator {
 			bag.add(conTranslator.createConstraint(conTO));
 		}
 		
-		return new ProcessModel(taskCharArchive, bag, proModTO.name);
+		return new ProcessSpecification(taskCharArchive, bag, proModTO.name);
 	}
 }

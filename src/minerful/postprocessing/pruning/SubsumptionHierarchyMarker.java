@@ -90,7 +90,7 @@ public class SubsumptionHierarchyMarker {
 		                    }
 		                }
             		}
-	                if (currCon.getSubFamily() == RelationConstraintSubFamily.COUPLING) {
+	                if (currCon.getSubFamily() == RelationConstraintSubFamily.MUTUAL) {
 	                	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_SUPPORT)) {
 	                		this.markAsRedundant(coExiCon.getForwardConstraint());
 	                		this.markAsRedundant(coExiCon.getBackwardConstraint());
@@ -131,7 +131,7 @@ public class SubsumptionHierarchyMarker {
 	                        if (noRelCon.isMoreReliableThanTheOpponent()) {
 	                        	logger.trace("Removing {0}" +
 	                        			" because {1} is the opponent of {0}" +
-	                        			" but less supported",
+	                        			" but less informative",
 	                        			noRelCon.getOpponent(),
 	                        			noRelCon);
 //	                            constraintsBag.remove(key, noRelCon.getOpponent());
@@ -139,7 +139,7 @@ public class SubsumptionHierarchyMarker {
 	                        } else {
 	                        	logger.trace("Removing {0}" +
 	                        			" because {0} is the opponent of {1}" +
-	                        			" but less supported",
+	                        			" but less informative",
 	                        			noRelCon,
 	                        			noRelCon.getOpponent());
 //	                            constraintsBag.remove(key, noRelCon);

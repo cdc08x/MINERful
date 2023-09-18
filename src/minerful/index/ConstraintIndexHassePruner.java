@@ -3,14 +3,14 @@ package minerful.index;
 import java.util.Set;
 import java.util.TreeSet;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.MetaConstraintUtils;
 
 import org.apache.log4j.Logger;
 
 public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
-	private static Logger logger = Logger.getLogger(ProcessModel.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(ProcessSpecification.class.getCanonicalName());
 	
 	private final boolean forOutBranching;
 	
@@ -168,14 +168,14 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 			for (ConstraintIndexHasseNode parentOrUncle : nodeUnderAnalysis.getParentAndUncles()) {
 				if (!parentOrUncle.equals(this.hasseDiagram.root)) {
 					parentOrUncleConstraint = parentOrUncle.constraints.get(conClass);
-					if (currentConstraint.getSupport() > parentOrUncleConstraint.getSupport()) {
-						logger.trace(currentConstraint + " has a support, " + currentConstraint.getSupport() + ", which is higher than his parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.getSupport() + " -> labeling " + parentOrUncleConstraint + " and its ancestors as redundant");
+					if (currentConstraint.getEventBasedMeasures().getSupport() > parentOrUncleConstraint.getEventBasedMeasures().getSupport()) {
+						logger.trace(currentConstraint + " has a support, " + currentConstraint.getEventBasedMeasures().getSupport() + ", which is higher than its parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.getEventBasedMeasures().getSupport() + " -> labeling " + parentOrUncleConstraint + " and its ancestors as redundant");
 						if (!parentOrUncleConstraint.isRedundant()) {
 							parentOrUncleConstraint.setRedundant(true);
 							propagateRedundancyLabel(parentOrUncle, conClass, explorationDirection);
 						}
 					} else {
-						logger.trace(currentConstraint + " has a support, " + currentConstraint.getSupport() + ", which is equal to or lower than his parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.getSupport() + " -> labeling this as redundant");
+						logger.trace(currentConstraint + " has a support, " + currentConstraint.getEventBasedMeasures().getSupport() + ", which is equal to or lower than its parent/uncle " + parentOrUncleConstraint + "'s one, " + parentOrUncleConstraint.getEventBasedMeasures().getSupport() + " -> labeling this as redundant");
 						currentConstraint.setRedundant(true);
 						if (!parentOrUncleConstraint.isRedundant()) {
 							labelRedundancyWrtSetContainment(
@@ -188,14 +188,17 @@ public class ConstraintIndexHassePruner extends ConstraintIndexHasseManager {
 				}
 			}
 			return;
-		case DOWN:
+		case DOWN: // watch out: when navigating down, the Hasse diagram has supersets as children (unlike the up-navigation case)
 			for (ConstraintIndexHasseNode child : nodeUnderAnalysis.children.values()) {
 				for (ConstraintIndexHasseNode childParentOrUncle : child.getParentAndUncles()) {
 					childConstraint = child.constraints.get(conClass);
 					parentOrUncleConstraint = childParentOrUncle.constraints.get(conClass);
-					if (parentOrUncleConstraint.getSupport() > childConstraint.getSupport()) {
-						logger.trace(parentOrUncleConstraint + " has a support, " + parentOrUncleConstraint.getSupport() + ", which is higher than his child " + childConstraint + "'s one, " + childConstraint.getSupport() + " -> labeling " + childConstraint + " as redundant");
+					if (parentOrUncleConstraint.getEventBasedMeasures().getSupport() > childConstraint.getEventBasedMeasures().getSupport()) {
+						logger.trace(parentOrUncleConstraint + " has a support, " + parentOrUncleConstraint.getEventBasedMeasures().getSupport() + ", which is higher than its child " + childConstraint + "'s one, " + childConstraint.getEventBasedMeasures().getSupport() + " -> labeling " + childConstraint + " as redundant");
 						childConstraint.setRedundant(true);
+					} else {
+						logger.trace(parentOrUncleConstraint + " has a support, " + parentOrUncleConstraint.getEventBasedMeasures().getSupport() + ", which is equal to or lower than its child " + childConstraint + "'s one, " + childConstraint.getEventBasedMeasures().getSupport() + " -> labeling " + parentOrUncleConstraint + " as redundant");
+						parentOrUncleConstraint.setRedundant(true);
 					}
 				}
 				if (childConstraint.isRedundant()) {

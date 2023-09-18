@@ -4,7 +4,7 @@
  */
 package minerful;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.params.InputModelParameters;
 import minerful.io.params.OutputModelParameters;
 import minerful.params.SystemCmdParameters;
@@ -86,7 +86,7 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
         
         MinerFulSimplificationLauncher miFuSimpLa = new MinerFulSimplificationLauncher(inputParams, postParams, systemParams);
         
-        ProcessModel outputProcess = miFuSimpLa.simplify();
+        ProcessSpecification outputProcess = miFuSimpLa.simplify();
 
         new MinerFulOutputManagementLauncher().manageOutput(outputProcess, viewParams, outParams, systemParams);
     }

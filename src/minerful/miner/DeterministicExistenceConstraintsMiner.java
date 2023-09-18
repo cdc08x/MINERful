@@ -58,7 +58,7 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	protected Constraint discoverInitConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
 	    Constraint init = null;
 	    if (!(localStats.repetitions.containsKey(0) && localStats.repetitions.get(0) > 0)) {
-	        if (localStats.getAppearancesAsFirst() >= this.globalStats.logSize) {
+	        if (localStats.getOccurrencesAsFirst() >= this.globalStats.logSize) {
 	            return new Init(base);
 	        }
 	    }
@@ -69,7 +69,7 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	protected Constraint discoverEndConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
 	    Constraint end = null;
 	    if (!(localStats.repetitions.containsKey(0) && localStats.repetitions.get(0) > 0)) {
-	        if (localStats.getAppearancesAsLast() >= this.globalStats.logSize) {
+	        if (localStats.getOccurrencesAsLast() >= this.globalStats.logSize) {
 	            return new End(base);
 	        }
 	    }

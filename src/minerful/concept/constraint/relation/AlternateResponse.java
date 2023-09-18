@@ -29,13 +29,6 @@ public class AlternateResponse extends Response {
     public AlternateResponse(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public AlternateResponse(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
-    public AlternateResponse(TaskCharSet param1, TaskCharSet param2,
-			double support) {
-		super(param1, param2, support);
-	}
 	public AlternateResponse(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

@@ -41,16 +41,16 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 	
 		for (TaskChar searched : comboToAnalyze.getTaskCharsArray()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
-			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).betweenBackwards;
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverOccurredBackwards();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).inBetweenRepsBackwards;
 			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 
 		support = 1.0 - (double) negativeOccurrences / (double) denominator;
 		nuConstraint = new AlternatePrecedence(
 				new TaskCharSet(pivotTaskCh),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 	
 		return nuConstraint;
 	}
@@ -88,8 +88,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		support = 1.0 - (double)negativeOccurrences  / (double)pivotAppearances;
 		nuConstraint = new AlternateResponse(
 				new TaskCharSet(pivotTaskCh),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 	
 		return nuConstraint;
 	}
@@ -124,16 +124,16 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		denominator += pivotAppearances;
 		for (TaskChar searched : comboToAnalyze.getTaskCharsArray()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
-			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).betweenBackwards;
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverOccurredBackwards();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).inBetweenRepsBackwards;
 			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		support = 1.0 - (double) negativeOccurrences / (double) denominator;
 		nuConstraint = new AlternateSuccession(
 				new TaskCharSet(pivotTaskCh),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 	
 		return nuConstraint;
 	}
@@ -161,8 +161,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		
 		nuConstraint = new ChainPrecedence(
 				new TaskCharSet(pivotTaskCh),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 		return nuConstraint;
 	}
 
@@ -187,8 +187,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		support = (double) positiveOccurrences / (double) pivotAppearances;
 		nuConstraint = new ChainResponse(
 				new TaskCharSet(pivotTaskCh),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 	
 		return nuConstraint;
 	}
@@ -224,8 +224,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			
 			nuConstraint = new ChainSuccession(
 					new TaskCharSet(pivotTaskCh),
-					comboToAnalyze,
-					support);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 	/*
 			nuConstraint = new NotChainSuccession(
 					new TaskCharSet(pivotTaskCh),
@@ -258,15 +258,15 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			denominator += pivotAppearances;
 			for (TaskChar searched : comboToAnalyze.getTaskCharsArray()) {
 				searchedStatsWrapper = globalStats.statsTable.get(searched);
-				negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedAtAll();
+				negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverOccurredAtAll();
 				denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 			}
 			
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new CoExistence(
 					new TaskCharSet(pivotTaskCh),
-					comboToAnalyze,
-					support);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 	/*		
 			nuConstraint = new NotCoExistence(
 					new TaskCharSet(pivotTaskCh),
@@ -290,15 +290,15 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		
 		for (TaskChar searched : comboToAnalyze.getTaskCharsArray()) {
 			searchedStatsWrapper = globalStats.statsTable.get(searched);
-			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
+			negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverOccurredBackwards();
 			denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 		}
 		
 		support = 1.0 - (double) negativeOccurrences / (double) denominator;
 		nuConstraint = new Precedence(
 				new TaskCharSet(pivotTaskCh),
-				comboToAnalyze,
-				support);
+				comboToAnalyze);
+		nuConstraint.getEventBasedMeasures().setSupport(support);
 	
 		return nuConstraint;
 	}
@@ -323,8 +323,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		if (neverAppearedCharSets.size() == 0) {
 			nuConstraint = new RespondedExistence(
 					new TaskCharSet(pivotTaskCh),
-					comboToAnalyze,
-					1.0);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(1.0);
 		} else {
 			for (TasksSetCounter neverAppearedCharSet : neverAppearedCharSets) {
 				negativeOccurrences += neverAppearedCharSet.getCounter();
@@ -332,8 +332,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			support = 1.0 - (double)negativeOccurrences / (double)pivotAppearances;
 			nuConstraint = new RespondedExistence(
 					new TaskCharSet(pivotTaskCh),
-					comboToAnalyze,
-					support);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 		}
 	
 		
@@ -361,16 +361,16 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 		if (neverAppearedCharSets.size() == 0) {
 			nuConstraint = new Response(
 					new TaskCharSet(pivotTaskCh),
-					comboToAnalyze,
-					1.0);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(1.0);
 		} else {
 			for (TasksSetCounter neverAppearedAfterCharSet : neverAppearedCharSets) {
 				negativeOccurrences += neverAppearedAfterCharSet.getCounter();
 				support = 1.0 - (double)negativeOccurrences / (double)pivotAppearances;
 				nuConstraint = new Response(
 						new TaskCharSet(pivotTaskCh),
-						comboToAnalyze,
-						support);
+						comboToAnalyze);
+				nuConstraint.getEventBasedMeasures().setSupport(support);
 			}
 		}
 		
@@ -400,7 +400,7 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			denominator += pivotAppearances;
 			for (TaskChar searched : comboToAnalyze.getTaskCharsArray()) {
 				searchedStatsWrapper = globalStats.statsTable.get(searched);
-				negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverAppearedBackwards();
+				negativeOccurrences += searchedStatsWrapper.interplayStatsTable.get(pivotTaskCh.identifier).howManyTimesItNeverOccurredBackwards();
 //				negativeOccurrences += searchedStatsWrapper.localStatsTable.get(pivot).betweenBackwards;
 				denominator += searchedStatsWrapper.getTotalAmountOfOccurrences();
 			}
@@ -408,8 +408,8 @@ public class ProbabilisticRelationOutBranchedConstraintsMiningEngine {
 			support = 1.0 - (double) negativeOccurrences / (double) denominator;
 			nuConstraint = new Succession(
 					new TaskCharSet(pivotTaskCh),
-					comboToAnalyze,
-					support);
+					comboToAnalyze);
+			nuConstraint.getEventBasedMeasures().setSupport(support);
 	/*
 				nuConstraint = new NotSuccession(
 						new TaskCharSet(pivotTaskCh),

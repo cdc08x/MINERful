@@ -69,9 +69,9 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 			TaskChar tCh = this.archive.getTaskCharByEvent(event);
 			
 			if (tCh.equals(this.baseTask)) {
-				for (TaskChar nevMoreAppTCh: this.neverMoreAppearancesAtThisStep.keySet()) {
-					this.neverMoreAppearancesAtThisStep.put(nevMoreAppTCh,
-							this.neverMoreAppearancesAtThisStep.get(nevMoreAppTCh) + 1
+				for (TaskChar nevMoreAppTCh: this.neverMoreCooccurrencesAtThisStep.keySet()) {
+					this.neverMoreCooccurrencesAtThisStep.put(nevMoreAppTCh,
+							this.neverMoreCooccurrencesAtThisStep.get(nevMoreAppTCh) + 1
 					);
 				}
 				/* if this is the first occurrence in the step, record it */
@@ -110,7 +110,7 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 			/* if the appeared character is NOT equal to this */
 			else {
 				/* store the info that chr appears after the pivot */
-				this.neverMoreAppearancesAtThisStep.put(tCh, 0);
+				this.neverMoreCooccurrencesAtThisStep.put(tCh, 0);
 				this.missingAtThisStepBeforeNextRepetition.put(tCh, 0);
 			}
 	
@@ -159,13 +159,13 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 	}
 
 	@Override
-	protected void setAsNeverAppeared(Set<TaskChar> neverAppearedStuff) {
+	protected void setAsNeverCooccurred(Set<TaskChar> neverAppearedStuff) {
 		if (neverAppearedStuff.size() < 1) {
 			return;
 		}
 		// Step 1: each character in neverAppearedStuff must be recorded as never appearing in the current string 
 		for (TaskChar neverAppearedChr : neverAppearedStuff) {
-			super.setAsNeverAppeared(neverAppearedChr);
+			super.setAsNeverCooccurred(neverAppearedChr);
 		}
 		// Step 2: the whole set of characters has to be recorded at once
 		// Step 2 is needed because Step 1 loses the information that all of the char's are not read at once all together in a string
@@ -183,19 +183,19 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 	}
 	 
 	@Override
-	protected void recordCharactersThatNeverAppearedAnymoreInStep(boolean onwards) {
+	protected void recordTasksThatDidntCooccurAnymoreInStep(boolean onwards) {
 		// Step 1: aggregate this.neverMoreAppearancesInStep and record
 		if (onwards) {
 			this.neverMoreAppearedAfterCharacterSets.merge(
-					FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreAppearancesAtThisStep)
+					FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreCooccurrencesAtThisStep)
 			);
 		} else {
 			this.neverMoreAppearedBeforeCharacterSets.merge(
-					FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreAppearancesAtThisStep)
+					FixedTaskSetIncrementalCountersCollection.fromNumberedSingletons(neverMoreCooccurrencesAtThisStep)
 			);
 		}
 		// Step 2: update singletons
-		super.recordCharactersThatNeverAppearedAnymoreInStep(onwards);
+		super.recordTasksThatDidntCooccurAnymoreInStep(onwards);
 	}
 
 	@Override

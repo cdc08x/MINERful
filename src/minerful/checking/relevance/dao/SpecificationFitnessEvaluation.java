@@ -3,12 +3,12 @@ package minerful.checking.relevance.dao;
 import minerful.concept.constraint.Constraint;
 import minerful.utils.MessagePrinter;
 
-public class ModelFitnessEvaluation {
+public class SpecificationFitnessEvaluation {
 	public static final String CSV_POST_HEADER = ";Avg-fitness;Trace-fit-ratio";
 	public final ConstraintsFitnessEvaluationsMap evaloMap;
 	public final String name;
 	
-	public ModelFitnessEvaluation(ConstraintsFitnessEvaluationsMap evaloMap, String name) {
+	public SpecificationFitnessEvaluation(ConstraintsFitnessEvaluationsMap evaloMap, String name) {
 		this.evaloMap = evaloMap;
 		this.name = name;
 	}
@@ -17,7 +17,7 @@ public class ModelFitnessEvaluation {
 		Double avgFitness = 0.0;
 		int denominator = 0;
 		for (Constraint cns : evaloMap.evaluationsOnLog.keySet()) {
-			avgFitness += cns.getFitness();
+			avgFitness += cns.getEventBasedMeasures().getFitness();
 			denominator++;
 		}
 		return avgFitness / denominator;

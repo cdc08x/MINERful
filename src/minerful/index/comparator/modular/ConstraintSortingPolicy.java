@@ -7,8 +7,8 @@ import minerful.index.SortingPolicy;
  * @author Claudio Di Ciccio
  */
 public enum ConstraintSortingPolicy implements SortingPolicy {
-	/** Support, confidence level, and interest factor, in descending order */
-	SUPPORTCONFIDENCEINTERESTFACTOR,
+	/** Support, confidence level, and coverage, in descending order */
+	SUPPORTCONFIDENCECOVERAGE,
 	/** Family (existence constraints first, then relation constraints, ...), and then position in the subsumption hierarchy (e.g., ChainPrecedence first, then AlternatePrecedence) */
 	FAMILYHIERARCHY,
 	/** Descending number of connected tasks by means of relation constraints */

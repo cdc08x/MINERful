@@ -27,15 +27,9 @@ public class Choice extends MutualRelationConstraint {
 		super();
 	}
 
-    public Choice(TaskChar param1, TaskChar param2, double support) {
-        super(param1, param2, support);
-    }
-    public Choice(TaskChar param1, TaskChar param2) {
+	public Choice(TaskChar param1, TaskChar param2) {
         super(param1, param2);
     }
-    public Choice(TaskCharSet param1, TaskCharSet param2, double support) {
-		super(param1, param2, support);
-	}
 	public Choice(TaskCharSet param1, TaskCharSet param2) {
 		super(param1, param2);
 	}

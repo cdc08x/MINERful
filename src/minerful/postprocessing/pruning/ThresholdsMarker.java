@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintMeasuresManager;
 import minerful.concept.constraint.ConstraintsBag;
 
 public class ThresholdsMarker {
@@ -31,19 +32,44 @@ public class ThresholdsMarker {
 		this.constraintsBag = constraintsBag;
 	}
 
-	public ConstraintsBag markConstraintsBelowSupportThreshold(double supportThreshold) {
-	    return markConstraintsBelowThresholds(supportThreshold, Constraint.DEFAULT_CONFIDENCE, Constraint.DEFAULT_INTEREST_FACTOR);
-	}
-
-	public ConstraintsBag markConstraintsBelowThresholds(double supportThreshold, double confidence, double interest) {
+	public ConstraintsBag markConstraintsBelowThresholds(double evtSupportTh, double evtConfidenceTh, double evtCoverageTh) {
+		ConstraintMeasuresManager conMes = null;
         for (TaskChar key : constraintsBag.getTaskChars()) {
             for (Constraint con : constraintsBag.getConstraintsOf(key)) {
-            	con.setBelowSupportThreshold(!con.hasSufficientSupport(supportThreshold));
-            	con.setBelowConfidenceThreshold(!con.hasSufficientConfidence(confidence));
-            	con.setBelowInterestFactorThreshold(!con.hasSufficientInterestFactor(interest));
-            	if (con.isBelowSupportThreshold() || con.isBelowConfidenceThreshold() || con.isBelowInterestFactorThreshold()) {
+            	conMes = con.getEventBasedMeasures();
+            	conMes.setBelowSupportThreshold(!conMes.hasSufficientSupport(evtSupportTh));
+            	conMes.setBelowConfidenceThreshold(!conMes.hasSufficientConfidence(evtConfidenceTh));
+            	conMes.setBelowCoverageThreshold(!conMes.hasSufficientCoverage(evtCoverageTh));
+            	if (conMes.isBelowSupportThreshold() || conMes.isBelowConfidenceThreshold() || conMes.isBelowCoverageThreshold()) {
             		this.numberOfMarkedConstraints++;
             	}
+            }
+        }
+
+        return constraintsBag;
+    }
+
+	public ConstraintsBag markConstraintsBelowThresholds(
+			double evtSupportTh, double evtConfidenceTh, double evtCoverageTh,
+			double trcSupportTh, double trcConfidenceTh, double trcCoverageTh) {
+		ConstraintMeasuresManager[] conMess = new ConstraintMeasuresManager[2];
+		boolean markedAsBelowThreshold = false;
+        for (TaskChar key : constraintsBag.getTaskChars()) {
+            for (Constraint con : constraintsBag.getConstraintsOf(key)) {
+            	conMess[0] = con.getEventBasedMeasures();
+            	conMess[1] = con.getTraceBasedMeasures();
+            	for (ConstraintMeasuresManager conMes: conMess) {
+	            	conMes.setBelowSupportThreshold(!conMes.hasSufficientSupport(evtSupportTh));
+	            	conMes.setBelowConfidenceThreshold(!conMes.hasSufficientConfidence(evtConfidenceTh));
+	            	conMes.setBelowCoverageThreshold(!conMes.hasSufficientCoverage(evtCoverageTh));
+	            	if (conMes.isBelowSupportThreshold() || conMes.isBelowConfidenceThreshold() || conMes.isBelowCoverageThreshold()) {
+	            		markedAsBelowThreshold = true;
+	            	}
+            	}
+	            if (markedAsBelowThreshold) {
+            		this.numberOfMarkedConstraints++;
+	            }
+	            markedAsBelowThreshold = false;
             }
         }
 

@@ -1,6 +1,6 @@
 package minerful;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.params.OutputModelParameters;
 import minerful.logmaker.errorinjector.params.ErrorInjectorCmdParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
@@ -110,7 +110,7 @@ public class MinerFulErrorInjectedSimuStarter extends MinerFulSimuStarter {
 			LogParser stringLogParser = new StringLogParser(testBedArray, ClassificationType.NAME);
 
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-	        ProcessModel processModel = new MinerFulMinerStarter().mine(stringLogParser, minerFulParams, postParams, tracesMakParams.alphabet);
+	        ProcessSpecification processModel = new MinerFulMinerStarter().mine(stringLogParser, minerFulParams, postParams, tracesMakParams.alphabet);
 
 	        MinerFulOutputManagementLauncher proViewLauncher = new MinerFulOutputManagementLauncher(); 
 	        proViewLauncher.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);

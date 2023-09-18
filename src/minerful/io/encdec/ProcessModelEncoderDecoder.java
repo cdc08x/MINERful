@@ -14,7 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
@@ -43,15 +43,15 @@ public class ProcessModelEncoderDecoder {
 	 * @param logPar An event log parser
 	 * @return The process model having the {@link TaskChar TaskChar} re-encoded according to the event log identifiers
 	 */
-	public ProcessModel reEncodeTaskCharsAccordingToEventLog(ProcessModel processModel, LogParser logPar) {
+	public ProcessSpecification reEncodeTaskCharsAccordingToEventLog(ProcessSpecification processModel, LogParser logPar) {
 		logPar.getEventEncoderDecoder().mergeWithConstraintsAndUpdateTheirParameters(
 				processModel.getAllConstraints().toArray(new Constraint[processModel.howManyConstraints()]));
 		return processModel;
 	}
 	
-	public ProcessModel unmarshalProcessModel(File procSchmInFile) throws JAXBException, PropertyException, FileNotFoundException,
+	public ProcessSpecification unmarshalProcessModel(File procSchmInFile) throws JAXBException, PropertyException, FileNotFoundException,
 			IOException {
-		String pkgName = ProcessModel.class.getCanonicalName().toString();
+		String pkgName = ProcessSpecification.class.getCanonicalName().toString();
 		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
 		JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
 		
@@ -63,14 +63,14 @@ public class ProcessModelEncoderDecoder {
 			                                       event.getLinkedException());
 			        }
 			});
-		ProcessModel proMod = (ProcessModel) unmarsh.unmarshal(procSchmInFile);
+		ProcessSpecification proMod = (ProcessSpecification) unmarsh.unmarshal(procSchmInFile);
 		
 		MetaConstraintUtils.createHierarchicalLinks(proMod.getAllConstraints());
 		
 		return proMod;
 	}
 	
-	public StringBuffer marshalProcessModel(ProcessModel processModel)
+	public StringBuffer marshalProcessModel(ProcessSpecification processModel)
 			throws JAXBException, PropertyException, FileNotFoundException, IOException {
 		String pkgName = processModel.getClass().getCanonicalName().toString();
 		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
@@ -85,7 +85,7 @@ public class ProcessModelEncoderDecoder {
 		return strixBuffer;
 	}
 
-	public void marshalProcessModel(ProcessModel processModel, File procSchmOutFile)
+	public void marshalProcessModel(ProcessSpecification processModel, File procSchmOutFile)
 			throws JAXBException, PropertyException, FileNotFoundException, IOException {
 		StringBuffer strixBuffer = this.marshalProcessModel(processModel);
 		// OINK
@@ -99,7 +99,7 @@ public class ProcessModelEncoderDecoder {
 		strixFileWriter.close();
 	}
 
-	public ProcessModel readFromJsonFile(File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public ProcessSpecification readFromJsonFile(File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		ProcessModelPojo pojo = jsonPojoMgr.fromJsonToProcessModelPojo(processModelJsonFile);
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
@@ -117,7 +117,7 @@ public class ProcessModelEncoderDecoder {
 	 * @throws JsonIOException
 	 * @throws FileNotFoundException
 	 */
-	public ProcessModel readFromJsonFile(File processModelJsonFile, TaskCharArchive alphabet) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public ProcessSpecification readFromJsonFile(File processModelJsonFile, TaskCharArchive alphabet) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		ProcessModelPojo pojo = jsonPojoMgr.fromJsonToProcessModelPojo(processModelJsonFile);
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
@@ -125,7 +125,7 @@ public class ProcessModelEncoderDecoder {
 		return translator.createProcessModel(proModTO, alphabet);
 	}
 
-	public void writeToJsonFile(ProcessModel processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public void writeToJsonFile(ProcessSpecification processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(processModel);
 		ProcessModelPojo pojo = proModTO.toPojo();
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
@@ -134,7 +134,7 @@ public class ProcessModelEncoderDecoder {
 		return;
 	}
 
-	public ProcessModel readFromJsonString(String processModelJson) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public ProcessSpecification readFromJsonString(String processModelJson) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		ProcessModelPojo pojo = jsonPojoMgr.fromJsonToProcessModelPojo(processModelJson);
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(pojo);
@@ -142,7 +142,7 @@ public class ProcessModelEncoderDecoder {
 		return translator.createProcessModel(proModTO);
 	}
 
-	public String toJsonString(ProcessModel processModel) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public String toJsonString(ProcessSpecification processModel) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		ProcessModelTransferObject proModTO = new ProcessModelTransferObject(processModel);
 		ProcessModelPojo pojo = proModTO.toPojo();
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();

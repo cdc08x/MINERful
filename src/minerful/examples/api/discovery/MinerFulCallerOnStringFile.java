@@ -4,7 +4,7 @@ import java.io.File;
 
 import minerful.MinerFulMinerLauncher;
 import minerful.MinerFulOutputManagementLauncher;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.params.OutputModelParameters;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputLogCmdParameters;
@@ -38,7 +38,7 @@ public class MinerFulCallerOnStringFile {
 
 		MinerFulMinerLauncher miFuMiLa = new MinerFulMinerLauncher(inputParams, minerFulParams, postParams, systemParams);
 		
-		ProcessModel processModel = miFuMiLa.mine();
+		ProcessSpecification processModel = miFuMiLa.mine();
 		
 		outParams.fileToSaveAsXML = new File("/home/claudio/Desktop/Temp-MINERful/model.xml");
 		

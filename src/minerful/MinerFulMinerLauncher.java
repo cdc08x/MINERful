@@ -3,7 +3,7 @@ package minerful;
 import org.deckfour.xes.model.XLog;
 import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.params.OutputModelParameters;
@@ -52,7 +52,7 @@ public class MinerFulMinerLauncher {
         MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 	
-	public ProcessModel mine() {
+	public ProcessSpecification mine() {
     	if (inputParams.inputLogFile == null) {
     		MessagePrinter.printlnError("Missing input file");
     		System.exit(1);
@@ -65,7 +65,7 @@ public class MinerFulMinerLauncher {
 		return minerFulStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
 	}
 	
-	public ProcessModel mine(XLog xLog) {
+	public ProcessSpecification mine(XLog xLog) {
 		ClassificationType classiType = fromInputParamToXesLogClassificationType(this.inputParams.eventClassification);
 		logParser = new XesLogParser(xLog, classiType);
 		return minerFulStarter.mine(logParser, inputParams, minerFulParams, postParams, logParser.getTaskCharArchive());
@@ -86,10 +86,22 @@ public class MinerFulMinerLauncher {
 		}
 	}
 
+	/**
+	 * Derives a {@link LogParser log parser} from an event log file.
+	 * @param inputParams Input parameters locating and categorising the input log file.
+	 * @return A log parser.
+	 */
 	public static LogParser deriveLogParserFromLogFile(InputLogCmdParameters inputParams) {
 		return deriveLogParserFromLogFile(inputParams, null);
 	}
 
+
+	/**
+	 * Derives a {@link LogParser log parser} from an event log file with the capability of ignoring certain tasks from the traces.
+	 * @param inputParams Input parameters locating and categorising the input log file.
+	 * @param minerFulParams Input parameters defining the tasks to be excluded from the log file parsing.
+	 * @return A log parser.
+	 */
 	public static LogParser deriveLogParserFromLogFile(InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
 		LogParser logParser = null;
 		boolean doAnalyseSubLog =
@@ -111,12 +123,6 @@ public class MinerFulMinerLauncher {
 				e1.printStackTrace();
 			}
 
-			// Remove from the analysed alphabet those activities that are
-			// specified in a user-defined list
-			if (minerFulParams != null && minerFulParams.activitiesToExcludeFromResult != null && minerFulParams.activitiesToExcludeFromResult.size() > 0) {
-				logParser.excludeTasksByName(minerFulParams.activitiesToExcludeFromResult);
-			}
-
 			// Let us try to free memory from the unused XesDecoder!
 			System.gc();
 			break;
@@ -135,6 +141,12 @@ public class MinerFulMinerLauncher {
 		default:
 			throw new UnsupportedOperationException("This encoding ("
 					+ inputParams.inputLanguage + ") is not yet supported");
+		}
+
+		// Remove from the analysed alphabet those activities that are
+		// specified in a user-defined list
+		if (minerFulParams != null && minerFulParams.tasksToBeExcludedFromResult != null && minerFulParams.tasksToBeExcludedFromResult.size() > 0) {
+			logParser.excludeTasksByName(minerFulParams.tasksToBeExcludedFromResult);
 		}
 
 		return logParser;

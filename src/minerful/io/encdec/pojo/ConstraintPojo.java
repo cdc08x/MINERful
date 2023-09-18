@@ -11,6 +11,7 @@ public class ConstraintPojo implements Comparable<ConstraintPojo> {
 	public Double support;
 	public Double confidence;
 	public Double interestFactor;
+	public Double coverage;
 
 	public ConstraintPojo() {
 		this.parameters = new ArrayList<Set<String>>();
@@ -28,6 +29,8 @@ public class ConstraintPojo implements Comparable<ConstraintPojo> {
 		builder.append(", confidence=");
 		builder.append(confidence);
 		builder.append(", interestFactor=");
+		builder.append(interestFactor);
+		builder.append(", coverage=");
 		builder.append(interestFactor);
 		builder.append("]");
 		return builder.toString();

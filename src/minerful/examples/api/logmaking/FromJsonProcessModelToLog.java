@@ -3,7 +3,7 @@ package minerful.examples.api.logmaking;
 import java.io.File;
 import java.io.IOException;
 
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.ProcessModelEncoderDecoder;
 import minerful.logmaker.MinerFulLogMaker;
 import minerful.logmaker.params.LogMakerParameters;
@@ -43,7 +43,7 @@ public class FromJsonProcessModelToLog {
 				+ "],"
 				+"tasks: [A,B,C,D,E] }";
 
-		ProcessModel proMod =
+		ProcessSpecification proMod =
 			new ProcessModelEncoderDecoder()
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
 //			.readFromJsonFile(new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.json"));

@@ -23,18 +23,9 @@ public class AtLeast1 extends ExistenceConstraint {
     	super();
     }
 	
-	public AtLeast1(TaskChar param1, double support) {
-		super(param1, support);
-	}
-
 	public AtLeast1(TaskChar param1) {
 		super(param1);
 	}
-
-	public AtLeast1(TaskCharSet param1, double support) {
-		super(param1, support);
-	}
-
 	public AtLeast1(TaskCharSet param1) {
 		super(param1);
 	}

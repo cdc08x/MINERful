@@ -12,8 +12,9 @@ import org.apache.log4j.Logger;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
 import minerful.automaton.AutomatonFactory;
-import minerful.concept.ProcessModel;
+import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintMeasuresManager;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.MutualRelationConstraint;
@@ -27,9 +28,9 @@ public class ConflictAndRedundancyResolver {
 
 	public static final int MAXIMUM_VISIBLE_CONSTRAINTS_FOR_REDUNDANCY_CHECK = 24;
 
-	private ProcessModel safeProcess;
-	private ProcessModel originalProcess;
-	private ConstraintsBag originallHierarchyUnredundantBag;
+	private ProcessSpecification safeProcess;
+	private ProcessSpecification originalProcess;
+	private ConstraintsBag originalHierarchyUnredundantBag;
 	private boolean checking;
 	private final boolean avoidingRedundancy;
 	private final boolean avoidingRedundancyWithDoubleCheck;
@@ -58,7 +59,7 @@ public class ConflictAndRedundancyResolver {
 		redundancyChecksPerformed;
 	private ConstraintSortingPolicy[] rankingPolicies;
 	
-	public ConflictAndRedundancyResolver(ProcessModel process, PostProcessingCmdParameters params) {
+	public ConflictAndRedundancyResolver(ProcessSpecification process, PostProcessingCmdParameters params) {
 		this.avoidingRedundancyWithDoubleCheck = params.postProcessingAnalysisType.isRedundancyResolutionDoubleCheckRequested();
 		this.avoidingRedundancy = this.avoidingRedundancyWithDoubleCheck || params.postProcessingAnalysisType.isRedundancyResolutionRequested();
 		this.originalProcess = process;
@@ -81,16 +82,16 @@ public class ConflictAndRedundancyResolver {
 		this.subsumMarker.setConstraintsBag(this.originalProcess.bag);
 		this.subsumMarker.markSubsumptionRedundantConstraints();
 		// Create a copy of the original bag where subsumption-redundant constraints are removed
-		this.originallHierarchyUnredundantBag = (ConstraintsBag) this.originalProcess.bag.clone();
-		this.originallHierarchyUnredundantBag.removeMarkedConstraints();
-		this.originalHierarchyUnredundantConstraints = this.originallHierarchyUnredundantBag.getAllConstraints();
+		this.originalHierarchyUnredundantBag = (ConstraintsBag) this.originalProcess.bag.clone();
+		this.originalHierarchyUnredundantBag.removeMarkedConstraints();
+		this.originalHierarchyUnredundantConstraints = this.originalHierarchyUnredundantBag.getAllConstraints();
 		/*
 		 * The blackboard is meant to associate to all constraints a tick,
 		 * whenever the constraint has already been checked
 		 */
 		this.sorter.setConstraints(originalHierarchyUnredundantConstraints);
 		this.blackboard = new TreeSet<Constraint>(this.sorter.getComparator());
-		ConstraintsBag safeBag = this.originallHierarchyUnredundantBag.getOnlyFullySupportedConstraintsInNewBag();
+		ConstraintsBag safeBag = this.originalHierarchyUnredundantBag.getNeverViolatedConstraintsInNewBag();
 		Collection<Constraint> safeConstraints = safeBag.getAllConstraints();
 		this.sorter.setConstraints(safeConstraints);
 
@@ -100,10 +101,10 @@ public class ConflictAndRedundancyResolver {
 		 * them: the log itself. So, their conjunction cannot be unsatisfiable.
 		 */
 		if (avoidingRedundancy) {
-			logger.info("Checking redundancies of fully-supported constraints...");
+			logger.info("Checking redundancies of never violated constraints...");
 
-			ConstraintsBag emptyBag = this.originallHierarchyUnredundantBag.createEmptyIndexedCopy();
-			this.safeProcess = new ProcessModel(this.originalProcess.getTaskCharArchive(), emptyBag);
+			ConstraintsBag emptyBag = this.originalHierarchyUnredundantBag.createEmptyIndexedCopy();
+			this.safeProcess = new ProcessSpecification(this.originalProcess.getTaskCharArchive(), emptyBag);
 			Automaton candidateAutomaton = null;
 			this.safeAutomaton = this.safeProcess.buildAlphabetAcceptingAutomaton();
 			for (Constraint candidateCon : this.sorter.sort(this.rankingPolicies)) {
@@ -120,7 +121,7 @@ public class ConflictAndRedundancyResolver {
 				blackboard.add(candidateCon);
 			}
 		} else {
-			this.safeProcess = new ProcessModel(this.originalProcess.getTaskCharArchive(), safeBag);
+			this.safeProcess = new ProcessSpecification(this.originalProcess.getTaskCharArchive(), safeBag);
 			this.safeAutomaton = this.safeProcess.buildAutomaton();
 			for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(safeBag)) {
 //System.out.println("PRESENTATION -- The safe constraint: " + c + " supp: " + c.support + "; conf: " + c.confidence + "; inf.f: " + c.interestFactor + " rex: " + c.getRegularExpression());
@@ -130,7 +131,7 @@ public class ConflictAndRedundancyResolver {
 		}
 
 //System.out.println("PRESENTATION -- The safe automaton:\n" + safeAutomaton.toDot());
-		ConstraintsBag unsafeBag = this.originallHierarchyUnredundantBag.createComplementOfCopyPrunedByThreshold(Constraint.MAX_SUPPORT);
+		ConstraintsBag unsafeBag = this.originalHierarchyUnredundantBag.createComplementOfCopyPrunedByThreshold(ConstraintMeasuresManager.MAX_SUPPORT);
 //		for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(unsafeBag)) {
 //			blackboard.add(c);
 //		}
@@ -138,7 +139,7 @@ public class ConflictAndRedundancyResolver {
 		this.notSurelySafeProcessConstraints = this.sorter.sort(this.rankingPolicies);
 	}
 
-	public ProcessModel resolveConflictsOrRedundancies() {
+	public ProcessSpecification resolveConflictsOrRedundancies() {
 		logger.info("Checking redundancies and conflicts of non-fully-supported constraints");
 
 		this.checking = true;
@@ -254,7 +255,7 @@ public class ConflictAndRedundancyResolver {
 				resolveConflictsRecursively(new RegExp(relaxedCon.getRegularExpression()).toAutomaton(), relaxedCon);
 			}
 
-			if (candidateCon.getSubFamily().equals(RelationConstraintSubFamily.COUPLING)) {
+			if (candidateCon.getSubFamily().equals(RelationConstraintSubFamily.MUTUAL)) {
 				MutualRelationConstraint coCandidateCon = (MutualRelationConstraint) candidateCon;
 				Constraint
 					forwardCon = coCandidateCon.getForwardConstraint(),
@@ -396,7 +397,7 @@ public class ConflictAndRedundancyResolver {
 		return redundantConstraintsInOriginalModel;
 	}
 
-	public ProcessModel getSafeProcess() {
+	public ProcessSpecification getSafeProcess() {
 		return safeProcess;
 	}
 

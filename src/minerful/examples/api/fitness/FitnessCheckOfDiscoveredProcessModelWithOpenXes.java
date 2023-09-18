@@ -9,8 +9,8 @@ import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 
 import minerful.MinerFulMinerLauncher;
 import minerful.checking.integration.prom.ModelFitnessEvaluatorOpenXesInterface;
-import minerful.checking.relevance.dao.ModelFitnessEvaluation;
-import minerful.concept.ProcessModel;
+import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
+import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.miner.params.MinerFulCmdParameters;
@@ -49,9 +49,9 @@ public class FitnessCheckOfDiscoveredProcessModelWithOpenXes {
 		inputLogParams.eventClassification = EventClassification.name;
 		// // Use the one below if you want to classify events not just by their task name!
 		// inputLogParams.eventClassification = EventClassification.logspec;
-		postParams.supportThreshold = 0.95; // For a sure total fit with the event log, this parameter should be set to 1.0
-		postParams.confidenceThreshold = 0.66; // The higher this is, the higher the frequency of occurrence of tasks triggering the returned constraints
-		postParams.interestFactorThreshold = 0.5; // The higher this is, the higher the frequency of occurrence of tasks involved in the returned constraints
+		postParams.evtSupportThreshold = 0.95; // For a sure total fit with the event log, this parameter should be set to 1.0
+		postParams.evtConfidenceThreshold = 0.66; // The higher this is, the higher the frequency of occurrence of tasks triggering the returned constraints
+		postParams.evtCoverageThreshold = 0.5; // The higher this is, the higher the frequency of occurrence of tasks involved in the returned constraints
 		
 		// Remove redundant constraints. WARNING: this may take some time.
 		// The language of the model remains completely unchanged. What changes is the number of constraints in it.
@@ -63,7 +63,7 @@ public class FitnessCheckOfDiscoveredProcessModelWithOpenXes {
 		System.out.println("Running the discovery algorithm...");
 		
 		MinerFulMinerLauncher miFuMiLa = new MinerFulMinerLauncher(inputLogParams, minerFulParams, postParams, systemParams);
-		ProcessModel processModel = miFuMiLa.mine(myXLog);
+		ProcessSpecification processModel = miFuMiLa.mine(myXLog);
 		
 		System.out.println("...Done");
 		
@@ -95,7 +95,7 @@ public class FitnessCheckOfDiscoveredProcessModelWithOpenXes {
 				// ClassificationType.LOG_SPECIFIED,
 				processModel);
 		
-		ModelFitnessEvaluation xEvalon = xEvalor.evaluateOnLog();
+		SpecificationFitnessEvaluation xEvalon = xEvalor.evaluateOnLog();
 		
 		if (xEvalon.isFullyFitting()) {
 			System.out.println("\nWhooppee! The event log in " + EXAMPLE_LOG_FILE_2 + " is perfectly fitting!\n"); // unlikely, if it is not the same log!
@@ -150,7 +150,7 @@ public class FitnessCheckOfDiscoveredProcessModelWithOpenXes {
 				processModel);
 		
 		// Check the process model extracted from EXAMPLE_LOG_FILE_1 against the first trace of EXAMPLE_LOG_FILE_3
-		ModelFitnessEvaluation xEvalon3 = xEvalor3.evaluateOnTrace(myXTrace3);
+		SpecificationFitnessEvaluation xEvalon3 = xEvalor3.evaluateOnTrace(myXTrace3);
 		
 		// Same code as above
 		if (xEvalon3.isFullyFitting()) {

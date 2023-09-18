@@ -100,13 +100,19 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final String RANKING_POLICY_PARAM_NAME = "pruneRnk";
 //	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP"; // TODO One day
 	public static final String KEEP_CONSTRAINTS_PARAM_NAME = "keep";
-	public static final char SUPPORT_THRESHOLD_PARAM_NAME = 's';
-	public static final char INTEREST_THRESHOLD_PARAM_NAME = 'i';
-	public static final char CONFIDENCE_THRESHOLD_PARAM_NAME = 'c';
+	public static final char EVT_SUPPORT_THRESHOLD_PARAM_NAME = 's';
+	public static final char EVT_COVERAGE_THRESHOLD_PARAM_NAME = 'g';
+	public static final char EVT_CONFIDENCE_THRESHOLD_PARAM_NAME = 'c';
+	public static final String TRC_SUPPORT_THRESHOLD_PARAM_NAME = "sT";
+	public static final String TRC_COVERAGE_THRESHOLD_PARAM_NAME = "gT";
+	public static final String TRC_CONFIDENCE_THRESHOLD_PARAM_NAME = "cT";
 
-	public static final Double DEFAULT_SUPPORT_THRESHOLD = 0.95;
-	public static final Double DEFAULT_INTEREST_FACTOR_THRESHOLD = 0.125;
-	public static final Double DEFAULT_CONFIDENCE_THRESHOLD = 0.25;
+	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.125;
+	public static final Double DEFAULT_EVT_COVERAGE_THRESHOLD = 0.125;
+	public static final Double DEFAULT_EVT_CONFIDENCE_THRESHOLD = 0.85;
+	public static final Double DEFAULT_TRC_SUPPORT_THRESHOLD = 0.0;
+	public static final Double DEFAULT_TRC_COVERAGE_THRESHOLD = 0.0;
+	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.0;
 	public static final PostProcessingAnalysisType DEFAULT_POST_PROCESSING_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
@@ -117,19 +123,25 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public PostProcessingAnalysisType postProcessingAnalysisType;
 	/** Ignore this: it is still unused -- Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_HIERARCHY_POLICY DEFAULT_HIERARCHY_POLICY}. */
 	public HierarchySubsumptionPruningPolicy hierarchyPolicy;
-	/** Minimum support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
-    public Double supportThreshold;
-	/** Minimum confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
-    public Double confidenceThreshold;
-	/** Minimum interest factor threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_INTEREST_FACTOR_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
-	public Double interestFactorThreshold;
+	/** Minimum event-based support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
+    public Double evtSupportThreshold;
+	/** Minimum event-based confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
+    public Double evtConfidenceThreshold;
+	/** Minimum event-based coverage threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_COVERAGE_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
+	public Double evtCoverageThreshold;
+	/** Minimum trace-based support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
+    public Double trcSupportThreshold;
+	/** Minimum trace-based confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
+    public Double trcConfidenceThreshold;
+	/** Minimum trace-based coverage threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_COVERAGE_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
+	public Double trcCoverageThreshold;
 	/** Specifies whether the redundant or inconsistent constraints should be only marked as such (<code>false</code>), hence hidden, or cropped (removed) from the model (<code>true</code>) */
 	public boolean cropRedundantAndInconsistentConstraints;
 
 	public static final ConstraintSortingPolicy[] DEFAULT_PRIORITY_POLICIES = new ConstraintSortingPolicy[] {
 		ConstraintSortingPolicy.ACTIVATIONTARGETBONDS,
 		ConstraintSortingPolicy.FAMILYHIERARCHY,
-		ConstraintSortingPolicy.SUPPORTCONFIDENCEINTERESTFACTOR,
+		ConstraintSortingPolicy.SUPPORTCONFIDENCECOVERAGE,
 	};
 	
 	public PostProcessingCmdParameters() {
@@ -137,9 +149,12 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		this.sortingPolicies = DEFAULT_PRIORITY_POLICIES;
 		this.postProcessingAnalysisType = DEFAULT_POST_PROCESSING_ANALYSIS_TYPE;
 		this.hierarchyPolicy = DEFAULT_HIERARCHY_POLICY;
-	    this.supportThreshold = DEFAULT_SUPPORT_THRESHOLD;
-	    this.confidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
-	    this.interestFactorThreshold = DEFAULT_INTEREST_FACTOR_THRESHOLD;
+	    this.evtSupportThreshold = DEFAULT_EVT_SUPPORT_THRESHOLD;
+	    this.evtConfidenceThreshold = DEFAULT_EVT_CONFIDENCE_THRESHOLD;
+	    this.evtCoverageThreshold = DEFAULT_EVT_COVERAGE_THRESHOLD;
+	    this.trcSupportThreshold = DEFAULT_TRC_SUPPORT_THRESHOLD;
+	    this.trcConfidenceThreshold = DEFAULT_TRC_CONFIDENCE_THRESHOLD;
+	    this.trcCoverageThreshold = DEFAULT_TRC_COVERAGE_THRESHOLD;
 	    this.cropRedundantAndInconsistentConstraints = !DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
 	}
 	
@@ -147,9 +162,9 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		PostProcessingCmdParameters noPostProcessParams = new PostProcessingCmdParameters();
 		noPostProcessParams.postProcessingAnalysisType = PostProcessingAnalysisType.NONE;
 		noPostProcessParams.hierarchyPolicy = HierarchySubsumptionPruningPolicy.NONE;
-		noPostProcessParams.supportThreshold = 0.0;
-		noPostProcessParams.confidenceThreshold = 0.0;
-		noPostProcessParams.interestFactorThreshold = 0.0;
+		noPostProcessParams.evtSupportThreshold = 0.0;
+		noPostProcessParams.evtConfidenceThreshold = 0.0;
+		noPostProcessParams.evtCoverageThreshold = 0.0;
 		noPostProcessParams.cropRedundantAndInconsistentConstraints = DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
 	
 		return noPostProcessParams;
@@ -169,22 +184,40 @@ public class PostProcessingCmdParameters extends ParamsManager {
 
 	@Override
 	protected void setup(CommandLine line) {
-		this.supportThreshold = Double.valueOf(
+		this.evtSupportThreshold = Double.valueOf(
 				line.getOptionValue(
-						SUPPORT_THRESHOLD_PARAM_NAME,
-						this.supportThreshold.toString()
+						EVT_SUPPORT_THRESHOLD_PARAM_NAME,
+						this.evtSupportThreshold.toString()
 				)
 		);
-		this.interestFactorThreshold = Double.valueOf(
+		this.evtCoverageThreshold = Double.valueOf(
 				line.getOptionValue(
-						INTEREST_THRESHOLD_PARAM_NAME,
-						this.interestFactorThreshold.toString()
+						EVT_COVERAGE_THRESHOLD_PARAM_NAME,
+						this.evtCoverageThreshold.toString()
 						)
 				);
-		this.confidenceThreshold = Double.valueOf(
+		this.evtConfidenceThreshold = Double.valueOf(
 				line.getOptionValue(
-						CONFIDENCE_THRESHOLD_PARAM_NAME,
-						this.confidenceThreshold.toString()
+						EVT_CONFIDENCE_THRESHOLD_PARAM_NAME,
+						this.evtConfidenceThreshold.toString()
+						)
+				);
+		this.trcSupportThreshold = Double.valueOf(
+				line.getOptionValue(
+						TRC_SUPPORT_THRESHOLD_PARAM_NAME,
+						this.trcSupportThreshold.toString()
+				)
+		);
+		this.trcCoverageThreshold = Double.valueOf(
+				line.getOptionValue(
+						TRC_COVERAGE_THRESHOLD_PARAM_NAME,
+						this.trcCoverageThreshold.toString()
+						)
+				);
+		this.trcConfidenceThreshold = Double.valueOf(
+				line.getOptionValue(
+						TRC_CONFIDENCE_THRESHOLD_PARAM_NAME,
+						this.trcConfidenceThreshold.toString()
 						)
 				);
 		
@@ -253,29 +286,56 @@ public class PostProcessingCmdParameters extends ParamsManager {
 						.build()
     	);
         options.addOption(
-                Option.builder(String.valueOf(SUPPORT_THRESHOLD_PARAM_NAME))
+                Option.builder(String.valueOf(EVT_SUPPORT_THRESHOLD_PARAM_NAME))
 						.hasArg().argName("threshold")
 						.longOpt("support")
-						.desc("threshold for support (reliability); it must be a real value ranging from 0.0 to 1.0"
-						+ printDefault(DEFAULT_SUPPORT_THRESHOLD))
+						.desc("threshold for support; it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_EVT_SUPPORT_THRESHOLD))
 						.type(Double.class)
 						.build()
         );
         options.addOption(
-        		Option.builder(String.valueOf(CONFIDENCE_THRESHOLD_PARAM_NAME))
+        		Option.builder(String.valueOf(EVT_CONFIDENCE_THRESHOLD_PARAM_NAME))
 						.hasArg().argName("threshold")
 						.longOpt("confidence")
-						.desc("threshold for confidence level (relevance); it must be a real value ranging from 0.0 to 1.0"
-						+ printDefault(DEFAULT_CONFIDENCE_THRESHOLD))
+						.desc("threshold for confidence; it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_EVT_CONFIDENCE_THRESHOLD))
 						.type(Double.class)
 						.build()
         		);
         options.addOption(
-        		Option.builder(String.valueOf(INTEREST_THRESHOLD_PARAM_NAME))
+        		Option.builder(String.valueOf(EVT_COVERAGE_THRESHOLD_PARAM_NAME))
 						.hasArg().argName("threshold")
-						.longOpt("interest-factor")
-						.desc("threshold for interest factor (relevance); it must be a real value ranging from 0.0 to 1.0"
-						+ printDefault(DEFAULT_INTEREST_FACTOR_THRESHOLD))
+						.longOpt("coverage")
+						.desc("threshold for coverage; it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_EVT_COVERAGE_THRESHOLD))
+						.type(Double.class)
+						.build()
+        		);
+        options.addOption(
+                Option.builder(String.valueOf(TRC_SUPPORT_THRESHOLD_PARAM_NAME))
+						.hasArg().argName("threshold")
+						.longOpt("trace-support")
+						.desc("threshold for trace-based support; it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_EVT_SUPPORT_THRESHOLD))
+						.type(Double.class)
+						.build()
+        );
+        options.addOption(
+        		Option.builder(String.valueOf(TRC_CONFIDENCE_THRESHOLD_PARAM_NAME))
+						.hasArg().argName("threshold")
+						.longOpt("trace-confidence")
+						.desc("threshold for trace-based confidence; it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_EVT_CONFIDENCE_THRESHOLD))
+						.type(Double.class)
+						.build()
+        		);
+        options.addOption(
+        		Option.builder(String.valueOf(TRC_COVERAGE_THRESHOLD_PARAM_NAME))
+						.hasArg().argName("threshold")
+						.longOpt("trace-coverage")
+						.desc("threshold for trace-based coverage; it must be a real value ranging from 0.0 to 1.0"
+						+ printDefault(DEFAULT_EVT_COVERAGE_THRESHOLD))
 						.type(Double.class)
 						.build()
         		);
