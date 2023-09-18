@@ -35,7 +35,7 @@ public class FromDeclareMapToJSONandXMLandCSV {
 		ProcessSpecification proMod =
 				new DeclareMapEncoderDecoder(
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap3.xml"
-						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap2.xml"
+						"/home/cdc08x/Code/MINERful-dev/models/examples-FMM/DeclareMap2.xml"
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap1.xml"
 				).createMinerFulProcessModel();
 
