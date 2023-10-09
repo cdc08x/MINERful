@@ -5,7 +5,6 @@ import java.io.File;
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.MinerFulSimplificationLauncher;
 import minerful.concept.ProcessSpecification;
-import minerful.concept.constraint.Constraint;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
 import minerful.io.params.InputModelParameters;
 import minerful.io.params.InputModelParameters.InputEncoding;
@@ -16,18 +15,13 @@ import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessingAnalysisType;
 
 /**
- * This example class demonstrates how to load a Declare Map file as a process model,
- * then run the simplification engine of MINERful to remove the redundant constraints.
- * Here we ignore the thresholds for constraint measures (i.e., support and the others).
+ * This example class demonstrates how to load a Declare Map file as a process model, then run the simplification engine of MINERful to remove the redundant constraints.
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
 public class MinerFulSimplificationInvokerOnDeclareMapFile {
 
-	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/cdc08x/Desktop/example-model.xml";
-	private static final String EXAMPLE_INPUT_PROCESS_MODEL_FILE = 
-			"/home/cdc08x/Code/MINERful-dev/models/examples-FMM/DeclareMap3.xml";
-	// Comment the line above and uncomment the line below if you want to try with a MINERful-XML specification
-	//		"/home/cdc08x/Code/MINERful-dev/models/mined/bpi_challenge_2013_closed_problems-model-s05-c02-i00.xml";
+	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/claudio/Desktop/example-model.xml";
+	private static final String EXAMPLE_INPUT_PROCESS_MODEL_FILE = "/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075.xml";
 
 	public static void main(String[] args) {
 		InputModelParameters inputParams = new InputModelParameters();
@@ -44,10 +38,6 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 			ConstraintSortingPolicy.FAMILYHIERARCHY,
 			ConstraintSortingPolicy.SUPPORTCONFIDENCECOVERAGE
 		};
-		// Set the measures' thresholds to the minimum
-		postParams.supportThreshold = Constraint.MIN_SUPPORT;
-		postParams.confidenceThreshold = Constraint.MIN_CONFIDENCE;
-		postParams.interestFactorThreshold = Constraint.MIN_INTEREST_FACTOR;
 
 		// Specifies the input file where the model is stored
 		inputParams.inputFile=new File(EXAMPLE_INPUT_PROCESS_MODEL_FILE);

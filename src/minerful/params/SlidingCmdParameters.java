@@ -11,6 +11,8 @@ public class SlidingCmdParameters extends ParamsManager {
 	public static final String STICK_TAIL_PARAM_NAME = "sliStick";
 	public static final boolean DEFAULT_STICKY_TAIL_POLICY = false;
 
+	public static final String INTERMEDIATE_OUTPUT_PARAM_NAME = "sliOut";
+
 	/** Sets how long is the step to slide the window on the event log. The default is {@link SlidingCmdParameters#DEFAULT_SLIDING_STEP DEFAULT_SLIDING_STEP} */
     public Integer slidingStep;
 
