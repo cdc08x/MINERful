@@ -46,7 +46,7 @@ public class StatsCell implements Cloneable {
     @XmlElement(name="repetitionsInBetweenBackwards")
     public int inBetweenRepsBackwards;
  
-    // The following three attributes cover the trace-based analysis.
+    // The following five attributes cover the trace-based analysis.
     // The amounts are derived only during the finalisation step,
     // as they add 1 to their counters rather than the number of occurrences
     // of the pivot task they relate to. Indeed, they count frequencies from traces,
@@ -57,6 +57,10 @@ public class StatsCell implements Cloneable {
     public int tracesWithInBetweenRepsOnwards;
     @XmlElement(name="tracesWithRepetitionsInBetweenBackwards")
     public int tracesWithInBetweenRepsBackwards;
+    @XmlElement(name="tracesWithCooccurrenceOnwards")
+    public int tracesWithCooccurrenceOnwards;
+    @XmlElement(name="tracesWithCooccurrenceBackwards")
+    public int tracesWithCooccurrenceBackwards;
     @XmlTransient
     private SortedSet<Integer> newDistancesInTrace;
 
@@ -68,6 +72,8 @@ public class StatsCell implements Cloneable {
         this.distancesPerTrace = new TreeMap<Integer, Integer>();
         this.tracesWithInBetweenRepsOnwards = 0;
         this.tracesWithInBetweenRepsBackwards = 0;
+        this.tracesWithCooccurrenceOnwards = 0;
+        this.tracesWithCooccurrenceBackwards = 0;
         
         this.newDistancesInTrace = new TreeSet<Integer>();
     }
@@ -92,6 +98,15 @@ public class StatsCell implements Cloneable {
                 (onwards ? NEVER_ONWARDS : NEVER_BACKWARDS),
                 quantity
         );
+    }
+
+    /* Store the information that this task occurred in the same trace as the pivot, either onwards or backwards. */
+    void setAsCooccurredInTrace(boolean onwards) {
+        if (onwards) {
+            this.tracesWithCooccurrenceOnwards += 1;
+        } else {
+            this.tracesWithCooccurrenceBackwards += 1;
+        }
     }
     
     protected void countOneMoreTraceWithDistance(int distance) {
@@ -202,6 +217,8 @@ public class StatsCell implements Cloneable {
 		this.inBetweenRepsOnwards += other.inBetweenRepsOnwards;
 		this.tracesWithInBetweenRepsBackwards += other.tracesWithInBetweenRepsBackwards;
 		this.tracesWithInBetweenRepsOnwards += other.tracesWithInBetweenRepsOnwards;
+		this.tracesWithCooccurrenceOnwards += other.tracesWithCooccurrenceOnwards;
+		this.tracesWithCooccurrenceBackwards += other.tracesWithCooccurrenceBackwards;
 		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {
@@ -233,6 +250,8 @@ public class StatsCell implements Cloneable {
 		this.inBetweenRepsOnwards -= other.inBetweenRepsOnwards;
 		this.tracesWithInBetweenRepsBackwards -= other.tracesWithInBetweenRepsBackwards;
 		this.tracesWithInBetweenRepsOnwards -= other.tracesWithInBetweenRepsOnwards;
+		this.tracesWithCooccurrenceOnwards -= other.tracesWithCooccurrenceOnwards;
+		this.tracesWithCooccurrenceBackwards -= other.tracesWithCooccurrenceBackwards;
 		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {
