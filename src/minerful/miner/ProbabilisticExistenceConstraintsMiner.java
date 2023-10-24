@@ -71,6 +71,8 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 			TaskChar indexingParam, Constraint discoveredCon) {
 		Constraint con = constraintsBag.getOrAdd(indexingParam, discoveredCon);       
         con.getEventBasedMeasures().setConfidence(discoveredCon.getEventBasedMeasures().getConfidence());
+        con.getEventBasedMeasures().setSupport(discoveredCon.getEventBasedMeasures().getSupport());
+        con.getEventBasedMeasures().setCoverage(discoveredCon.getEventBasedMeasures().getCoverage());
 		refineByComputingOtherMetricsThanEventBasedConfidence(con);
 		con.setEvaluatedOnLog(true);
 		return con;
@@ -84,7 +86,6 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 	 * @return The updated constraint
 	 */
     public static Constraint refineByComputingOtherMetricsThanEventBasedConfidence(Constraint con) {
-    	con.getEventBasedMeasures().setCoverage(1.0); // coverage includes all traces in which the activator occurred at least once. So, always.
     	con.getTraceBasedMeasures().setConfidence(con.getEventBasedMeasures().getConfidence()); // because we consider existence constraints as activated by the start of the trace, which occurs —suprirse surprise!— once per trace 
     	con.getTraceBasedMeasures().setSupport(con.getEventBasedMeasures().getConfidence()); // because we consider existence constraints as activated by the start of the trace, which occurs —suprirse surprise!— once per trace 
     	con.getTraceBasedMeasures().setCoverage(1.0); // coverage includes all traces in which the activator occurred at least once. So, always.
@@ -119,6 +120,10 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         
         Constraint[] newCons = new Constraint[] {atLe1, atLe2, atLe3};
 
+        for (Constraint con: newCons){
+            con.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
+        }
+
 //
 //        for (Constraint con: newCons) {
 //      System.out.println(con + " => econ " + con.getEventBasedMeasures().getConfidence());
@@ -150,14 +155,18 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         abse.getEventBasedMeasures().setConfidence((double) zeroOccurrences / (double) testbedSize);
         atMo1.getEventBasedMeasures().setConfidence((double) singleOrNoOccurrences / (double) testbedSize);
         atMo2.getEventBasedMeasures().setConfidence((double) upToTwoOccurrences / (double) testbedSize);
-        atMo3.getEventBasedMeasures().setConfidence((double) upToTwoOccurrences / (double) testbedSize);
+        atMo3.getEventBasedMeasures().setConfidence((double) upToThreeOccurrences / (double) testbedSize);
 
         abse.getEventBasedMeasures().setSupport((double) zeroOccurrences / (double) numOfEventsInLog);
         atMo1.getEventBasedMeasures().setSupport((double) singleOrNoOccurrences / (double) numOfEventsInLog);
         atMo2.getEventBasedMeasures().setSupport((double) upToTwoOccurrences / (double) numOfEventsInLog);
-        atMo3.getEventBasedMeasures().setSupport((double) upToTwoOccurrences / (double) numOfEventsInLog);
+        atMo3.getEventBasedMeasures().setSupport((double) upToThreeOccurrences / (double) numOfEventsInLog);
         
         Constraint[] newCons = new Constraint[] {abse, atMo1, atMo2, atMo3};
+
+        for (Constraint con: newCons){
+            con.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
+        }
         
         return newCons;
     }
@@ -172,6 +181,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             	Constraint init = new Init(base);
             	init.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsFirst() / (double) testbedSize);
             	init.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
+                init.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
             	return init;
             }
 //        }
@@ -188,6 +198,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             	Constraint end = new End(base);
             	end.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsLast() / (double) testbedSize);
             	end.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
+                end.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
             	return end;
             }
 //        }
