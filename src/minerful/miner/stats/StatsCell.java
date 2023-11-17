@@ -61,6 +61,10 @@ public class StatsCell implements Cloneable {
     public int tracesWithCooccurrenceOnwards;
     @XmlElement(name="tracesWithCooccurrenceBackwards")
     public int tracesWithCooccurrenceBackwards;
+    @XmlElement(name="tracesWithSuccessorCooccurrences")
+    public int tracesWithSuccessorCooccurrences;
+    @XmlElement(name="tracesWithPredecessorCooccurrences")
+    public int tracesWithPredecessorCooccurrences;
     @XmlTransient
     private SortedSet<Integer> newDistancesInTrace;
 
@@ -74,6 +78,9 @@ public class StatsCell implements Cloneable {
         this.tracesWithInBetweenRepsBackwards = 0;
         this.tracesWithCooccurrenceOnwards = 0;
         this.tracesWithCooccurrenceBackwards = 0;
+
+        this.tracesWithSuccessorCooccurrences = 0;
+        this.tracesWithPredecessorCooccurrences = 0;
         
         this.newDistancesInTrace = new TreeSet<Integer>();
     }
@@ -98,6 +105,15 @@ public class StatsCell implements Cloneable {
                 (onwards ? NEVER_ONWARDS : NEVER_BACKWARDS),
                 quantity
         );
+    }
+
+    public void setAsAdjacent(boolean onwards) {
+        if (onwards) {
+            this.tracesWithSuccessorCooccurrences += 1;
+        } else {
+            this.tracesWithPredecessorCooccurrences += 1;
+        }
+
     }
 
     /* Store the information that this task occurred in the same trace as the pivot, either onwards or backwards. */
@@ -219,6 +235,8 @@ public class StatsCell implements Cloneable {
 		this.tracesWithInBetweenRepsOnwards += other.tracesWithInBetweenRepsOnwards;
 		this.tracesWithCooccurrenceOnwards += other.tracesWithCooccurrenceOnwards;
 		this.tracesWithCooccurrenceBackwards += other.tracesWithCooccurrenceBackwards;
+		this.tracesWithSuccessorCooccurrences += other.tracesWithSuccessorCooccurrences;
+		this.tracesWithPredecessorCooccurrences += other.tracesWithPredecessorCooccurrences;
 		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {
@@ -252,6 +270,8 @@ public class StatsCell implements Cloneable {
 		this.tracesWithInBetweenRepsOnwards -= other.tracesWithInBetweenRepsOnwards;
 		this.tracesWithCooccurrenceOnwards -= other.tracesWithCooccurrenceOnwards;
 		this.tracesWithCooccurrenceBackwards -= other.tracesWithCooccurrenceBackwards;
+		this.tracesWithSuccessorCooccurrences -= other.tracesWithSuccessorCooccurrences;
+		this.tracesWithPredecessorCooccurrences -= other.tracesWithPredecessorCooccurrences;
 		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {

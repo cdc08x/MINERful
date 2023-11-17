@@ -191,9 +191,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 			if (interplayStats.distances.get(1) != null) {
 				satEvtNum = interplayStats.distances.get(1);
 			}
-			if (interplayStats.distancesPerTrace.get(1) != null) {
-				satTrcNum = interplayStats.distancesPerTrace.get(1);
-			}
+			satTrcNum = interplayStats.tracesWithSuccessorCooccurrences;
 		}
 		else if (conClass.equals(Precedence.class)) {
 			satEvtNum = pivotOccurrences - interplayStats.howManyTimesItNeverOccurredBackwards();
@@ -207,9 +205,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 			if (interplayStats.distances.get(-1) != null) {
 				satEvtNum = interplayStats.distances.get(-1);
 			}
-			if (interplayStats.distancesPerTrace.get(-1) != null) {
-				satTrcNum = interplayStats.distancesPerTrace.get(-1);
-			}
+			satTrcNum = interplayStats.tracesWithPredecessorCooccurrences;
 		}
 		else if (conClass.equals(NotRespondedExistence.class)) {
 			satEvtNum = interplayStats.howManyTimesItNeverOccurredAtAll();

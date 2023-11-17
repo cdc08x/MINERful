@@ -132,7 +132,7 @@ public class LocalStatsWrapper {
 	@XmlTransient
 	protected Map<TaskChar, Boolean> atLeastOneCooccurrenceInThisTrace;
 	@XmlTransient
-	protected Map<TaskChar, Boolean> alwaysAdjacentInThisTrace;
+	protected Map<TaskChar, Integer> adjacentOccurrencesInThisTrace;
 	@XmlTransient
 	protected Map<TaskChar, AlternatingCounterSwitcher> alternatingCntSwAtThisStep;
 	@XmlAttribute
@@ -163,14 +163,14 @@ public class LocalStatsWrapper {
 		this.interplayStatsTable = new HashMap<TaskChar, StatsCell>(alphabet.size(), (float)1.0);
 		this.neverMoreCooccurrencesAtThisStep = new HashMap<TaskChar, Integer>(alphabet.size(), (float)1.0);
 		this.atLeastOneCooccurrenceInThisTrace = new HashMap<TaskChar, Boolean>(alphabet.size(), (float)1.0);
-		this.alwaysAdjacentInThisTrace = new HashMap<TaskChar, Boolean>(alphabet.size(), (float)1.0);
+		this.adjacentOccurrencesInThisTrace = new HashMap<TaskChar, Integer>(alphabet.size(), (float)1.0);
 		this.alternatingCntSwAtThisStep = new HashMap<TaskChar, AlternatingCounterSwitcher>(alphabet.size(), (float)1.0);
 		for (TaskChar task : alphabet) {
 			this.interplayStatsTable.put(task, new StatsCell());
+			this.adjacentOccurrencesInThisTrace.put(task, 0);
 			if (!task.equals(this.baseTask)) {
 				this.neverMoreCooccurrencesAtThisStep.put(task, 0);
 				this.atLeastOneCooccurrenceInThisTrace.put(task, false);
-				this.alwaysAdjacentInThisTrace.put(task, true);
 				this.alternatingCntSwAtThisStep.put(task,
 						new AlternatingCounterSwitcher());
 			}
@@ -242,7 +242,7 @@ public class LocalStatsWrapper {
 					statsCell.inBetweenRepsBackwards += myAltCountSwitcher.flush();
 				}
 			}
-	
+
 			if (repetitionsAtThisStep != null) {
 				/*
 				 * for each repetition of the same character during the analysis,
@@ -254,7 +254,22 @@ public class LocalStatsWrapper {
 				/* THIS IS THE TRICK TO AVOID ANY TRANSITIVE CLOSURE effect!! */
 				for (Integer occurredAlsoAt : repetitionsAtThisStep) {
 					this.interplayStatsTable.get(tCh).newAtDistance(position - occurredAlsoAt);
+					/* 
+						If some task B occurs at distance 1, and we are impersoanting task A here, 
+						then all other tasks X violate ChainResponse(A,X).
+						This is to be recorded for trace-based measure computing:
+						one violation in a trace is enough to consider the whole trace as violating the constraint.
+						If some task B occurs at distance 1,
+						then all other tasks X violate ChainPrecedence(X,A).
+					*/
+					if (Math.abs(position - occurredAlsoAt) == 1) {
+						this.adjacentOccurrencesInThisTrace.put(tCh, this.adjacentOccurrencesInThisTrace.get(tCh) + 1);
+					}
 				}
+			}
+			/* Adjust the counter for adjacences to the first occurrence */
+			if  (Math.abs(position - firstOccurrenceAtThisStep) == 1) {
+				this.adjacentOccurrencesInThisTrace.put(tCh, this.adjacentOccurrencesInThisTrace.get(tCh) + 1);
 			}
 			/*
 			 * If this is not the first occurrence position, record the distance
@@ -278,6 +293,7 @@ public class LocalStatsWrapper {
 							position - firstOccurrenceAtThisStep);
 				}
 			}
+
 			/*
 			 * If this is the repetition of the pivot, record it (it is needed for
 			 * the computation of all the other distances!)
@@ -340,6 +356,8 @@ public class LocalStatsWrapper {
 			this.recordTasksThatDidntCooccurAnymoreInStep(onwards);
 			/* Record the tasks that co-occurred in the trace, afterwards or backwards */
 			this.recordTasksThatCooccurredInTrace(onwards);
+			/* Record the adjacent tasks, afterwards or backwards */
+			this.recordAdjacentTasks(onwards);
 
 			/* Stores that in this trace at least a repetition occurred (in case), then 
 			 * resets the switchers for the alternations counter */
@@ -359,6 +377,31 @@ public class LocalStatsWrapper {
 			/* Resets the local stats-table counters */
 			this.firstOccurrenceAtThisStep = null;
 			this.repetitionsAtThisStep = null;
+		}
+	}
+
+	protected void recordAdjacentTasks(boolean onwards) {
+		int totalAmountOfOccurrences = 0;
+		if (this.repetitionsAtThisStep == null) { // In case of no repetitions in this trace beyond the first
+			if (this.firstOccurrenceAtThisStep == null) { // In case of no occurrences at all, skip this
+				return;
+			} else { // Otherwise leave the default value (one) for totalAmountOfOccurrences
+				totalAmountOfOccurrences = 1;
+			}
+		} else {
+			totalAmountOfOccurrences = this.repetitionsAtThisStep.size() + 1;
+		}
+		System.err.println(new String("Repetitions of ").concat(this.baseTask.toString()).concat(" is ").concat(String.valueOf(totalAmountOfOccurrences)));
+		/* For each character, adjacent or not in the trace */
+		for (TaskChar otherTCh : this.adjacentOccurrencesInThisTrace.keySet()) {
+			System.err.println(otherTCh.toString().concat(" is adjacent to it #").concat(String.valueOf(this.adjacentOccurrencesInThisTrace.get(otherTCh))));
+			/* If it was adjacent as many times as this task occurred in the trace */
+			if (this.adjacentOccurrencesInThisTrace.get(otherTCh) == totalAmountOfOccurrences) {
+				/* Set it occurred at least once */
+				this.interplayStatsTable.get(otherTCh).setAsAdjacent(onwards);
+				/* Reset the counter! */
+				this.adjacentOccurrencesInThisTrace.put(otherTCh, 0);
+			}
 		}
 	}
 
@@ -401,7 +444,7 @@ public class LocalStatsWrapper {
 	 * records the amount of occurrences AT THIS STEP and increments the total
 	 * amount OVER ALL OF THE STEPS
 	 */
-	protected void updateOccurrencesCounters() {
+	protected int updateOccurrencesCounters() {
 		Integer numberOfRepetitions = 0;
 		if (this.firstOccurrenceAtThisStep != null) {
 			/* Record the amount of occurrences at this step */
@@ -428,6 +471,8 @@ public class LocalStatsWrapper {
 		this.totalAmountOfOccurrences += numberOfRepetitions;
 		/* Increment the total amount of traces having at least an occurrence of this task */
 		this.totalAmountOfTracesWithOccurrence += ((numberOfRepetitions > 0) ? 1 : 0);
+
+		return numberOfRepetitions;
 	}
 
 	public long getTotalAmountOfOccurrences() {
