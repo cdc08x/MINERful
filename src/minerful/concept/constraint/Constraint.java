@@ -396,7 +396,7 @@ public abstract class Constraint implements Comparable<Constraint> {
      * @return <code>true</code> if this constraint is redundant, below thresholds, or in conflict with other constraints; <code>false</code> otherwise.
      */
 	public boolean isMarkedForExclusion() {
-		return this.isRedundant() || !this.evtBasedMeasures.isAboveThresholds() || this.isConflicting();
+		return this.isRedundant() || this.isBelowThresholds() || this.isConflicting();
 	}
 
 
