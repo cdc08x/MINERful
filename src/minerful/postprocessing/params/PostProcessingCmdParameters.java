@@ -54,6 +54,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 		
 		public boolean isHierarchySubsumptionResolutionRequested() {
+			//conflict default and hierarchy
 			switch(this) {
 			case HIERARCHY:
 			case HIERARCHYCONFLICT:
@@ -110,9 +111,9 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.125;
 	public static final Double DEFAULT_EVT_COVERAGE_THRESHOLD = 0.125;
 	public static final Double DEFAULT_EVT_CONFIDENCE_THRESHOLD = 0.85;
-	public static final Double DEFAULT_TRC_SUPPORT_THRESHOLD = 0.0;
-	public static final Double DEFAULT_TRC_COVERAGE_THRESHOLD = 0.0;
-	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.0;
+	public static final Double DEFAULT_TRC_SUPPORT_THRESHOLD = 0.125;
+	public static final Double DEFAULT_TRC_COVERAGE_THRESHOLD = 0.125;
+	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.85;
 	public static final PostProcessingAnalysisType DEFAULT_POST_PROCESSING_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
@@ -129,11 +130,11 @@ public class PostProcessingCmdParameters extends ParamsManager {
     public Double evtConfidenceThreshold;
 	/** Minimum event-based coverage threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_COVERAGE_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
 	public Double evtCoverageThreshold;
-	/** Minimum trace-based support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
+	/** Minimum trace-based support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_TRC_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
     public Double trcSupportThreshold;
-	/** Minimum trace-based confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
+	/** Minimum trace-based confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_TRC_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
     public Double trcConfidenceThreshold;
-	/** Minimum trace-based coverage threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_COVERAGE_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
+	/** Minimum trace-based coverage threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_TRC_COVERAGE_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
 	public Double trcCoverageThreshold;
 	/** Specifies whether the redundant or inconsistent constraints should be only marked as such (<code>false</code>), hence hidden, or cropped (removed) from the model (<code>true</code>) */
 	public boolean cropRedundantAndInconsistentConstraints;
@@ -165,6 +166,9 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		noPostProcessParams.evtSupportThreshold = 0.0;
 		noPostProcessParams.evtConfidenceThreshold = 0.0;
 		noPostProcessParams.evtCoverageThreshold = 0.0;
+		noPostProcessParams.trcSupportThreshold = 0.0;
+		noPostProcessParams.trcConfidenceThreshold = 0.0;
+		noPostProcessParams.trcCoverageThreshold = 0.0;
 		noPostProcessParams.cropRedundantAndInconsistentConstraints = DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY;
 	
 		return noPostProcessParams;
@@ -317,7 +321,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 						.hasArg().argName("threshold")
 						.longOpt("trace-support")
 						.desc("threshold for trace-based support; it must be a real value ranging from 0.0 to 1.0"
-						+ printDefault(DEFAULT_EVT_SUPPORT_THRESHOLD))
+						+ printDefault(DEFAULT_TRC_SUPPORT_THRESHOLD))
 						.type(Double.class)
 						.build()
         );
@@ -326,7 +330,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 						.hasArg().argName("threshold")
 						.longOpt("trace-confidence")
 						.desc("threshold for trace-based confidence; it must be a real value ranging from 0.0 to 1.0"
-						+ printDefault(DEFAULT_EVT_CONFIDENCE_THRESHOLD))
+						+ printDefault(DEFAULT_TRC_CONFIDENCE_THRESHOLD))
 						.type(Double.class)
 						.build()
         		);
@@ -335,7 +339,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 						.hasArg().argName("threshold")
 						.longOpt("trace-coverage")
 						.desc("threshold for trace-based coverage; it must be a real value ranging from 0.0 to 1.0"
-						+ printDefault(DEFAULT_EVT_COVERAGE_THRESHOLD))
+						+ printDefault(DEFAULT_TRC_COVERAGE_THRESHOLD))
 						.type(Double.class)
 						.build()
         		);
