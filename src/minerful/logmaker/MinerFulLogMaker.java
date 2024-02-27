@@ -25,6 +25,7 @@ import org.deckfour.xes.extension.std.XLifecycleExtension;
 import org.deckfour.xes.extension.std.XTimeExtension;
 import org.deckfour.xes.factory.XFactory;
 import org.deckfour.xes.factory.XFactoryBufferedImpl;
+import org.deckfour.xes.factory.XFactoryNaiveImpl;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
@@ -89,7 +90,7 @@ public class MinerFulLogMaker {
 	 * @return The generated event log
 	 */
 	public XLog createLog(ProcessSpecification processModel) {
-		XFactory xFactory = new XFactoryBufferedImpl();
+		XFactory xFactory = new XFactoryNaiveImpl();
 		this.log = xFactory.createLog();
 		
 		XTrace xTrace = null;
