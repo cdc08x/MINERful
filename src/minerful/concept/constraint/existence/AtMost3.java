@@ -18,6 +18,19 @@ public class AtMost3 extends ExistenceConstraint {
     public String getLTLpfExpressionTemplate() {
     	return "G(%1$s -> X(G(%1$s -> X(G(%1$s -> X(G(!%1$s)))))))"; // G(a -> X(G(a -> X(G( a -> X(G(!a)))))))
     }
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+		return "[^%1$s]*([%1$s][^%1$s]*){4,}[^%1$s]*";
+	} // this expression is equivalent to a non-existing AtLeast4 Constraint
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		return "F(%1$s & X(F(%1$s & X(F(%1$s & X(F(%1$s)))))))";
+	}
+
     
 	protected AtMost3() {
     	super();

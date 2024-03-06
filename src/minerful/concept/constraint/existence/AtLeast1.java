@@ -18,6 +18,17 @@ public class AtLeast1 extends ExistenceConstraint {
     public String getLTLpfExpressionTemplate() {
     	return "F(%1$s)"; // F(a)
     }
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeRegularExpressionTemplate() { return "[^%1$s]*"; }
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		return "G(!%1$s)";// G(!a)
+	}
+
  
     protected AtLeast1() {
     	super();

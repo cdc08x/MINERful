@@ -140,6 +140,16 @@ public abstract class RelationConstraint extends Constraint {
 		return String.format(this.getLTLpfExpressionTemplate(), base.toLTLpfString(), implied.toLTLpfString());
 	}
 	
+	@Override
+	public String getNegativeRegularExpression() {
+		return String.format(this.getNegativeRegularExpressionTemplate(), base.toPatternString(), implied.toPatternString());
+	}
+
+	@Override
+	public String getNegativeLTLpfExpression() {
+		return String.format(this.getNegativeLTLpfExpressionTemplate(), base.toLTLpfString(), implied.toLTLpfString());
+	}
+	
 	public abstract ConstraintImplicationVerse getImplicationVerse();
 	
 	public boolean isActivationBranched() {
@@ -209,6 +219,13 @@ public abstract class RelationConstraint extends Constraint {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {

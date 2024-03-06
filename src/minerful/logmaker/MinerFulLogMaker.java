@@ -2,23 +2,30 @@ package minerful.logmaker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.Scanner;
 
 import minerful.automaton.AutomatonRandomWalker;
 import minerful.automaton.utils.AutomatonUtils;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.logmaker.params.LogMakerParameters;
+import minerful.logparser.LogEventClassifier;
+import minerful.logparser.XesLogParser;
 import minerful.utils.MessagePrinter;
 
+import org.deckfour.spex.SXTag;
 import org.deckfour.xes.classification.XEventNameClassifier;
 import org.deckfour.xes.extension.std.XConceptExtension;
 import org.deckfour.xes.extension.std.XLifecycleExtension;
@@ -26,6 +33,7 @@ import org.deckfour.xes.extension.std.XTimeExtension;
 import org.deckfour.xes.factory.XFactory;
 import org.deckfour.xes.factory.XFactoryBufferedImpl;
 import org.deckfour.xes.factory.XFactoryNaiveImpl;
+import org.deckfour.xes.model.XElement;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
@@ -51,6 +59,10 @@ public class MinerFulLogMaker {
 	 * Event log as strings
 	 */
 	private String[] stringsLog;
+
+	private String[] strLog;
+
+	private String legend;
 	/**
 	 * Maximum amount of traces we want to save as strings
 	 */
@@ -77,7 +89,12 @@ public class MinerFulLogMaker {
 		this.stringsLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
 				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
 					MAX_SIZE_OF_STRINGS_LOG)];
+		
+		this.strLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
+				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
+					MAX_SIZE_OF_STRINGS_LOG)];
 	}
+	
 
 	/**
 	 * Generates an event log based on a MINERful process model. To do so, it
@@ -107,11 +124,45 @@ public class MinerFulLogMaker {
 				"Synthetic log for process: " + processModel.getName()
 		);
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
-		
-		Automaton automaton = processModel.buildAutomaton();
-		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 
+		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+		String ncf = "";
+
+		if (this.parameters.negativeConstraintsFile == null) {
+			ncf = this.parameters.negativeConstraints;
+		}
+		else {
+			try{
+				Scanner s = new Scanner((File) this.parameters.negativeConstraintsFile); //this.parameters.negativeConstraintsFile
+				while (s.hasNext()){
+					ncf += s.next() + ",";
+				}
+				s.close();
+				ncf = ncf + this.parameters.negativeConstraints;
+			} catch (FileNotFoundException ex){
+				ncf = this.parameters.negativeConstraints;
+			}
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////
+
+		
+		// Automaton automaton = processModel.buildAutomaton();
+		// automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
+
+		// AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
+
+		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
+		Automaton automaton = processModel.buildAutomaton(ncf);//this.parameters.negativeConstraints
+		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
+		///////////////////////////////////////////////////////////////////////////////////////////////
+
+		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+		Automaton automatonPositive = processModel.buildAutomaton();
+		automatonPositive = AutomatonUtils.limitRunLength(automatonPositive, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
+		AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
+		/////////////////////////////////////////////////////////////////////////////////////////////
+
 		
 		TaskChar firedTransition = null;
 		Character pickedTransitionChar = 0;
@@ -120,8 +171,42 @@ public class MinerFulLogMaker {
 		int padder = (int)(Math.ceil(Math.log10(this.parameters.tracesInLog)));
 		String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
 		StringBuffer sBuf = new StringBuffer();
+		StringBuffer stringBuf = new StringBuffer();
 
-		for (int traceNum = 0; traceNum < this.parameters.tracesInLog; traceNum++) {
+		legend = "# Legend:" + "\n" + "# " + processModel.getTaskCharArchive().getTranslationMapById().toString() + "\n";
+
+		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
+		for (int traceNum = 0; traceNum < this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1)); traceNum++) {
+			sBuf.append("<");
+			walkerPositive.goToStart();
+			xTrace = xFactory.createTrace();
+			concExtino.assignName(
+					xTrace,
+					String.format(traceNameTemplate, (traceNum))
+			);
+
+			pickedTransitionChar = walkerPositive.walkOn();
+			while (pickedTransitionChar != null) {
+				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
+				if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
+					stringBuf.append(pickedTransitionChar);
+					sBuf.append(pickedTransitionChar + "=" + firedTransition + ";");
+				}
+
+				currentDate = generateRandomDateTimeForLogEvent(currentDate);
+				xEvent = makeXEvent(xFactory, concExtino, lifeExtension, timeExtension, firedTransition, currentDate);
+				xTrace.add(xEvent);
+				pickedTransitionChar = walkerPositive.walkOn();
+			}
+			this.log.add(xTrace);
+			if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
+				this.stringsLog[traceNum] = sBuf.substring(0, Math.max(1, sBuf.length() -1)) + ">";
+				this.strLog[traceNum] = stringBuf.substring(0, Math.max(1, stringBuf.length() -1));
+				sBuf = new StringBuffer();
+				stringBuf = new StringBuffer();
+			}
+		}
+		for (int traceNum = (int) (this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1))); traceNum < this.parameters.tracesInLog; traceNum++) {
 			sBuf.append("<");
 			walker.goToStart();
 			xTrace = xFactory.createTrace();
@@ -134,9 +219,10 @@ public class MinerFulLogMaker {
 			while (pickedTransitionChar != null) {
 				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 				if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
-					sBuf.append(firedTransition + ",");
+					stringBuf.append(pickedTransitionChar);
+					sBuf.append(pickedTransitionChar + "=" + firedTransition + ";");
 				}
-				
+
 				currentDate = generateRandomDateTimeForLogEvent(currentDate);
 				xEvent = makeXEvent(xFactory, concExtino, lifeExtension, timeExtension, firedTransition, currentDate);
 				xTrace.add(xEvent);
@@ -145,13 +231,18 @@ public class MinerFulLogMaker {
 			this.log.add(xTrace);
 			if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
 				this.stringsLog[traceNum] = sBuf.substring(0, Math.max(1, sBuf.length() -1)) + ">";
+				this.strLog[traceNum] = stringBuf.substring(0, Math.max(1, stringBuf.length() -1));
 				sBuf = new StringBuffer();
+				stringBuf = new StringBuffer();
 			}
 		}
 		
+		
 		return this.log;
-	}
-	
+		///////////////////////////////////////////////////////////////////////////////////////////////
+	}		
+
+
 	/**
 	 * Stores the generated event log, {@link #log log}, in the file specified in
 	 * {@link #parameters parameters}.
@@ -162,7 +253,6 @@ public class MinerFulLogMaker {
 		checkParametersForLogEncoding();
 		if (this.parameters.outputLogFile == null)
 			throw new IllegalStateException("Output file not specified in given parameters");
-		
 		File outFile = this.parameters.outputLogFile;
 		OutputStream outStream = new FileOutputStream(outFile);
 		this.printEncodedLogInStream(outStream);
@@ -199,13 +289,24 @@ public class MinerFulLogMaker {
 			new XMxmlSerializer().serialize(this.log, outStream);
 			break;
 		case strings:
+			String legendname = this.parameters.outputLogFile.toString().substring(0, this.parameters.outputLogFile.toString().length() - 4) + "_legend.txt";
+			File legendFile = new File(legendname);
+			OutputStream legendStream = new FileOutputStream(legendFile);
+			PrintWriter priLegend = new PrintWriter(legendStream);
 			PrintWriter priWri = new PrintWriter(outStream);
-			for (String stringTrace : this.stringsLog) {
+			for (String stringTrace : this.strLog) {
 				priWri.println(stringTrace);
-				MessagePrinter.printlnOut(stringTrace);
 			}
+			priLegend.println(this.legend);
+			for (String legendTrace : this.stringsLog) {
+				priLegend.println(legendTrace);
+			}
+			MessagePrinter.printlnOut("log in file .txt created successfully");
+
 			priWri.flush();
 			priWri.close();
+			priLegend.flush();
+			priLegend.close();
 			break;
 		default:
 			outStream.flush();

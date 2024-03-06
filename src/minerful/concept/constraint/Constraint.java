@@ -31,6 +31,7 @@ import minerful.concept.constraint.existence.ExistenceConstraint;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
+
 @XmlRootElement(name="constraint")
 @XmlSeeAlso({RelationConstraint.class,ExistenceConstraint.class})
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,6 +98,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return this.trcBasedMeasures;
 	}
 
+	
 	@Override
     public String toString() {
 		StringBuilder sBuil = new StringBuilder();
@@ -265,6 +267,17 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public String getLTLpfExpression() {
 		return String.format(this.getLTLpfExpressionTemplate(), this.base.toLTLpfString());
 	}
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	public String getNegativeRegularExpression() {
+		return String.format(this.getNegativeRegularExpressionTemplate(), this.base.toPatternString(true));
+	}//
+
+	public String getNegativeLTLpfExpression() {
+		return String.format(this.getNegativeLTLpfExpressionTemplate(), this.base.toLTLpfString());
+	}//
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 	/**
 	 * Reverses the order of parameters ()
@@ -279,17 +292,29 @@ public abstract class Constraint implements Comparable<Constraint> {
 	
 	public abstract String getLTLpfExpressionTemplate();
 
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	public abstract String getNegativeRegularExpressionTemplate();
+
+	public abstract String getNegativeLTLpfExpressionTemplate();
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
 	public boolean isBranched() {
 		return	(this.getBase() != null && this.getBase().size() > 1)
 			||	(this.getImplied() != null && this.getImplied().size() > 1);
 	}
 
-    
+    /**
+	 * method checking only event based confidence (to check)
+	 * @return
+	 */
     public boolean isMoreInformativeThanGeneric() {
         if (!this.hasConstraintToBaseUpon())
             return true;
         Integer moreReliableThanGeneric = Double.valueOf((double)this.evtBasedMeasures.confidence).compareTo(constraintWhichThisIsBasedUpon.evtBasedMeasures.confidence);
-        if (moreReliableThanGeneric == 0)
+        if (moreReliableThanGeneric < 0 && this.trcBasedMeasures.isAboveThresholds() && this.evtBasedMeasures.isAboveThresholds()){
+			return constraintWhichThisIsBasedUpon.isMoreInformativeThanGeneric();
+		}
+		if (moreReliableThanGeneric == 0)
         	return constraintWhichThisIsBasedUpon.isMoreInformativeThanGeneric();
         return (moreReliableThanGeneric > 0);
     }
@@ -389,7 +414,11 @@ public abstract class Constraint implements Comparable<Constraint> {
      */
 	public boolean isBelowThresholds() {
 		return !this.evtBasedMeasures.isAboveThresholds() || !this.trcBasedMeasures.isAboveThresholds();
+		//!false or !true --> true or false --> true
 	}
+
+
+	
 
     /**
      * Returns <code>true</code> if this constraint is redundant, below thresholds, or in conflict with other constraints; <code>false</code> otherwise.
@@ -397,6 +426,7 @@ public abstract class Constraint implements Comparable<Constraint> {
      */
 	public boolean isMarkedForExclusion() {
 		return this.isRedundant() || this.isBelowThresholds() || this.isConflicting();
+		//change event based in trace based
 	}
 
 

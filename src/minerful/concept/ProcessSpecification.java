@@ -4,8 +4,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedSet;
@@ -91,6 +93,16 @@ public class ProcessSpecification implements PropertyChangeListener {
 		return buildAutomatonByBondHeuristic();
 	}
 
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	public Automaton buildAutomaton(String nc) {
+		return buildAutomatonByBondHeuristic(nc);
+	}
+	public Automaton buildNegativeAutomaton() {
+		return buildNegativeAutomatonByBondHeuristic();
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	
+
 	public Automaton buildAlphabetAcceptingAutomaton() {
 		return AutomatonFactory.fromRegularExpressions(new ArrayList<String>(0), this.taskCharArchive.getIdentifiersAlphabet());
 	}
@@ -138,6 +150,38 @@ public class ProcessSpecification implements PropertyChangeListener {
 		}
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
 	}
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	protected Automaton buildAutomatonByBondHeuristic(String nc) {
+		Collection<String> regularExpressions = null;
+		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
+		regularExpressions = new ArrayList<String>(constraints.size());
+		String[] ncobj = Arrays.stream(nc.split(",")).map(String::trim).toArray(String[]::new);
+		List<String> ncList = Arrays.asList(ncobj);
+		for (Constraint con : constraints) {
+			String type = con.getClass().getCanonicalName().substring(con.getClass().getCanonicalName().lastIndexOf('.') + 1);
+			if (ncList.contains(type)){
+				regularExpressions.add(con.getNegativeRegularExpression());
+			}
+			else {
+				regularExpressions.add(con.getRegularExpression());
+			}
+		}
+		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
+	}
+
+	protected Automaton buildNegativeAutomatonByBondHeuristic() {
+		Collection<String> regularExpressions = null;
+		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
+		regularExpressions = new ArrayList<String>(constraints.size());
+		for (Constraint con : constraints) {
+			regularExpressions.add(con.getNegativeRegularExpression());
+		}
+		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 	public TaskCharArchive getTaskCharArchive() {
 		return this.taskCharArchive;
