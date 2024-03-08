@@ -126,4 +126,14 @@ public class SequenceResponse22 extends Constraint {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

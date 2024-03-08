@@ -19,7 +19,8 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	}
 
 	@Override
-	protected Constraint[] discoverMinMultiplicityConstraints(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
+	protected Constraint[] discoverMinMultiplicityConstraints(TaskChar base,
+	LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 	    for (int num: localStats.repetitions.keySet()) {
 	        if (num > 0)
 	            return new Constraint[] {new AtLeast1(base)};
@@ -37,7 +38,8 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	}
 
 	@Override
-	protected Constraint[] discoverMaxMultiplicityConstraints(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
+	protected Constraint[] discoverMaxMultiplicityConstraints(TaskChar base,
+	LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 		if (localStats.repetitions.containsKey(0))
 			return null;
 		return new Constraint[] {new AtMost1(base)};
@@ -55,7 +57,8 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	}
 
 	@Override
-	protected Constraint discoverInitConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
+	protected Constraint discoverInitConstraint(TaskChar base,
+	LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 	    Constraint init = null;
 	    if (!(localStats.repetitions.containsKey(0) && localStats.repetitions.get(0) > 0)) {
 	        if (localStats.getOccurrencesAsFirst() >= this.globalStats.logSize) {
@@ -66,7 +69,8 @@ public class DeterministicExistenceConstraintsMiner extends ExistenceConstraints
 	}
 	
 	@Override
-	protected Constraint discoverEndConstraint(TaskChar base, LocalStatsWrapper localStats, long testbedSize) {
+	protected Constraint discoverEndConstraint(TaskChar base,
+	LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 	    Constraint end = null;
 	    if (!(localStats.repetitions.containsKey(0) && localStats.repetitions.get(0) > 0)) {
 	        if (localStats.getOccurrencesAsLast() >= this.globalStats.logSize) {

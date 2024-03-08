@@ -21,6 +21,19 @@ public class NotCoExistence extends NotSuccession {
     public String getLTLpfExpressionTemplate() {
     	return "G((%1$s -> !(X(F(%2$s)) | Y(O(%2$s)))) & (%2$s -> !(X(F(%1$s)) | Y(O(%1$s)))))"; // G((a -> !(X(F(b)) | Y(O(b)))) & (b -> !(X(F(a)) | Y(O(a)))))
     }
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+		return "[^%1$s%2$s]*(([%1$s].*[%2$s].*)|([%2$s].*[%1$s].*)){1,}[^%1$s%2$s]*";
+	}
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		return "G((%1$s -> (X(F(%2$s)) | Y(O(%2$s)))) & (%2$s -> (X(F(%1$s)) | Y(O(%1$s)))))"; // G((a -> (X(F(b)) | Y(O(b)))) & (b -> (X(F(a)) | Y(O(a)))))
+	}
+
   	
 	protected NotCoExistence() {
 		super();

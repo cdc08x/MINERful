@@ -21,6 +21,20 @@ public class ChainResponse extends AlternateResponse {
     public String getLTLpfExpressionTemplate() {
     	return "G(%1$s -> X(%2$s))"; // G(a -> X(b))
     }
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+//		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
+		return "[^%1$s]*([%1$s][%2$s][^%1$s]*)*([%1$s][^%2$s]){1,}([^%1$s]*|[%1$s]*)";
+	}
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		return "G(%1$s -> !X(%2$s))"; // G(a -> !X(b))
+	}
+ 	
  	
 	protected ChainResponse() {
 		super();

@@ -21,6 +21,20 @@ public class AlternateSuccession extends Succession {
     public String getLTLpfExpressionTemplate() {
     	return "G((%1$s -> X(!%1$s U %2$s)) & (%2$s -> Y(!%2$s S %1$s)))"; // G((a -> X(!a U b)) & (b -> Y(!b S a)))
     }
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+//		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
+		return "[^%1$s%2$s]*([%1$s][^%1$s%2$s]*([%1$s]|[%2$s])*[^%1$s%2$s]*[%2$s]){1,}[^%1$s%2$s]*";
+	}
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+	}
+
 	
 	protected AlternateSuccession() {
 		super();

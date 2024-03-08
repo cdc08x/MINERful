@@ -34,6 +34,7 @@ public class ThresholdsMarker {
 
 	public ConstraintsBag markConstraintsBelowThresholds(double evtSupportTh, double evtConfidenceTh, double evtCoverageTh) {
 		ConstraintMeasuresManager conMes = null;
+
         for (TaskChar key : constraintsBag.getTaskChars()) {
             for (Constraint con : constraintsBag.getConstraintsOf(key)) {
             	conMes = con.getEventBasedMeasures();
@@ -59,9 +60,16 @@ public class ThresholdsMarker {
             	conMess[0] = con.getEventBasedMeasures();
             	conMess[1] = con.getTraceBasedMeasures();
             	for (ConstraintMeasuresManager conMes: conMess) {
-	            	conMes.setBelowSupportThreshold(!conMes.hasSufficientSupport(evtSupportTh));
-	            	conMes.setBelowConfidenceThreshold(!conMes.hasSufficientConfidence(evtConfidenceTh));
-	            	conMes.setBelowCoverageThreshold(!conMes.hasSufficientCoverage(evtCoverageTh));
+					if (conMes == conMess[0]){
+	            		conMes.setBelowSupportThreshold(!conMes.hasSufficientSupport(evtSupportTh));
+	            		conMes.setBelowConfidenceThreshold(!conMes.hasSufficientConfidence(evtConfidenceTh));
+	            		conMes.setBelowCoverageThreshold(!conMes.hasSufficientCoverage(evtCoverageTh));
+					}
+					if(conMes == conMess[1]){
+						conMes.setBelowSupportThreshold(!conMes.hasSufficientSupport(trcSupportTh));
+	            		conMes.setBelowConfidenceThreshold(!conMes.hasSufficientConfidence(trcConfidenceTh));
+	            		conMes.setBelowCoverageThreshold(!conMes.hasSufficientCoverage(trcCoverageTh));
+					}
 	            	if (conMes.isBelowSupportThreshold() || conMes.isBelowConfidenceThreshold() || conMes.isBelowCoverageThreshold()) {
 	            		markedAsBelowThreshold = true;
 	            	}

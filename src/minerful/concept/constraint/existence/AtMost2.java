@@ -19,6 +19,18 @@ public class AtMost2 extends ExistenceConstraint {
     	return "G(%1$s -> X(G(%1$s -> X(G(!%1$s)))))"; // G(a -> X(G( a -> X(G(!a)))))
     }
     
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeRegularExpressionTemplate() {
+		return "[^%1$s]*([%1$s][^%1$s]*){3,}[^%1$s]*";
+	}
+
+	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	@Override
+	public String getNegativeLTLpfExpressionTemplate() {
+		return "F(%1$s & X(F(%1$s & X(F(%1$s)))))"; // F(a & X(F(a & X(F(a)))))
+	}
+
 	protected AtMost2() {
     	super();
     }

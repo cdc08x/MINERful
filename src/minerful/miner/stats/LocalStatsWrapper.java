@@ -391,17 +391,15 @@ public class LocalStatsWrapper {
 		} else {
 			totalAmountOfOccurrences = this.repetitionsAtThisStep.size() + 1;
 		}
-		System.err.println(new String("Repetitions of ").concat(this.baseTask.toString()).concat(" is ").concat(String.valueOf(totalAmountOfOccurrences)));
 		/* For each character, adjacent or not in the trace */
 		for (TaskChar otherTCh : this.adjacentOccurrencesInThisTrace.keySet()) {
-			System.err.println(otherTCh.toString().concat(" is adjacent to it #").concat(String.valueOf(this.adjacentOccurrencesInThisTrace.get(otherTCh))));
 			/* If it was adjacent as many times as this task occurred in the trace */
 			if (this.adjacentOccurrencesInThisTrace.get(otherTCh) == totalAmountOfOccurrences) {
 				/* Set it occurred at least once */
 				this.interplayStatsTable.get(otherTCh).setAsAdjacent(onwards);
-				/* Reset the counter! */
-				this.adjacentOccurrencesInThisTrace.put(otherTCh, 0);
 			}
+			/* Reset the counter! */
+			this.adjacentOccurrencesInThisTrace.put(otherTCh, 0);
 		}
 	}
 

@@ -197,7 +197,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             } else {
             	Constraint end = new End(base);
             	end.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsLast() / (double) testbedSize);
-            	end.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
+            	end.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsLast() / (double) numOfEventsInLog);
                 end.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
             	return end;
             }
