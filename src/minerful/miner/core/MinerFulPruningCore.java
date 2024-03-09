@@ -41,14 +41,14 @@ public class MinerFulPruningCore {
 		this.tasksToQueryFor = tasksToQueryFor;
 		this.postProcParams = postProcParams;
 		this.subMarker = new SubsumptionHierarchyMarker(processModel.bag);
-		// FIXME Make it parametric
-		this.subMarker.setPolicy(SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY);
+		// fixed to be it parametric
+		this.subMarker.setPolicy(this.postProcParams.hierarchyPolicy.translate());
 		this.threshMarker = new ThresholdsMarker(processModel.bag);
 	}
 
 	public ConstraintsBag massageConstraints() {
 		logger.info("Post-processing the discovered model...");
-		
+		//System.out.println(this.postProcParams.postProcessingAnalysisType.isPostProcessingRequested());
 		if (this.postProcParams.postProcessingAnalysisType.isPostProcessingRequested()) {
 			this.markConstraintsBelowThresholds();
 			if (this.postProcParams.postProcessingAnalysisType.isHierarchySubsumptionResolutionRequested()) {
@@ -59,6 +59,7 @@ public class MinerFulPruningCore {
 			}
 		}
 		
+
 		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
 			this.processModel.bag.removeMarkedConstraints();
 		}
@@ -120,9 +121,9 @@ public class MinerFulPruningCore {
        	beforeSubCheck = 0L,
        	afterSubCheck = 0L;
 		
-//		if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
-//			this.processModel.resetMarks();
-//		}
+		// if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
+		// 	this.processModel.resetMarks();
+		// }
 
         logger.info("Pruning redundancy, on the basis of hierarchy subsumption...");
 

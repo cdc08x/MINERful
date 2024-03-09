@@ -6,15 +6,15 @@ public enum SubsumptionHierarchyMarkingPolicy {
 	 * for example, if the model contains AlternatePrecedence(A, B) and Precedence(A, B),
 	 * the latter is pruned out.
 	 */
-	EAGER_ON_HIERARCHY_OVER_SUPPORT,
+	EAGER_ON_HIERARCHY_OVER_CONFIDENCE,
 	/*
-	 * Privileges the support (eager policy):
+	 * Privileges the confidence (eager policy):
 	 * for example, if the model contains AlternatePrecedence(A, B) and Precedence(A, B),
-	 * and AlternatePrecedence(A, B) has a support of 0.89
-	 * whereas Precedence(A, B) has a support of 0.9,
+	 * and AlternatePrecedence(A, B) has a confidence of 0.89
+	 * whereas Precedence(A, B) has a confidence of 0.9,
 	 * then AlternatePrecedence(A, B) is pruned out.
 	 */
-	EAGER_ON_SUPPORT_OVER_HIERARCHY,
+	EAGER_ON_CONFIDENCE_OVER_HIERARCHY,
 	/*
 	 * Prunes only subsuming constraints, and only if ALL the subsuming ones in the whole hierarchy have the same support
 	 */

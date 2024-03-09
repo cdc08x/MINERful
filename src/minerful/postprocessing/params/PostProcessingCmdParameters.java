@@ -99,7 +99,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 
 	public static final String ANALYSIS_TYPE_PARAM_NAME = "prune";
 	public static final String RANKING_POLICY_PARAM_NAME = "pruneRnk";
-//	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP"; // TODO One day
+	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP"; // TODO One day
 	public static final String KEEP_CONSTRAINTS_PARAM_NAME = "keep";
 	public static final char EVT_SUPPORT_THRESHOLD_PARAM_NAME = 's';
 	public static final char EVT_COVERAGE_THRESHOLD_PARAM_NAME = 'g';
@@ -115,7 +115,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final Double DEFAULT_TRC_COVERAGE_THRESHOLD = 0.125;
 	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.85;
 	public static final PostProcessingAnalysisType DEFAULT_POST_PROCESSING_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
-	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.SUPPORTHIERARCHY;
+	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.HIERARCHY;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
 
 	/** Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following in the array is utilised. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
@@ -186,6 +186,8 @@ public class PostProcessingCmdParameters extends ParamsManager {
     	this.parseAndSetup(new Options(), args);
 	}
 
+	
+
 	@Override
 	protected void setup(CommandLine line) {
 		this.evtSupportThreshold = Double.valueOf(
@@ -241,7 +243,19 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		}
 		
 		this.updateRankingPolicies(line.getOptionValue(RANKING_POLICY_PARAM_NAME));
+
+
+		String hierarchyPolicyString = line.getOptionValue(HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME);
+		if (hierarchyPolicyString != null && !hierarchyPolicyString.isEmpty()) {
+			try {
+				this.hierarchyPolicy = HierarchySubsumptionPruningPolicy.valueOf(fromStringToEnumValue(hierarchyPolicyString));
+			} catch (Exception e) {
+				System.err.println("Invalid option for " + HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME + ": " + hierarchyPolicyString + ". Using default value.");
+			}
+		}
 	}
+
+
 
 	private void updateRankingPolicies(String paramString) {
 		String[] tokens = tokenise(paramString);
@@ -286,6 +300,15 @@ public class PostProcessingCmdParameters extends ParamsManager {
 						.longOpt("prune-ranking-by")
 						.desc("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
 						+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_PRIORITY_POLICIES)))
+						.type(String.class)
+						.build()
+    	);
+		options.addOption(
+                Option.builder(HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME)
+						.hasArg().argName("hierarchy-policy")
+						.longOpt("prune-hierarchy-by")
+						.desc("type of pruning of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(HierarchySubsumptionPruningPolicy.values())
+						+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_HIERARCHY_POLICY)))
 						.type(String.class)
 						.build()
     	);
@@ -357,16 +380,16 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	// TODO Still unused
 	public static enum HierarchySubsumptionPruningPolicy {
 		NONE,
-		HIERARCHY,
-		SUPPORTHIERARCHY;	// default
+		HIERARCHY, // default
+		CONFIDENCEHIERARCHY;	
 		
 		public SubsumptionHierarchyMarkingPolicy translate() {
 			switch(this) {
+			case CONFIDENCEHIERARCHY:
+				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_CONFIDENCE_OVER_HIERARCHY;
 			case HIERARCHY:
-				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_SUPPORT;
-			case SUPPORTHIERARCHY:
 			default:
-				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY;
+				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE;
 			}
 		}
 	}

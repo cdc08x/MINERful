@@ -311,9 +311,6 @@ public abstract class Constraint implements Comparable<Constraint> {
         if (!this.hasConstraintToBaseUpon())
             return true;
         Integer moreReliableThanGeneric = Double.valueOf((double)this.evtBasedMeasures.confidence).compareTo(constraintWhichThisIsBasedUpon.evtBasedMeasures.confidence);
-        if (moreReliableThanGeneric < 0 && this.trcBasedMeasures.isAboveThresholds() && this.evtBasedMeasures.isAboveThresholds()){
-			return constraintWhichThisIsBasedUpon.isMoreInformativeThanGeneric();
-		}
 		if (moreReliableThanGeneric == 0)
         	return constraintWhichThisIsBasedUpon.isMoreInformativeThanGeneric();
         return (moreReliableThanGeneric > 0);

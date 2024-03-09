@@ -10,9 +10,11 @@ import minerful.concept.constraint.relation.MutualRelationConstraint;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.utils.MessagePrinter;
 
+
 public class SubsumptionHierarchyMarker {
 	private static final String HIERARCHY_CODE = "'SH-check'";
 	private static MessagePrinter logger = MessagePrinter.getInstance(SubsumptionHierarchyMarker.class.getCanonicalName());
+	
 
 	private int numberOfMarkedConstraints = 0;
 	private boolean checking = false;
@@ -21,7 +23,7 @@ public class SubsumptionHierarchyMarker {
 	private SubsumptionHierarchyMarkingPolicy policy = null;
 
 	public SubsumptionHierarchyMarker() {
-		this.policy = SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY;
+		this.policy = SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE;
 	}
 
 	public SubsumptionHierarchyMarker(ConstraintsBag constraintsBag) {
@@ -63,12 +65,14 @@ public class SubsumptionHierarchyMarker {
         for (TaskChar key : targetTaskChars) {
             for (Constraint currCon : constraintsBag.getConstraintsOf(key)) {
             	if (!currCon.isRedundant()) {
+					//System.out.println(this.policy);
             		// If the policy is to be eager wrt the hierarchy subsumptions, no matter the support, this is the way to go
-            		if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_SUPPORT)) {
+            		if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE)) {
             			markGenealogyAsRedundant(currCon.getConstraintWhichThisIsBasedUpon(), currCon, key, constraintsBag);
             		} else {
             			// Otherwise, eliminate those constraints that are in the hierarchy behind the current one, if...
 		                if (currCon.hasConstraintToBaseUpon()) {
+
 		                	// ... if the current one has the same support of all others
 		                    if (currCon.isMoreInformativeThanGeneric()) {
 		                    	logger.trace(
@@ -79,7 +83,7 @@ public class SubsumptionHierarchyMarker {
 		                        markGenealogyAsRedundant(currCon.getConstraintWhichThisIsBasedUpon(), currCon, key, constraintsBag);
 		                    } else {
 		                    	// If we want to be "conservative" (namely, a higher support justifies the removal of more strict constraints, this is the way to go
-		                    	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY)) {
+		                    	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_CONFIDENCE_OVER_HIERARCHY)) {
 		                    		logger.trace(
 			                    			"Removing {0} because {1} has a higher support and {0} is subsumed by it",
 			                    			currCon,
@@ -91,7 +95,7 @@ public class SubsumptionHierarchyMarker {
 		                }
             		}
 	                if (currCon.getSubFamily() == RelationConstraintSubFamily.MUTUAL) {
-	                	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_SUPPORT)) {
+	                	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE)) {
 	                		this.markAsRedundant(coExiCon.getForwardConstraint());
 	                		this.markAsRedundant(coExiCon.getBackwardConstraint());
 	            		} else {
@@ -117,7 +121,7 @@ public class SubsumptionHierarchyMarker {
 //	                        		nuBag.remove(key, coExiCon.getBackwardConstraint());
 //	                        	}
 		                        } else {
-		                        	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_SUPPORT_OVER_HIERARCHY)) {
+		                        	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_CONFIDENCE_OVER_HIERARCHY)) {
 //	                        	constraintsBag.remove(key, coExiCon);
 		                        		this.markAsRedundant(coExiCon);
 		                        	}
