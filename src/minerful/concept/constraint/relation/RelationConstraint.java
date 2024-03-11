@@ -187,7 +187,7 @@ public abstract class RelationConstraint extends Constraint {
 		RelationConstraint relaCon = ((RelationConstraint)c);
 		return
 				this.getImplicationVerse() == relaCon.getImplicationVerse()
-			// FIXME This is a trick which could be inconsistent with possible model extensions
+			// FIXME This is a trick which could be inconsistent with possible specification extensions
 			||	relaCon.getClass().equals(RespondedExistence.class);
 	}
 
@@ -202,7 +202,7 @@ public abstract class RelationConstraint extends Constraint {
 		RelationConstraint relaCon = ((RelationConstraint)c);
 		return
 				this.getImplicationVerse() == relaCon.getImplicationVerse()
-			// FIXME This is a trick which could be inconsistent with possible model extensions
+			// FIXME This is a trick which could be inconsistent with possible specification extensions
 			||	relaCon.getClass().equals(RespondedExistence.class);
 	}
 	

@@ -17,7 +17,7 @@ import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.miner.core.MinerFulKBCore;
 import minerful.miner.core.MinerFulPruningCore;
@@ -31,8 +31,8 @@ import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.utils.MessagePrinter;
 
 public class MinerFulMinerStarter extends AbstractMinerFulStarter {
-	protected static final String PROCESS_MODEL_NAME_PATTERN = "Process model discovered from %s";
-	protected static final String DEFAULT_ANONYMOUS_MODEL_NAME = "Discovered process model";
+	protected static final String PROCESS_SPECIFICATION_NAME_PATTERN = "Process specification discovered from %s";
+	protected static final String DEFAULT_ANONYMOUS_SPECIFICATION_NAME = "Discovered process specification";
 	private static MessagePrinter logger = MessagePrinter.getInstance(MinerFulMinerStarter.class);
 
 	@Override
@@ -43,7 +43,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				inputOptions = InputLogCmdParameters.parseableOptions(),
 				systemOptions = SystemCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
-				outputOptions = OutputModelParameters.parseableOptions(),
+				outputOptions = OutputSpecificationParameters.parseableOptions(),
 				postProptions = PostProcessingCmdParameters.parseableOptions();
 		
     	for (Object opt: postProptions.getOptions()) {
@@ -90,8 +90,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				new ViewCmdParameters(
 						cmdLineOptions,
 						args);
-		OutputModelParameters outParams =
-				new OutputModelParameters(
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
 		SystemCmdParameters systemParams =
@@ -121,9 +121,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessSpecification processModel = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
+		ProcessSpecification processSpecification = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
 
-		new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams, logParser);
+		new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams, logParser);
 	}
 
 	public static boolean isEventLogGiven(Options cmdLineOptions, InputLogCmdParameters inputParams,
@@ -180,8 +180,8 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 	public static String makeDiscoveredProcessName(InputLogCmdParameters inputParams) {
 		return (inputParams != null && inputParams.inputLogFile != null ) ?
-			String.format(MinerFulMinerStarter.PROCESS_MODEL_NAME_PATTERN, inputParams.inputLogFile.getName()) :
-				DEFAULT_ANONYMOUS_MODEL_NAME;
+			String.format(MinerFulMinerStarter.PROCESS_SPECIFICATION_NAME_PATTERN, inputParams.inputLogFile.getName()) :
+				DEFAULT_ANONYMOUS_SPECIFICATION_NAME;
 	}
 
 	protected GlobalStatsTable computeKB(LogParser logParser,
@@ -293,17 +293,17 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 	}
 
 	protected ProcessSpecification pruneConstraints(
-			ProcessSpecification processModel,
+			ProcessSpecification processSpecification,
 			MinerFulCmdParameters minerFulParams,
 			PostProcessingCmdParameters postPrarams) {
 //		int coreNum = 0;
 //		if (minerFulParams.queryParallelProcessingThreads > MinerFulCmdParameters.MINIMUM_PARALLEL_EXECUTION_THREADS) {
 //			// TODO
 //		} else {
-		MinerFulPruningCore pruniCore = new MinerFulPruningCore(processModel, processModel.bag.getTaskChars(), postPrarams);
+		MinerFulPruningCore pruniCore = new MinerFulPruningCore(processSpecification, processSpecification.bag.getTaskChars(), postPrarams);
 			
-		processModel.bag = pruniCore.massageConstraints();
+		processSpecification.bag = pruniCore.massageConstraints();
 //		}
-		return processModel;
+		return processSpecification;
 	}
 }

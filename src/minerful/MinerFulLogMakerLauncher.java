@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import minerful.concept.ProcessSpecification;
-import minerful.io.ProcessModelLoader;
-import minerful.io.params.InputModelParameters;
+import minerful.io.ProcessSpecificationLoader;
+import minerful.io.params.InputSpecificationParameters;
 import minerful.logmaker.MinerFulLogMaker;
 import minerful.logmaker.params.LogMakerParameters;
 import minerful.params.SystemCmdParameters;
@@ -28,22 +28,22 @@ public class MinerFulLogMakerLauncher {
 	public MinerFulLogMakerLauncher(AssignmentModel declareMapModel, LogMakerParameters logMakParams) {
 		this(logMakParams);
 
-		this.inputProcess = new ProcessModelLoader().loadProcessModel(declareMapModel);
+		this.inputProcess = new ProcessSpecificationLoader().loadProcessSpecification(declareMapModel);
 	}
 
-	public MinerFulLogMakerLauncher(ProcessSpecification minerFulProcessModel, LogMakerParameters logMakParams) {
+	public MinerFulLogMakerLauncher(ProcessSpecification minerFulProcessSpecification, LogMakerParameters logMakParams) {
 		this(logMakParams);
 
-		this.inputProcess = minerFulProcessModel;
+		this.inputProcess = minerFulProcessSpecification;
 	}
 
-	public MinerFulLogMakerLauncher(InputModelParameters inputParams, 
+	public MinerFulLogMakerLauncher(InputSpecificationParameters inputParams, 
 			LogMakerParameters logMakParams, SystemCmdParameters systemParams) {
 		this(logMakParams);
 
-		this.inputProcess = new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage, inputParams.inputFile);
+		this.inputProcess = new ProcessSpecificationLoader().loadProcessSpecification(inputParams.inputLanguage, inputParams.inputFile);
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input process model file missing!");
+			systemParams.printHelpForWrongUsage("Input process specification file missing!");
 			System.exit(1);
 		}
 

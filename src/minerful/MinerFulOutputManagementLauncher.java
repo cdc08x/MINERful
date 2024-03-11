@@ -15,8 +15,8 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.ConstraintsPrinter;
-import minerful.io.encdec.ProcessModelEncoderDecoder;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.encdec.ProcessSpecificationEncoderDecoder;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
@@ -53,8 +53,8 @@ public class MinerFulOutputManagementLauncher {
 		);
 	}
 
-	public void manageOutput(ProcessSpecification processModel, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputModelParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
-		ConstraintsPrinter printer = new ConstraintsPrinter(processModel, additionalCnsIndexedInfo);
+	public void manageOutput(ProcessSpecification processSpecification, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputSpecificationParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
+		ConstraintsPrinter printer = new ConstraintsPrinter(processSpecification, additionalCnsIndexedInfo);
 		PrintWriter outWriter = null;
 		File outputFile = null;
 
@@ -85,7 +85,7 @@ public class MinerFulOutputManagementLauncher {
         	outputFile = this.retrieveFile(outParams.fileToSaveAsConDec);
         	logger.info("Saving the discovered process specification in ConDec/Declare-map XML format into " + outputFile + "...");
         	try {
-				printer.saveAsConDecModel(outputFile);
+				printer.saveAsConDecSpecification(outputFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -109,10 +109,10 @@ public class MinerFulOutputManagementLauncher {
         ConstraintsBag bagClone = null;
         switch (viewParams.constraintsSorting) {
 		case support:
-			bagClone = LinearConstraintsIndexFactory.createConstraintsBagCloneIndexedByTaskCharAndSupport(processModel.bag);
+			bagClone = LinearConstraintsIndexFactory.createConstraintsBagCloneIndexedByTaskCharAndSupport(processSpecification.bag);
 			break;
 		case interest:
-			bagClone = LinearConstraintsIndexFactory.createConstraintsBagCloneIndexedByTaskCharAndInterest(processModel.bag);
+			bagClone = LinearConstraintsIndexFactory.createConstraintsBagCloneIndexedByTaskCharAndInterest(processSpecification.bag);
 		case type:
 		default:
 			break;
@@ -266,7 +266,7 @@ public class MinerFulOutputManagementLauncher {
 				}
 			}
 		} else if (outParams.folderToSaveXmlFilesForPartialAutomata != null || outParams.fileToSaveXmlFileForAutomaton != null) {
-			throw new IllegalArgumentException("A log parser must be provided to create the weighted XML automaton corresponding to the process model");
+			throw new IllegalArgumentException("A log parser must be provided to create the weighted XML automaton corresponding to the process specification");
 		}
 
 		if (outParams.folderToSaveDotFilesForPartialAutomata != null) {
@@ -308,7 +308,7 @@ public class MinerFulOutputManagementLauncher {
 			logger.info("Saving the discovered process as XML in " + outputFile + "...");
 
 			try {
-				new ProcessModelEncoderDecoder().marshalProcessModel(processModel, outputFile);
+				new ProcessSpecificationEncoderDecoder().marshalProcessSpecification(processSpecification, outputFile);
 			} catch (PropertyException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -329,7 +329,7 @@ public class MinerFulOutputManagementLauncher {
 			logger.info("Saving the discovered process as JSON in " + outputFile + "...");
 
 			try {
-				new ProcessModelEncoderDecoder().writeToJsonFile(processModel, outputFile);
+				new ProcessSpecificationEncoderDecoder().writeToJsonFile(processSpecification, outputFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -337,22 +337,22 @@ public class MinerFulOutputManagementLauncher {
 		}
 	}
 
-	public void manageOutput(ProcessSpecification processModel,
-			ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams,
+	public void manageOutput(ProcessSpecification processSpecification,
+			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams,
 			LogParser logParser) {
-		this.manageOutput(processModel, null, outParams, viewParams, systemParams, logParser);
+		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, logParser);
 	}
 
-	public void manageOutput(ProcessSpecification processModel,
-			ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
-		this.manageOutput(processModel, null, outParams, viewParams, systemParams, null);
+	public void manageOutput(ProcessSpecification processSpecification,
+			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams) {
+		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, null);
 	}
 	
-	public void manageOutput(ProcessSpecification processModel, OutputModelParameters outParams) {
-		this.manageOutput(processModel, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null);
+	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams) {
+		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null);
 	}
 	
-	public void manageOutput(ProcessSpecification processModel, OutputModelParameters outParams, LogParser logParser) {
-		this.manageOutput(processModel, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser);
+	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams, LogParser logParser) {
+		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser);
 	}
 }

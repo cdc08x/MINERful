@@ -190,7 +190,7 @@ public class ProcessSpecification implements PropertyChangeListener {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ProcessModel [bag=");
+		builder.append("ProcessSpecification [bag=");
 		builder.append(bag);
 		builder.append(", name=");
 		builder.append(name);

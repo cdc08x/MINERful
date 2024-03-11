@@ -6,31 +6,31 @@ import minerful.MinerFulOutputManagementLauncher;
 import minerful.MinerFulSimplificationLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
-import minerful.io.params.InputModelParameters;
-import minerful.io.params.InputModelParameters.InputEncoding;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.InputSpecificationParameters;
+import minerful.io.params.InputSpecificationParameters.InputEncoding;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessingAnalysisType;
 
 /**
- * This example class demonstrates how to load a Declare Map file as a process model, then run the simplification engine of MINERful to remove the redundant constraints.
+ * This example class demonstrates how to load a Declare Map file as a process specification, then run the simplification engine of MINERful to remove the redundant constraints.
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
 public class MinerFulSimplificationInvokerOnDeclareMapFile {
 
-	private static final String EXAMPLE_OUTPUT_PROCESS_MODEL_FILE = "/home/claudio/Desktop/example-model.xml";
-	private static final String EXAMPLE_INPUT_PROCESS_MODEL_FILE = "/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075.xml";
+	private static final String EXAMPLE_OUTPUT_PROCESS_SPECIFICATION_FILE = "/home/claudio/Desktop/example-model.xml";
+	private static final String EXAMPLE_INPUT_PROCESS_SPECIFICATION_FILE = "/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075.xml";
 
 	public static void main(String[] args) {
-		InputModelParameters inputParams = new InputModelParameters();
+		InputSpecificationParameters inputParams = new InputSpecificationParameters();
 		PostProcessingCmdParameters postParams = new PostProcessingCmdParameters();
 		ViewCmdParameters viewParams = new ViewCmdParameters();
-		OutputModelParameters outParams = new OutputModelParameters();
+		OutputSpecificationParameters outParams = new OutputSpecificationParameters();
 		SystemCmdParameters systemParams = new SystemCmdParameters();
 
-		// Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process model
+		// Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process specification
 		postParams.postProcessingAnalysisType = PostProcessingAnalysisType.HIERARCHYCONFLICTREDUNDANCYDOUBLE;
 		// Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following one in the array is utilised. 
 		postParams.sortingPolicies = new ConstraintSortingPolicy[]{
@@ -39,9 +39,9 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 			ConstraintSortingPolicy.SUPPORTCONFIDENCECOVERAGE
 		};
 
-		// Specifies the input file where the model is stored
-		inputParams.inputFile=new File(EXAMPLE_INPUT_PROCESS_MODEL_FILE);
-		// Specifies that the input model is stored in the input file as a Declare Map. It can also be a MINERful output model.
+		// Specifies the input file where the specification is stored
+		inputParams.inputFile=new File(EXAMPLE_INPUT_PROCESS_SPECIFICATION_FILE);
+		// Specifies that the input specification is stored in the input file as a Declare Map. It can also be a MINERful output specification.
 		inputParams.inputLanguage=InputEncoding.DECLARE_MAP;
 		// If you want to try with a MINERful-XML specification, comment the line above and uncomment the one below.
 		// inputParams.inputLanguage=InputEncoding.MINERFUL;
@@ -49,20 +49,20 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		MinerFulSimplificationLauncher miFuSimpLa = new MinerFulSimplificationLauncher(inputParams, postParams, systemParams);
 		
 		/*
-		 * Should the process model be already in memory, it does not make much sense to write it into a file and then read that file. In such a case, please refer to the following constructors for MinerFulSimplificationLauncher:
+		 * Should the process specification be already in memory, it does not make much sense to write it into a file and then read that file. In such a case, please refer to the following constructors for MinerFulSimplificationLauncher:
 		 * MinerFulSimplificationLauncher(AssignmentModel declareMapModel, PostProcessingCmdParameters postParams)
-		 * MinerFulSimplificationLauncher(ProcessModel minerFulProcessModel, PostProcessingCmdParameters postParams)
+		 * MinerFulSimplificationLauncher(ProcessSpecification minerFulProcessSpecification, PostProcessingCmdParameters postParams)
 		 */
 		
-		ProcessSpecification processModel = miFuSimpLa.simplify();
+		ProcessSpecification processSpecification = miFuSimpLa.simplify();
 		
-		// To store the simplified process model file somewhere. Please mind that the process model can also be stored as a Declare map. See the specification of minerful.io.params.OutputModelParameters
-		outParams.fileToSaveAsXML = new File(EXAMPLE_OUTPUT_PROCESS_MODEL_FILE);
+		// To store the simplified process specification file somewhere. Please mind that the process specification can also be stored as a Declare map. See the specification of minerful.io.params.OutputSpecificationParameters
+		outParams.fileToSaveAsXML = new File(EXAMPLE_OUTPUT_PROCESS_SPECIFICATION_FILE);
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(processModel, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
 		
-		System.out.println("Simplified model: " + processModel);
+		System.out.println("Simplified specification: " + processSpecification);
 		
 		System.exit(0);
 	}

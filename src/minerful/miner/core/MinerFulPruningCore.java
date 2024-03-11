@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 public class MinerFulPruningCore {
 	protected static Logger logger;
-	protected ProcessSpecification processModel;
+	protected ProcessSpecification processSpecification;
 	protected Collection<TaskChar> tasksToQueryFor; 
 	protected PostProcessingCmdParameters postProcParams;
 	protected SubsumptionHierarchyMarker subMarker;
@@ -27,27 +27,27 @@ public class MinerFulPruningCore {
         }
 	}
 	
-	public MinerFulPruningCore(ProcessSpecification processModel,
+	public MinerFulPruningCore(ProcessSpecification processSpecification,
 			PostProcessingCmdParameters postProcParams) {
-		this(	processModel,
-				processModel.getProcessAlphabet(),
+		this(	processSpecification,
+				processSpecification.getProcessAlphabet(),
 				postProcParams);
 	}
 	
-	public MinerFulPruningCore(ProcessSpecification processModel,
+	public MinerFulPruningCore(ProcessSpecification processSpecification,
 			Collection<TaskChar> tasksToQueryFor,
 			PostProcessingCmdParameters postProcParams) {
-		this.processModel = processModel;
+		this.processSpecification = processSpecification;
 		this.tasksToQueryFor = tasksToQueryFor;
 		this.postProcParams = postProcParams;
-		this.subMarker = new SubsumptionHierarchyMarker(processModel.bag);
+		this.subMarker = new SubsumptionHierarchyMarker(processSpecification.bag);
 		// fixed to be it parametric
 		this.subMarker.setPolicy(this.postProcParams.hierarchyPolicy.translate());
-		this.threshMarker = new ThresholdsMarker(processModel.bag);
+		this.threshMarker = new ThresholdsMarker(processSpecification.bag);
 	}
 
 	public ConstraintsBag massageConstraints() {
-		logger.info("Post-processing the discovered model...");
+		logger.info("Post-processing the discovered specification...");
 		//System.out.println(this.postProcParams.postProcessingAnalysisType.isPostProcessingRequested());
 		if (this.postProcParams.postProcessingAnalysisType.isPostProcessingRequested()) {
 			this.markConstraintsBelowThresholds();
@@ -61,10 +61,10 @@ public class MinerFulPruningCore {
 		
 
 		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
-			this.processModel.bag.removeMarkedConstraints();
+			this.processSpecification.bag.removeMarkedConstraints();
 		}
 
-		return this.processModel.bag;
+		return this.processSpecification.bag;
 	}
 
 	private ConstraintsBag markConstraintsBelowThresholds() {
@@ -72,7 +72,7 @@ public class MinerFulPruningCore {
 		
 		long beforeThresholdsPruning = System.currentTimeMillis();
 		
-		this.processModel.bag = this.threshMarker.markConstraintsBelowThresholds(
+		this.processSpecification.bag = this.threshMarker.markConstraintsBelowThresholds(
 				this.postProcParams.evtSupportThreshold,
 				this.postProcParams.evtConfidenceThreshold,
 				this.postProcParams.evtCoverageThreshold,
@@ -85,21 +85,21 @@ public class MinerFulPruningCore {
 		this.threshMarker.printComputationStats(beforeThresholdsPruning, afterThresholdsPruning);
 		
 		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
-			this.processModel.bag.removeMarkedConstraints();
+			this.processSpecification.bag.removeMarkedConstraints();
 		}
 
 		// Let us try to free memory!
         System.gc();
         
-        return this.processModel.bag;
+        return this.processSpecification.bag;
 	}
 
 	private ConstraintsBag detectConflictsOrRedundancies() {
 
     	long beforeConflictResolution = System.currentTimeMillis();
     	
-    	ConflictAndRedundancyResolver confliReso = new ConflictAndRedundancyResolver(processModel, postProcParams);
-//    	this.processModel = confliReso.resolveConflictsOrRedundancies();
+    	ConflictAndRedundancyResolver confliReso = new ConflictAndRedundancyResolver(processSpecification, postProcParams);
+//    	this.processSpecification = confliReso.resolveConflictsOrRedundancies();
     	confliReso.resolveConflictsOrRedundancies();
 
     	long afterConflictResolution = System.currentTimeMillis();
@@ -107,13 +107,13 @@ public class MinerFulPruningCore {
         confliReso.printComputationStats(beforeConflictResolution, afterConflictResolution);
 
         if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
-			this.processModel.bag.removeMarkedConstraints();
+			this.processSpecification.bag.removeMarkedConstraints();
 		}
 		
 		// Let us try to free memory!
         System.gc();
 		
-        return this.processModel.bag;
+        return this.processSpecification.bag;
 	}
 
 	public ConstraintsBag markRedundancyBySubsumptionHierarchy() {
@@ -122,7 +122,7 @@ public class MinerFulPruningCore {
        	afterSubCheck = 0L;
 		
 		// if (!this.postProcParams.cropRedundantAndInconsistentConstraints) {
-		// 	this.processModel.resetMarks();
+		// 	this.processSpecification.resetMarks();
 		// }
 
         logger.info("Pruning redundancy, on the basis of hierarchy subsumption...");
@@ -135,16 +135,16 @@ public class MinerFulPruningCore {
 		this.subMarker.printComputationStats(beforeSubCheck, afterSubCheck);
     	
 		if (this.postProcParams.cropRedundantAndInconsistentConstraints) {
-			this.processModel.bag.removeMarkedConstraints();
+			this.processSpecification.bag.removeMarkedConstraints();
 		}
     	
         // Let us try to free memory!
         System.gc();
 	    
-	    return this.processModel.bag;
+	    return this.processSpecification.bag;
 	}
 
-	public ProcessSpecification getProcessModel() {
-		return this.processModel;
+	public ProcessSpecification getProcessSpecification() {
+		return this.processSpecification;
 	}
 }

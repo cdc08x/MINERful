@@ -26,7 +26,7 @@ import minerful.concept.constraint.relation.NotPrecedence;
 import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
 /**
- * The class managing the set of constraints of a declarative process model.
+ * The class managing the set of constraints of a declarative process specification.
  * 
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */

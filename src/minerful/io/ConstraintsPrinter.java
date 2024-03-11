@@ -45,17 +45,17 @@ public class ConstraintsPrinter {
 //	private static final int HALF_NUMBER_OF_BARS = 10;
 	// FIXME Make it user-customisable
 	private static final boolean PRINT_ONLY_IF_ADDITIONAL_INFO_IS_GIVEN = false;
-	private ProcessSpecification processModel;
+	private ProcessSpecification processSpecification;
 	private Automaton processAutomaton;
 	private NavigableMap<Constraint, String> additionalCnsIndexedInfo;
 
-	public ConstraintsPrinter(ProcessSpecification processModel) {
-		this(processModel, null);
+	public ConstraintsPrinter(ProcessSpecification processSpecification) {
+		this(processSpecification, null);
 	}
 	
-	public ConstraintsPrinter(ProcessSpecification processModel,
+	public ConstraintsPrinter(ProcessSpecification processSpecification,
 			NavigableMap<Constraint, String> additionalCnsIndexedInfo) {
-		this.processModel = processModel;
+		this.processSpecification = processSpecification;
 		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
 	}
 
@@ -65,13 +65,13 @@ public class ConstraintsPrinter {
 		int
 			maxPadding =  computePaddingForConstraintNames();
 
-        for (TaskChar key : this.processModel.bag.getTaskChars()) {
+        for (TaskChar key : this.processSpecification.bag.getTaskChars()) {
             sBld.append("\n\t[");
 
             sBld.append(key);
             sBld.append("] => {\n"
                     + "\t\t");
-            for (Constraint c : this.processModel.bag.getConstraintsOf(key)) {
+            for (Constraint c : this.processSpecification.bag.getConstraintsOf(key)) {
             	if (!c.isMarkedForExclusionOrForbidden()) {
 	        		sBld.append(printConstraintsData(c, this.additionalCnsIndexedInfo.get(c), maxPadding)); //, HALF_NUMBER_OF_BARS));
 	                sBld.append("\n\t\t");
@@ -96,7 +96,7 @@ public class ConstraintsPrinter {
 
         int i = 0;
         
-        ConstraintsBag redundaBag = this.processModel.bag.createRedundantCopy(this.processModel.bag.getTaskChars());
+        ConstraintsBag redundaBag = this.processSpecification.bag.createRedundantCopy(this.processSpecification.bag.getTaskChars());
         
         for (TaskChar key : redundaBag.getTaskChars()) {
         	for (Constraint c : redundaBag.getConstraintsOf(key)) {
@@ -158,7 +158,7 @@ public class ConstraintsPrinter {
     
 	/**
 	 * Prints the constraints in a CSV format. The constraints that are marked for exclusion are not included in the print-out.
-	 * @return A string containing the list of process model' constraints in a CSV format.  
+	 * @return A string containing the list of process specification' constraints in a CSV format.  
 	 */	
 	public String printBagCsv() {
         return this.printBagCsv(CsvEncoder.PRINT_OUT_ELEMENT.values());
@@ -172,7 +172,7 @@ public class ConstraintsPrinter {
 	public String printBagCsv(CsvEncoder.PRINT_OUT_ELEMENT... columns) {
 		return new CsvEncoder().printAsCsv(
 				new TreeSet<CsvEncoder.PRINT_OUT_ELEMENT>(Arrays.asList(columns)),
-				this.processModel
+				this.processSpecification
 		);
 	}
 	
@@ -198,19 +198,19 @@ public class ConstraintsPrinter {
 	}
 
 	public String printUnfoldedBag() {
-		return printConstraintsCollection(this.processModel.getAllConstraints());
+		return printConstraintsCollection(this.processSpecification.getAllConstraints());
 	}
 
 	public String printUnfoldedBagOrderedBySupport() {
-		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraintsSortedBySupport(this.processModel.bag));
+		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraintsSortedBySupport(this.processSpecification.bag));
 	}
 
 	public String printUnfoldedBagOrderedByInterest() {
-		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraintsSortedByInterest(this.processModel.bag));
+		return printConstraintsCollection(LinearConstraintsIndexFactory.getAllConstraintsSortedByInterest(this.processSpecification.bag));
 	}
 
 	public int computePaddingForConstraintNames() {
-		return computePaddingForConstraintNames(this.processModel.getAllConstraints());
+		return computePaddingForConstraintNames(this.processSpecification.getAllConstraints());
 	}
 	
 	public int computePaddingForConstraintNames(Collection<Constraint> constraintsSet) {
@@ -270,21 +270,21 @@ public class ConstraintsPrinter {
         return sBld.toString();
     }
     
-    public void saveAsConDecModel(File outFile) throws IOException {
-    	DeclareMapEncoderDecoder deMapEnDec = new DeclareMapEncoderDecoder(processModel);
+    public void saveAsConDecSpecification(File outFile) throws IOException {
+    	DeclareMapEncoderDecoder deMapEnDec = new DeclareMapEncoderDecoder(processSpecification);
     	DeclareMapReaderWriter.marshal(outFile.getCanonicalPath(), deMapEnDec.createDeclareMap());
     }
     
     public String printNuSMV() {
-    	NuSMVEncoder nuSmvDec = new NuSMVEncoder(processModel);
+    	NuSMVEncoder nuSmvDec = new NuSMVEncoder(processSpecification);
     	return nuSmvDec.printAsNuSMV();
     }
     
     public String printWeightedXmlAutomaton(LogParser logParser, boolean skimIt) throws JAXBException {
 		if (this.processAutomaton == null)
-			processAutomaton = this.processModel.buildAutomaton();
+			processAutomaton = this.processSpecification.buildAutomaton();
 		
-		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag));
+		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag));
 		WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, logParser, skimIt);
 
 		if (wAut == null)
@@ -308,9 +308,9 @@ public class ConstraintsPrinter {
     public NavigableMap<String, String> printWeightedXmlSubAutomata(LogParser logParser) throws JAXBException {
 		Collection<SubAutomaton> partialAutomata =
 //				this.process.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
-				this.processModel.buildSubAutomata();
-		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag));
-		NavigableMap<Character, AbstractTaskClass> idsNamesMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+				this.processSpecification.buildSubAutomata();
+		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag));
+		NavigableMap<Character, AbstractTaskClass> idsNamesMap = TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag);
 
 		NavigableMap<String, String> partialAutomataXmls = new TreeMap<String, String>();
 		
@@ -341,10 +341,10 @@ public class ConstraintsPrinter {
 
 	public String printDotAutomaton() {
 		if (this.processAutomaton == null)
-			processAutomaton = this.processModel.buildAutomaton();
+			processAutomaton = this.processSpecification.buildAutomaton();
 		
 		NavigableMap<Character, String> stringMap = new TreeMap<Character, String>();
-		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag);
 		for (Character key : charToClassMap.keySet())
 			stringMap.put(key, charToClassMap.get(key).getName());
 
@@ -353,20 +353,20 @@ public class ConstraintsPrinter {
 	
 	public String printTSMLAutomaton() {
 		if (this.processAutomaton == null)
-			processAutomaton = this.processModel.buildAutomaton();
+			processAutomaton = this.processSpecification.buildAutomaton();
 		NavigableMap<Character, String> idsNamesMap = new TreeMap<Character, String>();
-		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag);
 		for (Character key : charToClassMap.keySet())
 			idsNamesMap.put(key, charToClassMap.get(key).getName());
-		return new TsmlEncoder(idsNamesMap).automatonToTSML(processAutomaton, this.processModel.getName());
+		return new TsmlEncoder(idsNamesMap).automatonToTSML(processAutomaton, this.processSpecification.getName());
 	}
 	
 	public NavigableMap<String, String> printDotPartialAutomata() {
 		NavigableMap<String, String> partialAutomataDots = new TreeMap<String, String>();
 		Collection<SubAutomaton> partialAutomata =
-				this.processModel.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
+				this.processSpecification.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
 		String dotFormattedAutomaton = null;
-		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processModel.bag);
+		NavigableMap<Character, AbstractTaskClass> charToClassMap = TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag);
 		NavigableMap<Character, String> idsNamesMap = new TreeMap<Character, String>();
 		for (Character key : charToClassMap.keySet())
 			idsNamesMap.put(key, charToClassMap.get(key).getName());
@@ -382,6 +382,6 @@ public class ConstraintsPrinter {
 	}
 
 	public ConstraintsBag getBag() {
-		return this.processModel.bag;
+		return this.processSpecification.bag;
 	}
 }

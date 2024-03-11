@@ -27,7 +27,7 @@ import org.deckfour.xes.out.XesXmlSerializer;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.io.ConstraintsPrinter;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.miner.core.MinerFulKBCore;
 import minerful.miner.core.MinerFulQueryingCore;

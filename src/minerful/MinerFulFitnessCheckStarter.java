@@ -10,8 +10,8 @@ import org.apache.commons.cli.Options;
 import minerful.checking.params.CheckingCmdParameters;
 import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
 import minerful.concept.ProcessSpecification;
-import minerful.io.params.InputModelParameters;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.InputSpecificationParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.SystemCmdParameters.DebugLevel;
@@ -27,12 +27,12 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
 		Options cmdLineOptions = new Options();
 		
 		Options systemOptions = SystemCmdParameters.parseableOptions(),
-				outputOptions = OutputModelParameters.parseableOptions(),
+				outputOptions = OutputSpecificationParameters.parseableOptions(),
 				postPrOptions = PostProcessingCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				chkOptions = CheckingCmdParameters.parseableOptions(),
 				inputLogOptions = InputLogCmdParameters.parseableOptions(),
-				inpuModlOptions = InputModelParameters.parseableOptions();
+				inpuModlOptions = InputSpecificationParameters.parseableOptions();
 		
     	for (Object opt: systemOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
@@ -67,8 +67,8 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
-		OutputModelParameters outParams =
-				new OutputModelParameters(
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
 		PostProcessingCmdParameters preProcParams =
@@ -83,8 +83,8 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
 				new InputLogCmdParameters(
 						cmdLineOptions,
 						args);
-		InputModelParameters inpuModlParams =
-				new InputModelParameters(
+		InputSpecificationParameters inpuModlParams =
+				new InputSpecificationParameters(
 						cmdLineOptions,
 						args);
 		ViewCmdParameters viewParams =
@@ -101,8 +101,8 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
         MinerFulFitnessCheckLauncher miFuCheLa = new MinerFulFitnessCheckLauncher(inpuModlParams, preProcParams, inputLogParams, chkParams, systemParams);
         
         SpecificationFitnessEvaluation evaluationOutput = miFuCheLa.check();
-        ProcessSpecification processModel = miFuCheLa.getProcessSpecification();
+        ProcessSpecification processSpecification = miFuCheLa.getProcessSpecification();
 
-        new MinerFulOutputManagementLauncher().manageOutput(processModel, viewParams, outParams, systemParams);
+        new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams);
     }
  }

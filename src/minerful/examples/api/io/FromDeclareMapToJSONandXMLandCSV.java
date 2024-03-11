@@ -6,7 +6,7 @@ import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.csv.CsvEncoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 
@@ -17,8 +17,8 @@ import minerful.params.ViewCmdParameters;
  */
 public class FromDeclareMapToJSONandXMLandCSV {
 	public static void main(String[] args) {
-		OutputModelParameters outParams =
-				new OutputModelParameters();
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters();
 		ViewCmdParameters viewParams =
 				new ViewCmdParameters();
 		SystemCmdParameters systemParams =
@@ -26,18 +26,18 @@ public class FromDeclareMapToJSONandXMLandCSV {
 
 		/*
 		 * There are two possible methods of DeclareEncoderDecoder to create a
-		 * minerful.concept.ProcessModel out of a Declare Map:
-		 * 1)	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath)
-		 * 2)	public static ProcessModel fromDeclareMapToMinerfulProcessModel(org.processmining.plugins.declareminer.visualizing.AssignmentModel declareMapModel) {
+		 * minerful.concept.ProcessSpecification out of a Declare Map:
+		 * 1)	public static ProcessSpecification fromDeclareMapToMinerfulProcessSpecification(String declareMapFilePath)
+		 * 2)	public static ProcessSpecification fromDeclareMapToMinerfulProcessSpecification(org.processmining.plugins.declareminer.visualizing.AssignmentModel declareMapModel) {
 		 * The first one is used here, and reads an XML representation of the Declare map.
 		 * The second one can be used to pass in-memory representations of the Declare map.
 		 */
-		ProcessSpecification proMod =
+		ProcessSpecification proSpec =
 				new DeclareMapEncoderDecoder(
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap3.xml"
 						"/home/cdc08x/Code/MINERful-dev/models/examples-FMM/DeclareMap2.xml"
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap1.xml"
-				).createMinerFulProcessModel();
+				).createMinerFulProcessSpecification();
 
 		outParams.fileToSaveAsXML = new File("/home/cdc08x/MINERful-declarative-model.xml");
 		outParams.fileToSaveAsJSON = new File("/home/cdc08x/MINERful-declarative-model.json");
@@ -54,6 +54,6 @@ public class FromDeclareMapToJSONandXMLandCSV {
 		};
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(proMod, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(proSpec, viewParams, outParams, systemParams);
 	}
 }

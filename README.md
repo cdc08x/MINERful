@@ -1,7 +1,7 @@
 MINERful
 =========================
 
-MINERful is a fast process mining tool for discovering declarative process models out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/), [MXML](http://www.processmining.org/logs/mxml), or text files (a collection of strings, in which every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare models, and import/export models written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
+MINERful is a fast process mining tool for discovering declarative process specifications out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/), [MXML](http://www.processmining.org/logs/mxml), or text files (a collection of strings, in which every character is considered as an event, every line as a trace). Among the other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare specifications, and import/export specifications written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
 
 For updated info on the installation, usage, etc., please refer to the [**Wiki**](https://github.com/cdc08x/MINERful/wiki)!
 
@@ -33,7 +33,7 @@ Selected publications about MINERful and presentation slides:
     
   - Simulation of declarative models:
   
-    Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Models. EOMAS@CAiSE 2015: 20-36
+    Claudio Di Ciccio, Mario Luca Bernardi, Marta Cimitile, Fabrizio Maria Maggi: Generating Event Logs Through the Simulation of Declare Specifications. EOMAS@CAiSE 2015: 20-36
     - DOI: [10.1007/978-3-319-24626-0_2](https://doi.org/10.1007/978-3-319-24626-0_2)
 
 # License

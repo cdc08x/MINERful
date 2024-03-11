@@ -25,16 +25,16 @@ public class FromDeclareMapToLog {
 	public static void main(String[] args) throws IOException {
 		/*
 		 * There are two possible methods of DeclareEncoderDecoder to create a
-		 * minerful.concept.ProcessModel out of a Declare Map:
-		 * 1)	public static ProcessModel fromDeclareMapToMinerfulProcessModel(String declareMapFilePath)
-		 * 2)	public static ProcessModel fromDeclareMapToMinerfulProcessModel(org.processmining.plugins.declareminer.visualizing.AssignmentModel declareMapModel) {
+		 * minerful.concept.ProcessSpecification out of a Declare Map:
+		 * 1)	public static ProcessSpecification fromDeclareMapToMinerfulProcessSpecification(String declareMapFilePath)
+		 * 2)	public static ProcessSpecification fromDeclareMapToMinerfulProcessSpecification(org.processmining.plugins.declareminer.visualizing.AssignmentModel declareMapModel) {
 		 * The first one is used here, and reads an XML representation of the Declare map.
 		 * The second one can be used to pass in-memory representations of the Declare map.
 		 */
-		ProcessSpecification proMod =
+		ProcessSpecification proSpec =
 				new DeclareMapEncoderDecoder(
 						"/home/claudio/model.xml"
-				).createMinerFulProcessModel();
+				).createMinerFulProcessSpecification();
 		
 		/*
 		 * Specifies the parameters used to create the log
@@ -51,7 +51,7 @@ public class FromDeclareMapToLog {
 		/*
 		 * The log XLog is an in-memory representation of the log, which can be later serialized in XES or MXML formats.
 		 */
-		XLog log = logMak.createLog(proMod);
+		XLog log = logMak.createLog(proSpec);
 		
 		logMakParameters.outputEncoding = OUTPUT_ENCODING;
 		System.out.println(logMak.printEncodedLog());

@@ -12,7 +12,7 @@ import minerful.MinerFulSimplificationLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintChange;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputLogCmdParameters;
 import minerful.params.SystemCmdParameters;
@@ -23,8 +23,8 @@ import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessing
 
 /**
  * This example class demonstrates how to invoke the MINERful miner as an API, and subsequently observe the
- * changes that are applied to the process model from the MinerFulSimplificationLauncher.
- * Lastly, we save the model as a Declare Map file.
+ * changes that are applied to the process specification from the MinerFulSimplificationLauncher.
+ * Lastly, we save the specification as a Declare Map file.
  * 
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  * 
@@ -42,8 +42,8 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 				new MinerFulCmdParameters();
 		ViewCmdParameters viewParams =
 				new ViewCmdParameters();
-		OutputModelParameters outParams =
-				new OutputModelParameters();
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters();
 		SystemCmdParameters systemParams =
 				new SystemCmdParameters();
 		PostProcessingCmdParameters postParams =
@@ -60,7 +60,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		minerFulParams.tasksToBeExcludedFromResult.add("W_Valideren aanvraag");
 		minerFulParams.tasksToBeExcludedFromResult.add("W_Completeren aanvraag");
 		
-		// With the following option set up to "false", redundant/inconsistent/below-thresholds constraints are retained in the model, although marked as redundant/inconsistent/below-thresholds
+		// With the following option set up to "false", redundant/inconsistent/below-thresholds constraints are retained in the specification, although marked as redundant/inconsistent/below-thresholds
 		postParams.cropRedundantAndInconsistentConstraints = false;
 		
 		// To completely remove any form of post-processing, uncomment the following line:
@@ -70,18 +70,18 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		System.out.println("Running the discovery algorithm...");
 		
 		MinerFulMinerLauncher miFuMiLa = new MinerFulMinerLauncher(inputParams, minerFulParams, postParams, systemParams);
-		ProcessSpecification processModel = miFuMiLa.mine();
+		ProcessSpecification processSpecification = miFuMiLa.mine();
 		
 		System.out.println("...Done");
 
 //////////////////////////////////////////////////////////////////
-//		Observing the changes in the model with the "observer" pattern implementation
+//		Observing the changes in the specification with the "observer" pattern implementation
 //////////////////////////////////////////////////////////////////
 
-		// Start observing changes in the model
-		System.out.println("Starting to observe the changes in the process model...");
+		// Start observing changes in the specification
+		System.out.println("Starting to observe the changes in the process specification...");
 		
-		processModel.addPropertyChangeListener(new MinerFulObserverInvokerOnXesFile());
+		processSpecification.addPropertyChangeListener(new MinerFulObserverInvokerOnXesFile());
 		
 //////////////////////////////////////////////////////////////////
 //		Simplification phase
@@ -96,7 +96,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		// Run the simplification algorithm
 		System.out.println("Running the simplification algorithm...");
 		
-		MinerFulSimplificationLauncher miFuSiLa = new MinerFulSimplificationLauncher(processModel, postParams);
+		MinerFulSimplificationLauncher miFuSiLa = new MinerFulSimplificationLauncher(processSpecification, postParams);
 		miFuSiLa.simplify();
 
 		System.out.println("...Done");
@@ -106,10 +106,10 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 //////////////////////////////////////////////////////////////////
 
 		// Specify the output files locations
-		// Please notice that only the XML-saved model may contain also the redundant/conflicting/below-the-thresholds constraints.
+		// Please notice that only the XML-saved specification may contain also the redundant/conflicting/below-the-thresholds constraints.
 		// To do so, the
 		//		postParams.cropRedundantAndInconsistentConstraints = false;
-		// directive was given. By leaving the default value (true), the model does NOT contain the redundant/conflicting/below-the-thresholds constraints.
+		// directive was given. By leaving the default value (true), the specification does NOT contain the redundant/conflicting/below-the-thresholds constraints.
 		String pathToExampleOutput = Paths.get("").toAbsolutePath().getParent().toString() + "/example-output";
 		new File(Paths.get("").toAbsolutePath().getParent().toString() + "/example-output").mkdirs();
 
@@ -122,7 +122,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		System.out.println("Saving...");
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(processModel, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
 	
 		System.out.println("...Done");		
 		
@@ -130,7 +130,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 //		Cropping the identified redundant/inconsistent constraints
 //////////////////////////////////////////////////////////////////
 
-		// Let us minimise the model now, by removing the redundant/conflicting/below-the-thresholds constraints.
+		// Let us minimise the specification now, by removing the redundant/conflicting/below-the-thresholds constraints.
 		postParams.cropRedundantAndInconsistentConstraints = true;
 		postParams.postProcessingAnalysisType = PostProcessingAnalysisType.NONE;
 		// It is not necessary to go again through all checks again, if we do not want to change the thresholds or the conflict/redundancy-check policies: it is just enough to set the previous option to "true"
@@ -149,7 +149,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 
 		System.out.println("Saving...");
 		
-		outputMgt.manageOutput(processModel, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
 	
 		System.out.println("...Done");		
 		
@@ -158,12 +158,12 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 	}
 
 	/**
-	 * Just a simple implementation of the method to implement for PropertyListener on the process model.
+	 * Just a simple implementation of the method to implement for PropertyListener on the process specification.
 	 * It prints what happened.
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// Just to check whether "o", namely the notifier, is a process model.
+		// Just to check whether "o", namely the notifier, is a process specification.
 		// Until a new Observer-observable framework is not provided for other objects of MINERful, this check is basically useless.
 		Constraint constraint = (Constraint) evt.getSource();
 

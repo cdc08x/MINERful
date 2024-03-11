@@ -43,10 +43,10 @@ public class CsvEncoder {
 	/**
 	 * Prints the CSV format of the constraints bag. The columns appearing in the file can be customised.
 	 * @param columns A sorted set of columns. See the <code>PRINT_OUT_ELEMENT</code> enumeration.
-	 * @param proMod A declarative process model.
+	 * @param proSpec A declarative process specification.
 	 * @return A CSV string containing the constraints bag.
 	 */
-	public String printAsCsv(Collection<PRINT_OUT_ELEMENT> columns, ProcessSpecification proMod) {
+	public String printAsCsv(Collection<PRINT_OUT_ELEMENT> columns, ProcessSpecification proSpec) {
 		StringBuilder
 	        	superSbuf = new StringBuilder(),
 	        	sottoSbuf = new StringBuilder();
@@ -59,8 +59,8 @@ public class CsvEncoder {
 		superSbuf.append(sottoSbuf.substring(2)+"'");
 		superSbuf.append("\n");
 		sottoSbuf = new StringBuilder();
-        for (TaskChar key : proMod.bag.getTaskChars()) {
-        	for (Constraint c : proMod.bag.getConstraintsOf(key)) {
+        for (TaskChar key : proSpec.bag.getTaskChars()) {
+        	for (Constraint c : proSpec.bag.getConstraintsOf(key)) {
 				for (PRINT_OUT_ELEMENT col : columns) {
 					if (columns.contains(col)) {
 						sottoSbuf.append(';');

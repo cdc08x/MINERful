@@ -5,8 +5,8 @@
 package minerful;
 
 import minerful.concept.ProcessSpecification;
-import minerful.io.params.InputModelParameters;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.InputSpecificationParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -25,8 +25,8 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
 		Options systemOptions = SystemCmdParameters.parseableOptions(),
 				postProptions = PostProcessingCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
-				outputOptions = OutputModelParameters.parseableOptions(),
-				inputOptions = InputModelParameters.parseableOptions();
+				outputOptions = OutputSpecificationParameters.parseableOptions(),
+				inputOptions = InputSpecificationParameters.parseableOptions();
 		
     	for (Object opt: postProptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
@@ -59,12 +59,12 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
 				new PostProcessingCmdParameters(
 						cmdLineOptions,
 						args);
-		OutputModelParameters outParams =
-				new OutputModelParameters(
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
-		InputModelParameters inputParams =
-				new InputModelParameters(
+		InputSpecificationParameters inputParams =
+				new InputSpecificationParameters(
 						cmdLineOptions,
 						args);
 		ViewCmdParameters viewParams =
@@ -78,7 +78,7 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
         }
 
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input process model file missing!");
+			systemParams.printHelpForWrongUsage("Input process specification file missing!");
 			System.exit(1);
 		}
         

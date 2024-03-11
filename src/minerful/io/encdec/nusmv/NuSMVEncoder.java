@@ -7,7 +7,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 
 public class NuSMVEncoder {
-	ProcessSpecification processModel = null;
+	ProcessSpecification processSpecification = null;
 	
 	public static String OR = "|";
 	
@@ -20,10 +20,10 @@ public class NuSMVEncoder {
 
 	/**
 	 * Constructor of this class
-	 * @param processModel
+	 * @param processSpecification
 	 */
-	public NuSMVEncoder(ProcessSpecification processModel) {
-		this.processModel = processModel;
+	public NuSMVEncoder(ProcessSpecification processSpecification) {
+		this.processSpecification = processSpecification;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class NuSMVEncoder {
 		disjInvaBuil.append("\nINVAR\n    ");
 		xorInvaBuil.append("\nINVAR\n    ");
 		
-		Iterator<TaskChar> taChIt = processModel.getProcessAlphabet().iterator();
+		Iterator<TaskChar> taChIt = processSpecification.getProcessAlphabet().iterator();
 		TaskChar taCh = null;
 		String taChNumId = null;
 		// Printing variables
@@ -85,7 +85,7 @@ public class NuSMVEncoder {
 		}
 		// Complete the INVAR \wedge_{a,b \in P, a\not=b} a \rightarrow \neg b
 		String noneOfTheOtherTasks = noneOfOtheBuil.toString();
-		taChIt = processModel.getProcessAlphabet().iterator();
+		taChIt = processSpecification.getProcessAlphabet().iterator();
 		while (taChIt.hasNext()) {
 			taChNumId = taChIt.next().getTaskNumericId();
 			xorInvaBuil.append(taChNumId);
@@ -119,7 +119,7 @@ public class NuSMVEncoder {
 		scriptBuil.append(": {_");
 		
 		// Printing variables
-		for (TaskChar taCh: processModel.getProcessAlphabet()) {
+		for (TaskChar taCh: processSpecification.getProcessAlphabet()) {
 			// Add the task numeric id in the list of assignable values for variable "TASK_NUM_PREFIX"
 			scriptBuil.append(taCh.getTaskNumericId());
 			scriptBuil.append(", _");
@@ -145,7 +145,7 @@ public class NuSMVEncoder {
 		// Printing constraints
 		ltlSBuil.append('\n');		
 		int i = 1;
-		for (Constraint con: processModel.getAllConstraints()) {
+		for (Constraint con: processSpecification.getAllConstraints()) {
 			ltlSBuil.append("LTLSPEC NAME R");
 			ltlSBuil.append(i++);
 			ltlSBuil.append(" := ");

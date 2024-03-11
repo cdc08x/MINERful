@@ -3,10 +3,10 @@ package minerful;
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import minerful.concept.ProcessSpecification;
-import minerful.io.ProcessModelLoader;
-import minerful.io.encdec.ProcessModelEncoderDecoder;
+import minerful.io.ProcessSpecificationLoader;
+import minerful.io.encdec.ProcessSpecificationEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
-import minerful.io.params.InputModelParameters;
+import minerful.io.params.InputSpecificationParameters;
 import minerful.miner.core.MinerFulPruningCore;
 import minerful.params.SystemCmdParameters;
 import minerful.postprocessing.params.PostProcessingCmdParameters;
@@ -25,22 +25,22 @@ public class MinerFulSimplificationLauncher {
 	public MinerFulSimplificationLauncher(AssignmentModel declareMapModel, PostProcessingCmdParameters postParams) {
 		this(postParams);
 
-		this.inputProcess = new ProcessModelLoader().loadProcessModel(declareMapModel);
+		this.inputProcess = new ProcessSpecificationLoader().loadProcessSpecification(declareMapModel);
 	}
 
-	public MinerFulSimplificationLauncher(ProcessSpecification minerFulProcessModel, PostProcessingCmdParameters postParams) {
+	public MinerFulSimplificationLauncher(ProcessSpecification minerFulProcessSpecification, PostProcessingCmdParameters postParams) {
 		this(postParams);
 
-		this.inputProcess = minerFulProcessModel;
+		this.inputProcess = minerFulProcessSpecification;
 	}
 
-	public MinerFulSimplificationLauncher(InputModelParameters inputParams, 
+	public MinerFulSimplificationLauncher(InputSpecificationParameters inputParams, 
 			PostProcessingCmdParameters postParams, SystemCmdParameters systemParams) {
 		this(postParams);
 
-		this.inputProcess = new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage, inputParams.inputFile);
+		this.inputProcess = new ProcessSpecificationLoader().loadProcessSpecification(inputParams.inputLanguage, inputParams.inputFile);
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input process model file missing!");
+			systemParams.printHelpForWrongUsage("Input process specification file missing!");
 			System.exit(1);
 		}
 
@@ -51,7 +51,7 @@ public class MinerFulSimplificationLauncher {
 	    MinerFulPruningCore miFuPruNi = new MinerFulPruningCore(inputProcess, postParams);
 	    miFuPruNi.massageConstraints();
 
-	    ProcessSpecification outputProcess = miFuPruNi.getProcessModel();
+	    ProcessSpecification outputProcess = miFuPruNi.getProcessSpecification();
 
 	    return outputProcess;
 	}

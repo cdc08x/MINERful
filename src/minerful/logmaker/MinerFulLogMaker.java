@@ -43,7 +43,7 @@ import org.deckfour.xes.out.XesXmlSerializer;
 import dk.brics.automaton.Automaton;
 
 /**
- * Generates a log out of a MINERful declarative process model.
+ * Generates a log out of a MINERful declarative process specification.
  * @author Claudio Di Ciccio
  */
 public class MinerFulLogMaker {
@@ -97,16 +97,16 @@ public class MinerFulLogMaker {
 	
 
 	/**
-	 * Generates an event log based on a MINERful process model. To do so, it
-	 * extracts an automaton out of the declarative process model. Every finite
+	 * Generates an event log based on a MINERful process specification. To do so, it
+	 * extracts an automaton out of the declarative process specification. Every finite
 	 * random walk on it generates a trace. Every trace is included in the
 	 * returned event log. The minimum and maximum length of the trace, as well
 	 * as the number of traces to be generated, are specified in
 	 * {@link #parameters parameters}.
-	 * @param processModel The process model that the generated event log complies to
+	 * @param processSpecification The process specification that the generated event log complies to
 	 * @return The generated event log
 	 */
-	public XLog createLog(ProcessSpecification processModel) {
+	public XLog createLog(ProcessSpecification processSpecification) {
 		XFactory xFactory = new XFactoryNaiveImpl();
 		this.log = xFactory.createLog();
 		
@@ -121,7 +121,7 @@ public class MinerFulLogMaker {
 		this.log.getClassifiers().add(new XEventNameClassifier());
 
 		concExtino.assignName(this.log,
-				"Synthetic log for process: " + processModel.getName()
+				"Synthetic log for process: " + processSpecification.getName()
 		);
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
@@ -146,19 +146,19 @@ public class MinerFulLogMaker {
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
 		
-		// Automaton automaton = processModel.buildAutomaton();
+		// Automaton automaton = processSpecification.buildAutomaton();
 		// automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 
 		// AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		Automaton automaton = processModel.buildAutomaton(ncf);//this.parameters.negativeConstraints
+		Automaton automaton = processSpecification.buildAutomaton(ncf);//this.parameters.negativeConstraints
 		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		Automaton automatonPositive = processModel.buildAutomaton();
+		Automaton automatonPositive = processSpecification.buildAutomaton();
 		automatonPositive = AutomatonUtils.limitRunLength(automatonPositive, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
 		/////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ public class MinerFulLogMaker {
 		StringBuffer sBuf = new StringBuffer();
 		StringBuffer stringBuf = new StringBuffer();
 
-		legend = "# Legend:" + "\n" + "# " + processModel.getTaskCharArchive().getTranslationMapById().toString() + "\n";
+		legend = "# Legend:" + "\n" + "# " + processSpecification.getTaskCharArchive().getTranslationMapById().toString() + "\n";
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
 		for (int traceNum = 0; traceNum < this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1)); traceNum++) {
@@ -187,7 +187,7 @@ public class MinerFulLogMaker {
 
 			pickedTransitionChar = walkerPositive.walkOn();
 			while (pickedTransitionChar != null) {
-				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
+				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 				if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
 					stringBuf.append(pickedTransitionChar);
 					sBuf.append(pickedTransitionChar + "=" + firedTransition + ";");
@@ -217,7 +217,7 @@ public class MinerFulLogMaker {
 
 			pickedTransitionChar = walker.walkOn();
 			while (pickedTransitionChar != null) {
-				firedTransition = processModel.getTaskCharArchive().getTaskChar(pickedTransitionChar);
+				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 				if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
 					stringBuf.append(pickedTransitionChar);
 					sBuf.append(pickedTransitionChar + "=" + firedTransition + ";");

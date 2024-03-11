@@ -6,7 +6,7 @@ import org.processmining.plugins.declareminer.visualizing.DeclareMap;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
@@ -29,7 +29,7 @@ public class MinerFulMinerLauncher {
 	private MinerFulMinerStarter minerFulStarter;
 	private LogParser logParser;
 	private ViewCmdParameters viewParams;
-	private OutputModelParameters outParams;
+	private OutputSpecificationParameters outParams;
 
 	public MinerFulMinerLauncher(InputLogCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
@@ -40,7 +40,7 @@ public class MinerFulMinerLauncher {
 	public MinerFulMinerLauncher(InputLogCmdParameters inputParams,
 			MinerFulCmdParameters minerFulParams, 
 			PostProcessingCmdParameters postParams, SystemCmdParameters systemParams,
-			ViewCmdParameters viewParams, OutputModelParameters outParams) {
+			ViewCmdParameters viewParams, OutputSpecificationParameters outParams) {
 		this.inputParams = inputParams;
 		this.minerFulParams = minerFulParams;
 		this.systemParams = systemParams;

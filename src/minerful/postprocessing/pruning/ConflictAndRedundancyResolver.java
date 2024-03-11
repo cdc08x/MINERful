@@ -48,12 +48,12 @@ public class ConflictAndRedundancyResolver {
 	private Set<Constraint>
 		originalHierarchyUnredundantConstraints,
 		notSurelySafeProcessConstraints,
-		conflictingConstraintsInOriginalNonRedundantModel,
-		conflictingConstraintsInOriginalModel,
+		conflictingConstraintsInOriginalNonRedundantSpecification,
+		conflictingConstraintsInOriginalSpecification,
 		conflictingConstraints,
 		redundantConstraints,
 		redundantConstraintsAtSecondPass,
-		redundantConstraintsInOriginalModel;
+		redundantConstraintsInOriginalSpecification;
 	private int
 		conflictChecksPerformed,
 		redundancyChecksPerformed;
@@ -97,7 +97,7 @@ public class ConflictAndRedundancyResolver {
 
 		/*
 		 * Step 1: Consider as safe those constraints that have a support
-		 * of 100%: if they have a support of 100%, a model already exists for
+		 * of 100%: if they have a support of 100%, a specification already exists for
 		 * them: the log itself. So, their conjunction cannot be unsatisfiable.
 		 */
 		if (avoidingRedundancy) {
@@ -243,7 +243,7 @@ public class ConflictAndRedundancyResolver {
 				relaxedCon = candidateCon.suggestConstraintWhichThisShouldBeBasedUpon();
 				if (relaxedCon != null) {
 					relaxedCon = candidateCon.createConstraintWhichThisShouldBeBasedUpon();
-					logger.trace(relaxedCon + " included in process model as relaxation, replacing " + candidateCon);
+					logger.trace(relaxedCon + " included in process specification as relaxation, replacing " + candidateCon);
 				}
 			}
 
@@ -333,68 +333,68 @@ public class ConflictAndRedundancyResolver {
 		return this.redundantConstraintsAtSecondPass;
 	}
 	
-	public Set<Constraint> getConflictingConstraintsInOriginalUnredundantModel() {
+	public Set<Constraint> getConflictingConstraintsInOriginalUnredundantSpecification() {
 		if (checking == true) {
 			throw new IllegalStateException("Check in progress");
 		}
-		if (conflictingConstraintsInOriginalNonRedundantModel == null) {
+		if (conflictingConstraintsInOriginalNonRedundantSpecification == null) {
 			if (conflictingConstraints != null) {
-				conflictingConstraintsInOriginalNonRedundantModel = new TreeSet<Constraint>();
-				conflictingConstraintsInOriginalNonRedundantModel.addAll(this.originalHierarchyUnredundantConstraints);
-				conflictingConstraintsInOriginalNonRedundantModel.retainAll(new TreeSet<Constraint>(conflictingConstraints));
+				conflictingConstraintsInOriginalNonRedundantSpecification = new TreeSet<Constraint>();
+				conflictingConstraintsInOriginalNonRedundantSpecification.addAll(this.originalHierarchyUnredundantConstraints);
+				conflictingConstraintsInOriginalNonRedundantSpecification.retainAll(new TreeSet<Constraint>(conflictingConstraints));
 			} else {
 				throw new IllegalStateException("Conflict check not yet performed");
 			}
 		}
-		return conflictingConstraintsInOriginalNonRedundantModel;
+		return conflictingConstraintsInOriginalNonRedundantSpecification;
 	}
 
-	public Set<Constraint> getConflictingConstraintsInOriginalModel() {
+	public Set<Constraint> getConflictingConstraintsInOriginalSpecification() {
 		if (checking == true) {
 			throw new IllegalStateException("Check in progress");
 		}
-		if (conflictingConstraintsInOriginalModel == null) {
+		if (conflictingConstraintsInOriginalSpecification == null) {
 			if (conflictingConstraints != null) {
-				conflictingConstraintsInOriginalModel = new TreeSet<Constraint>();
-				conflictingConstraintsInOriginalModel.addAll(this.originalProcess.bag.getAllConstraints());
-				conflictingConstraintsInOriginalModel.retainAll(new TreeSet<Constraint>(conflictingConstraints));
+				conflictingConstraintsInOriginalSpecification = new TreeSet<Constraint>();
+				conflictingConstraintsInOriginalSpecification.addAll(this.originalProcess.bag.getAllConstraints());
+				conflictingConstraintsInOriginalSpecification.retainAll(new TreeSet<Constraint>(conflictingConstraints));
 			} else {
 				throw new IllegalStateException("Conflict check not yet performed");
 			}
 		}
-		return conflictingConstraintsInOriginalModel;
+		return conflictingConstraintsInOriginalSpecification;
 	}
 
-	public Set<Constraint> getRedundantConstraintsInOriginalModel() {
+	public Set<Constraint> getRedundantConstraintsInOriginalSpecification() {
 		if (checking == true) {
 			throw new IllegalStateException("Check in progress");
 		}
-		if (redundantConstraintsInOriginalModel == null) {
+		if (redundantConstraintsInOriginalSpecification == null) {
 			if (redundantConstraints != null) {
-				redundantConstraintsInOriginalModel = new TreeSet<Constraint>();
-				redundantConstraintsInOriginalModel.addAll(this.originalProcess.bag.getAllConstraints());
-				redundantConstraintsInOriginalModel.retainAll(redundantConstraints);
+				redundantConstraintsInOriginalSpecification = new TreeSet<Constraint>();
+				redundantConstraintsInOriginalSpecification.addAll(this.originalProcess.bag.getAllConstraints());
+				redundantConstraintsInOriginalSpecification.retainAll(redundantConstraints);
 			} else {
 				throw new IllegalStateException("Conflict check not yet performed");
 			}
 		}
-		return redundantConstraintsInOriginalModel;
+		return redundantConstraintsInOriginalSpecification;
 	}
 
-	public Set<Constraint> getRedundantConstraintsInOriginalUnredundantModel() {
+	public Set<Constraint> getRedundantConstraintsInOriginalUnredundantSpecification() {
 		if (checking == true) {
 			throw new IllegalStateException("Check in progress");
 		}
-		if (redundantConstraintsInOriginalModel == null) {
+		if (redundantConstraintsInOriginalSpecification == null) {
 			if (redundantConstraints != null) {
-				redundantConstraintsInOriginalModel = new TreeSet<Constraint>();
-				redundantConstraintsInOriginalModel.addAll(this.originalProcess.bag.getAllConstraints());
-				redundantConstraintsInOriginalModel.retainAll(redundantConstraints);
+				redundantConstraintsInOriginalSpecification = new TreeSet<Constraint>();
+				redundantConstraintsInOriginalSpecification.addAll(this.originalProcess.bag.getAllConstraints());
+				redundantConstraintsInOriginalSpecification.retainAll(redundantConstraints);
 			} else {
 				throw new IllegalStateException("Conflict check not yet performed");
 			}
 		}
-		return redundantConstraintsInOriginalModel;
+		return redundantConstraintsInOriginalSpecification;
 	}
 
 	public ProcessSpecification getSafeProcess() {
@@ -440,7 +440,7 @@ public class ConflictAndRedundancyResolver {
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
         csvSummaryBuffer.append(this.howManyInputUnredundantConstraints());
-        csvSummaryLegendBuffer.append("'Input constraints from hierarchy-unredundant model'");
+        csvSummaryLegendBuffer.append("'Input constraints from hierarchy-unredundant specification'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
@@ -454,13 +454,13 @@ public class ConflictAndRedundancyResolver {
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
-        csvSummaryBuffer.append(this.getConflictingConstraintsInOriginalModel().size());
-        csvSummaryLegendBuffer.append("'Conflicting constraints in original model'");
+        csvSummaryBuffer.append(this.getConflictingConstraintsInOriginalSpecification().size());
+        csvSummaryLegendBuffer.append("'Conflicting constraints in original specification'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
-        csvSummaryBuffer.append(this.getConflictingConstraintsInOriginalUnredundantModel().size());
-        csvSummaryLegendBuffer.append("'Conflicting constraints in original hierarchy-unredundant model'");
+        csvSummaryBuffer.append(this.getConflictingConstraintsInOriginalUnredundantSpecification().size());
+        csvSummaryLegendBuffer.append("'Conflicting constraints in original hierarchy-unredundant specification'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
@@ -479,13 +479,13 @@ public class ConflictAndRedundancyResolver {
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
-        csvSummaryBuffer.append(this.getRedundantConstraintsInOriginalModel().size());
-        csvSummaryLegendBuffer.append("'Redundant constraints in original model'");
+        csvSummaryBuffer.append(this.getRedundantConstraintsInOriginalSpecification().size());
+        csvSummaryLegendBuffer.append("'Redundant constraints in original specification'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------
-        csvSummaryBuffer.append(this.getRedundantConstraintsInOriginalUnredundantModel().size());
-        csvSummaryLegendBuffer.append("'Redundant constraints in original hierarchy-unredundant model'");
+        csvSummaryBuffer.append(this.getRedundantConstraintsInOriginalUnredundantSpecification().size());
+        csvSummaryLegendBuffer.append("'Redundant constraints in original hierarchy-unredundant specification'");
         csvSummaryBuffer.append(";");
         csvSummaryLegendBuffer.append(";");
      // --------------------------------

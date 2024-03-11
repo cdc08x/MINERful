@@ -7,7 +7,7 @@ package minerful;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-import minerful.io.params.InputModelParameters;
+import minerful.io.params.InputSpecificationParameters;
 import minerful.logmaker.params.LogMakerParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.utils.MessagePrinter;
@@ -20,7 +20,7 @@ public class MinerFulLogMakerStarter extends MinerFulMinerStarter {
 		Options cmdLineOptions = new Options();
 		
 		Options systemOptions = SystemCmdParameters.parseableOptions(),
-				inputOptions = InputModelParameters.parseableOptions(),
+				inputOptions = InputSpecificationParameters.parseableOptions(),
 				logMakOptions = LogMakerParameters.parseableOptions();
 
 		for (Object opt: systemOptions.getOptions()) {
@@ -44,8 +44,8 @@ public class MinerFulLogMakerStarter extends MinerFulMinerStarter {
         		new SystemCmdParameters(
         				cmdLineOptions,
     					args);
-		InputModelParameters inputParams =
-				new InputModelParameters(
+		InputSpecificationParameters inputParams =
+				new InputSpecificationParameters(
 						cmdLineOptions,
 						args);
 		LogMakerParameters logMakParameters =
@@ -59,7 +59,7 @@ public class MinerFulLogMakerStarter extends MinerFulMinerStarter {
         }
 
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input process model file missing!");
+			systemParams.printHelpForWrongUsage("Input process specification file missing!");
 			System.exit(1);
 		}
         

@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessSpecification;
-import minerful.io.encdec.ProcessModelEncoderDecoder;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.encdec.ProcessSpecificationEncoderDecoder;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.XesLogParser;
 import minerful.logparser.LogEventClassifier.ClassificationType;
@@ -28,10 +28,10 @@ public class FromJsonAndXEStoAutomatonXML {
 				+ "] }";
 
 		ProcessSpecification proMod =
-			new ProcessModelEncoderDecoder()
+			new ProcessSpecificationEncoderDecoder()
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
 //			.readFromJsonFile(new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.json"));
-//		/* Alternative 2: load from a (minimal) string version of the JSON model. Uncomment the following line to use this method. */ 
+//		/* Alternative 2: load from a (minimal) string version of the JSON specification. Uncomment the following line to use this method. */ 
 			.readFromJsonString(processJsonMin);
 		
 
@@ -43,7 +43,7 @@ public class FromJsonAndXEStoAutomatonXML {
 		/*
 		 * Specifies the parameters used to create the automaton
 		 */		
-		OutputModelParameters outParams = new OutputModelParameters();
+		OutputSpecificationParameters outParams = new OutputSpecificationParameters();
 		outParams.fileToSaveXmlFileForAutomaton = OUTPUT_XML_FILE;
 		
 		new MinerFulOutputManagementLauncher().manageOutput(proMod, outParams, logParser);

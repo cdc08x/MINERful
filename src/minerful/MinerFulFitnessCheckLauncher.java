@@ -9,8 +9,8 @@ import minerful.checking.ProcessSpecificationFitnessEvaluator;
 import minerful.checking.params.CheckingCmdParameters;
 import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
 import minerful.concept.ProcessSpecification;
-import minerful.io.ProcessModelLoader;
-import minerful.io.params.InputModelParameters;
+import minerful.io.ProcessSpecificationLoader;
+import minerful.io.params.InputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
 import minerful.miner.core.MinerFulPruningCore;
@@ -32,27 +32,27 @@ public class MinerFulFitnessCheckLauncher {
 	
 	public MinerFulFitnessCheckLauncher(AssignmentModel declareMapModel, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
-		this.processSpecification = new ProcessModelLoader().loadProcessModel(declareMapModel);
+		this.processSpecification = new ProcessSpecificationLoader().loadProcessSpecification(declareMapModel);
 		this.eventLogParser = inputLog;
 	}
 
-	public MinerFulFitnessCheckLauncher(ProcessSpecification minerFulProcessModel, LogParser inputLog, CheckingCmdParameters chkParams) {
+	public MinerFulFitnessCheckLauncher(ProcessSpecification minerFulProcessSpecification, LogParser inputLog, CheckingCmdParameters chkParams) {
 		this(chkParams);
-		this.processSpecification = minerFulProcessModel;
+		this.processSpecification = minerFulProcessSpecification;
 		this.eventLogParser = inputLog;
 	}
 
-	public MinerFulFitnessCheckLauncher(InputModelParameters inputParams, PostProcessingCmdParameters preProcParams,
+	public MinerFulFitnessCheckLauncher(InputSpecificationParameters inputParams, PostProcessingCmdParameters preProcParams,
 			InputLogCmdParameters inputLogParams, CheckingCmdParameters chkParams, SystemCmdParameters systemParams) {
 		this(chkParams);
 
 		if (inputParams.inputFile == null) {
-			systemParams.printHelpForWrongUsage("Input process model file missing!");
+			systemParams.printHelpForWrongUsage("Input process specification file missing!");
 			System.exit(1);
 		}
 		// Load the process specification from the file
 		this.processSpecification = 
-				new ProcessModelLoader().loadProcessModel(inputParams.inputLanguage, inputParams.inputFile);
+				new ProcessSpecificationLoader().loadProcessSpecification(inputParams.inputLanguage, inputParams.inputFile);
 
 		// Apply some preliminary pruning
 		MinerFulPruningCore pruniCore = new MinerFulPruningCore(this.processSpecification, preProcParams);
@@ -60,7 +60,7 @@ public class MinerFulFitnessCheckLauncher {
 
 		this.eventLogParser = MinerFulMinerLauncher.deriveLogParserFromLogFile(inputLogParams);
 
-		// Notice that the merging of event log codification of TaskChars with the given model’s one happens only late (at checking time)
+		// Notice that the merging of event log codification of TaskChars with the given specification’s one happens only late (at checking time)
 		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
 

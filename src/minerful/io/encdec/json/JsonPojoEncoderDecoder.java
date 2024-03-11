@@ -8,7 +8,7 @@ import java.util.Map;
 
 import minerful.concept.constraint.Constraint;
 import minerful.io.encdec.pojo.ConstraintPojo;
-import minerful.io.encdec.pojo.ProcessModelPojo;
+import minerful.io.encdec.pojo.ProcessSpecificationPojo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -37,16 +37,16 @@ public class JsonPojoEncoderDecoder {
 		priWri.close();
 	}
 
-	public ProcessModelPojo fromJsonToProcessModelPojo(String json) {
-		return this.gson.fromJson(json, ProcessModelPojo.class);
+	public ProcessSpecificationPojo fromJsonToProcessSpecificationPojo(String json) {
+		return this.gson.fromJson(json, ProcessSpecificationPojo.class);
 	}
-	public ProcessModelPojo fromJsonToProcessModelPojo(File jsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
-		return this.gson.fromJson(new FileReader(jsonFile), ProcessModelPojo.class);
+	public ProcessSpecificationPojo fromJsonToProcessSpecificationPojo(File jsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		return this.gson.fromJson(new FileReader(jsonFile), ProcessSpecificationPojo.class);
 	}
-	public String fromProcessModelPojoToJson(ProcessModelPojo pojo) {
+	public String fromProcessSpecificationPojoToJson(ProcessSpecificationPojo pojo) {
 		return this.gson.toJson(pojo);
 	}
-	public void saveProcessModelPojo(ProcessModelPojo pojo, File jsonFile) throws JsonIOException, FileNotFoundException {
+	public void saveProcessSpecificationPojo(ProcessSpecificationPojo pojo, File jsonFile) throws JsonIOException, FileNotFoundException {
 		PrintWriter priWri = new PrintWriter(jsonFile);
 		this.gson.toJson(pojo, priWri);
 		priWri.flush();

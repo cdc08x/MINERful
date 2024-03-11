@@ -47,7 +47,7 @@ public class DeclareMapEncoderDecoder {
 	private List<DeclareConstraintTransferObject> constraintTOs;
 //	private List<DeclareConstraintTransferObject> unmappedConstraintTOs;
 	private TaskCharArchive taskCharArchive = null;
-	private String processModelName = null;
+	private String processSpecificationName = null;
 
 	public static final String
 		INTEREST_FACTOR_LABEL = "IF",
@@ -80,7 +80,7 @@ public class DeclareMapEncoderDecoder {
 		this.constraintTOs = new ArrayList<DeclareConstraintTransferObject>(process.bag.howManyConstraints());
 //		this.unmappedConstraintTOs = new ArrayList<DeclareConstraintTransferObject>();
 		this.taskCharArchive = process.getTaskCharArchive();
-		this.processModelName = process.getName();
+		this.processSpecificationName = process.getName();
 
 		Collection<Constraint> auxConstraints = null;
 		DeclareConstraintTransferObject auxDeclareConstraintTO = null;
@@ -109,7 +109,7 @@ public class DeclareMapEncoderDecoder {
 	
 	private void buildFromDeclareMapModel(AssignmentModel declareMapModel) {
 		/* Record the name of the process */
-		this.processModelName = declareMapModel.getName();
+		this.processSpecificationName = declareMapModel.getName();
 
 		/* Create an archive of TaskChars out of the activity definitions in the Declare Map model */
 		Collection<TaskChar> tasksInDeclareMap = new ArrayList<TaskChar>(declareMapModel.activityDefinitionsCount());
@@ -128,7 +128,7 @@ public class DeclareMapEncoderDecoder {
 		}		
 	}
 	
-	public ProcessSpecification createMinerFulProcessModel() {
+	public ProcessSpecification createMinerFulProcessSpecification() {
 		Collection<Constraint> minerFulConstraints = new ArrayList<Constraint>(this.constraintTOs.size());
 		TransferObjectToConstraintTranslator miFuConMak = new TransferObjectToConstraintTranslator(this.taskCharArchive);
 		Constraint tmpCon = null;
@@ -143,7 +143,7 @@ public class DeclareMapEncoderDecoder {
 		MetaConstraintUtils.createHierarchicalLinks(new TreeSet<Constraint>(minerFulConstraints));
 		ConstraintsBag constraintsBag = new ConstraintsBag(this.taskCharArchive.getTaskChars(), minerFulConstraints);
 
-		return new ProcessSpecification(taskCharArchive, constraintsBag, this.processModelName);
+		return new ProcessSpecification(taskCharArchive, constraintsBag, this.processSpecificationName);
 	}
 
 	public List<DeclareConstraintTransferObject> getConstraintTOs() {
@@ -182,7 +182,7 @@ public class DeclareMapEncoderDecoder {
 		List<Language> languages = template.readLanguages();
 		Language lang = languages.get(0);
 		AssignmentModel model = new AssignmentModel(lang);
-		model.setName(this.processModelName);
+		model.setName(this.processSpecificationName);
 		
 		ActivityDefinition activitydefinition = null;
 		ConstraintDefinition constraintDefinition = null;

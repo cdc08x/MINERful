@@ -40,7 +40,7 @@ import minerful.interestingness.test.constraint.SequenceResponse32;
 import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.LogTraceParser;
@@ -161,8 +161,8 @@ public class MinerFulVacuityChecker {
 			}
 
 			ConstraintsBag coBag = new ConstraintsBag(loPar.getTaskCharArchive().getTaskChars(), nuStandardConstraints);
-			ProcessSpecification model = new ProcessSpecification(loPar.getTaskCharArchive(), coBag);
-			DeclareMapReaderWriter.marshal(args[2], new DeclareMapEncoderDecoder(model).createDeclareMap());
+			ProcessSpecification specification = new ProcessSpecification(loPar.getTaskCharArchive(), coBag);
+			DeclareMapReaderWriter.marshal(args[2], new DeclareMapEncoderDecoder(specification).createDeclareMap());
 			
 			logger.debug("Done.");
 		}

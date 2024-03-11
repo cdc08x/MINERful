@@ -9,7 +9,7 @@ import org.apache.commons.cli.Options;
 
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogEventClassifier.ClassificationType;
 import minerful.logparser.LogParser;
 import minerful.logparser.StringLogParser;
@@ -32,7 +32,7 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 				tracesMakerOptions = StringTracesMakerCmdParameters.parseableOptions(),
 				systemOptions = SystemCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
-				outputOptions = OutputModelParameters.parseableOptions(),
+				outputOptions = OutputSpecificationParameters.parseableOptions(),
 				postProptions = PostProcessingCmdParameters.parseableOptions();
 		
     	for (Object opt: postProptions.getOptions()) {
@@ -81,8 +81,8 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
         		new MinerFulCmdParameters(
         				cmdLineOptions,
     					args);
-		OutputModelParameters outParams =
-				new OutputModelParameters(
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
         SystemCmdParameters systemParams =
@@ -109,10 +109,10 @@ public class MinerFulSimuStarter extends MinerFulMinerStarter {
 			TaskCharArchive taskCharArchive = new TaskCharArchive(stringLogParser.getEventEncoderDecoder().getTranslationMap());
 
 	        // minerSimuStarter.mine(testBedArray, minerFulParams, tracesMakParams, systemParams);
-			ProcessSpecification processModel = minerSimuStarter.mine(stringLogParser, minerFulParams, postParams, taskCharArchive);
+			ProcessSpecification processSpecification = minerSimuStarter.mine(stringLogParser, minerFulParams, postParams, taskCharArchive);
 	        
 	        MinerFulOutputManagementLauncher proViewStarter = new MinerFulOutputManagementLauncher(); 
-	        proViewStarter.manageOutput(processModel, viewParams, outParams, systemParams, stringLogParser);
+	        proViewStarter.manageOutput(processSpecification, viewParams, outParams, systemParams, stringLogParser);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

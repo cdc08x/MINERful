@@ -9,7 +9,7 @@ import org.apache.commons.cli.Options;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.io.ConstraintsPrinter;
-import minerful.io.params.OutputModelParameters;
+import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.miner.core.MinerFulKBCore;
 import minerful.miner.core.MinerFulQueryingCore;
@@ -58,8 +58,8 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				new ViewCmdParameters(
 						cmdLineOptions,
 						args);
-		OutputModelParameters outParams =
-				new OutputModelParameters(
+		OutputSpecificationParameters outParams =
+				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
 		SystemCmdParameters systemParams =
@@ -92,10 +92,10 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		MinerFulOutputManagementLauncher minerFulOutputMgr = new MinerFulOutputManagementLauncher();
 		
-		ProcessSpecification processModel = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
+		ProcessSpecification processSpecification = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
 	}
 
-	public ProcessSpecification slideAndMine(LogParser logParser, SlidingMiningCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputModelParameters outParams, SystemCmdParameters systemParams) {
+	public ProcessSpecification slideAndMine(LogParser logParser, SlidingMiningCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams) {
 		PostProcessingCmdParameters noPostProcParams = PostProcessingCmdParameters.makeParametersForNoPostProcessing();
 		ProcessSpecification proMod = null;
 		int from = 0, to = 0;
@@ -232,7 +232,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.warn("Redirecting intermediate model measures to standard output");
+			logger.warn("Redirecting intermediate specification measures to standard output");
 			outWriter = new PrintWriter(System.out);
 		}
 		return outWriter;

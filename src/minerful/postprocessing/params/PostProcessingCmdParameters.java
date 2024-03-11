@@ -13,7 +13,7 @@ import minerful.postprocessing.pruning.SubsumptionHierarchyMarkingPolicy;
 
 public class PostProcessingCmdParameters extends ParamsManager {
 	/**
-	 * Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process model.
+	 * Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process specification.
 	 * @author Claudio Di Ciccio
 	 */
 	public static enum PostProcessingAnalysisType {
@@ -136,7 +136,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
     public Double trcConfidenceThreshold;
 	/** Minimum trace-based coverage threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_TRC_COVERAGE_THRESHOLD DEFAULT_INTEREST_FACTOR_THRESHOLD}. */
 	public Double trcCoverageThreshold;
-	/** Specifies whether the redundant or inconsistent constraints should be only marked as such (<code>false</code>), hence hidden, or cropped (removed) from the model (<code>true</code>) */
+	/** Specifies whether the redundant or inconsistent constraints should be only marked as such (<code>false</code>), hence hidden, or cropped (removed) from the specification (<code>true</code>) */
 	public boolean cropRedundantAndInconsistentConstraints;
 
 	public static final ConstraintSortingPolicy[] DEFAULT_PRIORITY_POLICIES = new ConstraintSortingPolicy[] {
@@ -375,7 +375,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
         options.addOption(
         		Option.builder(KEEP_CONSTRAINTS_PARAM_NAME)
 						.longOpt("keep-constraints")
-						.desc("do not physically remove the redundant or inconsistent constraints from the model")
+						.desc("do not physically remove the redundant or inconsistent constraints from the specification")
 						.type(Boolean.class)
 						.build()
         		);

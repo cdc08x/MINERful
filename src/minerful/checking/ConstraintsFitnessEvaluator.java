@@ -46,7 +46,7 @@ public class ConstraintsFitnessEvaluator {
 	/**
 	 * Constructor of this class. Notice that the
 	 * {@link TaskChar TaskChar}
-	 * elements in the given process model are re-encoded according to the encoding of the event log.
+	 * elements in the given process specification are re-encoded according to the encoding of the event log.
 	 * Notice that it does so as a side effect on the original constraints passed in input and on the
 	 * {@link TaskChar TaskChar} elements themselves.
 	 * @param taChaEncoDeco An encoder/decoder for tasks of constraints

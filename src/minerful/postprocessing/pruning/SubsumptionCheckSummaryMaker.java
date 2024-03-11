@@ -107,16 +107,16 @@ public class SubsumptionCheckSummaryMaker {
 	private static final SubsumptionKindComparator kin_compa = new SubsumptionKindComparator();
 	private NavigableMap<SubsumptionKind, Integer> checks;
 	private Map<Class<? extends Subsumption.SubsumptionKind>, Integer> checksSummary;
-	private Constraint[] model;
+	private Constraint[] specification;
 	
-	public SubsumptionCheckSummaryMaker(Constraint[] model) {
+	public SubsumptionCheckSummaryMaker(Constraint[] specification) {
 		this.initCounters();
-		this.model = model;
+		this.specification = specification;
 	}
 	
 	public SubsumptionCheckSummaryMaker(Collection<Constraint> allConstraints) {
 		this.initCounters();
-		this.model = allConstraints.toArray(new Constraint[allConstraints.size()]);
+		this.specification = allConstraints.toArray(new Constraint[allConstraints.size()]);
 	}
 
 	private void initCounters() {
@@ -156,55 +156,55 @@ public class SubsumptionCheckSummaryMaker {
 
 	public Subsumption checkSubsumption(Constraint c) {
 		Subsumption subsumption = null;
-		Constraint modelCon = null;
-		for (int i = 0; i < model.length && subsumption == null; i++) {
-			modelCon = model[i];
+		Constraint specificationCon = null;
+		for (int i = 0; i < specification.length && subsumption == null; i++) {
+			specificationCon = specification[i];
 
-			if (modelCon.equals(c)) {
-				subsumption = new Subsumption(modelCon, Equalisation.EQUAL_TO);
-			} else if (modelCon.isChildOf(c)) {
-				subsumption = new Subsumption(modelCon, Extension.DIRECT_PARENT_OF);
-			} else if (c.isChildOf(modelCon)) {
-				subsumption = new Subsumption(modelCon, Restriction.DIRECT_CHILD_OF);
-			} else if (modelCon.isDescendantAlongSameBranchOf(c)) {
-				subsumption = new Subsumption(modelCon, Extension.ANCESTOR_OF);
-			} else if (c.isDescendantAlongSameBranchOf(modelCon)) {
-				subsumption = new Subsumption(modelCon, Restriction.DESCENDANT_OF);
+			if (specificationCon.equals(c)) {
+				subsumption = new Subsumption(specificationCon, Equalisation.EQUAL_TO);
+			} else if (specificationCon.isChildOf(c)) {
+				subsumption = new Subsumption(specificationCon, Extension.DIRECT_PARENT_OF);
+			} else if (c.isChildOf(specificationCon)) {
+				subsumption = new Subsumption(specificationCon, Restriction.DIRECT_CHILD_OF);
+			} else if (specificationCon.isDescendantAlongSameBranchOf(c)) {
+				subsumption = new Subsumption(specificationCon, Extension.ANCESTOR_OF);
+			} else if (c.isDescendantAlongSameBranchOf(specificationCon)) {
+				subsumption = new Subsumption(specificationCon, Restriction.DESCENDANT_OF);
 			} else if (c.getSubFamily().equals(RelationConstraintSubFamily.MUTUAL)) {
 				MutualRelationConstraint coCon = ((MutualRelationConstraint)c);
-				if (coCon.getPossibleForwardConstraint().equals(modelCon)) {
-					subsumption = new Subsumption(modelCon, Restriction.INCLUDES_AS_FORWARD);
+				if (coCon.getPossibleForwardConstraint().equals(specificationCon)) {
+					subsumption = new Subsumption(specificationCon, Restriction.INCLUDES_AS_FORWARD);
 				}
-				if (coCon.getPossibleBackwardConstraint().equals(modelCon)) {
-					subsumption = new Subsumption(modelCon, Restriction.INCLUDES_AS_BACKWARD);
+				if (coCon.getPossibleBackwardConstraint().equals(specificationCon)) {
+					subsumption = new Subsumption(specificationCon, Restriction.INCLUDES_AS_BACKWARD);
 				}
-			} else if (modelCon.getSubFamily().equals(RelationConstraintSubFamily.MUTUAL)) {
-				MutualRelationConstraint coCheckCon = ((MutualRelationConstraint)modelCon);
+			} else if (specificationCon.getSubFamily().equals(RelationConstraintSubFamily.MUTUAL)) {
+				MutualRelationConstraint coCheckCon = ((MutualRelationConstraint)specificationCon);
 				if (coCheckCon.getPossibleForwardConstraint().equals(c)) {
-					subsumption = new Subsumption(modelCon, Extension.IS_FORWARD_OF);
+					subsumption = new Subsumption(specificationCon, Extension.IS_FORWARD_OF);
 				}
 				if (coCheckCon.getPossibleBackwardConstraint().equals(c)) {
-					subsumption = new Subsumption(modelCon, Extension.IS_BACKWARD_OF);
+					subsumption = new Subsumption(specificationCon, Extension.IS_BACKWARD_OF);
 				}
-			} else if (modelCon.isBranched() || c.isBranched()) {
-				if (modelCon instanceof RelationConstraint && c instanceof RelationConstraint) {
-					RelationConstraint reModelCon = ((RelationConstraint)modelCon);
+			} else if (specificationCon.isBranched() || c.isBranched()) {
+				if (specificationCon instanceof RelationConstraint && c instanceof RelationConstraint) {
+					RelationConstraint reSpecificationCon = ((RelationConstraint)specificationCon);
 					RelationConstraint reC = ((RelationConstraint)c);
 					
-					if (reModelCon.getBase().equals(reC.getBase())) {
-						if (reModelCon.type.equals(reC.type)) {
-							if (reModelCon.hasTargetSetStrictlyIncludingTheOneOf(reC)) {
-								subsumption = new Subsumption(modelCon, Restriction.SAME_TEMPLATE_SAME_ACTIVATION_TARGET_INCLUDED_IN);
-							} else if (reC.hasTargetSetStrictlyIncludingTheOneOf(reModelCon)) {
-								subsumption = new Subsumption(modelCon, Extension.SAME_TEMPLATE_SAME_ACTIVATION_TARGET_INCLUDES);
+					if (reSpecificationCon.getBase().equals(reC.getBase())) {
+						if (reSpecificationCon.type.equals(reC.type)) {
+							if (reSpecificationCon.hasTargetSetStrictlyIncludingTheOneOf(reC)) {
+								subsumption = new Subsumption(specificationCon, Restriction.SAME_TEMPLATE_SAME_ACTIVATION_TARGET_INCLUDED_IN);
+							} else if (reC.hasTargetSetStrictlyIncludingTheOneOf(reSpecificationCon)) {
+								subsumption = new Subsumption(specificationCon, Extension.SAME_TEMPLATE_SAME_ACTIVATION_TARGET_INCLUDES);
 							}
-						} else if (reModelCon.isTemplateDescendantAlongSameBranchOf(reC)) {
-							if (reC.hasTargetSetStrictlyIncludingTheOneOf(reModelCon)) {
-								subsumption = new Subsumption(modelCon, Extension.TEMPLATE_ANCESTOR_OF_SAME_ACTIVATION_TARGET_INCLUDES);
+						} else if (reSpecificationCon.isTemplateDescendantAlongSameBranchOf(reC)) {
+							if (reC.hasTargetSetStrictlyIncludingTheOneOf(reSpecificationCon)) {
+								subsumption = new Subsumption(specificationCon, Extension.TEMPLATE_ANCESTOR_OF_SAME_ACTIVATION_TARGET_INCLUDES);
 							}
-						} else if (reC.isTemplateDescendantAlongSameBranchOf(reModelCon)) {
-							if (reModelCon.hasTargetSetStrictlyIncludingTheOneOf(reC)) {
-								subsumption = new Subsumption(modelCon, Restriction.TEMPLATE_DESCENDANT_OF_SAME_ACTIVATION_TARGET_INCLUDED_IN);
+						} else if (reC.isTemplateDescendantAlongSameBranchOf(reSpecificationCon)) {
+							if (reSpecificationCon.hasTargetSetStrictlyIncludingTheOneOf(reC)) {
+								subsumption = new Subsumption(specificationCon, Restriction.TEMPLATE_DESCENDANT_OF_SAME_ACTIVATION_TARGET_INCLUDED_IN);
 							}
 						}
 					}
@@ -267,8 +267,8 @@ public class SubsumptionCheckSummaryMaker {
 	public Map<Class<? extends Subsumption.SubsumptionKind>, Integer> getChecksSummary() {
 		return checksSummary;
 	}
-	public Constraint[] getModel() {
-		return model;
+	public Constraint[] getSpecification() {
+		return specification;
 	}
 
 	public Subsumption[] checkSubsumption(Collection<Constraint> allConstraints) {
