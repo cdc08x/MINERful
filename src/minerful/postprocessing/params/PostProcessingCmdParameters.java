@@ -99,7 +99,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 
 	public static final String ANALYSIS_TYPE_PARAM_NAME = "prune";
 	public static final String RANKING_POLICY_PARAM_NAME = "pruneRnk";
-	public static final String HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME = "ppHSPP"; // TODO One day
+	public static final String SUBSUMPTION_HIERARCHY_PRUNING_POLICY_PARAM_NAME = "pruneHier";
 	public static final String KEEP_CONSTRAINTS_PARAM_NAME = "keep";
 	public static final char EVT_SUPPORT_THRESHOLD_PARAM_NAME = 's';
 	public static final char EVT_COVERAGE_THRESHOLD_PARAM_NAME = 'g';
@@ -108,14 +108,14 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final String TRC_COVERAGE_THRESHOLD_PARAM_NAME = "gT";
 	public static final String TRC_CONFIDENCE_THRESHOLD_PARAM_NAME = "cT";
 
-	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.125;
+	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.0125;
 	public static final Double DEFAULT_EVT_COVERAGE_THRESHOLD = 0.125;
 	public static final Double DEFAULT_EVT_CONFIDENCE_THRESHOLD = 0.85;
 	public static final Double DEFAULT_TRC_SUPPORT_THRESHOLD = 0.125;
 	public static final Double DEFAULT_TRC_COVERAGE_THRESHOLD = 0.125;
 	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.85;
 	public static final PostProcessingAnalysisType DEFAULT_POST_PROCESSING_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
-	public static final HierarchySubsumptionPruningPolicy DEFAULT_HIERARCHY_POLICY = HierarchySubsumptionPruningPolicy.HIERARCHY;
+	public static final SubsumptionHierarchyPruningPolicy DEFAULT_HIERARCHY_POLICY = SubsumptionHierarchyPruningPolicy.HIERARCHY_FIRST;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;
 
 	/** Policies according to which constraints are ranked in terms of significance. The position in the array reflects the order with which the policies are used. When a criterion does not establish which constraint in a pair should be put ahead in the ranking, the following in the array is utilised. Default value is {@link #DEFAULT_PRIORITY_POLICIES DEFAULT_PRIORITY_POLICIES}. */
@@ -123,7 +123,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	/** Type of post-processing analysis required. Default value is {@link #DEFAULT_POST_PROCESSING_ANALYSIS_TYPE DEFAULT_ANALYSIS_TYPE}. */
 	public PostProcessingAnalysisType postProcessingAnalysisType;
 	/** Ignore this: it is still unused -- Policies according to which constraints are ranked in terms of significance. Default value is {@link #DEFAULT_HIERARCHY_POLICY DEFAULT_HIERARCHY_POLICY}. */
-	public HierarchySubsumptionPruningPolicy hierarchyPolicy;
+	public SubsumptionHierarchyPruningPolicy hierarchyPolicy;
 	/** Minimum event-based support threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_SUPPORT_THRESHOLD DEFAULT_SUPPORT_THRESHOLD}. */
     public Double evtSupportThreshold;
 	/** Minimum event-based confidence level threshold required to consider a discovered constraint significant. Default value is {@link #DEFAULT_EVT_CONFIDENCE_THRESHOLD DEFAULT_CONFIDENCE_THRESHOLD}. */
@@ -162,7 +162,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static PostProcessingCmdParameters makeParametersForNoPostProcessing() {
 		PostProcessingCmdParameters noPostProcessParams = new PostProcessingCmdParameters();
 		noPostProcessParams.postProcessingAnalysisType = PostProcessingAnalysisType.NONE;
-		noPostProcessParams.hierarchyPolicy = HierarchySubsumptionPruningPolicy.NONE;
+		noPostProcessParams.hierarchyPolicy = SubsumptionHierarchyPruningPolicy.NONE;
 		noPostProcessParams.evtSupportThreshold = 0.0;
 		noPostProcessParams.evtConfidenceThreshold = 0.0;
 		noPostProcessParams.evtCoverageThreshold = 0.0;
@@ -245,12 +245,12 @@ public class PostProcessingCmdParameters extends ParamsManager {
 		this.updateRankingPolicies(line.getOptionValue(RANKING_POLICY_PARAM_NAME));
 
 
-		String hierarchyPolicyString = line.getOptionValue(HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME);
+		String hierarchyPolicyString = line.getOptionValue(SUBSUMPTION_HIERARCHY_PRUNING_POLICY_PARAM_NAME);
 		if (hierarchyPolicyString != null && !hierarchyPolicyString.isEmpty()) {
 			try {
-				this.hierarchyPolicy = HierarchySubsumptionPruningPolicy.valueOf(fromStringToEnumValue(hierarchyPolicyString));
+				this.hierarchyPolicy = SubsumptionHierarchyPruningPolicy.valueOf(fromStringToEnumValue(hierarchyPolicyString));
 			} catch (Exception e) {
-				System.err.println("Invalid option for " + HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME + ": " + hierarchyPolicyString + ". Using default value.");
+				System.err.println("Invalid option for " + SUBSUMPTION_HIERARCHY_PRUNING_POLICY_PARAM_NAME + ": " + hierarchyPolicyString + ". Using default value.");
 			}
 		}
 	}
@@ -298,16 +298,22 @@ public class PostProcessingCmdParameters extends ParamsManager {
                 Option.builder(RANKING_POLICY_PARAM_NAME)
 						.hasArg().argName("policy")
 						.longOpt("prune-ranking-by")
-						.desc("type of ranking of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
+						.desc("type of constraint ranking for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(ConstraintSortingPolicy.values())
 						+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_PRIORITY_POLICIES)))
 						.type(String.class)
 						.build()
     	);
 		options.addOption(
-                Option.builder(HIERARCHY_SUBSUMPTION_PRUNING_POLICY_PARAM_NAME)
+                Option.builder(SUBSUMPTION_HIERARCHY_PRUNING_POLICY_PARAM_NAME)
 						.hasArg().argName("hierarchy-policy")
 						.longOpt("prune-hierarchy-by")
-						.desc("type of pruning of constraints for post-processing analysis. It can be a " + ARRAY_TOKENISER_SEPARATOR + "-separated list of the following: " + printValues(HierarchySubsumptionPruningPolicy.values())
+						.desc("determines whether a subsumed constraint is retained whenever its quality measures are higher than the subsuming one ('"
+								+ fromEnumValueToString(SubsumptionHierarchyPruningPolicy.MEASURE_FIRST) 
+								+ "') or is discarded in favour of the subsuming one regardless ('"
+								+ fromEnumValueToString(SubsumptionHierarchyPruningPolicy.HIERARCHY_FIRST)
+								+ "'). Notice that this parameter takes effect only if the -"
+								+ ANALYSIS_TYPE_PARAM_NAME
+								+ " parameter is not set to '" + fromEnumValueToString(PostProcessingAnalysisType.NONE) + "'"
 						+ printDefault(fromEnumValuesToTokenJoinedString(DEFAULT_HIERARCHY_POLICY)))
 						.type(String.class)
 						.build()
@@ -377,17 +383,16 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	}
 	
 
-	// TODO Still unused
-	public static enum HierarchySubsumptionPruningPolicy {
+		public static enum SubsumptionHierarchyPruningPolicy {
 		NONE,
-		HIERARCHY, // default
-		CONFIDENCEHIERARCHY;	
+		HIERARCHY_FIRST, // default
+		MEASURE_FIRST;	
 		
 		public SubsumptionHierarchyMarkingPolicy translate() {
 			switch(this) {
-			case CONFIDENCEHIERARCHY:
+			case MEASURE_FIRST:
 				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_CONFIDENCE_OVER_HIERARCHY;
-			case HIERARCHY:
+			case HIERARCHY_FIRST:
 			default:
 				return SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE;
 			}

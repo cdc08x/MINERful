@@ -28,7 +28,7 @@ public class MinerFulCmdParameters extends ParamsManager {
 	public static final String STATS_OUT_PATH_PARAM_NAME = "statsXML";
 	public static final String OUT_BRANCHING_LIMIT_PARAM_NAME = "b";
 	public static final String FORESEE_DISTANCES_PARAM_NAME = "withDist";
-	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "showMem";
+	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "memShow";
 	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "exclTasks";
 	public static final String KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = "para";
 	public static final String QUERY_PARALLEL_COMPUTATION_THREADS_PARAM_NAME = "paraQ";
