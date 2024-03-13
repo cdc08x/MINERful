@@ -36,11 +36,13 @@ public class FromDeclareMapToJSONandXMLandCSV {
 				new DeclareMapEncoderDecoder(
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap3.xml"
 						"/home/cdc08x/Code/MINERful-dev/models/examples-FMM/DeclareMap2.xml"
+						//"/Users/ceciliaiacometta/Desktop/examples/uni-condec.xml"
 //						"/home/cdc08x/Code/MINERful/models/examples-FMM/DeclareMap1.xml"
 				).createMinerFulProcessSpecification();
 
 		outParams.fileToSaveAsXML = new File("/home/cdc08x/MINERful-declarative-model.xml");
-		outParams.fileToSaveAsJSON = new File("/home/cdc08x/MINERful-declarative-model.json");
+		outParams.fileToSaveAsJSON =  new File("/home/cdc08x/MINERful-declarative-model.json");
+		//outParams.fileToSaveAsJSON = new File("/Users/ceciliaiacometta/Desktop/examples/uni-condec.xml");
 		outParams.fileToSaveConstraintsAsCSV = new File("/home/cdc08x/MINERful-declarative-model.csv");
 		outParams.csvColumnsToPrint = new CsvEncoder.PRINT_OUT_ELEMENT[]{
 				CsvEncoder.PRINT_OUT_ELEMENT.FULL_NAME, // ("Constraint"),

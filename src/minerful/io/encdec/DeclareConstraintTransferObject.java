@@ -28,7 +28,10 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 	public final List<Set<String>> parameters;
 	public final Double support;
 	public final Double confidence;
-	public final Double interestFactor;
+	public final Double coverage;
+	public final Double tr_support;
+	public final Double tr_confidence;
+	public final Double tr_coverage;
 	
 	public DeclareConstraintTransferObject(Constraint con) {
 		this.minerFulTemplate = con.getClass();
@@ -49,10 +52,17 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		
 		this.support = con.getEventBasedMeasures().getSupport();
 		this.confidence = con.getEventBasedMeasures().getConfidence();
-		this.interestFactor = con.getEventBasedMeasures().getCoverage();
+		this.coverage = con.getEventBasedMeasures().getCoverage();
+		this.tr_support= con.getTraceBasedMeasures().getSupport();
+		this.tr_confidence= con.getTraceBasedMeasures().getConfidence();
+		this.tr_coverage= con.getTraceBasedMeasures().getCoverage();
+
 	}
 	
 	public DeclareConstraintTransferObject(ConstraintDefinition declareMapConstraint) {
+		this.tr_confidence= null;
+		this.tr_coverage= null;
+		this.tr_support= null;
 		this.declareMapTemplate = DeclareMapTemplate.fromName(declareMapConstraint.getName());
 		this.minerFulTemplate = DeclareMapToMinerFulTemplatesTranslator.translateTemplateName(this.declareMapTemplate);
 		this.parameters = new ArrayList<Set<String>>();
@@ -73,7 +83,9 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 
 		this.support = (supMatcher.matches() && supMatcher.groupCount() > 0 ? Double.valueOf(supMatcher.group(1)) : ConstraintMeasuresManager.DEFAULT_SUPPORT);
 		this.confidence = (confiMatcher.matches() && confiMatcher.groupCount() > 0 ? Double.valueOf(confiMatcher.group(1)) : ConstraintMeasuresManager.DEFAULT_CONFIDENCE);
-		this.interestFactor = (inteFaMatcher.matches() && inteFaMatcher.groupCount() > 0 ? Double.valueOf(inteFaMatcher.group(1)): ConstraintMeasuresManager.DEFAULT_COVERAGE);
+		this.coverage = (inteFaMatcher.matches() && inteFaMatcher.groupCount() > 0 ? Double.valueOf(inteFaMatcher.group(1)): ConstraintMeasuresManager.DEFAULT_COVERAGE);
+
+		
 	}
 	
 	public DeclareConstraintTransferObject(ConstraintPojo pojo) {
@@ -97,7 +109,12 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		this.parameters = pojo.parameters;
 		this.support = pojo.support;
 		this.confidence = pojo.confidence;
-		this.interestFactor = pojo.interestFactor;
+		this.coverage = pojo.coverage;
+
+		this.tr_support = pojo.tr_support;
+		this.tr_confidence = pojo.tr_confidence;
+		this.tr_coverage = pojo.tr_coverage;
+
 	}
 	
 	public ConstraintPojo toPojo() {
@@ -108,7 +125,11 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		
 		pojo.support = this.support;
 		pojo.confidence = this.confidence;
-		pojo.interestFactor = this.interestFactor;
+		pojo.coverage = this.coverage;
+
+		pojo.tr_support = this.tr_support;
+		pojo.tr_confidence = this.tr_confidence;
+		pojo.tr_coverage = this.tr_coverage;
 		
 		return pojo;
 	}
@@ -127,7 +148,7 @@ public class DeclareConstraintTransferObject implements Comparable<DeclareConstr
 		builder.append(", confidence=");
 		builder.append(confidence);
 		builder.append(", interestFactor=");
-		builder.append(interestFactor);
+		builder.append(coverage);
 		builder.append("]");
 		return builder.toString();
 	}

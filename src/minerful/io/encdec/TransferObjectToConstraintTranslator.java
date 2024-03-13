@@ -27,8 +27,8 @@ public class TransferObjectToConstraintTranslator {
 			if (conTO.confidence != null) {
 				minerFulConstraint.getEventBasedMeasures().setConfidence(conTO.confidence);
 			}
-			if (conTO.interestFactor != null) {
-				minerFulConstraint.getEventBasedMeasures().setCoverage(conTO.interestFactor);
+			if (conTO.coverage != null) {
+				minerFulConstraint.getEventBasedMeasures().setCoverage(conTO.coverage);
 			}
 			return minerFulConstraint;
 		}

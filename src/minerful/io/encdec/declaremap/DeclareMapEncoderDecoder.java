@@ -258,7 +258,7 @@ public class DeclareMapEncoderDecoder {
 				String.format(SUPPORT_CONFIDENCE_IF_FORMAT_PATTERN,
 						constraintTo.support,
 						constraintTo.confidence,
-						constraintTo.interestFactor)
+						constraintTo.coverage)
 		);
 		return constraintDefinition;
 	}
