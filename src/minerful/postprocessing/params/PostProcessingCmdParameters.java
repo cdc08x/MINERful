@@ -108,7 +108,7 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final String TRC_COVERAGE_THRESHOLD_PARAM_NAME = "gT";
 	public static final String TRC_CONFIDENCE_THRESHOLD_PARAM_NAME = "cT";
 
-	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.0125;
+	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.125;
 	public static final Double DEFAULT_EVT_COVERAGE_THRESHOLD = 0.125;
 	public static final Double DEFAULT_EVT_CONFIDENCE_THRESHOLD = 0.85;
 	public static final Double DEFAULT_TRC_SUPPORT_THRESHOLD = 0.125;
