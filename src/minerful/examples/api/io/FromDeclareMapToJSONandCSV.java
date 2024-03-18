@@ -15,7 +15,7 @@ import minerful.params.ViewCmdParameters;
  * Here it is also shown how to limit the columns to be printed in the CSV.
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
-public class FromDeclareMapToJSONandXMLandCSV {
+public class FromDeclareMapToJSONandCSV {
 	public static void main(String[] args) {
 		OutputSpecificationParameters outParams =
 				new OutputSpecificationParameters();
@@ -35,15 +35,14 @@ public class FromDeclareMapToJSONandXMLandCSV {
 		ProcessSpecification proSpec =
 				new DeclareMapEncoderDecoder(
 //						"/home/cdc08x/Code/MINERful-dev/specifications/examples-FMM/DeclareMap1.xml"
-						"/home/cdc08x/Code/MINERful-dev/specifications/examples-FMM/DeclareMap2.xml"
-						//"/Users/ceciliaiacometta/Desktop/examples/uni-condec.xml"
+						//"/home/cdc08x/Code/MINERful-dev/specifications/examples-FMM/DeclareMap2.xml"
+						"/Users/ceciliaiacometta/Desktop/examples/uni-condec.xml"
 //						/home/cdc08x/Code/MINERful-dev/specifications/examples-FMM/DeclareMap3.xml"
 				).createMinerFulProcessSpecification();
 
-		outParams.fileToSaveAsXML = new File("/home/cdc08x/MINERful-declarative-specification.xml");
-		outParams.fileToSaveAsJSON =  new File("/home/cdc08x/MINERful-declarative-specification.json");
-		//outParams.fileToSaveAsJSON = new File("/Users/ceciliaiacometta/Desktop/examples/uni-condec.xml");
-		outParams.fileToSaveConstraintsAsCSV = new File("/home/cdc08x/MINERful-declarative-specification.csv");
+		outParams.fileToSaveAsJSON =  new File("/Users/ceciliaiacometta/Desktop/examples/uni-condec_prova.json");
+		//outParams.fileToSaveAsXML = new File("/Users/ceciliaiacometta/Desktop/examples/uni-condec.xml");
+		outParams.fileToSaveConstraintsAsCSV = new File("/Users/ceciliaiacometta/Desktop/examples/uni-condec_prova.csv");
 		outParams.csvColumnsToPrint = new CsvEncoder.PRINT_OUT_ELEMENT[]{
 				CsvEncoder.PRINT_OUT_ELEMENT.FULL_NAME, // ("Constraint"),
 				CsvEncoder.PRINT_OUT_ELEMENT.TEMPLATE_NAME, //("Template"),

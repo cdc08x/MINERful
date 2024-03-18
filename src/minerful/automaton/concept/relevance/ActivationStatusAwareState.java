@@ -6,17 +6,11 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-
 import minerful.utils.RandomCharGenerator;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
-@XmlAccessorType(XmlAccessType.NONE)
+
 public class ActivationStatusAwareState extends State {
 	private static final long serialVersionUID = 169203888647636487L;
 
@@ -27,14 +21,12 @@ public class ActivationStatusAwareState extends State {
 	protected NavigableMap<Character, Transition> transitionMap = new TreeMap<Character, Transition>();
 	
 	@Override
-	@XmlElementWrapper(name="transitions")
-	@XmlElement(name="transition")
 	public Set<Transition> getTransitions() {
 		return super.getTransitions();
 	}
 	
 
-	@XmlAttribute(name="id")
+
 	public String getStateUUID() {
 		return stateUUID;
 	}
@@ -53,7 +45,6 @@ public class ActivationStatusAwareState extends State {
 	}
 	
 	@Override
-	@XmlAttribute
 	public boolean isAccept() {
 		return super.isAccept();
 	}

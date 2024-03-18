@@ -30,7 +30,7 @@ public class TsmlEncoder {
 		HashMap<State, Set<Transition>> transitionSet = new HashMap<State, Set<Transition>>();
 		StringBuilder tsmlBuilder = new StringBuilder();
 
-		tsmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		//tsmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		tsmlBuilder.append('\n');
 		tsmlBuilder.append("<tsml label=\"Converted from " + automatonSource + "\" layout=\"false\">");
 		tsmlBuilder.append('\n');

@@ -17,15 +17,11 @@ public class OutputSpecificationParameters extends ParamsManager {
 	public static final String SAVE_AS_CONDEC_PARAM_NAME = "oConDec";
 	public static final String SAVE_AS_NUSMV_PARAM_NAME = "oNuSMV";
 	public static final String SAVE_AS_CSV_PARAM_NAME = "oCSV";
-	public static final String SAVE_AS_XML_PARAM_NAME = "oXML";
 	public static final String SAVE_AS_JSON_PARAM_NAME = "oJSON";
 	public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "autoDOT";
 //	public static final String SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME = "dotCond"; // TODO To be done, one day
 	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "autoTSML";
 	public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "subautosDOT";
-	public static final String SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "autoReplayXML";
-	public static final String SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME = "autoReplayTrimXML";
-	public static final String FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME = "subautosReplayXML";
 
 	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveConstraintsAsCSV;
@@ -41,14 +37,6 @@ public class OutputSpecificationParameters extends ParamsManager {
 	public File fileToSaveAsConDec;
 	/** File in which the discovered process specification is saved as a NuSMV file. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveAsNuSMV;
-	/** File in which the discovered process specification is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Keep it equal to <code>null</code> to disable this functionality. */
-	public File fileToSaveXmlFileForAutomaton;
-	/** File in which the discovered process specification is printed as an XML representation of an automaton. Transitions are weighted by the number of times the replay of the traces in the event log traverses them. Transitions that are never traversed are removed. Keep it equal to <code>null</code> to disable this functionality. */
-	public File fileToSaveSkimmedXmlFileForAutomaton;
-	/** Directory in which the discovered constraints are printed as automata, in separate XML files. Keep it equal to <code>null</code> to disable this functionality. */
-	public File folderToSaveXmlFilesForPartialAutomata;
-	/** File in which the discovered process specification is saved as an XML file. Keep it equal to <code>null</code> to disable this functionality. */
-    public File fileToSaveAsXML;
 	/** File in which the discovered process specification is saved as a JSON file. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveAsJSON;
 	/** Columns to be printed if constraints are printed in CSV format. Notice that this attribute is not associated to a command-line parameter. */
@@ -62,10 +50,6 @@ public class OutputSpecificationParameters extends ParamsManager {
 //    	this.fileToSaveDotFileForCondensedAutomaton = null; // TODO One day
     	this.fileToSaveAsConDec = null;
     	this.fileToSaveAsNuSMV = null;
-    	this.fileToSaveXmlFileForAutomaton = null;
-    	this.fileToSaveSkimmedXmlFileForAutomaton = null;
-    	this.folderToSaveXmlFilesForPartialAutomata = null;
-    	this.fileToSaveAsXML = null;
     	this.fileToSaveAsJSON = null;
     }
 
@@ -82,9 +66,7 @@ public class OutputSpecificationParameters extends ParamsManager {
 	}
 
 	@Override
-	protected void setup(CommandLine line) {
-    	this.fileToSaveAsXML = openOutputFile(line, SAVE_AS_XML_PARAM_NAME);
-        
+	protected void setup(CommandLine line) {        
     	this.fileToSaveAsJSON = openOutputFile(line, SAVE_AS_JSON_PARAM_NAME);
 
         this.folderToSaveDotFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
@@ -100,13 +82,7 @@ public class OutputSpecificationParameters extends ParamsManager {
         this.fileToSaveAsConDec = openOutputFile(line, SAVE_AS_CONDEC_PARAM_NAME);
         
         this.fileToSaveAsNuSMV = openOutputFile(line, SAVE_AS_NUSMV_PARAM_NAME);
-        
-        this.fileToSaveXmlFileForAutomaton = openOutputFile(line, SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
-
-        this.fileToSaveSkimmedXmlFileForAutomaton = openOutputFile(line, SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME);
-        
-        this.folderToSaveXmlFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME);
-
+                
     }
     
 	@Override
@@ -124,14 +100,6 @@ public class OutputSpecificationParameters extends ParamsManager {
 	@SuppressWarnings("static-access")
 	public static Options parseableOptions() {
 		Options options = new Options();
-        options.addOption(
-        		Option.builder(SAVE_AS_XML_PARAM_NAME)
-        		.hasArg().argName("path")
-        		.longOpt("save-as-xml")
-        		.desc("path of the file in which to save the discovered process specification as XML")
-        		.type(String.class)
-        		.build()
-        		);
         options.addOption(
         		Option.builder(SAVE_AS_JSON_PARAM_NAME)
         		.hasArg().argName("path")
@@ -195,40 +163,10 @@ public class OutputSpecificationParameters extends ParamsManager {
         		.build()
         		);
   options.addOption(
-        Option.builder(SAVE_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
-        .hasArg().argName("path")
-            .longOpt("print-replay-autom")
-            .desc(
-        				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. The weight is computed based on the number of times the event log replay traverses the transition.")
-        		)
-        		.type(String.class)
-        		.build()
-        		);
-  options.addOption(
         Option.builder(SAVE_AS_NUSMV_PARAM_NAME)
         .hasArg().argName("path")
             .longOpt("print-replay-autom")
             .desc("print the discovered process as an input script for NuSMV into the specified file")
-        		.type(String.class)
-        		.build()
-        		);
-		options.addOption(
-				Option.builder(SAVE_SKIMMED_XML_WEIGHTED_AUTOMATON_PARAM_NAME)
-				.hasArg().argName("path")
-        		.longOpt("print-replay-trim-autom")
-        		.desc(
-        				attachInstabilityWarningToDescription("print the discovered process in weighted automaton XML format, into the specified file. Remove the transitions (and states) that have weight 0. The weight is computed based on the number of times the event log replay traverses the transition.")
-        		)
-        		.type(String.class)
-        		.build()
-        		);
-
-		options.addOption(
-				Option.builder(FOLDER_FOR_SAVING_XML_WEIGHTED_SUBAUTOMATA_PARAM_NAME)
-        		.hasArg().argName("path")
-        		.longOpt("xml-subautom-folder")
-        		.desc(
-        				attachInstabilityWarningToDescription("write the weighted automaton XML format of activities' finite state sub-automata on separate files, within the given folder"))
         		.type(String.class)
         		.build()
         		);

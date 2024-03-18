@@ -7,31 +7,16 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.log4j.Logger;
 
 import minerful.concept.Event;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
-import minerful.miner.stats.xmlenc.LocalStatsMapAdapter;
-import minerful.miner.stats.xmlenc.RepetitionsMapAdapter;
 
-@XmlType
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class LocalStatsWrapper {
-	@XmlTransient
 	public static final int FIRST_POSITION_IN_TRACE = 1;
 	
-	@XmlTransient
 	protected static Logger logger = Logger.getLogger(LocalStatsWrapper.class);
 
 	// TODO Do not consider this a constant, but rather a user-definable
@@ -44,7 +29,6 @@ public class LocalStatsWrapper {
 	 */
 	public static final boolean EVENT_CENTRIC_DISTANCE = false;
 
-	@XmlTransient
 	protected class AlternatingCounterSwitcher {
 		public boolean alternating = false;
 		public boolean repetitionInBetweenObserved = false;
@@ -113,35 +97,20 @@ public class LocalStatsWrapper {
 		}
 	}
 
-	@XmlTransient
+
 	protected TaskChar baseTask;
-	@XmlTransient
 	protected TaskCharArchive archive;
-	@XmlTransient
 	protected Integer firstOccurrenceAtThisStep;
-	@XmlTransient
 	protected SortedSet<Integer> repetitionsAtThisStep;
-	@XmlElement
-	@XmlJavaTypeAdapter(value = RepetitionsMapAdapter.class)
 	public Map<Integer, Integer> repetitions;
-	@XmlElement(name = "interplayStats")
-	@XmlJavaTypeAdapter(value = LocalStatsMapAdapter.class)
 	public Map<TaskChar, StatsCell> interplayStatsTable;
-	@XmlTransient
 	protected Map<TaskChar, Integer> neverMoreCooccurrencesAtThisStep;
-	@XmlTransient
 	protected Map<TaskChar, Boolean> atLeastOneCooccurrenceInThisTrace;
-	@XmlTransient
 	protected Map<TaskChar, Integer> adjacentOccurrencesInThisTrace;
-	@XmlTransient
 	protected Map<TaskChar, AlternatingCounterSwitcher> alternatingCntSwAtThisStep;
-	@XmlAttribute
 	public int occurencesAsFirst;
-	@XmlAttribute
 	public int occurrencesAsLast;
-	@XmlAttribute
 	protected long totalAmountOfOccurrences;
-	@XmlAttribute
 	protected long totalAmountOfTracesWithOccurrence;
 
 	protected LocalStatsWrapper() {

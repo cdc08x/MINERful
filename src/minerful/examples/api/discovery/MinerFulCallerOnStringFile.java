@@ -40,7 +40,7 @@ public class MinerFulCallerOnStringFile {
 		
 		ProcessSpecification processSpecification = miFuMiLa.mine();
 		
-		outParams.fileToSaveAsXML = new File("/home/claudio/Desktop/Temp-MINERful/model.xml");
+		//outParams.fileToSaveAsXML = new File("/home/claudio/Desktop/Temp-MINERful/model.xml");
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
 		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);

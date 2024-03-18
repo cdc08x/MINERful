@@ -4,11 +4,6 @@
  */
 package minerful.concept.constraint.relation;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
@@ -16,8 +11,6 @@ import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
-@XmlType
-@XmlSeeAlso({MutualRelationConstraint.class,NegativeRelationConstraint.class,UnidirectionalRelationConstraint.class})
 public abstract class RelationConstraint extends Constraint {
 	public static enum ImplicationVerse {
 		FORWARD,
@@ -25,7 +18,6 @@ public abstract class RelationConstraint extends Constraint {
 		BOTH
 	}
 
-	@XmlIDREF
 	protected TaskCharSet implied;
 	
 	protected RelationConstraint() {
@@ -206,13 +198,13 @@ public abstract class RelationConstraint extends Constraint {
 			||	relaCon.getClass().equals(RespondedExistence.class);
 	}
 	
-	@Override
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if (this.getFamily().equals(ConstraintFamily.RELATION)) {
-				this.base = this.getParameters().get(0);
-				this.implied = this.getParameters().get(1);
-		}
-	}
+	// @Override
+	// protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+	// 	if (this.getFamily().equals(ConstraintFamily.RELATION)) {
+	// 			this.base = this.getParameters().get(0);
+	// 			this.implied = this.getParameters().get(1);
+	// 	}
+	// }
 
 	@Override
 	public String getRegularExpressionTemplate() {

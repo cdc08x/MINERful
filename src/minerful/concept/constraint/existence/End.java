@@ -4,14 +4,11 @@
  */
 package minerful.concept.constraint.existence;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
-@XmlRootElement
 public class End extends AtLeast1 {
 	@Override
 	public String getRegularExpressionTemplate() {

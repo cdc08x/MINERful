@@ -4,19 +4,11 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 import minerful.utils.MessagePrinter;
 import minerful.utils.RandomCharGenerator;
 
-@XmlAccessorType(XmlAccessType.NONE)
 public class WeightedState extends State implements AutomatonElementQuantileButter, AutomatonNonConformityElementButter {
 
 	private static final long serialVersionUID = -3665359375777248550L;
@@ -35,15 +27,11 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 	private NavigableMap<Character, Transition> transitionMap = new TreeMap<Character, Transition>();
 	
 	@Override
-	@XmlElementWrapper(name="transitions")
-	@XmlElement(name="transition")
-	@XmlJavaTypeAdapter(WeightedTransitionXmlAdapter.class)
 	public Set<Transition> getTransitions() {
 		return super.getTransitions();
 	}
 	
 
-	@XmlAttribute(name="id")
 	public String getStateUUID() {
 		return stateUUID;
 	}
@@ -63,7 +51,6 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 	}
 
 	@Override
-	@XmlAttribute
 	public int getWeight() {
 		return weight;
 	}
@@ -74,7 +61,6 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 	}
 	
 	@Override
-	@XmlAttribute
 	public int getWeightQuantile() {
 		return weightQuantile;
 	}
@@ -97,7 +83,6 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 	}
 
 	@Override
-	@XmlAttribute
 	public int getNonConformityWeight() {
 		return this.nonConformityWeight;
 	}
@@ -108,7 +93,6 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 	}
 
 	@Override
-	@XmlAttribute
 	public int getNonConformityWeightQuantile() {
 		return this.nonConformityWeightQuantile;
 	}
@@ -125,13 +109,11 @@ public class WeightedState extends State implements AutomatonElementQuantileButt
 	}
 	
 	@Override
-	@XmlAttribute
 	public boolean isAccept() {
 		return super.isAccept();
 	}
 	
 	@Override
-	@XmlAttribute
 	public boolean isIllegal() {
 		return this.illegal;
 	}

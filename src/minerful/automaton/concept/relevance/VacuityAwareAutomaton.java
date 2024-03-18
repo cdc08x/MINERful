@@ -8,21 +8,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 import minerful.concept.AbstractTaskClass;
 import minerful.utils.MessagePrinter;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+
 public class VacuityAwareAutomaton extends Automaton {
 	public static MessagePrinter logger = MessagePrinter.getInstance(VacuityAwareAutomaton.class);
 
@@ -67,8 +59,7 @@ public class VacuityAwareAutomaton extends Automaton {
 	}
 
 	@Override
-	@XmlElementWrapper(name = "states")
-	@XmlElement(name = "state")
+
 	public Set<State> getStates() {
 		return super.getStates();
 	}
@@ -186,7 +177,6 @@ public class VacuityAwareAutomaton extends Automaton {
 	}
 	
 	@Override
-	@XmlAttribute
 	public boolean isDeterministic() {
 		return super.isDeterministic();
 	}

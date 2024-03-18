@@ -10,30 +10,18 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.logparser.StringTaskClass;
 
-@XmlRootElement(name="processAlphabet")
-@XmlAccessorType(XmlAccessType.FIELD)
+
 /**
  * An archive of the tasks of a process. For each task, an identifying character is given, as per {@link minerful.concept.TaskChar TaskChar}
  * @author Claudio Di Ciccio
  */
 public class TaskCharArchive {
-	@XmlElementWrapper(name="tasks")
-	@XmlElement(name="task")
+
 	private TreeSet<TaskChar> taskChars;
-	@XmlTransient
 	private HashMap<Character, TaskChar> taskCharsMapById;
-	@XmlTransient
 	private HashMap<AbstractTaskClass, TaskChar> taskCharsMapByClass;
 
 	public TaskCharArchive() {
@@ -228,7 +216,7 @@ public class TaskCharArchive {
 		return taskCharsSubsets;
 	}
 	
-	private void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		this.computeIndices();
-	}
+	// private void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+	// 	this.computeIndices();
+	// }
 }

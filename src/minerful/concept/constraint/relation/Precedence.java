@@ -6,16 +6,12 @@ package minerful.concept.constraint.relation;
 
 import java.util.Collections;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
-@XmlRootElement
 public class Precedence extends RespondedExistence {  
     @Override
 	public String getRegularExpressionTemplate() {
@@ -74,13 +70,13 @@ public class Precedence extends RespondedExistence {
 		return new RespondedExistence(base, implied);
 	}
 	
-	@Override
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if (this.getFamily().equals(ConstraintFamily.RELATION)) {
-				this.base = this.getParameters().get(1);
-				this.implied = this.getParameters().get(0);
-		}
-	}
+	// @Override
+	// protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+	// 	if (this.getFamily().equals(ConstraintFamily.RELATION)) {
+	// 			this.base = this.getParameters().get(1);
+	// 			this.implied = this.getParameters().get(0);
+	// 	}
+	// }
 
 	@Override
 	public Constraint copy(TaskChar... taskChars) {

@@ -1,7 +1,5 @@
 package minerful.automaton.concept.weight;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 import minerful.utils.RandomCharGenerator;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
@@ -20,7 +18,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 	private String transitionUUID = "t" + RandomCharGenerator.generateChar(6);
 
 	
-	@XmlAttribute(name="id")
 	public String getTransitionUUID() {
 		return transitionUUID;
 	}
@@ -34,7 +31,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 		this.taskName = taskName;
 	}
 	
-	@XmlAttribute(name="to")
 	public String getDestinationStateUUID(){
 		return ((WeightedState) getDest()).getStateUUID();
 	}
@@ -64,7 +60,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 		return getWeight();
 	}
 	@Override
-	@XmlAttribute
 	public int getWeight() {
 		return weight;
 	}
@@ -73,7 +68,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 		this.weight = weight;
 	}
 	@Override
-	@XmlAttribute
 	public int getWeightQuantile() {
 		return weightQuantile;
 	}
@@ -82,7 +76,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 		this.weightQuantile = weightQuantile;
 	}
 
-	@XmlAttribute
 	public String getName() {
 		name = getMin() == getMax() ? "" + getMin() : "" + getMin() + getMax(); //Character of the transition (should not be more than one character)
 		return name;
@@ -92,7 +85,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 		this.name = name;
 	}
 
-	@XmlAttribute
 	public String getTaskName() {
 		return taskName;
 	}
@@ -113,7 +105,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 	}
 
 	@Override
-	@XmlAttribute
 	public int getNonConformityWeight() {
 		return this.nonConformityWeight;
 	}
@@ -124,7 +115,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 	}
 
 	@Override
-	@XmlAttribute
 	public int getNonConformityWeightQuantile() {
 		return this.nonConformityWeightQuantile;
 	}
@@ -135,7 +125,6 @@ public class WeightedTransition extends Transition implements AutomatonElementQu
 	}
 	
 	@Override
-	@XmlAttribute
 	public boolean isIllegal() {
 		return this.illegal;
 	}

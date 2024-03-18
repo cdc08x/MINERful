@@ -4,13 +4,10 @@
  */
 package minerful.concept.constraint.relation;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
-@XmlRootElement
 public class NotPrecedence extends NotChainPrecedence {
 	@Override
 	public String getRegularExpressionTemplate() {

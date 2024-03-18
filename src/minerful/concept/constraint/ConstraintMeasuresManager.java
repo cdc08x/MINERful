@@ -2,69 +2,34 @@ package minerful.concept.constraint;
 
 import java.beans.PropertyChangeSupport;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
-
 import minerful.concept.constraint.existence.ExistenceConstraint;
 import minerful.concept.constraint.relation.RelationConstraint;
 
-@XmlRootElement(name="measures")
-@XmlSeeAlso({RelationConstraint.class,ExistenceConstraint.class})
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ConstraintMeasuresManager {
-	@XmlTransient
     public static final double MIN_SUPPORT = 0;
-	@XmlTransient
     public static final double MAX_SUPPORT = 1.0;
-	@XmlTransient
 	public static final double DEFAULT_SUPPORT = MAX_SUPPORT;
-	@XmlTransient
 	public static final double MIN_COVERAGE = MIN_SUPPORT;
-	@XmlTransient
 	public static final double MAX_COVERAGE = MAX_SUPPORT;
-	@XmlTransient
 	public static final double DEFAULT_COVERAGE = MAX_COVERAGE;
-	@XmlTransient
 	public static final double MIN_CONFIDENCE = MIN_SUPPORT;
-	@XmlTransient
 	public static final double MAX_CONFIDENCE = MAX_SUPPORT;
-	@XmlTransient
 	public static final double DEFAULT_CONFIDENCE = MAX_CONFIDENCE;
-	@XmlTransient
     public static final double MIN_FITNESS = 0;
-	@XmlTransient
     public static final double MAX_FITNESS = 1.0;
-	@XmlTransient
 	public static final double DEFAULT_FITNESS = MIN_FITNESS;
-	@XmlTransient
     public static final double RANGE_FOR_SUPPORT = (MAX_SUPPORT - MIN_SUPPORT);
 
-	@XmlElement
 	public double support = DEFAULT_SUPPORT;
-	@XmlElement
 	public double confidence = DEFAULT_CONFIDENCE;
-	@XmlElement
 	public double coverage = DEFAULT_COVERAGE;
-	@XmlElement
 	public Double fitness = null;
-	@XmlAttribute
 	public boolean evaluatedOnLog = false;
-	@XmlAttribute
 	public boolean belowSupportThreshold = false;
-	@XmlAttribute
 	public boolean belowConfidenceThreshold = false;
-	@XmlAttribute
 	public boolean belowCoverageThreshold = false;
-	@XmlAttribute
 	public boolean belowFitnessThreshold = false;
-	@XmlTransient
 	private PropertyChangeSupport pcs;
-	@XmlTransient
 	private Constraint cns;
 
 	protected ConstraintMeasuresManager() {

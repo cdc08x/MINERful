@@ -4,41 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.log4j.Logger;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
-import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
+//import minerful.miner.stats.xmlenc.GlobalStatsMapAdapter;
 
 /**
  * This class wraps all the information, activity per activity, on its statistics as per the mined event log.
  * The information includes, for all activities, the total amount of occurrences, and the interplay with other activities.
  * @author Claudio Di Ciccio <dc.claudio@gmail.com>
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalStatsTable {
-	@XmlTransient
 	protected static Logger logger = Logger.getLogger(GlobalStatsTable.class);
 
-	@XmlElement
-	@XmlJavaTypeAdapter(value=GlobalStatsMapAdapter.class)
     public Map<TaskChar, LocalStatsWrapper> statsTable;
-	@XmlTransient
     public final TaskCharArchive taskCharArchive;
-	@XmlAttribute
     public long logSize;
-	@XmlAttribute
     public long numOfEvents;
-	@XmlAttribute
 	public final Integer maximumBranchingFactor;
 	
 	private GlobalStatsTable() {

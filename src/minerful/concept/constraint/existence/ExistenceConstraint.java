@@ -1,14 +1,11 @@
 package minerful.concept.constraint.existence;
 
-import javax.xml.bind.annotation.XmlType;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ExistenceConstraintSubFamily;
 
-@XmlType
 public abstract class ExistenceConstraint extends Constraint {
     protected ExistenceConstraint() {
     	super();

@@ -1,9 +1,6 @@
 package minerful.concept;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class AbstractTaskClass implements TaskClass {
 	public String className;
 

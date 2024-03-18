@@ -3,22 +3,14 @@ package minerful.concept.constraint.relation;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
-@XmlType
-@XmlSeeAlso({CoExistence.class})
 public abstract class MutualRelationConstraint extends RelationConstraint {
-	@XmlTransient
 	protected RelationConstraint forwardConstraint;
-	@XmlTransient
 	protected RelationConstraint backwardConstraint;
 
 	public MutualRelationConstraint() {

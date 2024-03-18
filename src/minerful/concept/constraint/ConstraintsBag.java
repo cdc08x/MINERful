@@ -12,38 +12,26 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.log4j.Logger;
 
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.relation.NegativeRelationConstraint;
 import minerful.concept.constraint.relation.NotPrecedence;
-import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
 /**
  * The class managing the set of constraints of a declarative process specification.
  * 
  * @author Claudio Di Ciccio (dc.claudio@gmail.com)
  */
-@XmlRootElement
-@XmlJavaTypeAdapter(ConstraintsBagAdapter.class)
 //@XmlAccessorType(XmlAccessType.FIELD)
 public class ConstraintsBag implements Cloneable, PropertyChangeListener {
-	// @XmlTransient
 	private static Logger logger = Logger.getLogger(ConstraintsBag.class.getCanonicalName());
 
-	@XmlTransient
 	private PropertyChangeSupport pcs;
 
-	@XmlElementRef
 	private Map<TaskChar, TreeSet<Constraint>> bag;
 
-	// @XmlTransient
 	private Set<TaskChar> taskChars = new TreeSet<TaskChar>();
 
 	public ConstraintsBag() {

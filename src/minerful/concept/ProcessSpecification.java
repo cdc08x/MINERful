@@ -14,14 +14,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.log4j.Logger;
 
 import dk.brics.automaton.Automaton;
@@ -32,28 +24,18 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.index.LinearConstraintsIndexFactory;
-import minerful.io.encdec.xml.ConstraintsBagAdapter;
 
-@XmlRootElement(name="processSpecification")
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class ProcessSpecification implements PropertyChangeListener {
-	@XmlTransient
 	private static Logger logger = Logger.getLogger(ProcessSpecification.class.getCanonicalName());
 	
-	@XmlTransient
 	private PropertyChangeSupport pcs;
 	
-	@XmlTransient
 	public static String DEFAULT_NAME = "Discovered specification";
 
-	@XmlElement(name="declarative-specification", required=true)
-	@XmlJavaTypeAdapter(type=TreeSet.class, value=ConstraintsBagAdapter.class)
 	public ConstraintsBag bag;
-	@XmlAttribute
 	private String name;
-	@XmlElement
 	private TaskCharArchive taskCharArchive;
-	@XmlTransient
 	public static final String MINERFUL_XMLNS = "https://github.com/cdc08x/MINERful/";
 
 	protected ProcessSpecification() {}

@@ -31,9 +31,6 @@ public class ProcessSpecificationLoader {
 		
 		try {
 			switch (inputLanguage) {
-			case MINERFUL:
-				inputProcess = new ProcessSpecificationEncoderDecoder().unmarshalProcessSpecification(inputFile);
-				break;
 			case JSON:
 				inputProcess = new ProcessSpecificationEncoderDecoder().readFromJsonFile(inputFile);
 				break;
@@ -64,9 +61,6 @@ public class ProcessSpecificationLoader {
 
 		try {
 			switch (inputLanguage) {
-			case MINERFUL:
-				inputProcess = new ProcessSpecificationEncoderDecoder().unmarshalProcessSpecification(inputFile);
-				break;
 			case JSON:
 				inputProcess = new ProcessSpecificationEncoderDecoder().readFromJsonFile(inputFile, alphabet);
 				break;

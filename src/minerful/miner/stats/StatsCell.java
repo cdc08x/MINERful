@@ -9,16 +9,9 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.log4j.Logger;
 
-import minerful.miner.stats.xmlenc.DistancesMapAdapter;
+//import minerful.miner.stats.xmlenc.DistancesMapAdapter;
 
 /**
  * Wraps the information about co-occurrences with <em>other</em> tasks,
@@ -26,24 +19,15 @@ import minerful.miner.stats.xmlenc.DistancesMapAdapter;
  * minimum. Updates and values to store are for the largest part computed in
  * {@link LocalStatsWrapper #LocalStatsWrapper}.
  */
-@XmlType
-@XmlAccessorType(XmlAccessType.FIELD)
 public class StatsCell implements Cloneable {
-    @XmlTransient
     public static final int NEVER_ONWARDS = Integer.MAX_VALUE;
-    @XmlTransient
     public static final int NEVER_BACKWARDS = Integer.MIN_VALUE;
-    @XmlTransient
     public static final int NEVER_EVER = 0;
     
-    @XmlTransient
     protected static Logger logger = Logger.getLogger(StatsCell.class);
     
-    @XmlJavaTypeAdapter(value=DistancesMapAdapter.class)
     public NavigableMap<Integer, Integer> distances;
-    @XmlElement(name="repetitionsInBetweenOnwards")
     public int inBetweenRepsOnwards;
-    @XmlElement(name="repetitionsInBetweenBackwards")
     public int inBetweenRepsBackwards;
  
     // The following five attributes cover the trace-based analysis.
@@ -51,21 +35,13 @@ public class StatsCell implements Cloneable {
     // as they add 1 to their counters rather than the number of occurrences
     // of the pivot task they relate to. Indeed, they count frequencies from traces,
     // not events.
-    @XmlJavaTypeAdapter(value=DistancesMapAdapter.class)
     public NavigableMap<Integer, Integer> distancesPerTrace;
-    @XmlElement(name="tracesWithRepetitionsInBetweenOnwards")
     public int tracesWithInBetweenRepsOnwards;
-    @XmlElement(name="tracesWithRepetitionsInBetweenBackwards")
     public int tracesWithInBetweenRepsBackwards;
-    @XmlElement(name="tracesWithCooccurrenceOnwards")
     public int tracesWithCooccurrenceOnwards;
-    @XmlElement(name="tracesWithCooccurrenceBackwards")
     public int tracesWithCooccurrenceBackwards;
-    @XmlElement(name="tracesWithSuccessorCooccurrences")
     public int tracesWithSuccessorCooccurrences;
-    @XmlElement(name="tracesWithPredecessorCooccurrences")
     public int tracesWithPredecessorCooccurrences;
-    @XmlTransient
     private SortedSet<Integer> newDistancesInTrace;
 
     public StatsCell() {

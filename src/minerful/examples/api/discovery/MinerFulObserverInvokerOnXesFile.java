@@ -113,7 +113,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		String pathToExampleOutput = Paths.get("").toAbsolutePath().getParent().toString() + "/example-output";
 		new File(Paths.get("").toAbsolutePath().getParent().toString() + "/example-output").mkdirs();
 
-		outParams.fileToSaveAsXML = new File(pathToExampleOutput +"/BPIC2012-disco-minerful.xml");
+		//outParams.fileToSaveAsXML = new File(pathToExampleOutput +"/BPIC2012-disco-minerful.xml");
 		// Please notice that NONE of the Declare-map XML-, JSON-, or CSV-formatted copies contain the redundant/conflicting/below-the-thresholds constraints.
 		outParams.fileToSaveAsConDec = new File(pathToExampleOutput + "/BPIC2012-disco-declaremap.xml");
 		outParams.fileToSaveAsJSON = new File(pathToExampleOutput + "/BPIC2012-disco.json");
@@ -145,7 +145,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 //		Saving again...
 //////////////////////////////////////////////////////////////////
 
-		outParams.fileToSaveAsXML = new File(pathToExampleOutput + "/running-examples2.xml");
+		//outParams.fileToSaveAsXML = new File(pathToExampleOutput + "/running-examples2.xml");
 
 		System.out.println("Saving...");
 		

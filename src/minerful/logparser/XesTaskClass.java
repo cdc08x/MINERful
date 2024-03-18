@@ -1,14 +1,11 @@
 package minerful.logparser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
 
 import org.deckfour.xes.classification.XEventClass;
 
 public class XesTaskClass extends AbstractTaskClass implements TaskClass {
-	@XmlTransient
 	public XEventClass xEventClass;
 
 	protected XesTaskClass() {

@@ -13,10 +13,6 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
@@ -112,17 +108,17 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         	exiConTime = 0L,
         	relaConTime = 0L;
         
-        if (minerFulParams.statsOutputFile != null) {
-        	try {
-				this.marshalStats(statsTable, minerFulParams.statsOutputFile, taskCharArchive);
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
+        // if (minerFulParams.statsOutputFile != null) {
+        // 	try {
+		// 		this.marshalStats(statsTable, minerFulParams.statsOutputFile, taskCharArchive);
+		// 	} catch (JAXBException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	} catch (IOException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	}
+        // }
 
         logger.info("Discovering existence constraints...");
         before = System.currentTimeMillis();
@@ -323,38 +319,38 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         logger.info(csvSummaryComprehensiveBuffer.toString());
 	}
     
-    public void marshalStats(GlobalStatsTable statsTable, File outFile, TaskCharArchive taskCharArchive) throws JAXBException, IOException {
-    	String pkgName = statsTable.getClass().getCanonicalName().toString();
-    	pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
-    	JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
-    	Marshaller marsh = jaxbCtx.createMarshaller();
-    	marsh.setProperty("jaxb.formatted.output", true);
+    // public void marshalStats(GlobalStatsTable statsTable, File outFile, TaskCharArchive taskCharArchive) throws JAXBException, IOException {
+    // 	String pkgName = statsTable.getClass().getCanonicalName().toString();
+    // 	pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
+    // 	JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
+    // 	Marshaller marsh = jaxbCtx.createMarshaller();
+    // 	marsh.setProperty("jaxb.formatted.output", true);
     	
-    	if (taskCharArchive == null) {
-    		OutputStream os = new FileOutputStream(outFile);
-        	marsh.marshal(statsTable, os);
-        	os.flush();
-        	os.close();
-    	} else {
-    		// TODO AWFUL but probably less time-consuming 
-    		StringWriter sWri = new StringWriter();
-    		marsh.marshal(statsTable, sWri);
-    		Pattern p = Pattern.compile("task=\"(.)\"");
-    		String rawXml = sWri.toString();
-    		StringBuffer sBuf = new StringBuffer(rawXml.length());
-    		Matcher match = p.matcher(rawXml);
-    		String auxDecodedTask = null;
-			while (match.find()) {
-				auxDecodedTask = StringEscapeUtils.escapeXml(taskCharArchive.getTaskChar(match.group(1).charAt(0)).getName());
-				match.appendReplacement(sBuf, "task=\"" + auxDecodedTask + "\"");
-			}
-			match.appendTail(sBuf);
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-			out.print(sBuf);
-			out.flush();
-			out.close();
-    	}
-    }
+    // 	if (taskCharArchive == null) {
+    // 		OutputStream os = new FileOutputStream(outFile);
+    //     	marsh.marshal(statsTable, os);
+    //     	os.flush();
+    //     	os.close();
+    // 	} else {
+    // 		// TODO AWFUL but probably less time-consuming 
+    // 		StringWriter sWri = new StringWriter();
+    // 		marsh.marshal(statsTable, sWri);
+    // 		Pattern p = Pattern.compile("task=\"(.)\"");
+    // 		String rawXml = sWri.toString();
+    // 		StringBuffer sBuf = new StringBuffer(rawXml.length());
+    // 		Matcher match = p.matcher(rawXml);
+    // 		String auxDecodedTask = null;
+	// 		while (match.find()) {
+	// 			auxDecodedTask = StringEscapeUtils.escapeXml(taskCharArchive.getTaskChar(match.group(1).charAt(0)).getName());
+	// 			match.appendReplacement(sBuf, "task=\"" + auxDecodedTask + "\"");
+	// 		}
+	// 		match.appendTail(sBuf);
+	// 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
+	// 		out.print(sBuf);
+	// 		out.flush();
+	// 		out.close();
+    // 	}
+    // }
 
 	@Override
 	public ConstraintsBag call() throws Exception {

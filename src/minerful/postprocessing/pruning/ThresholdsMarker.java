@@ -1,7 +1,5 @@
 package minerful.postprocessing.pruning;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.log4j.Logger;
 
 import minerful.concept.TaskChar;
@@ -12,7 +10,6 @@ import minerful.concept.constraint.ConstraintsBag;
 public class ThresholdsMarker {
 	public static final String THRESHOLDS_CHECK_CODE = "'Th-check'";
 
-	@XmlTransient
 	private static Logger logger = Logger.getLogger(ThresholdsMarker.class.getCanonicalName());
 
 	private int numberOfMarkedConstraints = 0;

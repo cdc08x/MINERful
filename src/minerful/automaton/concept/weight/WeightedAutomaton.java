@@ -6,21 +6,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import minerful.concept.AbstractTaskClass;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+
 //@XmlJavaTypeAdapter(WeightedAutomatonXmlAdapter.class)
 public class WeightedAutomaton extends Automaton {
 
@@ -53,9 +44,6 @@ public class WeightedAutomaton extends Automaton {
 	}
 
 	@Override
-	@XmlElementWrapper(name = "states")
-	@XmlElement(name = "state")
-	@XmlJavaTypeAdapter(WeightedStateXmlAdapter.class)
 	public Set<State> getStates() {
 		return super.getStates();
 	}
@@ -102,7 +90,6 @@ public class WeightedAutomaton extends Automaton {
 	}
 	
 	@Override
-	@XmlAttribute
 	public boolean isDeterministic() {
 		// TODO Auto-generated method stub
 		return super.isDeterministic();

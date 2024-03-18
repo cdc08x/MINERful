@@ -10,10 +10,6 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
 import minerful.automaton.AutomatonFactory;
 import minerful.automaton.SubAutomaton;
 import minerful.automaton.concept.weight.WeightedAutomaton;
@@ -280,64 +276,64 @@ public class ConstraintsPrinter {
     	return nuSmvDec.printAsNuSMV();
     }
     
-    public String printWeightedXmlAutomaton(LogParser logParser, boolean skimIt) throws JAXBException {
-		if (this.processAutomaton == null)
-			processAutomaton = this.processSpecification.buildAutomaton();
+    // public String printWeightedXmlAutomaton(LogParser logParser, boolean skimIt) throws JAXBException {
+	// 	if (this.processAutomaton == null)
+	// 		processAutomaton = this.processSpecification.buildAutomaton();
 		
-		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag));
-		WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, logParser, skimIt);
+	// 	WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag));
+	// 	WeightedAutomaton wAut = wAF.augmentByReplay(processAutomaton, logParser, skimIt);
 
-		if (wAut == null)
-			return null;
+	// 	if (wAut == null)
+	// 		return null;
 		
-		JAXBContext jaxbCtx = JAXBContext.newInstance(WeightedAutomaton.class);
-		Marshaller marsh = jaxbCtx.createMarshaller();
-		marsh.setProperty("jaxb.formatted.output", true);
-		StringWriter strixWriter = new StringWriter();
-		marsh.marshal(wAut, strixWriter);
-		strixWriter.flush();
-		StringBuffer strixBuffer = strixWriter.getBuffer();
+		// JAXBContext jaxbCtx = JAXBContext.newInstance(WeightedAutomaton.class);
+		// Marshaller marsh = jaxbCtx.createMarshaller();
+		// marsh.setProperty("jaxb.formatted.output", true);
+		// StringWriter strixWriter = new StringWriter();
+		// marsh.marshal(wAut, strixWriter);
+		// strixWriter.flush();
+		// StringBuffer strixBuffer = strixWriter.getBuffer();
 
 		// OINK
-		strixBuffer.replace(strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3), strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-				" xmlns=\"" + ProcessSpecification.MINERFUL_XMLNS + "\"");
+	// 	strixBuffer.replace(strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3), strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
+	// 			" xmlns=\"" + ProcessSpecification.MINERFUL_XMLNS + "\"");
 		
-		return strixWriter.toString();
-    }
+	// 	return strixWriter.toString();
+    // }
     
-    public NavigableMap<String, String> printWeightedXmlSubAutomata(LogParser logParser) throws JAXBException {
-		Collection<SubAutomaton> partialAutomata =
-//				this.process.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
-				this.processSpecification.buildSubAutomata();
-		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag));
-		NavigableMap<Character, AbstractTaskClass> idsNamesMap = TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag);
+//     public NavigableMap<String, String> printWeightedXmlSubAutomata(LogParser logParser) throws JAXBException {
+// 		Collection<SubAutomaton> partialAutomata =
+// //				this.process.buildSubAutomata(ConstraintsPrinter.SUBAUTOMATA_MAXIMUM_ACTIVITIES_BEFORE_AND_AFTER);
+// 				this.processSpecification.buildSubAutomata();
+// 		WeightedAutomatonFactory wAF = new WeightedAutomatonFactory(TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag));
+// 		NavigableMap<Character, AbstractTaskClass> idsNamesMap = TaskCharEncoderDecoder.getTranslationMap(this.processSpecification.bag);
 
-		NavigableMap<String, String> partialAutomataXmls = new TreeMap<String, String>();
+// 		NavigableMap<String, String> partialAutomataXmls = new TreeMap<String, String>();
 		
-		WeightedAutomaton wAut = null;
-		StringWriter strixWriter = null;
-		StringBuffer strixBuffer = null;
+// 		WeightedAutomaton wAut = null;
+// 		StringWriter strixWriter = null;
+// 		StringBuffer strixBuffer = null;
 	
-		JAXBContext jaxbCtx = JAXBContext.newInstance(WeightedAutomaton.class);
-		Marshaller marsh = jaxbCtx.createMarshaller();
-		marsh.setProperty("jaxb.formatted.output", true);
+// 		JAXBContext jaxbCtx = JAXBContext.newInstance(WeightedAutomaton.class);
+// 		Marshaller marsh = jaxbCtx.createMarshaller();
+// 		marsh.setProperty("jaxb.formatted.output", true);
 
-		for (SubAutomaton partialAuto : partialAutomata) {
-			wAut = wAF.augmentByReplay(partialAuto.automaton, logParser, false, true);
-			if (wAut != null) {
-				strixWriter = new StringWriter();
-				marsh.marshal(wAut, strixWriter);
-				strixWriter.flush();
-				strixBuffer = strixWriter.getBuffer();
+// 		for (SubAutomaton partialAuto : partialAutomata) {
+// 			wAut = wAF.augmentByReplay(partialAuto.automaton, logParser, false, true);
+// 			if (wAut != null) {
+// 				strixWriter = new StringWriter();
+// 				marsh.marshal(wAut, strixWriter);
+// 				strixWriter.flush();
+// 				strixBuffer = strixWriter.getBuffer();
 
-				// OINK
-				strixBuffer.replace(strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3), strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-						" xmlns=\"" + ProcessSpecification.MINERFUL_XMLNS + "\"");
-				partialAutomataXmls.put(idsNamesMap.get(partialAuto.basingCharacter).getName(), strixWriter.toString());
-			}
-		}
-		return partialAutomataXmls;
-    }
+// 				// OINK
+// 				strixBuffer.replace(strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3), strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
+// 						" xmlns=\"" + ProcessSpecification.MINERFUL_XMLNS + "\"");
+// 				partialAutomataXmls.put(idsNamesMap.get(partialAuto.basingCharacter).getName(), strixWriter.toString());
+// 			}
+// 		}
+// 		return partialAutomataXmls;
+//     }
 
 	public String printDotAutomaton() {
 		if (this.processAutomaton == null)

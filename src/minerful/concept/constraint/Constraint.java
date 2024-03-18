@@ -12,17 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
-
 import minerful.automaton.concept.relevance.VacuityAwareWildcardAutomaton;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
@@ -32,36 +21,26 @@ import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 
-@XmlRootElement(name="constraint")
-@XmlSeeAlso({RelationConstraint.class,ExistenceConstraint.class})
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public abstract class Constraint implements Comparable<Constraint> {
-	@XmlIDREF
     protected TaskCharSet base;
-	@XmlTransient
+
 	public final String type = this.getClass().getCanonicalName().substring(this.getClass().getCanonicalName().lastIndexOf('.') +1);
-	@XmlAttribute
+
 	protected boolean redundant = false;
-	@XmlAttribute
+
 	protected boolean conflicting = false;
 	/**
 	 * To be set to <code>true</code> if we want to state that the constraint is to be violated.
 	 */
-	@XmlAttribute
 	protected boolean forbidden = false;
-	@XmlElement(name="eventBasedMeasures")
 	protected ConstraintMeasuresManager evtBasedMeasures = new ConstraintMeasuresManager();
-	@XmlElement(name="traceBasedMeasures")
 	protected ConstraintMeasuresManager trcBasedMeasures = new ConstraintMeasuresManager();
-	@XmlTransient
     protected Constraint constraintWhichThisIsBasedUpon;
-	@XmlElementWrapper(name="parameters")
-	@XmlElement(name="parameter")
 	protected List<TaskCharSet> parameters;
-	@XmlTransient
+
 	protected boolean silentToObservers = true;
 	
-	@XmlTransient
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	protected Constraint() {
@@ -479,9 +458,9 @@ public abstract class Constraint implements Comparable<Constraint> {
 		this.silentToObservers = silentToObservers;
 	}
 	
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
-			this.base = this.getParameters().get(0);
-		}
-	}
+	// protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+	// 	if (this.getFamily().equals(ConstraintFamily.EXISTENCE)) {
+	// 		this.base = this.getParameters().get(0);
+	// 	}
+	// }
 }

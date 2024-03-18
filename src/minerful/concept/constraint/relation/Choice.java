@@ -4,14 +4,11 @@
  */
 package minerful.concept.constraint.relation;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.existence.Absence;
 
-@XmlRootElement
 public class Choice extends MutualRelationConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {

@@ -1,7 +1,5 @@
 package minerful.automaton.concept.relevance;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 import minerful.utils.RandomCharGenerator;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
@@ -17,7 +15,6 @@ public class RelevanceAwareTransition extends Transition {
 	private String transitionUUID = "t" + RandomCharGenerator.generateChar(6);
 
 	
-	@XmlAttribute(name="id")
 	public String getTransitionUUID() {
 		return transitionUUID;
 	}
@@ -31,7 +28,6 @@ public class RelevanceAwareTransition extends Transition {
 		this.taskName = taskName;
 	}
 	
-	@XmlAttribute(name="to")
 	public String getDestinationStateUUID(){
 		return ((ActivationStatusAwareState) getDest()).getStateUUID();
 	}
@@ -59,7 +55,6 @@ public class RelevanceAwareTransition extends Transition {
 		this.relevance = relevance;
 	}
 
-	@XmlAttribute
 	public String getName() {
 		name = getMin() == getMax() ? "" + getMin() : "" + getMin() + getMax(); //Character of the transition (should not be more than one character)
 		return name;
@@ -69,7 +64,6 @@ public class RelevanceAwareTransition extends Transition {
 		this.name = name;
 	}
 
-	@XmlAttribute
 	public String getTaskName() {
 		return taskName;
 	}

@@ -6,14 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.TaskChar;
@@ -49,55 +41,55 @@ public class ProcessSpecificationEncoderDecoder {
 		return processModel;
 	}
 	
-	public ProcessSpecification unmarshalProcessSpecification(File procSchmInFile) throws JAXBException, PropertyException, FileNotFoundException,
-			IOException {
-		String pkgName = ProcessSpecification.class.getCanonicalName().toString();
-		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
-		JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
+	// public ProcessSpecification unmarshalProcessSpecification(File procSchmInFile) throws JAXBException, PropertyException, FileNotFoundException,
+	// 		IOException {
+	// 	String pkgName = ProcessSpecification.class.getCanonicalName().toString();
+	// 	pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
+	// 	JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
 		
-		Unmarshaller unmarsh = jaxbCtx.createUnmarshaller();
-		unmarsh.setEventHandler(
-			    new ValidationEventHandler() {
-			        public boolean handleEvent(ValidationEvent event) {
-			            throw new RuntimeException(event.getMessage(),
-			                                       event.getLinkedException());
-			        }
-			});
-		ProcessSpecification proMod = (ProcessSpecification) unmarsh.unmarshal(procSchmInFile);
+	// 	Unmarshaller unmarsh = jaxbCtx.createUnmarshaller();
+	// 	unmarsh.setEventHandler(
+	// 		    new ValidationEventHandler() {
+	// 		        public boolean handleEvent(ValidationEvent event) {
+	// 		            throw new RuntimeException(event.getMessage(),
+	// 		                                       event.getLinkedException());
+	// 		        }
+	// 		});
+	// 	ProcessSpecification proMod = (ProcessSpecification) unmarsh.unmarshal(procSchmInFile);
 		
-		MetaConstraintUtils.createHierarchicalLinks(proMod.getAllConstraints());
+	// 	MetaConstraintUtils.createHierarchicalLinks(proMod.getAllConstraints());
 		
-		return proMod;
-	}
+	// 	return proMod;
+	// }
 	
-	public StringBuffer marshalProcessModel(ProcessSpecification processModel)
-			throws JAXBException, PropertyException, FileNotFoundException, IOException {
-		String pkgName = processModel.getClass().getCanonicalName().toString();
-		pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
-		JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
-		Marshaller marsh = jaxbCtx.createMarshaller();
-		marsh.setProperty("jaxb.formatted.output", true);
-		StringWriter strixWriter = new StringWriter();
-		marsh.marshal(processModel, strixWriter);
-		strixWriter.flush();
-		StringBuffer strixBuffer = strixWriter.getBuffer();
+	// public StringBuffer marshalProcessModel(ProcessSpecification processModel)
+	// 		throws JAXBException, PropertyException, FileNotFoundException, IOException {
+	// 	String pkgName = processModel.getClass().getCanonicalName().toString();
+	// 	pkgName = pkgName.substring(0, pkgName.lastIndexOf('.'));
+	// 	JAXBContext jaxbCtx = JAXBContext.newInstance(pkgName);
+	// 	Marshaller marsh = jaxbCtx.createMarshaller();
+	// 	marsh.setProperty("jaxb.formatted.output", true);
+	// 	StringWriter strixWriter = new StringWriter();
+	// 	marsh.marshal(processModel, strixWriter);
+	// 	strixWriter.flush();
+	// 	StringBuffer strixBuffer = strixWriter.getBuffer();
 		
-		return strixBuffer;
-	}
+	// 	return strixBuffer;
+	// }
 
-	public void marshalProcessSpecification(ProcessSpecification processModel, File procSchmOutFile)
-			throws JAXBException, PropertyException, FileNotFoundException, IOException {
-		StringBuffer strixBuffer = this.marshalProcessModel(processModel);
-		// OINK
-//		strixBuffer.replace(
-//				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-//				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
-//				" xmlns=\"" + ProcessModel.MINERFUL_XMLNS + "\"");
-		FileWriter strixFileWriter = new FileWriter(procSchmOutFile);
-		strixFileWriter.write(strixBuffer.toString());
-		strixFileWriter.flush();
-		strixFileWriter.close();
-	}
+// 	public void marshalProcessSpecification(ProcessSpecification processModel, File procSchmOutFile)
+// 			throws JAXBException, PropertyException, FileNotFoundException, IOException {
+// 		StringBuffer strixBuffer = this.marshalProcessModel(processModel);
+// 		// OINK
+// //		strixBuffer.replace(
+// //				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
+// //				strixBuffer.indexOf(">", strixBuffer.indexOf("?>") + 3),
+// //				" xmlns=\"" + ProcessModel.MINERFUL_XMLNS + "\"");
+// 		FileWriter strixFileWriter = new FileWriter(procSchmOutFile);
+// 		strixFileWriter.write(strixBuffer.toString());
+// 		strixFileWriter.flush();
+// 		strixFileWriter.close();
+// 	}
 
 	public ProcessSpecification readFromJsonFile(File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();

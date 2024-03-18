@@ -7,9 +7,6 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.PropertyException;
-
 import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
@@ -200,129 +197,129 @@ public class MinerFulOutputManagementLauncher {
 			}
 		}
 
-		if (logParser != null) {
-			if (outParams.fileToSaveXmlFileForAutomaton != null) {
-				outputFile = this.retrieveFile(outParams.fileToSaveXmlFileForAutomaton);
-	        	try {
-	        		outWriter = new PrintWriter(new File(outputFile.getAbsolutePath()));
-		        	outWriter.print(printer.printWeightedXmlAutomaton(logParser, false));
-		        	outWriter.flush();
-		        	outWriter.close();
-		        	MessagePrinter.printlnOut("Discovered weighted process automaton written in XML format on " + outputFile);
-				} catch (FileNotFoundException | JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		// if (logParser != null) {
+		// 	if (outParams.fileToSaveXmlFileForAutomaton != null) {
+		// 		outputFile = this.retrieveFile(outParams.fileToSaveXmlFileForAutomaton);
+	    //     	try {
+	    //     		outWriter = new PrintWriter(new File(outputFile.getAbsolutePath()));
+		//         	outWriter.print(printer.printWeightedXmlAutomaton(logParser, false));
+		//         	outWriter.flush();
+		//         	outWriter.close();
+		//         	MessagePrinter.printlnOut("Discovered weighted process automaton written in XML format on " + outputFile);
+		// 		} catch (FileNotFoundException | JAXBException e) {
+		// 			// TODO Auto-generated catch block
+		// 			e.printStackTrace();
+		// 		}
+		// 	}
 
-			if (outParams.fileToSaveSkimmedXmlFileForAutomaton != null) {
-				outputFile = this.retrieveFile(outParams.fileToSaveSkimmedXmlFileForAutomaton);
-	        	try {
-	        		outWriter = new PrintWriter(new File(outputFile.getAbsolutePath()));
-		        	outWriter.print(printer.printWeightedXmlAutomaton(logParser, true));
-		        	outWriter.flush();
-		        	outWriter.close();
-		        	MessagePrinter.printlnOut("Discovered skimmed weighted process automaton written in XML format on " + outputFile);
-				} catch (FileNotFoundException | JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			// if (outParams.fileToSaveSkimmedXmlFileForAutomaton != null) {
+			// 	outputFile = this.retrieveFile(outParams.fileToSaveSkimmedXmlFileForAutomaton);
+	        // 	try {
+	        // 		outWriter = new PrintWriter(new File(outputFile.getAbsolutePath()));
+		    //     	outWriter.print(printer.printWeightedXmlAutomaton(logParser, true));
+		    //     	outWriter.flush();
+		    //     	outWriter.close();
+		    //     	MessagePrinter.printlnOut("Discovered skimmed weighted process automaton written in XML format on " + outputFile);
+			// 	} catch (FileNotFoundException | JAXBException e) {
+			// 		// TODO Auto-generated catch block
+			// 		e.printStackTrace();
+			// 	}
+			// }
 	
-			if (outParams.folderToSaveXmlFilesForPartialAutomata != null) {
-	        	try {
-	        		NavigableMap<String, String> partialAutoMap = printer.printWeightedXmlSubAutomata(logParser);
-					StringBuilder subAutomataPathsBuilder = new StringBuilder();
-					String subAutomatonPath = null;
+		// 	if (outParams.folderToSaveXmlFilesForPartialAutomata != null) {
+	    //     	try {
+	    //     		NavigableMap<String, String> partialAutoMap = printer.printWeightedXmlSubAutomata(logParser);
+		// 			StringBuilder subAutomataPathsBuilder = new StringBuilder();
+		// 			String subAutomatonPath = null;
 					
-					for (Map.Entry<String, String> partialAutomaton : partialAutoMap.entrySet()) {
-						try {
-							subAutomatonPath = outParams.folderToSaveXmlFilesForPartialAutomata
-									+ "/"
-									+ partialAutomaton.getKey().replaceAll("\\W", "_")
-									+ ".automaton.xml";
-							outputFile = retrieveFile(subAutomatonPath);
-							outWriter = new PrintWriter(
-									outputFile
-							);
-							outWriter.print(partialAutomaton.getValue());
-							outWriter.flush();
-				        	outWriter.close();
+		// 			for (Map.Entry<String, String> partialAutomaton : partialAutoMap.entrySet()) {
+		// 				try {
+		// 					subAutomatonPath = outParams.folderToSaveXmlFilesForPartialAutomata
+		// 							+ "/"
+		// 							+ partialAutomaton.getKey().replaceAll("\\W", "_")
+		// 							+ ".automaton.xml";
+		// 					outputFile = retrieveFile(subAutomatonPath);
+		// 					outWriter = new PrintWriter(
+		// 							outputFile
+		// 					);
+		// 					outWriter.print(partialAutomaton.getValue());
+		// 					outWriter.flush();
+		// 		        	outWriter.close();
 				        	
-				        	subAutomataPathsBuilder.append("Sub-automaton for activity \"");
-				        	subAutomataPathsBuilder.append(partialAutomaton.getKey());
-				        	subAutomataPathsBuilder.append("\" written in XML format on ");
-				        	subAutomataPathsBuilder.append(outputFile);
-				        	subAutomataPathsBuilder.append('\n');
-						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
-				} catch (JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else if (outParams.folderToSaveXmlFilesForPartialAutomata != null || outParams.fileToSaveXmlFileForAutomaton != null) {
-			throw new IllegalArgumentException("A log parser must be provided to create the weighted XML automaton corresponding to the process specification");
-		}
+		// 		        	subAutomataPathsBuilder.append("Sub-automaton for activity \"");
+		// 		        	subAutomataPathsBuilder.append(partialAutomaton.getKey());
+		// 		        	subAutomataPathsBuilder.append("\" written in XML format on ");
+		// 		        	subAutomataPathsBuilder.append(outputFile);
+		// 		        	subAutomataPathsBuilder.append('\n');
+		// 				} catch (FileNotFoundException e) {
+		// 					// TODO Auto-generated catch block
+		// 					e.printStackTrace();
+		// 				}
+		// 			}
+		// 			MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
+		// 		} catch (JAXBException e) {
+		// 			// TODO Auto-generated catch block
+		// 			e.printStackTrace();
+		// 		}
+		// 	}
+		// } else if (outParams.folderToSaveXmlFilesForPartialAutomata != null || outParams.fileToSaveXmlFileForAutomaton != null) {
+		// 	throw new IllegalArgumentException("A log parser must be provided to create the weighted XML automaton corresponding to the process specification");
+		// }
 
-		if (outParams.folderToSaveDotFilesForPartialAutomata != null) {
-			NavigableMap<String, String> partialAutoMap = printer.printDotPartialAutomata();
-			StringBuilder subAutomataPathsBuilder = new StringBuilder();
-			String subAutomatonPath = null;
+		// if (outParams.folderToSaveDotFilesForPartialAutomata != null) {
+		// 	NavigableMap<String, String> partialAutoMap = printer.printDotPartialAutomata();
+		// 	StringBuilder subAutomataPathsBuilder = new StringBuilder();
+		// 	String subAutomatonPath = null;
 			
-			logger.info("Saving activation-related automata DOT files in folder " + outParams.folderToSaveDotFilesForPartialAutomata + "...");
+		// 	logger.info("Saving activation-related automata DOT files in folder " + outParams.folderToSaveDotFilesForPartialAutomata + "...");
 
-			for (Map.Entry<String, String> partialAutomaton : partialAutoMap.entrySet()) {
-				try {
-					subAutomatonPath = outParams.folderToSaveDotFilesForPartialAutomata
-							+ "/"
-							+ partialAutomaton.getKey().replaceAll("\\W", "_")
-							+ ".automaton.dot";
-					outputFile = retrieveFile(subAutomatonPath);
-					outWriter = new PrintWriter(
-							outputFile
-					);
-					outWriter.print(partialAutomaton.getValue());
-					outWriter.flush();
-		        	outWriter.close();
+		// 	for (Map.Entry<String, String> partialAutomaton : partialAutoMap.entrySet()) {
+		// 		try {
+		// 			subAutomatonPath = outParams.folderToSaveDotFilesForPartialAutomata
+		// 					+ "/"
+		// 					+ partialAutomaton.getKey().replaceAll("\\W", "_")
+		// 					+ ".automaton.dot";
+		// 			outputFile = retrieveFile(subAutomatonPath);
+		// 			outWriter = new PrintWriter(
+		// 					outputFile
+		// 			);
+		// 			outWriter.print(partialAutomaton.getValue());
+		// 			outWriter.flush();
+		//         	outWriter.close();
 		        	
-		        	subAutomataPathsBuilder.append("Sub-automaton for activity \"");
-		        	subAutomataPathsBuilder.append(partialAutomaton.getKey());
-		        	subAutomataPathsBuilder.append("\" written in DOT format on ");
-		        	subAutomataPathsBuilder.append(outputFile);
-		        	subAutomataPathsBuilder.append('\n');
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
-		}
+		//         	subAutomataPathsBuilder.append("Sub-automaton for activity \"");
+		//         	subAutomataPathsBuilder.append(partialAutomaton.getKey());
+		//         	subAutomataPathsBuilder.append("\" written in DOT format on ");
+		//         	subAutomataPathsBuilder.append(outputFile);
+		//         	subAutomataPathsBuilder.append('\n');
+		// 		} catch (FileNotFoundException e) {
+		// 			// TODO Auto-generated catch block
+		// 			e.printStackTrace();
+		// 		}
+		// 	}
+		// 	MessagePrinter.printlnOut(subAutomataPathsBuilder.toString());
+		// }
 
-		if (outParams.fileToSaveAsXML != null) {
-			outputFile = retrieveFile(outParams.fileToSaveAsXML);
-			logger.info("Saving the discovered process as XML in " + outputFile + "...");
+		// if (outParams.fileToSaveAsXML != null) {
+		// 	outputFile = retrieveFile(outParams.fileToSaveAsXML);
+		// 	logger.info("Saving the discovered process as XML in " + outputFile + "...");
 
-			try {
-				new ProcessSpecificationEncoderDecoder().marshalProcessSpecification(processSpecification, outputFile);
-			} catch (PropertyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		// 	try {
+		// 		new ProcessSpecificationEncoderDecoder().marshalProcessSpecification(processSpecification, outputFile);
+		// 	} catch (PropertyException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	} catch (FileNotFoundException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	} catch (JAXBException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	} catch (IOException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	}
+		// }
 
 		if (outParams.fileToSaveAsJSON != null) {
 			outputFile = retrieveFile(outParams.fileToSaveAsJSON);

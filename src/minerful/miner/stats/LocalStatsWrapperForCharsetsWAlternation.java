@@ -9,15 +9,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import minerful.concept.Event;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.miner.stats.charsets.FixedTaskSetIncrementalCountersCollection;
 
 public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperForCharsets {
-	@XmlTransient
 	protected Map<TaskChar, Integer> missingAtThisStepBeforeNextRepetition;
 
 	public LocalStatsWrapperForCharsetsWAlternation(TaskCharArchive archive, TaskChar baseTask, Integer maximumCharactersSetSize) {

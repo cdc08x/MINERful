@@ -20,7 +20,6 @@ import minerful.postprocessing.params.PostProcessingCmdParameters.PostProcessing
  */
 public class MinerFulSimplificationInvokerOnDeclareMapFile {
 
-	private static final String EXAMPLE_OUTPUT_PROCESS_SPECIFICATION_FILE = "/home/claudio/Desktop/example-model.xml";
 	private static final String EXAMPLE_INPUT_PROCESS_SPECIFICATION_FILE = "/home/claudio/Code/MINERful/models/mined/bpi_challenge_2013_closed_problems-model-s075.xml";
 
 	public static void main(String[] args) {
@@ -57,7 +56,7 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		ProcessSpecification processSpecification = miFuSimpLa.simplify();
 		
 		// To store the simplified process specification file somewhere. Please mind that the process specification can also be stored as a Declare map. See the specification of minerful.io.params.OutputSpecificationParameters
-		outParams.fileToSaveAsXML = new File(EXAMPLE_OUTPUT_PROCESS_SPECIFICATION_FILE);
+		//outParams.fileToSaveAsXML = new File(EXAMPLE_OUTPUT_PROCESS_SPECIFICATION_FILE);
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
 		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
