@@ -26,7 +26,8 @@ public class MinerFulCmdParameters extends ParamsManager {
 	}
 	
 	public static final String STATS_OUT_PATH_PARAM_NAME = "statsXML";
-	public static final String OUT_BRANCHING_LIMIT_PARAM_NAME = "b";
+// TODO to be revised in light of the new measuring framework 
+//	public static final String OUT_BRANCHING_LIMIT_PARAM_NAME = "b";
 	public static final String FORESEE_DISTANCES_PARAM_NAME = "withDist";
 	public static final String SHOW_MEMSPACE_USED_PARAM_NAME = "memShow";
 	public static final String EXCLUDED_FROM_RESULTS_SPEC_FILE_PATH_PARAM_NAME = "exclTasks";
@@ -77,16 +78,16 @@ public class MinerFulCmdParameters extends ParamsManager {
 
 	@Override
 	protected void setup(CommandLine line) {
-		this.branchingLimit = Integer.valueOf(line.getOptionValue(
-				OUT_BRANCHING_LIMIT_PARAM_NAME,
-				this.branchingLimit.toString()
-			)
-		);
-		if (this.branchingLimit < MINIMUM_BRANCHING_LIMIT) {
-			throw new IllegalArgumentException(
-					"Invalid value for " + OUT_BRANCHING_LIMIT_PARAM_NAME + " option" +
-					" (must be equal to or greater than " + (MINIMUM_BRANCHING_LIMIT) + ")");
-		}
+		// this.branchingLimit = Integer.valueOf(line.getOptionValue(
+		// 		OUT_BRANCHING_LIMIT_PARAM_NAME,
+		// 		this.branchingLimit.toString()
+		// 	)
+		// );
+		// if (this.branchingLimit < MINIMUM_BRANCHING_LIMIT) {
+		// 	throw new IllegalArgumentException(
+		// 			"Invalid value for " + OUT_BRANCHING_LIMIT_PARAM_NAME + " option" +
+		// 			" (must be equal to or greater than " + (MINIMUM_BRANCHING_LIMIT) + ")");
+		// }
 		this.kbParallelProcessingThreads = Integer.valueOf(line.getOptionValue(
 				KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME,
 				kbParallelProcessingThreads.toString()
@@ -162,17 +163,17 @@ public class MinerFulCmdParameters extends ParamsManager {
 						.type(String.class)
 						.build()
     	);
-        options.addOption(
-        		Option.builder(OUT_BRANCHING_LIMIT_PARAM_NAME)
-						.hasArg().argName("number")
-						.longOpt("out-branch")
-						.desc("out-branching maximum level for discovered constraints (must be greater than or equal to "
-						+ (MINIMUM_BRANCHING_LIMIT)
-						+ ")"
-						+ printDefault(DEFAULT_OUT_BRANCHING_LIMIT))
-						.type(String.class)
-						.build()
-        		);
+        // options.addOption(
+        // 		Option.builder(OUT_BRANCHING_LIMIT_PARAM_NAME)
+		// 				.hasArg().argName("number")
+		// 				.longOpt("out-branch")
+		// 				.desc("out-branching maximum level for discovered constraints (must be greater than or equal to "
+		// 				+ (MINIMUM_BRANCHING_LIMIT)
+		// 				+ ")"
+		// 				+ printDefault(DEFAULT_OUT_BRANCHING_LIMIT))
+		// 				.type(String.class)
+		// 				.build()
+        // 		);
         options.addOption(
         		Option.builder(KB_PARALLEL_COMPUTATION_THREADS_PARAM_NAME)
 						.hasArg().argName("number")

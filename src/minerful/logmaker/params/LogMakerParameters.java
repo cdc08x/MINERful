@@ -344,7 +344,7 @@ public class LogMakerParameters extends ParamsManager {
 		options.addOption(
 				Option.builder(SIZE_NEGATIVE_PARAM_NAME)
 						.hasArg().argName("number of negative traces")
-						.longOpt("size")
+						.longOpt("sizeneg")
 						.desc("number of negative traces to simulate"
 						+ printDefault(DEFAULT_NEGATIVE_SIZE))
 						.type(Long.class)
