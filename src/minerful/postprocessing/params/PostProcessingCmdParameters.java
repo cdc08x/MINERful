@@ -108,12 +108,12 @@ public class PostProcessingCmdParameters extends ParamsManager {
 	public static final String TRC_COVERAGE_THRESHOLD_PARAM_NAME = "gT";
 	public static final String TRC_CONFIDENCE_THRESHOLD_PARAM_NAME = "cT";
 
-	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.125;
-	public static final Double DEFAULT_EVT_COVERAGE_THRESHOLD = 0.125;
-	public static final Double DEFAULT_EVT_CONFIDENCE_THRESHOLD = 0.85;
+	public static final Double DEFAULT_EVT_SUPPORT_THRESHOLD = 0.05;
+	public static final Double DEFAULT_EVT_COVERAGE_THRESHOLD = 0.05;
+	public static final Double DEFAULT_EVT_CONFIDENCE_THRESHOLD = 0.95;
 	public static final Double DEFAULT_TRC_SUPPORT_THRESHOLD = 0.125;
 	public static final Double DEFAULT_TRC_COVERAGE_THRESHOLD = 0.125;
-	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.85;
+	public static final Double DEFAULT_TRC_CONFIDENCE_THRESHOLD = 0.95;
 	public static final PostProcessingAnalysisType DEFAULT_POST_PROCESSING_ANALYSIS_TYPE = PostProcessingAnalysisType.HIERARCHY;
 	public static final SubsumptionHierarchyPruningPolicy DEFAULT_HIERARCHY_POLICY = SubsumptionHierarchyPruningPolicy.HIERARCHY_FIRST;
 	public static final boolean DEFAULT_REDUNDANT_INCONSISTENT_CONSTRAINTS_KEEPING_POLICY = false;

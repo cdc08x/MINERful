@@ -1,0 +1,54 @@
+'Constraint';'Template';'Activation';'Target';'Confidence';'Coverage';'Support';'Trace confidence';'Trace coverage';'Trace support';'Marked for exclusion';'Below thresholds';'Redudant';'Conflicting'
+'AtMost1(Create a candidate account)';'AtMost1';'';'Create a candidate account';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'Init(Create a candidate account)';'Init';'';'Create a candidate account';1.000;1.000;1.000;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Create a candidate account, Enrol in the program)';'NotChainResponse';'Create a candidate account';'Enrol in the program';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Create a candidate account, Enter evaluation phase)';'NotChainResponse';'Create a candidate account';'Enter evaluation phase';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Create a candidate account, Pay subscription fee)';'NotChainResponse';'Create a candidate account';'Pay subscription fee';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Create a candidate account, Pre-enrol in the program)';'NotChainResponse';'Create a candidate account';'Pre-enrol in the program';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Create a candidate account, Receive admission notification)';'NotChainResponse';'Create a candidate account';'Receive admission notification';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Create a candidate account, Receive rejection notification)';'NotChainResponse';'Create a candidate account';'Receive rejection notification';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Enrol in the program, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Enrol in the program';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Enter evaluation phase, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Enter evaluation phase';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Pay subscription fee, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Pay subscription fee';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Pre-enrol in the program, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Pre-enrol in the program';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Receive admission notification, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Receive admission notification';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Receive rejection notification, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Receive rejection notification';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Register for selection round, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Register for selection round';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Upload admission test score, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Upload admission test score';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(Upload certificates, Create a candidate account)';'NotPrecedence';'Create a candidate account';'Upload certificates';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'AtMost1(Enrol in the program)';'AtMost1';'';'Enrol in the program';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'Precedence(Create a candidate account, Enter evaluation phase)';'Precedence';'Enter evaluation phase';'Create a candidate account';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Create a candidate account, Enter evaluation phase)';'NotChainPrecedence';'Enter evaluation phase';'Create a candidate account';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotResponse(Enter evaluation phase, Create a candidate account)';'NotResponse';'Enter evaluation phase';'Create a candidate account';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Enter evaluation phase, Pre-enrol in the program)';'NotChainResponse';'Enter evaluation phase';'Pre-enrol in the program';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Pay subscription fee, Enter evaluation phase)';'NotChainPrecedence';'Enter evaluation phase';'Pay subscription fee';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'AlternatePrecedence(Register for selection round, Enter evaluation phase)';'AlternatePrecedence';'Enter evaluation phase';'Register for selection round';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'Precedence(Upload admission test score, Enter evaluation phase)';'Precedence';'Enter evaluation phase';'Upload admission test score';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'AtMost1(Pay subscription fee)';'AtMost1';'';'Pay subscription fee';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'AtMost1(Pre-enrol in the program)';'AtMost1';'';'Pre-enrol in the program';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'Precedence(Create a candidate account, Receive admission notification)';'Precedence';'Receive admission notification';'Create a candidate account';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Create a candidate account, Receive admission notification)';'NotChainPrecedence';'Receive admission notification';'Create a candidate account';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'AlternatePrecedence(Enter evaluation phase, Receive admission notification)';'AlternatePrecedence';'Receive admission notification';'Enter evaluation phase';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Pay subscription fee, Receive admission notification)';'NotChainPrecedence';'Receive admission notification';'Pay subscription fee';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'NotResponse(Receive admission notification, Create a candidate account)';'NotResponse';'Receive admission notification';'Create a candidate account';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Receive admission notification, Enrol in the program)';'NotChainResponse';'Receive admission notification';'Enrol in the program';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Receive admission notification, Pre-enrol in the program)';'NotChainResponse';'Receive admission notification';'Pre-enrol in the program';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'NotResponse(Receive admission notification, Receive rejection notification)';'NotResponse';'Receive admission notification';'Receive rejection notification';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'Precedence(Register for selection round, Receive admission notification)';'Precedence';'Receive admission notification';'Register for selection round';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'Precedence(Upload admission test score, Receive admission notification)';'Precedence';'Receive admission notification';'Upload admission test score';1.000;0.023;0.023;1.000;0.120;0.120;FALSE;FALSE;FALSE;FALSE
+'AtMost2(Receive rejection notification)';'AtMost2';'';'Receive rejection notification';1.000;0.175;0.175;1.000;1.000;1.000;FALSE;FALSE;FALSE;FALSE
+'Precedence(Create a candidate account, Register for selection round)';'Precedence';'Register for selection round';'Create a candidate account';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Enrol in the program, Register for selection round)';'NotChainPrecedence';'Register for selection round';'Enrol in the program';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Pay subscription fee, Register for selection round)';'NotChainPrecedence';'Register for selection round';'Pay subscription fee';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotResponse(Register for selection round, Create a candidate account)';'NotResponse';'Register for selection round';'Create a candidate account';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'AlternateResponse(Register for selection round, Enter evaluation phase)';'AlternateResponse';'Register for selection round';'Enter evaluation phase';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Register for selection round, Pre-enrol in the program)';'NotChainResponse';'Register for selection round';'Pre-enrol in the program';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'RespondedExistence(Register for selection round, Upload admission test score)';'RespondedExistence';'Register for selection round';'Upload admission test score';1.000;0.106;0.106;1.000;0.499;0.499;FALSE;FALSE;FALSE;FALSE
+'Precedence(Create a candidate account, Upload admission test score)';'Precedence';'Upload admission test score';'Create a candidate account';1.000;0.272;0.272;1.000;0.789;0.789;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Pay subscription fee, Upload admission test score)';'NotChainPrecedence';'Upload admission test score';'Pay subscription fee';1.000;0.272;0.272;1.000;0.789;0.789;FALSE;FALSE;FALSE;FALSE
+'NotResponse(Upload admission test score, Create a candidate account)';'NotResponse';'Upload admission test score';'Create a candidate account';1.000;0.272;0.272;1.000;0.789;0.789;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Upload admission test score, Pre-enrol in the program)';'NotChainResponse';'Upload admission test score';'Pre-enrol in the program';1.000;0.272;0.272;1.000;0.789;0.789;FALSE;FALSE;FALSE;FALSE
+'Precedence(Create a candidate account, Upload certificates)';'Precedence';'Upload certificates';'Create a candidate account';1.000;0.283;0.283;1.000;0.725;0.725;FALSE;FALSE;FALSE;FALSE
+'NotChainPrecedence(Pay subscription fee, Upload certificates)';'NotChainPrecedence';'Upload certificates';'Pay subscription fee';1.000;0.283;0.283;1.000;0.725;0.725;FALSE;FALSE;FALSE;FALSE
+'NotResponse(Upload certificates, Create a candidate account)';'NotResponse';'Upload certificates';'Create a candidate account';1.000;0.283;0.283;1.000;0.725;0.725;FALSE;FALSE;FALSE;FALSE
+'NotChainResponse(Upload certificates, Pre-enrol in the program)';'NotChainResponse';'Upload certificates';'Pre-enrol in the program';1.000;0.283;0.283;1.000;0.725;0.725;FALSE;FALSE;FALSE;FALSE
