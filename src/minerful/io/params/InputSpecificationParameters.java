@@ -18,16 +18,15 @@ public class InputSpecificationParameters extends ParamsManager {
     public static final String INPUT_SPECIFICATION_ENC_PARAM_NAME = "iSE";
     public static final String INPUT_SPECIFICATION_ENC_PARAM_LONG_NAME = "input-specification-encoding";
 	
-    public static final InputEncoding DEFAULT_INPUT_SPECIFICATION_ENC = InputEncoding.MINERFUL;
+    public static final InputEncoding DEFAULT_INPUT_SPECIFICATION_ENC = InputEncoding.JSON;
 
     /**
      * Possible file encodings for marshalled process models.
      * @author Claudio Di Ciccio
      */
 	public enum InputEncoding {
-		DECLARE_MAP,
-		MINERFUL,	// default
-		JSON
+		DECLARE_MAP,	
+		JSON // default
 	}
 
 	/**
