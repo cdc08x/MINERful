@@ -11,7 +11,7 @@ import minerful.concept.constraint.Constraint;
 public class NotPrecedence extends NotChainPrecedence {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*([%1$s][^%2$s]*)*[^%1$s%2$s]*";
+		return "([%1$s].*[%2$s])*[^%2$s]*"; // ([^a].*[b])*[^b]*
 	}
     
     @Override
