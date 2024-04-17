@@ -141,8 +141,7 @@ public class ProcessSpecification implements PropertyChangeListener {
 		String[] ncobj = Arrays.stream(nc.split(",")).map(String::trim).toArray(String[]::new);
 		List<String> ncList = Arrays.asList(ncobj);
 		for (Constraint con : constraints) {
-			String type = con.getClass().getCanonicalName().substring(con.getClass().getCanonicalName().lastIndexOf('.') + 1);
-			if (ncList.contains(type)){
+			if (ncList.contains(con.toString())){
 				regularExpressions.add(con.getNegativeRegularExpression());
 			}
 			else {

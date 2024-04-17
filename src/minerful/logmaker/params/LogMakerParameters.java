@@ -40,14 +40,12 @@ public class LogMakerParameters extends ParamsManager {
 	public static final String MIN_LEN_PARAM_NAME = "oLm";
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public static final String SIZE_NEGATIVE_PARAM_NAME = "oLN";
-	public static final String NEGATIVE_CONSTRAINTS = "NC";
 	public static final String INPUT_NEGATIVE_CONSTRAINTS_FILE = "iNC";
 	////////////////////////////////////////////////////////////////////////////////////////////
     public static final Long DEFAULT_SIZE = 100L;
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public static final Long DEFAULT_NEGATIVE_SIZE = 0L;
 	// added
-	public static final String  DEFAULT_NEGATIVE_CONSTRAINTS = "";
 	////////////////////////////////////////////////////////////////////////////////////////////
     public static final Integer DEFAULT_MIN_TRACE_LENGTH = 0;
     public static final Integer DEFAULT_MAX_TRACE_LENGTH = 100;
@@ -68,14 +66,13 @@ public class LogMakerParameters extends ParamsManager {
     /**
      * File in which the generated event log is going to be stored.
      */
-
+	public File outputLogFile;
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public Long negativesInLog;
-	public String negativeConstraints;
 	public File negativeConstraintsFile;
 	////////////////////////////////////////////////////////////////////////////////////////////
 
-    public File outputLogFile;
+    
     /**
      * Event log encoding (see {@link Encoding #Encoding}).
      */
@@ -83,7 +80,7 @@ public class LogMakerParameters extends ParamsManager {
 
 	///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
     public LogMakerParameters () {
-    	this(DEFAULT_MIN_TRACE_LENGTH, DEFAULT_MAX_TRACE_LENGTH, DEFAULT_SIZE, DEFAULT_NEGATIVE_SIZE, DEFAULT_NEGATIVE_CONSTRAINTS, null,null, DEFAULT_OUTPUT_ENCODING);
+    	this(DEFAULT_MIN_TRACE_LENGTH, DEFAULT_MAX_TRACE_LENGTH, DEFAULT_SIZE, DEFAULT_NEGATIVE_SIZE,null, DEFAULT_OUTPUT_ENCODING);
     }
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,33 +113,6 @@ public class LogMakerParameters extends ParamsManager {
 		this.negativesInLog = negativesInLog;
 	}
 
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, String negativeConstraints,
-							   File outputLogFile, Encoding outputEncoding) {
-		super();
-		this.minEventsPerTrace = minEventsPerTrace;
-		this.maxEventsPerTrace = maxEventsPerTrace;
-		this.tracesInLog = tracesInLog;
-		this.outputLogFile = outputLogFile;
-		this.outputEncoding = outputEncoding;
-		this.negativeConstraints = negativeConstraints;
-	}
-
-
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-			Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, Long negativesInLog, String negativeConstraints,
-			File outputLogFile, Encoding outputEncoding) {
-		super();
-		this.minEventsPerTrace = minEventsPerTrace;
-		this.maxEventsPerTrace = maxEventsPerTrace;
-		this.tracesInLog = tracesInLog;
-		this.outputLogFile = outputLogFile;
-		this.outputEncoding = outputEncoding;
-		this.negativesInLog = negativesInLog;
-		this.negativeConstraints = negativeConstraints;
-	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public LogMakerParameters(
@@ -171,75 +141,13 @@ public class LogMakerParameters extends ParamsManager {
 		this.negativeConstraintsFile = negativesConstraintsFile;
 	}
 
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, Long negativesInLog, String negativeConstraints, File negativesConstraintsFile,
-							   File outputLogFile, Encoding outputEncoding) {
-		super();
-		this.minEventsPerTrace = minEventsPerTrace;
-		this.maxEventsPerTrace = maxEventsPerTrace;
-		this.tracesInLog = tracesInLog;
-		this.outputLogFile = outputLogFile;
-		this.outputEncoding = outputEncoding;
-		this.negativesInLog = negativesInLog;
-		this.negativeConstraints = negativeConstraints;
-		this.negativeConstraintsFile = negativesConstraintsFile;
-	}
-
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, String negativeConstraints, File negativesConstraintsFile,
-							   File outputLogFile, Encoding outputEncoding) {
-		super();
-		this.minEventsPerTrace = minEventsPerTrace;
-		this.maxEventsPerTrace = maxEventsPerTrace;
-		this.tracesInLog = tracesInLog;
-		this.outputLogFile = outputLogFile;
-		this.outputEncoding = outputEncoding;
-		this.negativeConstraints = negativeConstraints;
-		this.negativeConstraintsFile = negativesConstraintsFile;
-	}
 
 
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-			Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, Long negativesInLog) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, negativesInLog, null, null, null, null);
-	}
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-		    Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, Long negativesInLog, String negativeConstraints) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, negativesInLog, negativeConstraints, null,null, null);
-	}
-
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, String negativeConstraints) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog,  null, negativeConstraints, null,null, null);
-	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public LogMakerParameters(
 							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, Long negativesInLog, File negativeConstraintsFile) {
 		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, negativesInLog, negativeConstraintsFile,null, null);
-	}
-
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, File negativeConstraintsFile) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog,  null, null, negativeConstraintsFile,null, null);
-	}
-
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, Long negativesInLog, String negativeConstraints, File negativeConstraintsFile) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, negativesInLog, negativeConstraints, negativeConstraintsFile,null, null);
-	}
-
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public LogMakerParameters(
-							   Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog, String negativeConstraints, File negativeConstraintsFile) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, null, negativeConstraints, negativeConstraintsFile,null, null);
 	}
 
 
@@ -257,7 +165,7 @@ public class LogMakerParameters extends ParamsManager {
 	///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
 	public LogMakerParameters(
 			Integer minEventsPerTrace, Integer maxEventsPerTrace, Long tracesInLog) {
-		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, null, null, null, null, null);
+		this(minEventsPerTrace, maxEventsPerTrace, tracesInLog, null, null, null, null);
 	}
 
     public LogMakerParameters(Options options, String[] args) {
@@ -286,9 +194,7 @@ public class LogMakerParameters extends ParamsManager {
 		this.negativesInLog =
 				Long.valueOf(line.getOptionValue(SIZE_NEGATIVE_PARAM_NAME, this.negativesInLog.toString()));
 
-		this.negativeConstraints =
-				String.valueOf(line.getOptionValue(NEGATIVE_CONSTRAINTS, this.negativeConstraints));
-
+	
 		this.negativeConstraintsFile = openInputFile(line, INPUT_NEGATIVE_CONSTRAINTS_FILE);
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -348,16 +254,6 @@ public class LogMakerParameters extends ParamsManager {
 						.desc("number of negative traces to simulate"
 						+ printDefault(DEFAULT_NEGATIVE_SIZE))
 						.type(Long.class)
-						.build()
-		);
-		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		options.addOption(
-				Option.builder(NEGATIVE_CONSTRAINTS)
-						.hasArg().argName("negative constraints")
-						.longOpt("neg-const")
-						.desc("constraints that are violated"
-								+ printDefault(DEFAULT_NEGATIVE_CONSTRAINTS))
-						.type(String.class)
 						.build()
 		);
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

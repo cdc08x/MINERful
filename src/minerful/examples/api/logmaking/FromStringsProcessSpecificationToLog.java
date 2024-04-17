@@ -76,7 +76,7 @@ public class FromStringsProcessSpecificationToLog {
 		MinerFulLogMaker logMak = new MinerFulLogMaker(logMakParameters);
 
 		// Create the event log
-		XLog log = logMak.createLog(proMod);
+		XLog log = logMak.createLog(proMod, null);
 
 		// Store the log
 		logMakParameters.outputEncoding = Encoding.xes;

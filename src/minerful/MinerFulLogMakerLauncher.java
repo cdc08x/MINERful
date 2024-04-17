@@ -1,10 +1,13 @@
 package minerful;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
+
 
 import org.processmining.plugins.declareminer.visualizing.AssignmentModel;
 
 import minerful.concept.ProcessSpecification;
+import minerful.concept.constraint.Constraint;
 import minerful.io.ProcessSpecificationLoader;
 import minerful.io.params.InputSpecificationParameters;
 import minerful.logmaker.MinerFulLogMaker;
@@ -20,6 +23,7 @@ public class MinerFulLogMakerLauncher {
 			
 	private ProcessSpecification inputProcess;
 	private LogMakerParameters logMakParams;
+	private ProcessSpecification negProcessSpecification;
 	
 	private MinerFulLogMakerLauncher(LogMakerParameters logMakParams) {
 		this.logMakParams = logMakParams;
@@ -46,6 +50,14 @@ public class MinerFulLogMakerLauncher {
 			systemParams.printHelpForWrongUsage("Input process specification file missing!");
 			System.exit(1);
 		}
+		
+		if (logMakParams.negativeConstraintsFile != null){
+			this.negProcessSpecification = new ProcessSpecificationLoader().loadNegatedProcessSpecification(logMakParams.negativeConstraintsFile);		
+		}else{
+			this.negProcessSpecification = null;
+		}
+
+		
 
 		MessagePrinter.configureLogging(systemParams.debugLevel);
 	}
@@ -58,7 +70,7 @@ public class MinerFulLogMakerLauncher {
 		 * Creates the log.
 		 */
 		MinerFulLogMaker logMak = new MinerFulLogMaker(logMakParams);
-		logMak.createLog(this.inputProcess);
+		logMak.createLog(this.inputProcess, this.negProcessSpecification);
 		
 		try {
 			logMak.storeLog();

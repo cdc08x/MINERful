@@ -15,8 +15,6 @@ public class ProcessSpecificationLoader {
 	/**
 	 * Loads a process specification from <code>inputFile</code>, either imported from a JSON-format file (see
 	 * {@link ProcessSpecificationEncoderDecoder#readFromJsonFile(File) ProcessSpecificationEncoderDecoder.readFromJsonFile}),
-	 * MINERful XML-format (see 
-	 * {@link ProcessSpecificationEncoderDecoder#unmarshalProcessSpecification(File) ProcessSpecificationEncoderDecoder.unmarshalProcessSpecification }),
 	 * or Declare Map XML-format (see
 	 * {@link DeclareMapEncoderDecoder#createMinerFulProcessSpecification() DeclareMapEncoderDecoder.createMinerFulProcessSpecification}),
 	 * depending on the <code>inputLanguage</code> parameter.
@@ -81,4 +79,22 @@ public class ProcessSpecificationLoader {
 	public ProcessSpecification loadProcessSpecification(AssignmentModel declareMapModel) {
 		return new DeclareMapEncoderDecoder(declareMapModel).createMinerFulProcessSpecification();
 	}
+
+/**
+ * 
+ * @param negativeFile
+ * @return
+ */
+public ProcessSpecification loadNegatedProcessSpecification(File negativeFile) {
+	ProcessSpecification negProcessSpecification = null;
+	
+	try {
+		negProcessSpecification = new ProcessSpecificationEncoderDecoder().readFromJsonFile(negativeFile);
+	} catch (Exception e) {
+		MessagePrinter.getInstance(this).error("Unreadable process specification from file: " + negativeFile.getAbsolutePath()
+				+ ". Check the file path or the specified encoding.", e);
+	}
+
+	return negProcessSpecification;
+}
 }

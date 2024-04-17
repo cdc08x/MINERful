@@ -24,6 +24,8 @@ import minerful.logmaker.params.LogMakerParameters;
 import minerful.logparser.LogEventClassifier;
 import minerful.logparser.XesLogParser;
 import minerful.utils.MessagePrinter;
+import minerful.concept.constraint.Constraint;
+
 
 import org.deckfour.spex.SXTag;
 import org.deckfour.xes.classification.XEventNameClassifier;
@@ -67,7 +69,7 @@ public class MinerFulLogMaker {
 	 * Maximum amount of traces we want to save as strings
 	 */
 	public static int MAX_SIZE_OF_STRINGS_LOG = Integer.MAX_VALUE;
-	
+
 	/**
 	 * For debugging purposes
 	 */
@@ -80,21 +82,21 @@ public class MinerFulLogMaker {
 
 	public void setParameters(LogMakerParameters parameters) {
 		String errors = parameters.checkValidity();
-		
+
 		if (errors != null)
 			throw new IllegalArgumentException(errors);
 
 		this.parameters = parameters;
-		
+
 		this.stringsLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
 				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
 					MAX_SIZE_OF_STRINGS_LOG)];
-		
+
 		this.strLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
 				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
 					MAX_SIZE_OF_STRINGS_LOG)];
 	}
-	
+
 
 	/**
 	 * Generates an event log based on a MINERful process specification. To do so, it
@@ -106,10 +108,10 @@ public class MinerFulLogMaker {
 	 * @param processSpecification The process specification that the generated event log complies to
 	 * @return The generated event log
 	 */
-	public XLog createLog(ProcessSpecification processSpecification) {
+	public XLog createLog(ProcessSpecification processSpecification, ProcessSpecification negProcessSpecification) {
 		XFactory xFactory = new XFactoryNaiveImpl();
 		this.log = xFactory.createLog();
-		
+
 		XTrace xTrace = null;
 		XEvent xEvent = null;
 		XConceptExtension concExtino = XConceptExtension.instance();
@@ -126,26 +128,18 @@ public class MinerFulLogMaker {
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		String ncf = "";
+		 String ncf = "";
 
-		if (this.parameters.negativeConstraintsFile == null) {
-			ncf = this.parameters.negativeConstraints;
-		}
-		else {
-			try{
-				Scanner s = new Scanner((File) this.parameters.negativeConstraintsFile); //this.parameters.negativeConstraintsFile
-				while (s.hasNext()){
-					ncf += s.next() + ",";
+
+		if (negProcessSpecification != null){
+				for (Constraint con : negProcessSpecification.getAllConstraints()){
+					ncf += con + ",";
 				}
-				s.close();
-				ncf = ncf + this.parameters.negativeConstraints;
-			} catch (FileNotFoundException ex){
-				ncf = this.parameters.negativeConstraints;
 			}
-		}
+		
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
-		
+
 		// Automaton automaton = processSpecification.buildAutomaton();
 		// automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 
@@ -163,10 +157,10 @@ public class MinerFulLogMaker {
 		AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
-		
+
 		TaskChar firedTransition = null;
 		Character pickedTransitionChar = 0;
-		
+
 		Date currentDate = null;
 		int padder = (int)(Math.ceil(Math.log10(this.parameters.tracesInLog)));
 		String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
@@ -236,11 +230,11 @@ public class MinerFulLogMaker {
 				stringBuf = new StringBuffer();
 			}
 		}
-		
-		
+
+
 		return this.log;
 		///////////////////////////////////////////////////////////////////////////////////////////////
-	}		
+	}
 
 
 	/**
@@ -353,13 +347,13 @@ public class MinerFulLogMaker {
 	/**
 	 * Generates a random date and time for a log event, no sooner than the
 	 * provided parameter.
-	 * 
+	 *
 	 * @param laterThan The date and time with respect to which the generated time stamp must be later
 	 * @return A random date and time for the log event
 	 */
 	private Date generateRandomDateTimeForLogEvent(Date laterThan) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		
+
 		if (laterThan == null) {
 			cal.add(GregorianCalendar.YEAR, -1);
 			cal.add(GregorianCalendar.MONTH, (int) ( Math.round(Math.random() * 12 )) * -1 );
