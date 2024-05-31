@@ -6,6 +6,7 @@ package minerful.miner.stats;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -61,7 +62,7 @@ public class LocalStatsWrapperForCharsetsWAlternation extends LocalStatsWrapperF
 	}
 	
 	@Override
-	void newAtPosition(Event event, int position, boolean onwards) {
+	void newAtPosition(Event event, int position, boolean onwards, SortedSet<TaskChar> beforethefirst) {
 		if (this.archive.containsTaskCharByEvent(event)) {
 			TaskChar tCh = this.archive.getTaskCharByEvent(event);
 			

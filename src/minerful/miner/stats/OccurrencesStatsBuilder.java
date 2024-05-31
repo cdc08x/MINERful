@@ -68,6 +68,9 @@ public class OccurrencesStatsBuilder {
         LogTraceParser auxTraceParser = null;
         
         SortedSet<TaskChar> occurredEvents = null;
+        SortedSet<TaskChar> beforetheFirst = null;
+
+
         Event auxEvent = null;
         TaskChar auxTaskChar = null;
 
@@ -79,6 +82,8 @@ public class OccurrencesStatsBuilder {
         	auxTraceParser.init();
 
             occurredEvents = new TreeSet<TaskChar>();
+            beforetheFirst = new TreeSet<TaskChar>();
+
             auxEvent = null;
             int positionCursor = 0;
 //            boolean contemporaneity = false;
@@ -97,7 +102,14 @@ public class OccurrencesStatsBuilder {
                     if (this.statsTable.taskCharArchive.containsTaskCharByEvent(auxEvent)) {
                     	auxTaskChar = this.statsTable.taskCharArchive.getTaskCharByEvent(auxEvent);
     	                // record the occurrence of this chr in the current string
+                        if (!occurredEvents.contains(auxTaskChar) && onwards){
+                            for (TaskChar occurredEvt : occurredEvents){
+                                beforetheFirst.add(occurredEvt);
+                            }
+                        }
+
     	                occurredEvents.add(auxTaskChar);
+                        
     	                for (TaskChar occurredEvt : occurredEvents) {
     	                    // for every already occurred chr, register the new occurrence of the current in its own stats table, at the proper distance.
     	                	this.statsTable.statsTable.get(occurredEvt).newAtPosition(
@@ -106,7 +118,8 @@ public class OccurrencesStatsBuilder {
     	                                ?   positionCursor
     	                                :   0 - positionCursor
     	                            ),
-    	                            onwards
+    	                            onwards,
+                                    beforetheFirst
     	                    );
     	                }
                     }
@@ -125,6 +138,8 @@ public class OccurrencesStatsBuilder {
              * record the amount of occurrences AT THIS STEP and increment the total amount OVER ALL OF THE STEPS,
              * reset the switchers for the alternations counters
              */
+            //System.out.println(beforetheFirst);
+            //System.out.println(aftertheLast);
             this.finalizeAnalysisStep(onwards, secondPass);
             
         	counter++;
