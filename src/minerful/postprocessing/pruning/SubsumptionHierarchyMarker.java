@@ -95,11 +95,14 @@ public class SubsumptionHierarchyMarker {
 		                }
             		}
 	                if (currCon.getSubFamily() == RelationConstraintSubFamily.MUTUAL) {
+						coExiCon = (MutualRelationConstraint) currCon;
 	                	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE)) {
-	                		this.markAsRedundant(coExiCon.getForwardConstraint());
-	                		this.markAsRedundant(coExiCon.getBackwardConstraint());
+							if (coExiCon.getBackwardConstraint() != null && coExiCon.getForwardConstraint() != null){
+	                			this.markAsRedundant(coExiCon.getForwardConstraint());
+	                			this.markAsRedundant(coExiCon.getBackwardConstraint());
+							}
 	            		} else {
-		                    coExiCon = (MutualRelationConstraint) currCon;
+		                    //coExiCon = (MutualRelationConstraint) currCon;
 		                    if (coExiCon.hasImplyingConstraints()) {
 		                        if (coExiCon.isAsInformativeAsTheImplyingConstraints()) {
 		                        	logger.trace("Removing {0}" +
