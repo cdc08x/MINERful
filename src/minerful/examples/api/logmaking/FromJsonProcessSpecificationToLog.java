@@ -70,7 +70,6 @@ public class FromJsonProcessSpecificationToLog {
 		XLog log = logMak.createLog(proMod, null);
 		
 		logMakParameters.outputEncoding = OUTPUT_ENCODING;
-		//System.out.println(logMak.printEncodedLog());
 		
 		logMakParameters.outputLogFile = OUTPUT_LOG;
 		logMak.storeLog();

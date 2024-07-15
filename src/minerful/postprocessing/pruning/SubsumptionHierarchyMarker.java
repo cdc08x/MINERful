@@ -65,7 +65,6 @@ public class SubsumptionHierarchyMarker {
         for (TaskChar key : targetTaskChars) {
             for (Constraint currCon : constraintsBag.getConstraintsOf(key)) {
             	if (!currCon.isRedundant()) {
-					//System.out.println(this.policy);
             		// If the policy is to be eager wrt the hierarchy subsumptions, no matter the support, this is the way to go
             		if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE)) {
             			markGenealogyAsRedundant(currCon.getConstraintWhichThisIsBasedUpon(), currCon, key, constraintsBag);

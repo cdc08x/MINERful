@@ -124,13 +124,10 @@ public class ConflictAndRedundancyResolver {
 			this.safeProcess = new ProcessSpecification(this.originalProcess.getTaskCharArchive(), safeBag);
 			this.safeAutomaton = this.safeProcess.buildAutomaton();
 			for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(safeBag)) {
-//System.out.println("PRESENTATION -- The safe constraint: " + c + " supp: " + c.support + "; conf: " + c.confidence + "; inf.f: " + c.interestFactor + " rex: " + c.getRegularExpression());
-//System.out.println("PRESENTATION -- The safe constraint automaton: " + c + " \n" + safeProcess.buildAlphabetAcceptingAutomaton().intersection(new RegExp(c.getRegularExpression()).toAutomaton()).toDot());
 				blackboard.add(c);
 			}
 		}
 
-//System.out.println("PRESENTATION -- The safe automaton:\n" + safeAutomaton.toDot());
 		ConstraintsBag unsafeBag = this.originalHierarchyUnredundantBag.createComplementOfCopyPrunedByThreshold(ConstraintMeasuresManager.MAX_SUPPORT);
 //		for (Constraint c : LinearConstraintsIndexFactory.getAllConstraints(unsafeBag)) {
 //			blackboard.add(c);
@@ -147,8 +144,6 @@ public class ConflictAndRedundancyResolver {
 		for (Constraint candidateCon : this.notSurelySafeProcessConstraints) {
 			if (!isConstraintAlreadyChecked(candidateCon)) {
 				logger.trace("Checking consistency of " + candidateCon);
-//System.out.println("PRESENTATION -- The unsafe constraint: " + candidateCon + " supp: " + candidateCon.support + "; conf: " + candidateCon.confidence + "; inf.f: " + candidateCon.interestFactor);
-//System.out.println("PRESENTATION -- The unsafe constraint automaton: " + candidateCon + " \n" + safeProcess.buildAlphabetAcceptingAutomaton().intersection(new RegExp(candidateCon.getRegularExpression()).toAutomaton()).toDot());
 				candidateAutomaton = new RegExp(candidateCon.getRegularExpression()).toAutomaton();
 				if (!this.avoidingRedundancy || this.checkRedundancy(candidateAutomaton, candidateCon))
 					resolveConflictsRecursively(candidateAutomaton, candidateCon);
@@ -277,7 +272,6 @@ public class ConflictAndRedundancyResolver {
 
 		} else {
 			safeAutomaton = auxAutomaton;
-//System.out.println("PRESENTATION -- Safe automaton so far: " + safeAutomaton.toDot());
 			safeProcess.bag.add(candidateCon.getBase(), candidateCon);
 		}
 	}

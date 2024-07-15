@@ -34,16 +34,12 @@ public class RelevanceAutomatonWalker {
 				actualCharParamsArray = actualCharParams.toArray(new Character[formalCharParams.size()]);
 
 		for (int i = 0; i < actualCharParamsArray.length; i++) {
-//System.out.println("Merdaccia infame: actualCharParamsArray[i]: " + actualCharParamsArray[i] + " formalCharParamsArray[i] " + formalCharParamsArray[i]);
 			alteredInverseLogTranslationMap.put(logTranslationMap.get(actualCharParamsArray[i]), new Character(formalCharParamsArray[i]));
 		}
 
 		this.initialState = initialState;
 		this.setUpAlteredLogTranslationMap();
 		reset();
-//System.out.println("Lurida merdazza alteredInverseLogTranslationMap " + alteredInverseLogTranslationMap);
-//System.out.println("Lurida merdazza formalCharParamsArray " + Arrays.toString(formalCharParamsArray));
-//System.out.println("Lurida merdazza actualCharParamsArray " + Arrays.toString(actualCharParamsArray));
 
 	}
 
@@ -81,7 +77,6 @@ public class RelevanceAutomatonWalker {
 			ActivationStatusWildcardAwareState necState = null;
 			RelevanceAwareTransition relAwaTrans = null;
 			Character arg0 = null;
-//System.out.println("Lurido merdone: req. tasClass = " + taskClass + " alteredInverseLogTranslationMap.containsKey(taskClass) = " + alteredInverseLogTranslationMap.containsKey(taskClass) + (alteredInverseLogTranslationMap.containsKey(taskClass) ? " " + codify(taskClass): " e sto cazzo"));
 			if (alteredInverseLogTranslationMap.containsKey(taskClass)) {
 				arg0 = codify(taskClass);
 				relAwaTrans = this.currentStateInTheWalk.getTransition(arg0);

@@ -101,13 +101,13 @@ public class OccurrencesStatsBuilder {
 //	                }
                     if (this.statsTable.taskCharArchive.containsTaskCharByEvent(auxEvent)) {
                     	auxTaskChar = this.statsTable.taskCharArchive.getTaskCharByEvent(auxEvent);
-    	                // record the occurrence of this chr in the current string
+                        // record the occurrences of this chr if it is not already in occurredEvents when going onwards
                         if (!occurredEvents.contains(auxTaskChar) && onwards){
                             for (TaskChar occurredEvt : occurredEvents){
                                 beforetheFirst.add(occurredEvt);
                             }
                         }
-
+    	                // record the occurrence of this chr in the current string
     	                occurredEvents.add(auxTaskChar);
                         
     	                for (TaskChar occurredEvt : occurredEvents) {
@@ -138,8 +138,6 @@ public class OccurrencesStatsBuilder {
              * record the amount of occurrences AT THIS STEP and increment the total amount OVER ALL OF THE STEPS,
              * reset the switchers for the alternations counters
              */
-            //System.out.println(beforetheFirst);
-            //System.out.println(aftertheLast);
             this.finalizeAnalysisStep(onwards, secondPass);
             
         	counter++;

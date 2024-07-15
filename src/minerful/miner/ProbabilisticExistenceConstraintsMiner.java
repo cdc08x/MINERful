@@ -124,11 +124,6 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
             con.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
         }
 
-//
-//        for (Constraint con: newCons) {
-//      System.out.println(con + " => econ " + con.getEventBasedMeasures().getConfidence());
-//      System.out.println(con + " => tsup " + con.getTraceBasedMeasures().getSupport());
-//        }
 
         return newCons;
     }

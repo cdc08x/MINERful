@@ -150,11 +150,8 @@ public class ConstraintsFitnessEvaluator {
 			parametersPerTemplate.get(constraint).add(charParameters);
 		}
 		int templateIndex = 0;
-//System.out.println("MERDACCIA taChaEncoDeco.getTranslationMap() + " + taChaEncoDeco.getTranslationMap());
 		
 		for (Constraint template : templates) {
-//System.out.println("MERDACCIA parametersPerTemplate.get(template) " + parametersPerTemplate.get(template));
-//System.out.println("MERDACCIA template " + template);
 			texasMultiRangers[templateIndex++] =
 					new RelevanceAutomatonMultiWalker(
 							template.type,
@@ -334,7 +331,6 @@ public class ConstraintsFitnessEvaluator {
 				constraintUnderAnalysis = this.checkedConstraints.get(constraintIndex++);
 				
 				logEvalsMap.increment(constraintUnderAnalysis, walker.getTraceEvaluation());
-//System.out.println("MERDACCIA " + constraintUnderAnalysis + constraintUnderAnalysis.getRegularExpression() + " ha dato " + walker.getTraceEvaluation() + " su " + loTraParser.encodeTrace() + ": " + loTraParser.toString());
 			}
 		}
 		updateConstraintsFitness(logEvalsMap, loTraParser);

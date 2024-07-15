@@ -102,21 +102,17 @@ public class StatsCell implements Cloneable {
     }
 
     public void setAsSuccession() {
-        
-            this.tracesWithSuccession += 1;
-        
+            this.tracesWithSuccession += 1; 
     }
 
     public void setAsAdjacentSuccession(boolean onwards) {
         if (onwards){
-         
         this.tracesWithAdjacentSuccession += 1;
         } 
     }
 
     public void setAsAlternateSuccession(boolean onwards) {
         if (onwards){
-         
         this.tracesWithAlternateSuccession += 1;
         } 
     }
