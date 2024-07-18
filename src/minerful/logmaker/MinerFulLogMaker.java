@@ -295,7 +295,7 @@ public class MinerFulLogMaker {
 			for (String legendTrace : this.stringsLog) {
 				priLegend.println(legendTrace);
 			}
-			MessagePrinter.printlnOut("log in file .txt created successfully");
+			MessagePrinter.printlnOut("log in file '"+this.parameters.outputLogFile+"' created successfully with legend in '"+legendname+"'");
 
 			priWri.flush();
 			priWri.close();
