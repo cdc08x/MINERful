@@ -11,7 +11,7 @@ import minerful.concept.constraint.Constraint;
 public class NotResponse extends NotChainResponse {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*([%1$s][^%2$s]*)*[^%1$s%2$s]*";
+		return "[^%1$s]*([%1$s][^%2$s]*)*[^%1$s%2$s]*"; // [^a]*([a][^b]*)*[^ab]*
 	}
     
     @Override

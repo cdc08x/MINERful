@@ -14,12 +14,12 @@ public class AlternatePrecedence extends Precedence {
 //		return "[^%2$s]*(%1$s[^%2$s]*%2$s[^%2$s]*)*[^%2$s]*";
 //		return "[^%1$s]*([%2$s][^%1$s]*[%1$s])*[^%1$s]*";
 //		return "[^%1$s]*([%2$s][^%1$s]*[%1$s][^%1$s]*)*[^%1$s]*";
-		return "[^%2$s]*([%1$s][^%2$s]*[%2$s][^%2$s]*)*[^%2$s]*";
+		return "[^%2$s]*([%1$s][^%2$s]*[%2$s][^%2$s]*)*[^%2$s]*"; // [^b]*([a][^b]*[b][^b]*)*[^b]*
 	}
 	   
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G(%1$s -> Y(!%1$s S %2$s))"; // G(b -> Y(!b S a))
+    	return "G(%2$s -> Y(!%2$s S %1$s))"; // G(b -> Y(!b S a))
     }
 	
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
