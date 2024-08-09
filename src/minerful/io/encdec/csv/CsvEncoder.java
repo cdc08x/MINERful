@@ -1,5 +1,6 @@
 package minerful.io.encdec.csv;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -72,10 +73,10 @@ public class CsvEncoder {
 							sottoSbuf.append("'" + c.getTemplateName() + "'");
 							break;
 						case ACTIVATION:
-							sottoSbuf.append(c.getActivator() == null? "''" : "'" + c.getActivator() + "'");
+							sottoSbuf.append(c.getActivators() == null? "''" : "'" + Arrays.toString(c.getActivators()) + "'");
 							break;
 						case TARGET:
-							sottoSbuf.append(c.getTarget() == null? "''" : "'" + c.getTarget() + "'");
+							sottoSbuf.append(c.getTargets() == null? "''" : "'" + Arrays.toString(c.getTargets()) + "'");
 							break;
 						case SUPPORT:
 							sottoSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getEventBasedMeasures().getSupport()));

@@ -101,7 +101,7 @@ public class MetaConstraintUtils {
 				) {
 				con.setConstraintWhichThisIsBasedUpon(treeConSet.tailSet(constraintWhichThisShouldBeBasedUpon).first());
 			}
-			if (con.getSubFamily().equals(RelationConstraintSubFamily.MUTUAL)) {
+			if (con.getSubFamily().equals(RelationConstraintSubFamily.POSITIVE_MUTUAL)) {
 				MutualRelationConstraint coReCon = (MutualRelationConstraint) con;
 				if (!coReCon.hasForwardConstraint() && treeConSet.contains(coReCon.getPossibleForwardConstraint())) {
 					coReCon.setForwardConstraint((RelationConstraint) treeConSet.tailSet(coReCon.getPossibleForwardConstraint()).first());

@@ -49,9 +49,19 @@ public class NotCoExistence extends NotSuccession {
     }
 
     @Override
-    public void setOpposedTo(RelationConstraint opposedTo) {
+    public void setOpponent(RelationConstraint opposedTo) {
         super.setOpponent(opposedTo, CoExistence.class);
     }
+
+	@Override
+	public NegativeRelationConstraint getPossibleForwardConstraint() {
+		return new NotRespondedExistence(base, implied);
+	}
+
+	@Override
+	public NegativeRelationConstraint getPossibleBackwardConstraint() {
+		return new NotRespondedExistence(implied, base);
+	}
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {

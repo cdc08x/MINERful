@@ -8,7 +8,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
-public class NotRespondedExistence extends NotSuccession {
+public class NotRespondedExistence extends NegativeRelationConstraint {
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?";
@@ -48,7 +48,7 @@ public class NotRespondedExistence extends NotSuccession {
     }
 
     @Override
-    public void setOpposedTo(RelationConstraint opposedTo) {
+    public void setOpponent(RelationConstraint opposedTo) {
         super.setOpponent(opposedTo, RespondedExistence.class);
     }
 

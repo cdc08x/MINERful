@@ -64,7 +64,7 @@ public class RespondedExistence extends RelationConstraint {
     
     @Override
 	public RelationConstraintSubFamily getSubFamily() {
-		return RelationConstraintSubFamily.SINGLE_ACTIVATION;
+		return RelationConstraintSubFamily.POSITIVE;
 	}
 
 	@Override

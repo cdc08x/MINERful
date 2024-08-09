@@ -49,10 +49,19 @@ public class NotSuccession extends NotChainSuccession {
     }
 
     @Override
-    public void setOpposedTo(RelationConstraint opposedTo) {
+    public void setOpponent(RelationConstraint opposedTo) {
         super.setOpponent(opposedTo, Succession.class);
     }
-    
+
+	@Override
+	public NegativeRelationConstraint getPossibleForwardConstraint() {
+		return new NotResponse(base, implied);
+	}
+
+	@Override
+	public NegativeRelationConstraint getPossibleBackwardConstraint() {
+		return new NotPrecedence(base, implied);
+	}
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {

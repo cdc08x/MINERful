@@ -9,7 +9,7 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
-public class NotChainSuccession extends NegativeRelationConstraint {
+public class NotChainSuccession extends NegativeMutualRelationConstraint {
     @Override
 	public String getRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
@@ -50,7 +50,8 @@ public class NotChainSuccession extends NegativeRelationConstraint {
         return super.getHierarchyLevel()+1;
     }
     
-    public void setOpposedTo(RelationConstraint opposedTo) {
+	@Override
+    public void setOpponent(RelationConstraint opposedTo) {
         super.setOpponent(opposedTo, ChainSuccession.class);
     }
 
@@ -60,9 +61,14 @@ public class NotChainSuccession extends NegativeRelationConstraint {
 	}
 
 	@Override
-    public ConstraintImplicationVerse getImplicationVerse() {
-        return ConstraintImplicationVerse.BOTH;
-    }
+	public NegativeRelationConstraint getPossibleForwardConstraint() {
+		return new NotChainResponse(base, implied);
+	}
+
+	@Override
+	public NegativeRelationConstraint getPossibleBackwardConstraint() {
+		return new NotChainPrecedence(base, implied);
+	}
 
 	@Override
 	public Constraint getSupposedOpponentConstraint() {
@@ -80,4 +86,5 @@ public class NotChainSuccession extends NegativeRelationConstraint {
 		super.checkParams(taskCharSets);
 		return new NotChainSuccession(taskCharSets[0], taskCharSets[1]);
 	}
+
 }
