@@ -13,13 +13,13 @@ public class ChainPrecedence extends AlternatePrecedence {
 	@Override
 	public String getRegularExpressionTemplate() {
 //		return "[^%2$s]*(%1$s%2$s[^%2$s]*)*[^%2$s]*";
-//		return "[^%1$s]*([%2$s][%1$s][^%1$s]*)*[^%1$s]*"; 
-		return "[^%2$s]*([%1$s][%2$s][^%2$s]*)*[^%2$s]*"; // [^b]*([a][b][^b]*)*[^a]*
+		return "[^%1$s]*([%2$s][%1$s][^%1$s]*)*[^%1$s]*"; 
+		//return "[^%2$s]*([%1$s][%2$s][^%2$s]*)*[^%2$s]*"; // [^b]*([a][b][^b]*)*[^a]*
 	}
 	
 	@Override
 	public String getLTLpfExpressionTemplate() {
-		return "G(%2$s -> Y(%1$s))"; // G(b -> Y(a))
+		return "G(%1$s -> Y(%2$s))"; // G(b -> Y(a))
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

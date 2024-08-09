@@ -13,12 +13,13 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
     @Override
 	public String getRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
-		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s]*)"; // [^a]*(aa*[^ab][^a]*)*([^a]*|a*)
+//		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s]*)"; // [^a]*(aa*[^ab][^a]*)*([^a]*|a*)
+		return "[^%2$s]*([%2$s][%2$s]*[^%2$s%1$s][^%2$s]*)*([^%2$s]*|[%2$s]*)";
     }
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G(%2$s -> !Y(%1$s))"; // G(b -> !Y(a))
+    	return "G(%1$s -> !Y(%2$s))"; // G(b -> !Y(a))
     }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

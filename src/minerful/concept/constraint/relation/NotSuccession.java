@@ -11,12 +11,14 @@ import minerful.concept.constraint.Constraint;
 public class NotSuccession extends NotChainSuccession {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s]*([%1$s][^%2$s]*)*[^%1$s%2$s]*";
+		//return "[^%1$s]*([%1$s][^%2$s]*)*[^%1$s%2$s]*";
+		return "[^%2$s]*([%2$s][^%1$s]*)*[^%2$s%1$s]*";
 	}
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G((%1$s -> X(G(!%2$s))) & (%2$s -> Z(H(!%1$s))))"; // G((a -> X(G(!b))) & (b -> Z(H(!a))))
+    	//return "G((%1$s -> X(G(!%2$s))) & (%2$s -> Z(H(!%1$s))))"; // G((a -> X(G(!b))) & (b -> Z(H(!a))))
+		return "G((%2$s -> X(G(!%1$s))) & (%1$s -> Z(H(!%2$s))))";
     }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

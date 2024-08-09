@@ -22,7 +22,9 @@ public class NotPrecedence extends NotChainPrecedence {
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
-		return "[^%2$s]*([%1$s].*[%2$s]){1,}[^%2$s]*"; // [^b]*([a].*[b])*[^b]*
+//		return "[^%2$s]*([%1$s].*[%2$s]){1,}[^%2$s]*"; // [^b]*([a].*[b])*[^b]*
+		return "[^%1$s]*([%2$s].*[%1$s]){1,}[^%1$s]*"; // [^b]*([a].*[b])*[^b]*
+
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

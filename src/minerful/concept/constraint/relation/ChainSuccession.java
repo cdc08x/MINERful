@@ -11,12 +11,14 @@ import minerful.concept.constraint.Constraint;
 public class ChainSuccession extends AlternateSuccession {
 	@Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*([%1$s][%2$s][^%1$s%2$s]*)*[^%1$s%2$s]*";
+		//return "[^%1$s%2$s]*([%1$s][%2$s][^%1$s%2$s]*)*[^%1$s%2$s]*";
+		return "[^%2$s%1$s]*([%2$s][%1$s][^%2$s%1$s]*)*[^%2$s%1$s]*";
 	}
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G((%1$s -> X(%2$s)) & (%2$s -> Y(%1$s)))"; // G((a -> X(b)) & (b -> Y(a)))
+    	//return "G((%1$s -> X(%2$s)) & (%2$s -> Y(%1$s)))"; // G((a -> X(b)) & (b -> Y(a)))
+		return "G((%2$s -> X(%1$s)) & (%1$s -> Y(%2$s)))"; 
     }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
