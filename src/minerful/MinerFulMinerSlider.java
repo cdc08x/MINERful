@@ -97,11 +97,11 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 	public ProcessSpecification slideAndMine(LogParser logParser, SlidingMiningCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams) {
 		PostProcessingCmdParameters noPostProcParams = PostProcessingCmdParameters.makeParametersForNoPostProcessing();
-		ProcessSpecification proMod = null;
+		ProcessSpecification proSpec = null;
 		int from = 0, to = 0;
 
-		proMod = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
-		proMod.setName(makeDiscoveredProcessName(inputParams));
+		proSpec = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
+		proSpec.setName(makeDiscoveredProcessName(inputParams));
 		
 		GlobalStatsTable
 			statsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit),
@@ -118,9 +118,9 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 			globalStatsTable.mergeAdditively(statsTable);
 		}
 
-		proMod.bag = queryForConstraints(slicedLogParser, minerFulParams,
+		proSpec.bag = queryForConstraints(slicedLogParser, minerFulParams,
 				noPostProcParams,
-				taskCharArchive, statsTable, proMod.bag);
+				taskCharArchive, statsTable, proSpec.bag);
 		
 		int step = slideParams.slidingStep;
 		
@@ -132,8 +132,8 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				minerFulParams, taskCharArchive);
 		MinerFulQueryingCore qCore = new MinerFulQueryingCore(0,
 				logParser, minerFulParams, noPostProcParams, taskCharArchive,
-				statsTable, proMod.bag);
-		ConstraintsPrinter cPrin = new ConstraintsPrinter(proMod);
+				statsTable, proSpec.bag);
+		ConstraintsPrinter cPrin = new ConstraintsPrinter(proSpec);
 
 		from = inputParams.startFromTrace;
 		to = inputParams.startFromTrace + slicedLogParser.length();
@@ -146,7 +146,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
     							from + ";" + to + ";'",";;'"));
     					// The last one is to avoid, e.g., “0;297;'Support';'Confidence'” in the header
 		minerFulOutputMgr.setAdditionalFileSuffix(String.format("-%06d-%06d", from, to));
-		minerFulOutputMgr.manageOutput(proMod, viewParams, outParams, systemParams, logParser);
+		minerFulOutputMgr.manageOutput(proSpec, viewParams, outParams, systemParams, logParser);
 
 		if (slideParams.slidingStep > 0) {   		
     		//
@@ -192,7 +192,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				}
 				
 				// wipe out existing constraints
-				proMod.bag.wipeOutConstraints();
+				proSpec.bag.wipeOutConstraints();
 				// query the altered knowledge base!
 				qCore.discover();
 				
@@ -206,11 +206,11 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				);
 				
 				minerFulOutputMgr.setAdditionalFileSuffix(String.format("-%06d-%06d", from, to));
-				minerFulOutputMgr.manageOutput(proMod, viewParams, outParams, systemParams, logParser);
+				minerFulOutputMgr.manageOutput(proSpec, viewParams, outParams, systemParams, logParser);
 			}
 			
 			if (!slideParams.stickTail) {
-				proMod.bag.wipeOutConstraints();
+				proSpec.bag.wipeOutConstraints();
 				qCore.setStatsTable(globalStatsTable);
 				qCore.discover();
 			}
@@ -219,9 +219,9 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		outWriter.flush();
 		outWriter.close();
 		
-		super.pruneConstraints(proMod, minerFulParams, postParams);
+		super.pruneConstraints(proSpec, minerFulParams, postParams);
 
-		return proMod;
+		return proSpec;
 	}
 
 

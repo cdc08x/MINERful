@@ -11,6 +11,7 @@ import minerful.io.encdec.pojo.ConstraintPojo;
 import minerful.io.encdec.pojo.ProcessSpecificationPojo;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -18,7 +19,7 @@ public class JsonPojoEncoderDecoder {
 	private Gson gson;
 	
 	public JsonPojoEncoderDecoder() {
-		this.gson = new Gson();
+		this.gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 	}
 	
 	public ConstraintPojo fromJsonToConstraintPojo(String json) {

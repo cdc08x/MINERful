@@ -40,11 +40,11 @@ public class TransferObjectToProcessSpecificationTranslator {
 		return new ProcessSpecification(taskCharArchive, bag, proSpecTO.name);
 	}
 
-	public ProcessSpecification createProcessModel(ProcessSpecificationTransferObject proModTO) {
+	public ProcessSpecification createProcessModel(ProcessSpecificationTransferObject proSpecTO) {
 		/* Create/update the TaskCharArchive */
 		TaskCharFactory taskCharFactory = new TaskCharFactory();
 		Set<TaskChar> taskChars = new TreeSet<TaskChar>();
-		for (String taskName : proModTO.tasks) {
+		for (String taskName : proSpecTO.tasks) {
 			taskChars.add(taskCharFactory.makeTaskChar(taskName));
 		}
 		TaskCharArchive taskCharArchive = new TaskCharArchive(taskChars);
@@ -53,10 +53,10 @@ public class TransferObjectToProcessSpecificationTranslator {
 		TransferObjectToConstraintTranslator conTranslator = new TransferObjectToConstraintTranslator(taskCharArchive);
 		ConstraintsBag bag = new ConstraintsBag(taskChars);
 		
-		for(DeclareConstraintTransferObject conTO : proModTO.constraints) {
+		for(DeclareConstraintTransferObject conTO : proSpecTO.constraints) {
 			bag.add(conTranslator.createConstraint(conTO));
 		}
 		
-		return new ProcessSpecification(taskCharArchive, bag, proModTO.name);
+		return new ProcessSpecification(taskCharArchive, bag, proSpecTO.name);
 	}
 }

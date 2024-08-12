@@ -215,8 +215,12 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	}
 
 	public String toLTLpfString() {
+		return this.toLTLpfString(false);	
+	}
+
+	public String toLTLpfString(boolean idenfifyTaskByNumber) {
 		if (this.size() == 1)
-			return this.taskChars[0].getTaskNumericId();
+			return idenfifyTaskByNumber ? this.taskChars[0].getTaskNumericId() : this.taskChars[0].toString();
 		String disjunctionOfLiterals = "";
 		for (int i = 0; i < this.taskChars.length; i++) {
 			disjunctionOfLiterals = disjunctionOfLiterals.concat(NuSMVEncoder.OR).concat(taskChars[i].getTaskNumericId());

@@ -43,7 +43,7 @@ public class FromJsonProcessSpecificationToLog {
 				+ "],"
 				+"tasks: [A,B,C,D,E] }";
 
-		ProcessSpecification proMod =
+		ProcessSpecification proSpec =
 			new ProcessSpecificationEncoderDecoder()
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
 //			.readFromJsonFile(new File("/home/claudio/Code/MINERful/temp/BPIC2012-disco.json"));
@@ -67,7 +67,7 @@ public class FromJsonProcessSpecificationToLog {
 		/*
 		 * The log XLog is an in-memory representation of the log, which can be later serialized in XES or MXML formats.
 		 */
-		XLog log = logMak.createLog(proMod, null);
+		XLog log = logMak.createLog(proSpec, null);
 		
 		logMakParameters.outputEncoding = OUTPUT_ENCODING;
 		

@@ -55,11 +55,11 @@ public class ProcessSpecificationEncoderDecoder {
 	// 		                                       event.getLinkedException());
 	// 		        }
 	// 		});
-	// 	ProcessSpecification proMod = (ProcessSpecification) unmarsh.unmarshal(procSchmInFile);
+	// 	ProcessSpecification proSpec = (ProcessSpecification) unmarsh.unmarshal(procSchmInFile);
 		
-	// 	MetaConstraintUtils.createHierarchicalLinks(proMod.getAllConstraints());
+	// 	MetaConstraintUtils.createHierarchicalLinks(proSpec.getAllConstraints());
 		
-	// 	return proMod;
+	// 	return proSpec;
 	// }
 	
 	// public StringBuffer marshalProcessModel(ProcessSpecification processModel)
@@ -94,9 +94,9 @@ public class ProcessSpecificationEncoderDecoder {
 	public ProcessSpecification readFromJsonFile(File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		ProcessSpecificationPojo pojo = jsonPojoMgr.fromJsonToProcessSpecificationPojo(processModelJsonFile);
-		ProcessSpecificationTransferObject proModTO = new ProcessSpecificationTransferObject(pojo);
+		ProcessSpecificationTransferObject proSpecTO = new ProcessSpecificationTransferObject(pojo);
 		TransferObjectToProcessSpecificationTranslator translator = new TransferObjectToProcessSpecificationTranslator();
-		return translator.createProcessModel(proModTO);
+		return translator.createProcessModel(proSpecTO);
 	}
 
 	/**
@@ -112,14 +112,14 @@ public class ProcessSpecificationEncoderDecoder {
 	public ProcessSpecification readFromJsonFile(File processModelJsonFile, TaskCharArchive alphabet) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		ProcessSpecificationPojo pojo = jsonPojoMgr.fromJsonToProcessSpecificationPojo(processModelJsonFile);
-		ProcessSpecificationTransferObject proModTO = new ProcessSpecificationTransferObject(pojo);
+		ProcessSpecificationTransferObject proSpecTO = new ProcessSpecificationTransferObject(pojo);
 		TransferObjectToProcessSpecificationTranslator translator = new TransferObjectToProcessSpecificationTranslator();
-		return translator.createProcessModel(proModTO, alphabet);
+		return translator.createProcessModel(proSpecTO, alphabet);
 	}
 
 	public void writeToJsonFile(ProcessSpecification processModel, File processModelJsonFile) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
-		ProcessSpecificationTransferObject proModTO = new ProcessSpecificationTransferObject(processModel);
-		ProcessSpecificationPojo pojo = proModTO.toPojo();
+		ProcessSpecificationTransferObject proSpecTO = new ProcessSpecificationTransferObject(processModel);
+		ProcessSpecificationPojo pojo = proSpecTO.toPojo();
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		jsonPojoMgr.saveProcessSpecificationPojo(pojo, processModelJsonFile);
 
@@ -129,14 +129,14 @@ public class ProcessSpecificationEncoderDecoder {
 	public ProcessSpecification readFromJsonString(String processModelJson) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		ProcessSpecificationPojo pojo = jsonPojoMgr.fromJsonToProcessSpecificationPojo(processModelJson);
-		ProcessSpecificationTransferObject proModTO = new ProcessSpecificationTransferObject(pojo);
+		ProcessSpecificationTransferObject proSpecTO = new ProcessSpecificationTransferObject(pojo);
 		TransferObjectToProcessSpecificationTranslator translator = new TransferObjectToProcessSpecificationTranslator();
-		return translator.createProcessModel(proModTO);
+		return translator.createProcessModel(proSpecTO);
 	}
 
 	public String toJsonString(ProcessSpecification processModel) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
-		ProcessSpecificationTransferObject proModTO = new ProcessSpecificationTransferObject(processModel);
-		ProcessSpecificationPojo pojo = proModTO.toPojo();
+		ProcessSpecificationTransferObject proSpecTO = new ProcessSpecificationTransferObject(processModel);
+		ProcessSpecificationPojo pojo = proSpecTO.toPojo();
 		JsonPojoEncoderDecoder jsonPojoMgr = new JsonPojoEncoderDecoder();
 		return jsonPojoMgr.fromProcessSpecificationPojoToJson(pojo);
 	}

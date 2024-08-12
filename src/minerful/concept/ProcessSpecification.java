@@ -182,7 +182,7 @@ public class ProcessSpecification implements PropertyChangeListener {
 	}
 
 	public static ProcessSpecification generateNonEvaluatedDiscoverableSpecification(TaskCharArchive taskCharArchive) {
-		ProcessSpecification proMod = null;
+		ProcessSpecification proSpec = null;
 		
 		Iterator<TaskChar>
 			actIter = taskCharArchive.getTaskChars().iterator(),
@@ -218,9 +218,9 @@ public class ProcessSpecification implements PropertyChangeListener {
 			}
 		}
 		ConstraintsBag bag = new ConstraintsBag(taskCharArchive.getTaskChars(), conSet);
-		proMod = new ProcessSpecification(taskCharArchive, bag);
+		proSpec = new ProcessSpecification(taskCharArchive, bag);
 
-		return proMod;
+		return proSpec;
 	}
 
 	public SortedSet<Constraint> getAllConstraints() {
