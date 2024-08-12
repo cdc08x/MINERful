@@ -26,13 +26,15 @@ public class Precedence extends RespondedExistence {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public String getNegativeRegularExpressionTemplate() {
-		return "[^%2$s]*([^%2$s]*[%1$s]){1,}[^%1$s]*";
+//		return "[^%2$s]*([^%2$s]*[%1$s]){1,}[^%1$s]*";
+		return "[^%1$s]*([^%1$s]*[%2$s]){1,}[^%2$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G(%1$s -> !Y(H(%2$s)))"; // G(b -> !Y(H(a)))
+		// return "G(%1$s -> !Y(H(%2$s)))"; // G(b -> !Y(H(a)))
+		return "G(%2$s -> !Y(H(%1$s)))"; // G(b -> !Y(H(a)))
 	}
 
  
