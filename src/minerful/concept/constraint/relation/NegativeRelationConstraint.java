@@ -67,5 +67,5 @@ public abstract class NegativeRelationConstraint extends RelationConstraint impl
 	}
 
 	@Override
-	public abstract Constraint getSupposedOpponentConstraint();
+	public abstract Constraint suggestOpponentConstraint();
 }

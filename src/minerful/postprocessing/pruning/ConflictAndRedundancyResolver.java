@@ -250,7 +250,7 @@ public class ConflictAndRedundancyResolver {
 				resolveConflictsRecursively(new RegExp(relaxedCon.getRegularExpression()).toAutomaton(), relaxedCon);
 			}
 
-			if (candidateCon.getSubFamily().equals(RelationConstraintSubFamily.POSITIVE_MUTUAL)) {
+			if (candidateCon.getSubFamily().equals(RelationConstraintSubFamily.POSITIVE_MUTUAL) || candidateCon.getSubFamily().equals(RelationConstraintSubFamily.NEGATIVE_MUTUAL)) {
 				MutualRelationConstraint coCandidateCon = (MutualRelationConstraint) candidateCon;
 				Constraint
 					forwardCon = coCandidateCon.getForwardConstraint(),

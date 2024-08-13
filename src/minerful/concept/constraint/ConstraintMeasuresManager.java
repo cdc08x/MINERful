@@ -117,26 +117,6 @@ public class ConstraintMeasuresManager {
     	return !( this.belowSupportThreshold || this.belowConfidenceThreshold || this.belowCoverageThreshold);
     }
 
-    public boolean hasReasonableSupport(double threshold) {
-        return	(
-        			(threshold == ConstraintMeasuresManager.MAX_SUPPORT)
-        		?	(support - threshold == 0)
-				:		Math.abs(this.getRelativeSupport(threshold)) >= ConstraintMeasuresManager.MIN_SUPPORT
-        			&&	Math.abs(this.getRelativeSupport(threshold)) <= ConstraintMeasuresManager.MAX_SUPPORT
-        );
-    }
-
-    public double getRelativeSupport(double threshold) {
-        if (ConstraintMeasuresManager.MAX_SUPPORT - threshold == 0) {
-            if (support - threshold == 0) {
-                return ConstraintMeasuresManager.MAX_SUPPORT;
-            } else {
-                return ConstraintMeasuresManager.MIN_SUPPORT;
-            }
-        }
-        return ((support - threshold) / (ConstraintMeasuresManager.MAX_SUPPORT - threshold));
-    }
-
 	public boolean isBelowSupportThreshold() {
 		return belowSupportThreshold;
 	}
@@ -255,5 +235,15 @@ public class ConstraintMeasuresManager {
         }
         return true;
     }
+
+    /**
+     * Sets all measures to the respective minima.
+     */
+	public void setAllMeasuresToMinimum() {
+		this.confidence = MIN_CONFIDENCE;
+		this.support = MIN_SUPPORT;
+		this.coverage = MIN_COVERAGE;
+		this.fitness = MIN_FITNESS;
+	}
 
 }

@@ -10,7 +10,7 @@ public interface NegativeRelationConstraintInterface {
 
 	void setOpponent(RelationConstraint opponent);
 
-	Constraint getSupposedOpponentConstraint();
+	Constraint suggestOpponentConstraint();
 
 	boolean hasOpponent();
 

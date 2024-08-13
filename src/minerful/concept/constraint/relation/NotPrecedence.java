@@ -63,7 +63,7 @@ public class NotPrecedence extends NotChainPrecedence {
 	}
 
 	@Override
-	public Constraint getSupposedOpponentConstraint() {
+	public Constraint suggestOpponentConstraint() {
 		return new Precedence(implied, base);
 	}
 	

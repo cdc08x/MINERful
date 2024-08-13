@@ -265,7 +265,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 		}
 		else if (conClass.equals(NotSuccession.class)){ 
 			satEvtNum = interplayStats.howManyTimesItNeverOccurredOnwards() + reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
-			satTrcNum = tracesWithPivot-reversedInterplayStats.tracesWithSuccession;
+			satTrcNum = tracesWithPivot - reversedInterplayStats.tracesWithSuccession;
 		}
 		else if (conClass.equals(ChainSuccession.class)){
 			if (interplayStats.distances.get(1) != null && reversedInterplayStats.distances.get(-1) != null) {
@@ -306,11 +306,11 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 //				constraint, satOccurs, pivotOccurrences, satOccurs / pivotOccurrences));
 		
 
-		if (conClass.equals(Succession.class) || conClass.equals(CoExistence.class) || conClass.equals(NotCoExistence.class) || conClass.equals(NotSuccession.class) || conClass.equals(ChainSuccession.class)||conClass.equals(AlternateSuccession.class)||conClass.equals(NotChainSuccession.class)){
-			nuCon.getEventBasedMeasures().setConfidence(satEvtNum/ (double)(pivotOccurrences+searchedOccurrences));
-			nuCon.getTraceBasedMeasures().setConfidence(satTrcNum /(double) (tracesWithPivot+tracesWithSearched));
-			nuCon.getEventBasedMeasures().setCoverage((double)(pivotOccurrences+searchedOccurrences) / numOfEventsInLog);
-			nuCon.getTraceBasedMeasures().setCoverage((double)(tracesWithPivot + tracesWithSearched) /numOfTracesInLog);
+		if (conClass.equals(CoExistence.class) || conClass.equals(NotCoExistence.class) || conClass.equals(Succession.class) || conClass.equals(NotSuccession.class) || conClass.equals(AlternateSuccession.class) || conClass.equals(ChainSuccession.class) || conClass.equals(NotChainSuccession.class)){
+			nuCon.getEventBasedMeasures().setConfidence(satEvtNum / (double)(pivotOccurrences+ searchedOccurrences));
+			nuCon.getTraceBasedMeasures().setConfidence(satTrcNum / (double)(tracesWithPivot + tracesWithSearched));
+			nuCon.getEventBasedMeasures().setCoverage((double)(pivotOccurrences + searchedOccurrences) / numOfEventsInLog);
+			nuCon.getTraceBasedMeasures().setCoverage((double)(tracesWithPivot + tracesWithSearched) / numOfTracesInLog);
 
 		}
 		else{

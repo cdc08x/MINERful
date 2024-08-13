@@ -62,7 +62,7 @@ public class NotResponse extends NotChainResponse {
 	}
 
 	@Override
-	public Constraint getSupposedOpponentConstraint() {
+	public Constraint suggestOpponentConstraint() {
 		return new Response(base, implied);
 	}
 	

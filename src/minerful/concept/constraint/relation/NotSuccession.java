@@ -58,12 +58,12 @@ public class NotSuccession extends NotChainSuccession {
     }
 
 	@Override
-	public NegativeRelationConstraint getPossibleForwardConstraint() {
+	public RelationConstraint getPossibleForwardConstraint() {
 		return new NotResponse(base, implied);
 	}
 
 	@Override
-	public NegativeRelationConstraint getPossibleBackwardConstraint() {
+	public RelationConstraint getPossibleBackwardConstraint() {
 		return new NotPrecedence(base, implied);
 	}
 
@@ -73,7 +73,7 @@ public class NotSuccession extends NotChainSuccession {
 	}
 
 	@Override
-	public Constraint getSupposedOpponentConstraint() {
+	public Constraint suggestOpponentConstraint() {
 		return new Succession(base, implied);
 	}
 	

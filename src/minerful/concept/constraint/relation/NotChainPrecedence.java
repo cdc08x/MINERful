@@ -66,7 +66,7 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
 	}
 
 	@Override
-	public Constraint getSupposedOpponentConstraint() {
+	public Constraint suggestOpponentConstraint() {
 		return new ChainPrecedence(implied, base);
 	}
 

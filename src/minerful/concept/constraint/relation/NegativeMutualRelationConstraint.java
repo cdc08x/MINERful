@@ -59,6 +59,6 @@ public abstract class NegativeMutualRelationConstraint extends MutualRelationCon
 	}
 
 	@Override
-	public abstract Constraint getSupposedOpponentConstraint();
+	public abstract Constraint suggestOpponentConstraint();
 
 }

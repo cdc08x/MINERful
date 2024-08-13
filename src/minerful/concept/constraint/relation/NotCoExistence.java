@@ -54,12 +54,12 @@ public class NotCoExistence extends NotSuccession {
     }
 
 	@Override
-	public NegativeRelationConstraint getPossibleForwardConstraint() {
+	public RelationConstraint getPossibleForwardConstraint() {
 		return new NotRespondedExistence(base, implied);
 	}
 
 	@Override
-	public NegativeRelationConstraint getPossibleBackwardConstraint() {
+	public RelationConstraint getPossibleBackwardConstraint() {
 		return new NotRespondedExistence(implied, base);
 	}
 
@@ -69,7 +69,7 @@ public class NotCoExistence extends NotSuccession {
 	}
 
 	@Override
-	public Constraint getSupposedOpponentConstraint() {
+	public Constraint suggestOpponentConstraint() {
 		return new CoExistence(base, implied);
 	}
 	

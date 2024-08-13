@@ -112,8 +112,8 @@ public class MetaConstraintUtils {
 			}
 			if (con.getSubFamily().equals(RelationConstraintSubFamily.NEGATIVE)) {
 				NegativeRelationConstraint negaCon = (NegativeRelationConstraint) con;
-				if (!negaCon.hasOpponent() && treeConSet.contains(negaCon.getSupposedOpponentConstraint())) {
-					negaCon.setOpponent((RelationConstraint) treeConSet.tailSet(negaCon.getSupposedOpponentConstraint()).first());
+				if (!negaCon.hasOpponent() && treeConSet.contains(negaCon.suggestOpponentConstraint())) {
+					negaCon.setOpponent((RelationConstraint) treeConSet.tailSet(negaCon.suggestOpponentConstraint()).first());
 				}
 			}
 		}
@@ -424,36 +424,42 @@ public class MetaConstraintUtils {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
+				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(implied, base);
+				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableForwardNegativeRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
+				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardNegativeRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(implied, base);
+				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
+				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);				
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualNegativeRelationConstraintTemplates()) {
 				tmpConstructor = relationConstraintTypeClass.getConstructor(
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
+				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);				
 			}
 		} catch (Exception e) {
