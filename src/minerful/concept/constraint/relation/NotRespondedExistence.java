@@ -8,7 +8,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 
-public class NotRespondedExistence extends NotResponse {
+public class NotRespondedExistence extends NotResponse { // TODO This kind of inheritance is partial. See below (suggestConstraint... method)
 	@Override
 	public String getRegularExpressionTemplate() {
 		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?";
@@ -54,6 +54,7 @@ public class NotRespondedExistence extends NotResponse {
 
 	@Override
 	public Constraint suggestConstraintWhichThisShouldBeBasedUpon() {
+		// FIXME Actually, NotRespondedExistence entails NotPrecedence(implied, base) too. The current web of methods does not allow it.
 		return new NotResponse(base, implied);
 	}
 
