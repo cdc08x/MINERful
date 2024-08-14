@@ -145,19 +145,19 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
         	upToThreeOccurrences = upToTwoOccurrences + localStats.repetitions.get(3);
         }	else upToThreeOccurrences = upToTwoOccurrences;
         
-        Constraint abse = new Absence(base), atMo1 = new AtMost1(base), atMo2 = new AtMost2(base), atMo3 = new AtMost3(base);
+        Constraint atMo1 = new AtMost1(base), atMo2 = new AtMost2(base), atMo3 = new AtMost3(base);
         
-        abse.getEventBasedMeasures().setConfidence((double) zeroOccurrences / (double) testbedSize);
+        //abse.getEventBasedMeasures().setConfidence((double) zeroOccurrences / (double) testbedSize);
         atMo1.getEventBasedMeasures().setConfidence((double) singleOrNoOccurrences / (double) testbedSize);
         atMo2.getEventBasedMeasures().setConfidence((double) upToTwoOccurrences / (double) testbedSize);
         atMo3.getEventBasedMeasures().setConfidence((double) upToThreeOccurrences / (double) testbedSize);
 
-        abse.getEventBasedMeasures().setSupport((double) zeroOccurrences / (double) numOfEventsInLog);
+        //abse.getEventBasedMeasures().setSupport((double) zeroOccurrences / (double) numOfEventsInLog);
         atMo1.getEventBasedMeasures().setSupport((double) singleOrNoOccurrences / (double) numOfEventsInLog);
         atMo2.getEventBasedMeasures().setSupport((double) upToTwoOccurrences / (double) numOfEventsInLog);
         atMo3.getEventBasedMeasures().setSupport((double) upToThreeOccurrences / (double) numOfEventsInLog);
         
-        Constraint[] newCons = new Constraint[] {abse, atMo1, atMo2, atMo3};
+        Constraint[] newCons = new Constraint[] { atMo1, atMo2, atMo3};
 
         for (Constraint con: newCons){
             con.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);

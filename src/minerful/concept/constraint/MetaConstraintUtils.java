@@ -199,7 +199,7 @@ public class MetaConstraintUtils {
 		constraintTemplates.add(AtMost3.class);
 		constraintTemplates.add(AtMost2.class);
 		constraintTemplates.add(AtMost1.class);
-		constraintTemplates.add(Absence.class);
+		//constraintTemplates.add(Absence.class);
 		
 		return constraintTemplates;
 	}
