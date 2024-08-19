@@ -10,7 +10,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintFamily.RelationConstraintSubFamily;
 
-public abstract class NegativeRelationConstraint extends RelationConstraint {
+public abstract class NegativeRelationConstraint extends RelationConstraint implements NegativeRelationConstraintInterface {
     protected RelationConstraint opponent;
 
     protected NegativeRelationConstraint() {
@@ -38,29 +38,34 @@ public abstract class NegativeRelationConstraint extends RelationConstraint {
         return super.getHierarchyLevel()+1;
     }
     
-    protected void setOpponent(RelationConstraint opposedTo, Class<?> expectedClass) {
+	protected void setOpponent(RelationConstraint opposedTo, Class<?> expectedClass) {
         if (!opposedTo.getClass().equals(expectedClass))
             throw new IllegalArgumentException("Illegal opponent constraint");
         this.opponent = opposedTo;
     }
     
-    public boolean isMoreReliableThanTheOpponent() {
+    @Override
+	public boolean isMoreReliableThanTheOpponent() {
         if (!this.hasOpponent())
             throw new IllegalStateException("No opponent constraint is set");
         return this.evtBasedMeasures.support > opponent.getEventBasedMeasures().getSupport();
     }
     
+    @Override
     public boolean hasOpponent() {
         return this.opponent != null;
     }
 
-    public RelationConstraint getOpponent() {
+    @Override
+	public RelationConstraint getOpponent() {
         return opponent;
     }
 
-    public void setOpponent(RelationConstraint opponent) {
+    @Override
+	public void setOpponent(RelationConstraint opponent) {
 		this.opponent = opponent;
 	}
 
-	public abstract Constraint getSupposedOpponentConstraint();
+	@Override
+	public abstract Constraint suggestOpponentConstraint();
 }

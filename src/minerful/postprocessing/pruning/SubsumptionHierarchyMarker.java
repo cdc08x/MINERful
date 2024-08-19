@@ -65,7 +65,6 @@ public class SubsumptionHierarchyMarker {
         for (TaskChar key : targetTaskChars) {
             for (Constraint currCon : constraintsBag.getConstraintsOf(key)) {
             	if (!currCon.isRedundant()) {
-					//System.out.println(this.policy);
             		// If the policy is to be eager wrt the hierarchy subsumptions, no matter the support, this is the way to go
             		if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE)) {
             			markGenealogyAsRedundant(currCon.getConstraintWhichThisIsBasedUpon(), currCon, key, constraintsBag);
@@ -94,12 +93,15 @@ public class SubsumptionHierarchyMarker {
 		                    }
 		                }
             		}
-	                if (currCon.getSubFamily() == RelationConstraintSubFamily.MUTUAL) {
+	                if (currCon.getSubFamily() == RelationConstraintSubFamily.POSITIVE_MUTUAL || currCon.getSubFamily() == RelationConstraintSubFamily.NEGATIVE_MUTUAL) {
+						coExiCon = (MutualRelationConstraint) currCon;
 	                	if (this.policy.equals(SubsumptionHierarchyMarkingPolicy.EAGER_ON_HIERARCHY_OVER_CONFIDENCE)) {
-	                		this.markAsRedundant(coExiCon.getForwardConstraint());
-	                		this.markAsRedundant(coExiCon.getBackwardConstraint());
+							if (coExiCon.getBackwardConstraint() != null && coExiCon.getForwardConstraint() != null){
+	                			this.markAsRedundant(coExiCon.getForwardConstraint());
+	                			this.markAsRedundant(coExiCon.getBackwardConstraint());
+							}
 	            		} else {
-		                    coExiCon = (MutualRelationConstraint) currCon;
+		                    //coExiCon = (MutualRelationConstraint) currCon;
 		                    if (coExiCon.hasImplyingConstraints()) {
 		                        if (coExiCon.isAsInformativeAsTheImplyingConstraints()) {
 		                        	logger.trace("Removing {0}" +
@@ -135,7 +137,7 @@ public class SubsumptionHierarchyMarker {
 	                        if (noRelCon.isMoreReliableThanTheOpponent()) {
 	                        	logger.trace("Removing {0}" +
 	                        			" because {1} is the opponent of {0}" +
-	                        			" but less informative",
+	                        			" and more informative",
 	                        			noRelCon.getOpponent(),
 	                        			noRelCon);
 //	                            constraintsBag.remove(key, noRelCon.getOpponent());
@@ -143,7 +145,7 @@ public class SubsumptionHierarchyMarker {
 	                        } else {
 	                        	logger.trace("Removing {0}" +
 	                        			" because {0} is the opponent of {1}" +
-	                        			" but less informative",
+	                        			" and more informative",
 	                        			noRelCon,
 	                        			noRelCon.getOpponent());
 //	                            constraintsBag.remove(key, noRelCon);

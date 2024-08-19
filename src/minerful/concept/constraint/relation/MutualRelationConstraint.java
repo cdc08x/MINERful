@@ -32,7 +32,7 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 
 	@Override
 	public RelationConstraintSubFamily getSubFamily() {
-	    return RelationConstraintSubFamily.MUTUAL;
+	    return RelationConstraintSubFamily.POSITIVE_MUTUAL;
 	}
 
 	@Override
@@ -62,21 +62,21 @@ public abstract class MutualRelationConstraint extends RelationConstraint {
 	}
 
 	public boolean isAsInformativeAsTheImplyingConstraints() {
-	    return	this.evtBasedMeasures.support >= forwardConstraint.getEventBasedMeasures().getSupport() &&
-	            this.evtBasedMeasures.support >= backwardConstraint.getEventBasedMeasures().getSupport();
+	    return	this.evtBasedMeasures.confidence >= forwardConstraint.getEventBasedMeasures().getConfidence() &&
+	            this.evtBasedMeasures.confidence >= backwardConstraint.getEventBasedMeasures().getConfidence();
 	}
 
 	public boolean isMoreInformativeThanAnyOfImplyingConstraints() {
-	    return	this.evtBasedMeasures.support >= forwardConstraint.getEventBasedMeasures().getSupport() ||
-	            this.evtBasedMeasures.support >= backwardConstraint.getEventBasedMeasures().getSupport();
+	    return	this.evtBasedMeasures.confidence >= forwardConstraint.getEventBasedMeasures().getConfidence() ||
+	            this.evtBasedMeasures.confidence >= backwardConstraint.getEventBasedMeasures().getConfidence();
 	}
 
 	public boolean isMoreInformativeThanForwardConstraint() {
-	    return	this.evtBasedMeasures.support >= forwardConstraint.getEventBasedMeasures().getSupport();
+	    return	this.evtBasedMeasures.confidence >= forwardConstraint.getEventBasedMeasures().getConfidence();
 	}
 
 	public boolean isMoreInformativeThanBackwardConstraints() {
-	    return	this.evtBasedMeasures.support >= backwardConstraint.getEventBasedMeasures().getSupport();
+	    return	this.evtBasedMeasures.confidence >= backwardConstraint.getEventBasedMeasures().getConfidence();
 	}
 
 	protected boolean ckeckConsistency(RelationConstraint forwardConstraint, RelationConstraint backwardConstraint) {

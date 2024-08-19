@@ -42,14 +42,14 @@ public class ProcessSpecificationTransferObject {
 		}
 	}
 	
-	public ProcessSpecificationTransferObject(ProcessSpecification proMod) {
-		this.name = proMod.getName();
-		this.tasks = new HashSet<String>(proMod.howManyTasks(), (float)1.0);
-		for (TaskChar taskChar: proMod.getTasks()) {
+	public ProcessSpecificationTransferObject(ProcessSpecification proSpec) {
+		this.name = proSpec.getName();
+		this.tasks = new HashSet<String>(proSpec.howManyTasks(), (float)1.0);
+		for (TaskChar taskChar: proSpec.getTasks()) {
 			this.tasks.add(taskChar.getName());
 		}
-		this.constraints = new HashSet<DeclareConstraintTransferObject>(proMod.howManyUnmarkedConstraints(), (float)1.0);
-		for (Constraint con: proMod.getAllUnmarkedConstraints()) {
+		this.constraints = new HashSet<DeclareConstraintTransferObject>(proSpec.howManyUnmarkedConstraints(), (float)1.0);
+		for (Constraint con: proSpec.getAllUnmarkedConstraints()) {
 			this.constraints.add(new DeclareConstraintTransferObject(con));
 		}
 	}

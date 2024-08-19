@@ -9,28 +9,32 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 
-public class NotChainSuccession extends NegativeRelationConstraint {
+public class NotChainSuccession extends NegativeMutualRelationConstraint {
     @Override
 	public String getRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
-		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s]*)";
+		//return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s]*)";
+		return "[^%2$s]*([%2$s][%2$s]*[^%2$s%1$s][^%2$s]*)*([^%2$s]*|[%2$s]*)";
     }
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+    	//return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+		return "G((%2$s -> !X(%1$s)) & (%1$s -> !Y(%2$s)))";
     }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*([%1$s][%2$s][^%1$s%2$s]*){1,}[^%1$s%2$s]*";
+//		return "[^%1$s%2$s]*([%1$s][%2$s][^%1$s%2$s]*){1,}[^%1$s%2$s]*";
+		return "[^%2$s%1$s]*([%2$s][%1$s][^%2$s%1$s]*){1,}[^%2$s%1$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G((%1$s -> X(%2$s)) & (%2$s -> Y(%1$s)))"; // G((a -> X(b)) & (b -> Y(a)))
+//		return "G((%1$s -> X(%2$s)) & (%2$s -> Y(%1$s)))"; // G((a -> X(b)) & (b -> Y(a)))
+		return "G((%2$s -> X(%1$s)) & (%1$s -> Y(%2$s)))"; // G((a -> X(b)) & (b -> Y(a)))
 	}
 
     
@@ -50,7 +54,8 @@ public class NotChainSuccession extends NegativeRelationConstraint {
         return super.getHierarchyLevel()+1;
     }
     
-    public void setOpposedTo(RelationConstraint opposedTo) {
+	@Override
+    public void setOpponent(RelationConstraint opposedTo) {
         super.setOpponent(opposedTo, ChainSuccession.class);
     }
 
@@ -60,12 +65,17 @@ public class NotChainSuccession extends NegativeRelationConstraint {
 	}
 
 	@Override
-    public ConstraintImplicationVerse getImplicationVerse() {
-        return ConstraintImplicationVerse.BOTH;
-    }
+	public RelationConstraint getPossibleForwardConstraint() {
+		return new NotChainResponse(base, implied);
+	}
 
 	@Override
-	public Constraint getSupposedOpponentConstraint() {
+	public RelationConstraint getPossibleBackwardConstraint() {
+		return new NotChainPrecedence(base, implied);
+	}
+
+	@Override
+	public Constraint suggestOpponentConstraint() {
 		return new ChainSuccession(base, implied);
 	}
 	
@@ -80,4 +90,5 @@ public class NotChainSuccession extends NegativeRelationConstraint {
 		super.checkParams(taskCharSets);
 		return new NotChainSuccession(taskCharSets[0], taskCharSets[1]);
 	}
+
 }

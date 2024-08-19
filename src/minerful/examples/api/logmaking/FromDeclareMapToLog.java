@@ -51,7 +51,7 @@ public class FromDeclareMapToLog {
 		/*
 		 * The log XLog is an in-memory representation of the log, which can be later serialized in XES or MXML formats.
 		 */
-		XLog log = logMak.createLog(proSpec);
+		XLog log = logMak.createLog(proSpec, null);
 		
 		logMakParameters.outputEncoding = OUTPUT_ENCODING;
 		System.out.println(logMak.printEncodedLog());

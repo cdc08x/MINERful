@@ -26,7 +26,7 @@ public class FromJsonProcessSpecificationToAutomaton {
 				+ "{template: notcoexistence, parameters: [['Accept paper'],['Reject paper']]}"
 				+ "] }";
 
-		ProcessSpecification proMod =
+		ProcessSpecification proSpec =
 			new ProcessSpecificationEncoderDecoder()
 //		/* Alternative 1: load from file. Uncomment the following line to use this method. */ 
 //			.readFromJsonFile(new File("/home/cdc08x/Code/MINERful/temp/BPIC2012-disco.json"));
@@ -40,10 +40,10 @@ public class FromJsonProcessSpecificationToAutomaton {
 		outParams.fileToSaveDotFileForAutomaton = OUTPUT_DOT_FILE;
 		
 		// With the following command, the DOT file is stored directly in the output file.
-		new MinerFulOutputManagementLauncher().manageOutput(proMod, outParams);
+		new MinerFulOutputManagementLauncher().manageOutput(proSpec, outParams);
 		
 		// If you prefer to retain the DOT string in memory:
-		ConstraintsPrinter cPrin = new ConstraintsPrinter(proMod);
+		ConstraintsPrinter cPrin = new ConstraintsPrinter(proSpec);
 		String dotString = cPrin.printDotAutomaton();
 		System.out.println(dotString);  // Prints out the whole DOT file
 		

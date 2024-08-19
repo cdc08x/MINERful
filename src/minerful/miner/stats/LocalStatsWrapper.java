@@ -101,12 +101,17 @@ public class LocalStatsWrapper {
 	protected TaskChar baseTask;
 	protected TaskCharArchive archive;
 	protected Integer firstOccurrenceAtThisStep;
+
 	protected SortedSet<Integer> repetitionsAtThisStep;
 	public Map<Integer, Integer> repetitions;
 	public Map<TaskChar, StatsCell> interplayStatsTable;
 	protected Map<TaskChar, Integer> neverMoreCooccurrencesAtThisStep;
 	protected Map<TaskChar, Boolean> atLeastOneCooccurrenceInThisTrace;
 	protected Map<TaskChar, Integer> adjacentOccurrencesInThisTrace;
+	protected Map<TaskChar, Integer> otherTasks;
+	protected Map<TaskChar, Boolean> tasksBeforeTheFirst;
+	
+
 	protected Map<TaskChar, AlternatingCounterSwitcher> alternatingCntSwAtThisStep;
 	public int occurencesAsFirst;
 	public int occurrencesAsLast;
@@ -133,20 +138,26 @@ public class LocalStatsWrapper {
 		this.neverMoreCooccurrencesAtThisStep = new HashMap<TaskChar, Integer>(alphabet.size(), (float)1.0);
 		this.atLeastOneCooccurrenceInThisTrace = new HashMap<TaskChar, Boolean>(alphabet.size(), (float)1.0);
 		this.adjacentOccurrencesInThisTrace = new HashMap<TaskChar, Integer>(alphabet.size(), (float)1.0);
+		this.otherTasks = new HashMap<TaskChar, Integer>(alphabet.size(), (float)1.0);
+		this.tasksBeforeTheFirst = new HashMap<TaskChar, Boolean>(alphabet.size(), (float)1.0);
 		this.alternatingCntSwAtThisStep = new HashMap<TaskChar, AlternatingCounterSwitcher>(alphabet.size(), (float)1.0);
 		for (TaskChar task : alphabet) {
 			this.interplayStatsTable.put(task, new StatsCell());
 			this.adjacentOccurrencesInThisTrace.put(task, 0);
+			
 			if (!task.equals(this.baseTask)) {
+				this.otherTasks.put(task, 0);
 				this.neverMoreCooccurrencesAtThisStep.put(task, 0);
 				this.atLeastOneCooccurrenceInThisTrace.put(task, false);
+				this.tasksBeforeTheFirst.put(task,false);
 				this.alternatingCntSwAtThisStep.put(task,
 						new AlternatingCounterSwitcher());
 			}
 		}
 	}
 
-	void newAtPosition(Event event, int position, boolean onwards) {
+	void newAtPosition(Event event, int position, boolean onwards, SortedSet<TaskChar> beforethefirst) {
+		
 		if (this.archive.containsTaskCharByEvent(event)) {
 			TaskChar tCh = this.archive.getTaskCharByEvent(event);
 			/* if the occurred character is equal to this */
@@ -158,6 +169,10 @@ public class LocalStatsWrapper {
 				/* if this is the first occurrence in the step, record it */
 				if (this.firstOccurrenceAtThisStep == null) {
 					this.firstOccurrenceAtThisStep = position;
+					/*record each task presenti in beforthefirst according with the current first occurrence*/
+					for (TaskChar before : beforethefirst){
+							this.tasksBeforeTheFirst.put(before, true);
+						}
 				} else {
 					/*
 					 * if this is not the first time this the task occurs in the step,
@@ -181,12 +196,17 @@ public class LocalStatsWrapper {
 			}
 			/* if the occurred character is NOT equal to this */
 			else {
+				/*counter of occurrences for each task different from the current one*/
+				this.otherTasks.put(tCh, this.otherTasks.get(tCh) + 1);
 				AlternatingCounterSwitcher myAltCountSwitcher = this.alternatingCntSwAtThisStep.get(tCh);
 				StatsCell statsCell = this.interplayStatsTable.get(tCh);
 				/* store the info that tCh occurs after the pivot */
 				this.neverMoreCooccurrencesAtThisStep.put(tCh, 0);
 				/* store that in this trace there has been at least an occorrence of tCh after the pivot */
 				this.atLeastOneCooccurrenceInThisTrace.put(tCh, true);
+				
+				
+				
 				/* is this reading analysis onwards? */
 				if (onwards) {// onwards?
 					/* If there has been an alternation with an in-between repetition, record it! */
@@ -208,7 +228,9 @@ public class LocalStatsWrapper {
 					 * string from left to right, i.e., backwards) and restart the
 					 * counter
 					 */
+					
 					statsCell.inBetweenRepsBackwards += myAltCountSwitcher.flush();
+					
 				}
 			}
 
@@ -231,11 +253,13 @@ public class LocalStatsWrapper {
 						If some task B occurs at distance 1,
 						then all other tasks X violate ChainPrecedence(X,A).
 					*/
+				
 					if (Math.abs(position - occurredAlsoAt) == 1) {
 						this.adjacentOccurrencesInThisTrace.put(tCh, this.adjacentOccurrencesInThisTrace.get(tCh) + 1);
 					}
 				}
 			}
+			
 			/* Adjust the counter for adjacences to the first occurrence */
 			if  (Math.abs(position - firstOccurrenceAtThisStep) == 1) {
 				this.adjacentOccurrencesInThisTrace.put(tCh, this.adjacentOccurrencesInThisTrace.get(tCh) + 1);
@@ -288,6 +312,7 @@ public class LocalStatsWrapper {
 			// ": " + neverMoreOccurrencesInStep.get(chr)); System.out.print("\n");}
 		}
 	}
+	
 
 	/**
 	 * Records that task <code>neverOccurredTask</code> did not co-occur in this trace.
@@ -315,19 +340,27 @@ public class LocalStatsWrapper {
 		 * Record the amount of occurrences AT THIS STEP and the total amount
 		 * OVER ALL OF THE STEPS
 		 */
+	
 		if (!secondPass) {
 			this.updateOccurrencesCounters();
 		}
 		AlternatingCounterSwitcher sw = null;
 		StatsCell cell = null;
 		if (this.firstOccurrenceAtThisStep != null) {
+			/* Record the alternate tasks that success in the trace*/
+			this.recordAlternateSuccessionTasks(onwards);
+			/* Record the adjacent tasks that success in the trace*/
+			this.recordAdjacentSuccessionTasks(onwards);
+			/* Record the tasks that success in the trace*/
+			this.recordSuccessionTasks();
+
 			/* Record what did not occur in the step, afterwards or backwards */
 			this.recordTasksThatDidntCooccurAnymoreInStep(onwards);
 			/* Record the tasks that co-occurred in the trace, afterwards or backwards */
 			this.recordTasksThatCooccurredInTrace(onwards);
 			/* Record the adjacent tasks, afterwards or backwards */
 			this.recordAdjacentTasks(onwards);
-
+			
 			/* Stores that in this trace at least a repetition occurred (in case), then 
 			 * resets the switchers for the alternations counter */
 			for (TaskChar taskChar : this.alternatingCntSwAtThisStep.keySet()) {
@@ -344,8 +377,10 @@ public class LocalStatsWrapper {
 				finaliCell.finalizeAnalysisStep(onwards, secondPass);
 			}
 			/* Resets the local stats-table counters */
+			
 			this.firstOccurrenceAtThisStep = null;
 			this.repetitionsAtThisStep = null;
+			
 		}
 	}
 
@@ -370,7 +405,77 @@ public class LocalStatsWrapper {
 			/* Reset the counter! */
 			this.adjacentOccurrencesInThisTrace.put(otherTCh, 0);
 		}
+		
 	}
+
+	protected void recordSuccessionTasks() {
+		/* For each character, preceding or not the first occurrence of the activation in the trace */
+		for (TaskChar othertCh : this.tasksBeforeTheFirst.keySet()) {
+			/*If the char is before the first activation*/
+			if (this.tasksBeforeTheFirst.get(othertCh)) {
+				/*If there is at least one occurrence of the target after the last activation*/
+				if (this.neverMoreCooccurrencesAtThisStep.get(othertCh)>0){
+					this.interplayStatsTable.get(othertCh).setAsSuccession();
+				}
+				/*Reset the counter*/
+				this.tasksBeforeTheFirst.put(othertCh, false);
+
+			}
+
+		}
+	}
+
+	protected void recordAdjacentSuccessionTasks(boolean onwards) {
+		
+		int totalAmountOfOccurrences = 0;
+		if (this.repetitionsAtThisStep == null) { // In case of no repetitions in this trace beyond the first
+			if (this.firstOccurrenceAtThisStep == null) { // In case of no occurrences at all, skip this
+				return;
+			} else { // Otherwise leave the default value (one) for totalAmountOfOccurrences
+				totalAmountOfOccurrences = 1;
+			}
+		} else {
+			totalAmountOfOccurrences = this.repetitionsAtThisStep.size() + 1;
+		}
+		
+		/* For each character, preceding or not the first occurrence of the activation in the trace */
+		for (TaskChar othertCh : this.tasksBeforeTheFirst.keySet()) {
+			/*If the char is not before the first activation && all the occurrences are adjacent && target and activation have the same number of occurrences*/
+			if (!this.tasksBeforeTheFirst.get(othertCh) && this.adjacentOccurrencesInThisTrace.get(othertCh) == totalAmountOfOccurrences && this.otherTasks.get(othertCh)== totalAmountOfOccurrences){
+				this.interplayStatsTable.get(othertCh).setAsAdjacentSuccession(onwards);		
+			}
+			/*Reset the counter*/
+			this.otherTasks.put(othertCh, 0);
+			
+		}
+	}
+
+	protected void recordAlternateSuccessionTasks(boolean onwards) {
+		
+		int totalAmountOfOccurrences = 0;
+		if (this.repetitionsAtThisStep == null) { // In case of no repetitions in this trace beyond the first
+			if (this.firstOccurrenceAtThisStep == null) { // In case of no occurrences at all, skip this
+				return;
+			} else { // Otherwise leave the default value (one) for totalAmountOfOccurrences
+				totalAmountOfOccurrences = 1;
+			}
+		} else {
+			totalAmountOfOccurrences = this.repetitionsAtThisStep.size() + 1;
+		}
+		/* For each character, preceding or not the first occurrence of the activation in the trace */
+		for (TaskChar othertCh : this.tasksBeforeTheFirst.keySet()) {
+			/*If the char is not before the first activation && target and activation have the same number of occurrences*/
+			if (!this.tasksBeforeTheFirst.get(othertCh) && (this.otherTasks.get(othertCh)== totalAmountOfOccurrences)) {
+				/*If there are no occurrences of the target after the last activation*/
+				if (!(this.neverMoreCooccurrencesAtThisStep.get(othertCh)>0)){
+					this.interplayStatsTable.get(othertCh).setAsAlternateSuccession(onwards);
+				}
+			
+			}
+
+		}
+	}
+
 
 	protected void recordTasksThatCooccurredInTrace(boolean onwards) {
 		/* For each character, occurred or not in the step */
@@ -457,6 +562,7 @@ public class LocalStatsWrapper {
 	public int getOccurrencesAsLast() {
 		return this.occurrencesAsLast;
 	}
+
 
 	@Override
 	public String toString() {

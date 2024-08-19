@@ -68,6 +68,9 @@ public class OccurrencesStatsBuilder {
         LogTraceParser auxTraceParser = null;
         
         SortedSet<TaskChar> occurredEvents = null;
+        SortedSet<TaskChar> beforetheFirst = null;
+
+
         Event auxEvent = null;
         TaskChar auxTaskChar = null;
 
@@ -79,6 +82,8 @@ public class OccurrencesStatsBuilder {
         	auxTraceParser.init();
 
             occurredEvents = new TreeSet<TaskChar>();
+            beforetheFirst = new TreeSet<TaskChar>();
+
             auxEvent = null;
             int positionCursor = 0;
 //            boolean contemporaneity = false;
@@ -96,8 +101,15 @@ public class OccurrencesStatsBuilder {
 //	                }
                     if (this.statsTable.taskCharArchive.containsTaskCharByEvent(auxEvent)) {
                     	auxTaskChar = this.statsTable.taskCharArchive.getTaskCharByEvent(auxEvent);
+                        // record the occurrences of this chr if it is not already in occurredEvents when going onwards
+                        if (!occurredEvents.contains(auxTaskChar) && onwards){
+                            for (TaskChar occurredEvt : occurredEvents){
+                                beforetheFirst.add(occurredEvt);
+                            }
+                        }
     	                // record the occurrence of this chr in the current string
     	                occurredEvents.add(auxTaskChar);
+                        
     	                for (TaskChar occurredEvt : occurredEvents) {
     	                    // for every already occurred chr, register the new occurrence of the current in its own stats table, at the proper distance.
     	                	this.statsTable.statsTable.get(occurredEvt).newAtPosition(
@@ -106,7 +118,8 @@ public class OccurrencesStatsBuilder {
     	                                ?   positionCursor
     	                                :   0 - positionCursor
     	                            ),
-    	                            onwards
+    	                            onwards,
+                                    beforetheFirst
     	                    );
     	                }
                     }

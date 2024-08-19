@@ -19,10 +19,15 @@ import minerful.concept.constraint.ConstraintFamily.ConstraintImplicationVerse;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.relation.AlternatePrecedence;
 import minerful.concept.constraint.relation.AlternateResponse;
+import minerful.concept.constraint.relation.AlternateSuccession;
 import minerful.concept.constraint.relation.ChainPrecedence;
 import minerful.concept.constraint.relation.ChainResponse;
+import minerful.concept.constraint.relation.ChainSuccession;
+import minerful.concept.constraint.relation.CoExistence;
 import minerful.concept.constraint.relation.NotChainPrecedence;
 import minerful.concept.constraint.relation.NotChainResponse;
+import minerful.concept.constraint.relation.NotChainSuccession; 
+import minerful.concept.constraint.relation.NotCoExistence;
 import minerful.concept.constraint.relation.NotPrecedence;
 import minerful.concept.constraint.relation.NotRespondedExistence;
 import minerful.concept.constraint.relation.NotResponse;
@@ -30,6 +35,9 @@ import minerful.concept.constraint.relation.Precedence;
 import minerful.concept.constraint.relation.RelationConstraint;
 import minerful.concept.constraint.relation.RespondedExistence;
 import minerful.concept.constraint.relation.Response;
+import minerful.concept.constraint.relation.Succession;
+import minerful.concept.constraint.relation.NotSuccession;
+
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.miner.stats.LocalStatsWrapper;
 import minerful.miner.stats.StatsCell;
@@ -129,6 +137,14 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 		constraintsBag.getOrAdd(pivotTask, new NotChainResponse(pivotTask, searchedTask)),
                 		constraintsBag.getOrAdd(pivotTask, new NotPrecedence(searchedTask, pivotTask)),
                 		constraintsBag.getOrAdd(pivotTask, new NotChainPrecedence(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new Succession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new NotSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new ChainSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new AlternateSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new NotChainSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new CoExistence(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(pivotTask, new NotCoExistence(searchedTask, pivotTask)),
+
                 };
                 
                 for (Constraint nuCon : nuCons) {
@@ -137,6 +153,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 	                					nuCon,
 	                					pivotLocalStats,
 	                					interplayStats,
+										reversedInterplayStats,
 	                					searchedLocalStats,
 	                					globalStats.numOfEvents,
 	                					globalStats.logSize)
@@ -167,6 +184,7 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 			Constraint nuCon,
 			LocalStatsWrapper pivotLocalStats,
 			StatsCell interplayStats,
+			StatsCell reversedInterplayStats,
 			LocalStatsWrapper searchedLocalStats,
 			long numOfEventsInLog,
 			long numOfTracesInLog) {
@@ -174,9 +192,11 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 		double	satEvtNum = 0.0,
 				satTrcNum = 0.0;
 		long	pivotOccurrences = pivotLocalStats.getTotalAmountOfOccurrences(),
+				searchedOccurrences = searchedLocalStats.getTotalAmountOfOccurrences(),
+				tracesWithSearched = (long) reversedInterplayStats.inHowManyTracesItNeverOccurredAtAll(),
 				tracesWithPivot = pivotLocalStats.getTotalAmountOfTracesWithOccurrence();
 		if (conClass.equals(RespondedExistence.class)) {
-			satEvtNum = pivotLocalStats.getTotalAmountOfOccurrences() - interplayStats.howManyTimesItNeverOccurredAtAll();
+			satEvtNum = pivotOccurrences - interplayStats.howManyTimesItNeverOccurredAtAll();
 			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredAtAll();
 		}
 		else if (conClass.equals(Response.class)) {
@@ -239,6 +259,41 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 				satTrcNum -= interplayStats.distancesPerTrace.get(-1);
 			}
 		}
+		else if (conClass.equals(Succession.class)){ 
+			satEvtNum = pivotOccurrences + searchedOccurrences - interplayStats.howManyTimesItNeverOccurredOnwards() - reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
+			satTrcNum = reversedInterplayStats.tracesWithSuccession;
+		}
+		else if (conClass.equals(NotSuccession.class)){ 
+			satEvtNum = interplayStats.howManyTimesItNeverOccurredOnwards() + reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
+			satTrcNum = tracesWithPivot - reversedInterplayStats.tracesWithSuccession;
+		}
+		else if (conClass.equals(ChainSuccession.class)){
+			if (interplayStats.distances.get(1) != null && reversedInterplayStats.distances.get(-1) != null) {
+				satEvtNum = interplayStats.distances.get(1) + reversedInterplayStats.distances.get(-1);
+			}
+			satTrcNum = interplayStats.tracesWithAdjacentSuccession;
+		}
+		else if(conClass.equals(AlternateSuccession.class)){
+			satEvtNum = pivotOccurrences + searchedOccurrences;
+			satEvtNum -= interplayStats.howManyTimesItNeverOccurredOnwards() + reversedInterplayStats.inBetweenRepsBackwards + reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
+			satTrcNum = interplayStats.tracesWithAlternateSuccession;
+		}
+		else if (conClass.equals(NotChainSuccession.class)){
+			satEvtNum = pivotOccurrences + searchedOccurrences;
+			
+			if (interplayStats.distances.get(1) != null && reversedInterplayStats.distances.get(-1) != null) {
+				satEvtNum -= interplayStats.distances.get(1) + reversedInterplayStats.distances.get(-1);
+			}
+			satTrcNum = tracesWithPivot - interplayStats.tracesWithAdjacentSuccession;
+		}
+		else if (conClass.equals(CoExistence.class)){
+			satEvtNum = pivotOccurrences + searchedOccurrences - interplayStats.howManyTimesItNeverOccurredAtAll() - reversedInterplayStats.howManyTimesItNeverOccurredAtAll();
+			satTrcNum = tracesWithPivot - interplayStats.inHowManyTracesItNeverOccurredAtAll();
+		}
+		else if (conClass.equals(NotCoExistence.class)){
+			satEvtNum = interplayStats.howManyTimesItNeverOccurredAtAll() + reversedInterplayStats.howManyTimesItNeverOccurredAtAll();
+			satTrcNum = interplayStats.inHowManyTracesItNeverOccurredAtAll();
+		}
 		else {
 			throw new IllegalArgumentException("The computation of interestingness measures for the given class (" + conClass.getSimpleName() + ") is not (yet!) possible");
 		}
@@ -249,12 +304,23 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 		nuCon.getTraceBasedMeasures().setSupport(satTrcNum / numOfTracesInLog);
 //		logger.trace(String.format("There are %2$f satisfying occurrences for %1$s. The confidence is thus %2$f / %3$d = %4$f",
 //				constraint, satOccurs, pivotOccurrences, satOccurs / pivotOccurrences));
-		nuCon.getEventBasedMeasures().setConfidence(satEvtNum / pivotOccurrences);
-		nuCon.getTraceBasedMeasures().setConfidence(satTrcNum / tracesWithPivot);
+		
+
+		if (conClass.equals(CoExistence.class) || conClass.equals(NotCoExistence.class) || conClass.equals(Succession.class) || conClass.equals(NotSuccession.class) || conClass.equals(AlternateSuccession.class) || conClass.equals(ChainSuccession.class) || conClass.equals(NotChainSuccession.class)){
+			nuCon.getEventBasedMeasures().setConfidence(satEvtNum / (double)(pivotOccurrences+ searchedOccurrences));
+			nuCon.getTraceBasedMeasures().setConfidence(satTrcNum / (double)(tracesWithPivot + tracesWithSearched));
+			nuCon.getEventBasedMeasures().setCoverage((double)(pivotOccurrences + searchedOccurrences) / numOfEventsInLog);
+			nuCon.getTraceBasedMeasures().setCoverage((double)(tracesWithPivot + tracesWithSearched) / numOfTracesInLog);
+
+		}
+		else{
+			nuCon.getEventBasedMeasures().setConfidence(satEvtNum / pivotOccurrences);
+			nuCon.getTraceBasedMeasures().setConfidence(satTrcNum / tracesWithPivot);
+			nuCon.getEventBasedMeasures().setCoverage((double)pivotOccurrences / numOfEventsInLog);
+			nuCon.getTraceBasedMeasures().setCoverage((double)tracesWithPivot / numOfTracesInLog);
+		}
 //		logger.trace(String.format("The pivot participation fraction for %1$s is %3$f. The interest factor is thus %2$f * %3$f = %4$f",
 //				constraint, constraint.getConfidence(), pivotParticipationFraction, constraint.getConfidence() * pivotParticipationFraction));
-		nuCon.getEventBasedMeasures().setCoverage((double)pivotOccurrences / numOfEventsInLog);
-		nuCon.getTraceBasedMeasures().setCoverage((double)tracesWithPivot / numOfTracesInLog);
 		
 		return nuCon;
 	}

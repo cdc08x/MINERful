@@ -126,8 +126,6 @@ public class MinerFulSlidingLogMaker extends MinerFulMinerStarter {
 				XLog outEvLog =  xFactory.createLog(inEvLog.getAttributes());
 				List<XTrace> traceList = new ArrayList<XTrace>(inEvLog);
 				File outFile =  null;
-				System.err.println("Lurido merdone: " + traceList.size());
-				System.err.println("Lurido merdone: " + outEvLog.size());
 
 
 				OutputStream outStream = null;
@@ -214,7 +212,6 @@ public class MinerFulSlidingLogMaker extends MinerFulMinerStarter {
 	 */
 	private static boolean printEncodedLogInStream(OutputStream outStream, SlidingLogXtractorCmdParameters slideParams, XLog log) throws IOException {
 
-		System.err.println("Lurido merdone: " + log.size());
 		switch(slideParams.outputEncoding) {
 		case xes:
 			new XesXmlSerializer().serialize(log, outStream);

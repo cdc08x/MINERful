@@ -243,13 +243,13 @@ public abstract class RelationConstraint extends Constraint {
 	
 	
 	@Override
-	public TaskCharSet getTarget() {
-		return getImplied();
+	public TaskCharSet[] getTargets() {
+		return new TaskCharSet[] { getImplied() };
 	}
 
 	@Override
-	public TaskCharSet getActivator() {
-		return getBase();
+	public TaskCharSet[] getActivators() {
+		return new TaskCharSet[] { getBase() };
 	}
 
 }

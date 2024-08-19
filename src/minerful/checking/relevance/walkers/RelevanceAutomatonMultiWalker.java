@@ -49,7 +49,6 @@ public class RelevanceAutomatonMultiWalker {
 			List<List<Character>> charParametersList) {
 		this.name = name;
 		init(vAwaWildAuto, logTranslationMap);
-//System.out.println("Lurido merdonazzo charParametersList " + charParametersList);
 		this.walkers = setupAllWalkers(charParametersList);
 	}
 	
@@ -58,8 +57,6 @@ public class RelevanceAutomatonMultiWalker {
 		ArrayList<RelevanceAutomatonWalker> walkers =
 				new ArrayList<RelevanceAutomatonWalker>(charParametersList.size());
 		for (List<Character> charParameters : charParametersList) {
-//System.out.println("Lurido merdo charParameters " + charParameters);
-//System.out.println("Lurido merdo alphabetWithoutWildcard " + automAlphabetNoWildcard);
 			walkers.add(
 					new RelevanceAutomatonWalker(
 							this.name + "/" + charParameters,
@@ -69,7 +66,6 @@ public class RelevanceAutomatonMultiWalker {
 							vacuAwaWildAuto.getInitialWildState()));
 
 		}
-//System.out.println("Lurido merdone logTranslationMap: " + logTranslationMap);
 		return walkers;
 	}
 

@@ -62,7 +62,7 @@ public class FromStringsProcessSpecificationToLog {
 		bag.add(new AtLeast1(b0b1b2b0));
 
 		// Create the process specification on the basis of the archive of tasks, and the constraints expressed thereupon
-		ProcessSpecification proMod = new ProcessSpecification(taChaAr, bag);
+		ProcessSpecification proSpec = new ProcessSpecification(taChaAr, bag);
 		
 //////////////////////////////////////////////////////////////////
 // Creation of the log...
@@ -76,7 +76,7 @@ public class FromStringsProcessSpecificationToLog {
 		MinerFulLogMaker logMak = new MinerFulLogMaker(logMakParameters);
 
 		// Create the event log
-		XLog log = logMak.createLog(proMod);
+		XLog log = logMak.createLog(proSpec, null);
 
 		// Store the log
 		logMakParameters.outputEncoding = Encoding.xes;

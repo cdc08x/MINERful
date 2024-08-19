@@ -165,17 +165,17 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		System.gc();
 
-		ProcessSpecification proMod = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
+		ProcessSpecification proSpec = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
 		
-		proMod.setName(makeDiscoveredProcessName(inputParams));
+		proSpec.setName(makeDiscoveredProcessName(inputParams));
 
-		proMod.bag = queryForConstraints(logParser, minerFulParams, postParams,
-				taskCharArchive, globalStatsTable, proMod.bag);
+		proSpec.bag = queryForConstraints(logParser, minerFulParams, postParams,
+				taskCharArchive, globalStatsTable, proSpec.bag);
 
 		System.gc();
 
-		pruneConstraints(proMod, minerFulParams, postParams);
-		return proMod;
+		pruneConstraints(proSpec, minerFulParams, postParams);
+		return proSpec;
 	}
 
 	public static String makeDiscoveredProcessName(InputLogCmdParameters inputParams) {

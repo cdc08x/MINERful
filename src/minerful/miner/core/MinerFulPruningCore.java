@@ -48,7 +48,6 @@ public class MinerFulPruningCore {
 
 	public ConstraintsBag massageConstraints() {
 		logger.info("Post-processing the discovered specification...");
-		//System.out.println(this.postProcParams.postProcessingAnalysisType.isPostProcessingRequested());
 		if (this.postProcParams.postProcessingAnalysisType.isPostProcessingRequested()) {
 			this.markConstraintsBelowThresholds();
 			if (this.postProcParams.postProcessingAnalysisType.isHierarchySubsumptionResolutionRequested()) {

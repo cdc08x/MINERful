@@ -46,7 +46,6 @@ public class ModRandomComparator extends ModularConstraintsComparator {
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
 		int result = this.computeIndex(o1).compareTo(this.computeIndex(o2));
-//System.err.println("Lurido merdone: merdonazzo: " + o1 + " against " + o2 + " fa " + result);
 		if (result == 0)
 			return super.compare(o1, o2);
 		

@@ -206,18 +206,18 @@ public abstract class Constraint implements Comparable<Constraint> {
 	}
 	
 	/**
-	 * Returns the target parameter of this relation constraint. 
-	 * @return The target parameter of this relation constraint.
+	 * Returns the target parameters of this relation constraint. 
+	 * @return The target parameters of this relation constraint.
 	 */
-	public TaskCharSet getTarget() {
-		return this.getBase();
+	public TaskCharSet[] getTargets() {
+		return new TaskCharSet[] { this.getBase() };
 	}
 
 	/**
-	 * Returns the activation parameter of this relation constraint. 
-	 * @return The activation parameter of this relation constraint.
+	 * Returns the activation parameters of this relation constraint. 
+	 * @return The activation parameters of this relation constraint.
 	 */
-	public TaskCharSet getActivator() {
+	public TaskCharSet[] getActivators() {
 		return null;
 	}
 

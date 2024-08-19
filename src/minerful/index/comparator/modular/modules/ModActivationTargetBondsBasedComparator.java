@@ -73,7 +73,6 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 		for (TaskChar tCh : tasksSortedByTargetedConstraintRelDegree) {
 			this.activationTargetBondsIndex.put(tCh, new Integer(i++));
 		}
-//		System.err.println("Lurido merdone: " + this.activationTargetBondsIndex);
 /*
 		// Start creating the final indexing
 		this.activityIndexByChainedTargeting = new HashMap<TaskChar, Integer>(tasksSortedByTargetedConstraintRelDegree.size(), (float) 1.0);
@@ -149,7 +148,6 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 				}
 			}
 		}
-//		System.err.println("Lurido merdone: " + auxRelatedActivitiesPerActivity);
 		this.relatedActivitiesPerActivity = auxRelatedActivitiesPerActivity;
 	}
 	
@@ -162,16 +160,13 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 			comparison = this.activationTargetBondsIndex.get(tCh);
 			index = (index < comparison ? index : comparison);
 		}
-//System.err.println("Lurido merdone: merdonazzo: per " + con + " index est " + index);
 		
 		if (con.getFamily() == ConstraintFamily.RELATION 
 				&& ((RelationConstraint) con).getImplicationVerse() == ConstraintImplicationVerse.BOTH) {
-//System.err.println("Lurido merdone: merdonazzo: ah, ma quisht est un bottimplichescionvers!");
 			for (TaskChar tCh : con.getImplied().getTaskCharsArray()) {
 				comparison = this.activationTargetBondsIndex.get(tCh);
 				index = (index < comparison ? index : comparison);
 				}
-//System.err.println("Lurido merdone: merdonazzo: allora per " + con + " mo index fa " + index);
 		}		
 		return index;
 	}
@@ -179,7 +174,6 @@ public class ModActivationTargetBondsBasedComparator extends ModularConstraintsC
 	@Override
 	public int compare(Constraint o1, Constraint o2) {
 		int result = this.computeIndex(o1).compareTo(this.computeIndex(o2));
-//System.err.println("Lurido merdone: merdonazzo: " + o1 + " against " + o2 + " fa " + result);
 		if (result == 0)
 			return super.compare(o1, o2);
 		
