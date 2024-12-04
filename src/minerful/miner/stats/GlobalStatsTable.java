@@ -97,6 +97,7 @@ public class GlobalStatsTable {
 
 	public void mergeAdditively(GlobalStatsTable other) {
 		this.logSize += other.logSize;
+		this.numOfEvents += other.numOfEvents;
 		
 		for (TaskChar key : this.statsTable.keySet()) {
 			if (other.statsTable.containsKey(key)) {
@@ -115,6 +116,7 @@ public class GlobalStatsTable {
 
 	public void mergeSubtractively(GlobalStatsTable other) {
 		this.logSize -= other.logSize;
+		this.numOfEvents -= other.numOfEvents;
 		
 		for (TaskChar key : this.statsTable.keySet()) {
 			if (other.statsTable.containsKey(key)) {
