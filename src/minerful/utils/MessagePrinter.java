@@ -25,7 +25,7 @@ public class MessagePrinter {
     	String threshold = "ALL";
     	switch (debugLevel) {
     	case none:
-            threshold = "INFO";
+            threshold = "INFO"; // Setting NONE here does not change things
             break;
     	case info:
     		threshold = "INFO";

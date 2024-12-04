@@ -422,7 +422,8 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public VacuityAwareWildcardAutomaton getCheckAutomaton() {
 		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(
 				this.toString(),
-				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
+				this.getRegularExpression(), 
+				TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
 		return autom;
 	}
 	

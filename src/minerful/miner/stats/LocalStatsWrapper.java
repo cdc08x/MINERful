@@ -620,6 +620,7 @@ public class LocalStatsWrapper {
 	}
 
 	public void mergeSubtractively(LocalStatsWrapper other) {
+		
 		this.occurencesAsFirst -= other.occurencesAsFirst;
 		this.occurrencesAsLast -= other.occurrencesAsLast;
 		this.totalAmountOfOccurrences -= other.totalAmountOfOccurrences;

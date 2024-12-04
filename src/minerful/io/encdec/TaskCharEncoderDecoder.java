@@ -150,7 +150,9 @@ public class TaskCharEncoderDecoder {
 	public static final Character WILDCARD_CHAR = '_';
 	public static final String WILDCARD_STRING = "*";
 
+	/** Associates every AbstractTaskClass to a Character */
 	private TreeMap<AbstractTaskClass, Character> tasksDictionary;
+	/** Associates every Character to an AbstractTaskClass  */
 	private TreeMap<Character, AbstractTaskClass> inverseTasksDictionary;
 	private int charCursor, tasksCursor, boundCursor;
 

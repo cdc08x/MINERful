@@ -96,7 +96,7 @@ public class ConstraintsFitnessEvaluator {
 
         from = System.currentTimeMillis();
 
-        initStructures(taChaEncoDeco, tCharArchive, templates);
+        this.initStructures(taChaEncoDeco, tCharArchive, templates);
 		
 		int numOfGeneratedConstraints = setupAutomataWalkersByTaskPermutations(templates);
 
@@ -125,29 +125,33 @@ public class ConstraintsFitnessEvaluator {
 
 		this.vacuAwAutos = new TreeMap<Constraint,VacuityAwareWildcardAutomaton>(new TemplateBasedComparator());
 
-		int numOfGeneratedAutomata = setupCheckAutomata(templates);
+		int numOfGeneratedAutomata = this.setupCheckAutomata(templates);
 		logger.debug(String.format("Automata prepared (%d).)", numOfGeneratedAutomata));
 		
 		this.texasMultiRangers = new RelevanceAutomatonMultiWalker[templates.size()];
 	}
 
 	protected void setupAutomataWalkers(Collection<Constraint> templates, Constraint[] constraints) {
-		Map<Constraint, List<List<Character>>> parametersPerTemplate =
-				new TreeMap<Constraint, List<List<Character>>>(new TemplateBasedComparator());
-		List<Character> charParameters = null;
+		/* For every constraint, this data structure considers the list of actual parameters in the form of characters.
+		 * We have thus a list (one for each constraint)
+		 * of lists (one for each parameter of that constraint) 
+		 * of collections (the parameter's characters; can be more than one, due to branching): 
+		 */
+		Map<Constraint, List<List<Collection<Character>>>> parametersPerTemplate =
+				new TreeMap<Constraint, List<List<Collection<Character>>>>(new TemplateBasedComparator());
+		List<Collection<Character>> charParameters = null; // A tuple of parameters
 		for (Constraint constraint : constraints) {
-			if (constraint.isBranched()) {
-				// FIXME Relevance check to be added for branched Declare
-				throw new UnsupportedOperationException("Branched Declare not yet supported");
-			}
-			charParameters = new ArrayList<Character>();
-			for (TaskCharSet param : constraint.getParameters()) {
-				charParameters.addAll(param.getListOfIdentifiers());
-			}
+			logger.debug("Checking constraint " + constraint.toString());
+			charParameters = new ArrayList<Collection<Character>>(constraint.getParameters().size());
 			if (!parametersPerTemplate.containsKey(constraint)) {
-				parametersPerTemplate.put(constraint, new ArrayList<List<Character>>());
+				parametersPerTemplate.put(constraint, new ArrayList<List<Collection<Character>>>());
+			}
+			for (TaskCharSet param : constraint.getParameters()) {
+				charParameters.add(param.getListOfIdentifiers());
 			}
 			parametersPerTemplate.get(constraint).add(charParameters);
+
+			logger.debug("parametersPerTemplate.get(constraint): " + parametersPerTemplate.get(constraint));
 		}
 		int templateIndex = 0;
 		
@@ -156,6 +160,7 @@ public class ConstraintsFitnessEvaluator {
 					new RelevanceAutomatonMultiWalker(
 							template.type,
 							vacuAwAutos.get(template),
+							// The translation map associates every Character to a specific AbstractTaskClass
 							taChaEncoDeco.getTranslationMap(),
 							parametersPerTemplate.get(template));
 		}
@@ -185,7 +190,7 @@ public class ConstraintsFitnessEvaluator {
 				paramsIndex = 0;
 				nuConstraintParams = new TaskChar[constraintParams.size()];
 				for (TaskChar param : constraintParams){
-					nuConstraintParams[paramsIndex++] = tChArchive.getTaskChar(walker.decode(param.identifier));
+					nuConstraintParams[paramsIndex++] = tChArchive.getTaskChar(taChaEncoDeco.decode(param.identifier));
 				}
 				nuConstraint = template.copy(nuConstraintParams);
 				numOfGeneratedConstraints++;
@@ -203,10 +208,10 @@ public class ConstraintsFitnessEvaluator {
 		int
 			automatonIndex = 0;
 		for (Constraint paraCon : templates) {
-			if (paraCon.isBranched()) {
-				// FIXME Relevance check to be added for branched Declare
-				throw new UnsupportedOperationException("Branched Declare not yet considered");
-			}
+//			if (paraCon.isBranched()) {
+//				// FIXME Relevance check to be added for branched Declare
+//				throw new UnsupportedOperationException("Branched Declare not yet considered");
+//			}
 			vacuAwAutos.put(paraCon, paraCon.getCheckAutomaton());
 			automatonIndex++;
 		}
@@ -231,7 +236,7 @@ public class ConstraintsFitnessEvaluator {
 		int constraintIndex = 0;
 		LogTraceParser loTraParse = null;
 		Constraint constraintUnderAnalysis = null;
-		ArrayList<RelevanceAutomatonWalker> walkersToRemove = new ArrayList<RelevanceAutomatonWalker>();
+		ArrayList<RelevanceAutomatonWalker> walkersToBeRemoved = new ArrayList<RelevanceAutomatonWalker>();
 		ConstraintFitnessEvaluation eval = null;
 		
 		ConstraintsFitnessEvaluationsMap logEvalsMap = 
@@ -275,7 +280,7 @@ public class ConstraintsFitnessEvaluator {
 					// This condition is activated only when fitness is used for mining -- to save memory by removing those constraints that for sure will not make it to have a sufficient fitness at this stage already
 					if (fitnessThreshold != null && isFitnessInsufficient(fitnessThreshold, eval, logParser)) {
 						this.checkedConstraints.remove(constraintIndex);
-						walkersToRemove.add(walker);
+						walkersToBeRemoved.add(walker);
 						logEvalsMap.remove(constraintUnderAnalysis);
 					} else {
 						constraintIndex++;
@@ -283,10 +288,10 @@ public class ConstraintsFitnessEvaluator {
 				}
 				
 				// This loop is run only when fitness is used for mining -- to save memory by removing those constraints that for sure will not make it to have a sufficient fitness at this stage already
-				for (RelevanceAutomatonWalker walkerToRemove : walkersToRemove) {
+				for (RelevanceAutomatonWalker walkerToRemove : walkersToBeRemoved) {
 					texasMultiRanger.remove(walkerToRemove);
 				}
-				walkersToRemove = new ArrayList<RelevanceAutomatonWalker>();
+				walkersToBeRemoved = new ArrayList<RelevanceAutomatonWalker>();
 			}
 			barCount = displayAdvancementBars(logParser.length(), barCount);
 			traceCount++;
@@ -339,13 +344,13 @@ public class ConstraintsFitnessEvaluator {
 
 	private void updateConstraintsFitness(ConstraintsFitnessEvaluationsMap logEvalsMap, LogTraceParser loTraParser) {
 		for (Constraint con : this.checkedConstraints) {
-			con.getEventBasedMeasures().setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), loTraParser));
+			con.getTraceBasedMeasures().setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), loTraParser));
 		}
 	}
 
 	public void updateConstraintsFitness(ConstraintsFitnessEvaluationsMap logEvalsMap, LogParser logParser) {
 		for (Constraint con : this.checkedConstraints) {
-			con.getEventBasedMeasures().setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), logParser));
+			con.getTraceBasedMeasures().setFitness(computeFitness(logEvalsMap.evaluationsOnLog.get(con), logParser));
 		}
 	}
 	

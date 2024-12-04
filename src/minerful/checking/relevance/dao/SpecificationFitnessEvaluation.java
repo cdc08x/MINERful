@@ -17,7 +17,7 @@ public class SpecificationFitnessEvaluation {
 		Double avgFitness = 0.0;
 		int denominator = 0;
 		for (Constraint cns : evaloMap.evaluationsOnLog.keySet()) {
-			avgFitness += cns.getEventBasedMeasures().getFitness();
+			avgFitness += cns.getTraceBasedMeasures().getFitness();
 			denominator++;
 		}
 		return avgFitness / denominator;
