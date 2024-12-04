@@ -211,6 +211,9 @@ public class ConstraintMeasuresManager {
 			this.pcs.firePropertyChange(ConstraintChange.ChangedProperty.FITNESS.toString(), oldFitness, fitness);
 		}
 	}
+	public boolean isFitnessComputed() {
+		return fitness != UNKNOWN_FITNESS;
+	}
 
 
     private boolean checkSupport(double support) {
@@ -245,7 +248,7 @@ public class ConstraintMeasuresManager {
 		this.confidence = MIN_CONFIDENCE;
 		this.support = MIN_SUPPORT;
 		this.coverage = MIN_COVERAGE;
-		this.fitness = MIN_FITNESS;
+		this.fitness = UNKNOWN_FITNESS;
 	}
 
 }

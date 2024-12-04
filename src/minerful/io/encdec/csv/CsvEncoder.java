@@ -25,6 +25,7 @@ public class CsvEncoder {
 		TRACE_CONFIDENCE("Trace confidence"),
 		TRACE_COVERAGE("Trace coverage"),
 		TRACE_SUPPORT("Trace support"),
+		TRACE_FITNESS("Trace fitness"),
 		MARKED_FOR_EXCLUSION("Marked for exclusion"),
 		BELOW_TRHESHOLD("Below thresholds"),
 		REDUNDANT("Redudant"),
@@ -95,6 +96,9 @@ public class CsvEncoder {
 							break;
 						case TRACE_COVERAGE:
 							sottoSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getTraceBasedMeasures().getCoverage()));
+							break;
+						case TRACE_FITNESS:
+							sottoSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getTraceBasedMeasures().isFitnessComputed() ? c.getTraceBasedMeasures().getFitness() : ""));
 							break;
 						case MARKED_FOR_EXCLUSION:
 							sottoSbuf.append(c.isMarkedForExclusion() ? "TRUE" : "FALSE");

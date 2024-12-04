@@ -27,26 +27,29 @@ public class RelevanceAutomatonWalker {
 	private boolean noNeedToCheckFurther;
 	public final String name;
 
-	public RelevanceAutomatonWalker(String name, List<Collection<Character>> actualCharParams, List<Character> formalCharParams, Map<Character, AbstractTaskClass> logTranslationMap, ActivationStatusWildcardAwareState initialState) {
+	public RelevanceAutomatonWalker(String name, List<Collection<Character>> actualCharParams, List<Character> symbolicCharParams, Map<Character, AbstractTaskClass> logTranslationMap, ActivationStatusWildcardAwareState initialState) {
 		this.name = name;
 		this.alteredInverseLogTranslationMap = new HashMap<AbstractTaskClass, Character>(actualCharParams.size(), (float)1.0);
 
 		Iterator<Character> charIter = null;
-		for (int i = 0; i < formalCharParams.size(); i++) {
+		for (int i = 0; i < symbolicCharParams.size(); i++) {
 			try {
 				charIter = actualCharParams.get(i).iterator();
 			} catch (Exception e) {
-				logger.error("Issue: formalCharParams " + formalCharParams.toString());
+				logger.error("Issue: symbolicCharParams " + symbolicCharParams.toString());
 				logger.error("Issue: actualCharParams " + actualCharParams.toString());
 				throw e;
 			}
 			while (charIter.hasNext()) {
 				alteredInverseLogTranslationMap.put(logTranslationMap.get(charIter.next()),
-						formalCharParams.get(i));
+						symbolicCharParams.get(i));
 			}
 		}
 
 		this.initialState = initialState;
+		logger.debug("DEBUG PRINTOUT: symbolicCharParams " + symbolicCharParams.toString());
+		logger.debug("DEBUG PRINTOUT: actualCharParams " + actualCharParams.toString());
+		logger.debug("DEBUG PRINTOUT: alteredInverseLogTranslationMap " + alteredInverseLogTranslationMap.toString());
 		reset();
 	}
 
@@ -75,14 +78,14 @@ public class RelevanceAutomatonWalker {
 		if (!noNeedToCheckFurther) {
 			ActivationStatusWildcardAwareState necState = null;
 			RelevanceAwareTransition relAwaTrans = null;
-			Character arg0 = null;
+			Character stepChar = null;
 			logger.debug(this.name.toString() + " reads " + taskClass);
 			if (alteredInverseLogTranslationMap.containsKey(taskClass)) {
-				arg0 = codify(taskClass);
-				relAwaTrans = this.currentStateInTheWalk.getTransition(arg0);
-				necState = ((ActivationStatusWildcardAwareState) this.currentStateInTheWalk.step(arg0));
+				stepChar = codify(taskClass);
+				relAwaTrans = this.currentStateInTheWalk.getTransition(stepChar);
+				necState = ((ActivationStatusWildcardAwareState) this.currentStateInTheWalk.step(stepChar));
 				logger.debug("currentStateInTheWalk.getTransitions(): " + this.currentStateInTheWalk.getTransitions());
-				logger.debug(taskClass + " => " + arg0 + " is involved in this constraint (" + this.name + ") and leads to " + (necState!=null?necState.getStatus():null));
+				logger.debug(taskClass + " => " + stepChar + " is involved in this constraint (" + this.name + ") and leads to " + (necState!=null?necState.getStatus():null));
 			} else {
 				logger.debug(taskClass + " is not involved in this constraint (" + this.name + ")");
 				relAwaTrans = this.currentStateInTheWalk.getWildTransition();

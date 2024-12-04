@@ -70,6 +70,7 @@ public class ConstraintsFitnessEvaluator {
 		this.taChaEncoDeco = taChaEncoDeco;
 		this.taChaEncoDeco.mergeWithConstraintsAndUpdateTheirParameters(constraints);
 
+		// Extract templates from constraints. A template is taken from every constraint by invoking getSymbolic() on it
 		Collection<Constraint> templates = identifyTemplates(this.checkedConstraints);
 		
 		this.initStructures(taChaEncoDeco, null, templates);
@@ -107,14 +108,12 @@ public class ConstraintsFitnessEvaluator {
 						numOfGeneratedConstraints, (to - from)));
 	}
 
-	protected Collection<Constraint> identifyTemplates(Collection<Constraint> parametricConstraints) {
+	protected Collection<Constraint> identifyTemplates(Collection<Constraint> constraints) {
 		// In case we have, e.g., Response(a,b) and Response(c,d), they are instances of the same template, so we do not want duplicates
 		Collection<Constraint> templates = null;
-		if (parametricConstraints.size() > 1) {
-			templates = new TreeSet<Constraint>(new TemplateBasedComparator());
-			templates.addAll(parametricConstraints);
-		} else {
-			templates = parametricConstraints;
+		templates = new TreeSet<Constraint>(new TemplateBasedComparator());
+		for (Constraint constraint : constraints) {
+			templates.add(constraint.getSymbolic());
 		}
 		return templates;
 	}
@@ -137,32 +136,44 @@ public class ConstraintsFitnessEvaluator {
 		 * of lists (one for each parameter of that constraint) 
 		 * of collections (the parameter's characters; can be more than one, due to branching): 
 		 */
-		Map<Constraint, List<List<Collection<Character>>>> parametersPerTemplate =
+		Map<Constraint, List<List<Collection<Character>>>> actualParametersPerTemplate =
 				new TreeMap<Constraint, List<List<Collection<Character>>>>(new TemplateBasedComparator());
 		List<Collection<Character>> charParameters = null; // A tuple of parameters
 		for (Constraint constraint : constraints) {
 			logger.debug("Checking constraint " + constraint.toString());
 			charParameters = new ArrayList<Collection<Character>>(constraint.getParameters().size());
-			if (!parametersPerTemplate.containsKey(constraint)) {
-				parametersPerTemplate.put(constraint, new ArrayList<List<Collection<Character>>>());
+			if (!actualParametersPerTemplate.containsKey(constraint)) {
+				actualParametersPerTemplate.put(constraint, new ArrayList<List<Collection<Character>>>());
 			}
 			for (TaskCharSet param : constraint.getParameters()) {
 				charParameters.add(param.getListOfIdentifiers());
 			}
-			parametersPerTemplate.get(constraint).add(charParameters);
+			actualParametersPerTemplate.get(constraint).add(charParameters);
 
-			logger.debug("parametersPerTemplate.get(constraint): " + parametersPerTemplate.get(constraint));
+			logger.debug("parametersPerTemplate.get(constraint): " + actualParametersPerTemplate.get(constraint));
 		}
 		int templateIndex = 0;
+		int templateParamsNum = 0;
 		
 		for (Constraint template : templates) {
+			templateParamsNum = template.getParameters().size();
+			Character[] formalParameters = new Character[templateParamsNum];
+			int i = 0;
+			for (TaskCharSet parameter : template.getParameters()) {
+				// Notice that we assume formal parameters to be individual characters here, so iterator().next() will only get the first in the list
+				formalParameters[i++] = parameter.getListOfIdentifiers().iterator().next();
+			}
+			// Instantiate a RelevanceAutomatonMultiWalker for every template
 			texasMultiRangers[templateIndex++] =
 					new RelevanceAutomatonMultiWalker(
-							template.type,
+							template.type, // The template type will become the name of the RelevanceAutomatonMultiWalker
 							vacuAwAutos.get(template),
-							// The translation map associates every Character to a specific AbstractTaskClass
+							// The translation map associates every Character to a specific AbstractTaskClass of the event log
 							taChaEncoDeco.getTranslationMap(),
-							parametersPerTemplate.get(template));
+							// Get all the actual parameters that belong to the instantiation of that template
+							actualParametersPerTemplate.get(template),
+							// The formal parameters of the template
+							formalParameters);
 		}
 	}
 
@@ -204,15 +215,13 @@ public class ConstraintsFitnessEvaluator {
 		return numOfGeneratedConstraints;
 	}
 
-	protected int setupCheckAutomata(Collection<Constraint> templates) {
+	protected int setupCheckAutomata(Collection<Constraint> constraints) {
 		int
 			automatonIndex = 0;
-		for (Constraint paraCon : templates) {
-//			if (paraCon.isBranched()) {
-//				// FIXME Relevance check to be added for branched Declare
-//				throw new UnsupportedOperationException("Branched Declare not yet considered");
-//			}
-			vacuAwAutos.put(paraCon, paraCon.getCheckAutomaton());
+		for (Constraint con : constraints) {
+			// The symbolic parameters can be just always the same, say A and B!
+			// FIXME To be put where the automaton was first created, not here!!
+			vacuAwAutos.put(con, con.getSymbolic().getCheckAutomaton());
 			automatonIndex++;
 		}
 		

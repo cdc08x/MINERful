@@ -65,4 +65,10 @@ public class ChainResponse extends AlternateResponse {
 		super.checkParams(taskCharSets);
 		return new ChainResponse(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new ChainResponse(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

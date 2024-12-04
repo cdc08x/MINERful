@@ -61,4 +61,8 @@ public class AtMost3 extends ExistenceConstraint {
 		super.checkParams(taskCharSets);
 		return new AtMost3(taskCharSets[0]);
 	}
+	@Override
+	public Constraint getSymbolic() {
+		return new AtMost3(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 }

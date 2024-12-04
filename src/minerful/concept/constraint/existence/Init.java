@@ -69,4 +69,9 @@ public class Init extends AtLeast1 {
 		super.checkParams(taskCharSets);	// check that parameters are OK
 		return new Init(taskCharSets[0]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new Init(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 }

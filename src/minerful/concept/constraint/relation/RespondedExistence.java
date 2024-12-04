@@ -109,4 +109,9 @@ public class RespondedExistence extends RelationConstraint {
 		super.checkParams(taskCharSets);
 		return new RespondedExistence(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new RespondedExistence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

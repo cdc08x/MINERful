@@ -13,6 +13,7 @@ import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintFamily;
 import minerful.concept.constraint.ConstraintFamily.ConstraintSubFamily;
+import minerful.concept.constraint.relation.Response;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
 public class SequenceResponse21 extends Constraint {
@@ -142,5 +143,11 @@ public class SequenceResponse21 extends Constraint {
 	public String getNegativeRegularExpressionTemplate() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new SequenceResponse21(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1], TaskChar.SYMBOLIC_TASKCHARS[2]);
 	}
 }

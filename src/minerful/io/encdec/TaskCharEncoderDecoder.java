@@ -462,7 +462,7 @@ public class TaskCharEncoderDecoder {
 
 	/**
 	 * Includes the tasks from the constraints in the managed set.
-	 * As a side effect, it replaces the existing index characters of the constraints' parameters with new ones.
+	 * As a side effect, it replaces the existing index characters of the passed constraints' parameters with new ones.
 	 * @param constraints Constraints from which TaskChars are extracted
 	 */
 	public void mergeWithConstraintsAndUpdateTheirParameters(Constraint... constraints) {

@@ -68,4 +68,9 @@ public class End extends AtLeast1 {
 		super.checkParams(taskCharSets);	// check that parameters are OK
 		return new End(taskCharSets[0]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new End(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 }

@@ -84,4 +84,9 @@ public class NotCoExistence extends NotSuccession {
 		super.checkParams(taskCharSets);
 		return new NotCoExistence(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new NotCoExistence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

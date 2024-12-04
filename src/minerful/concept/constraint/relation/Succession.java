@@ -88,4 +88,10 @@ public class Succession extends CoExistence {
 		super.checkParams(taskCharSets);
 		return new Succession(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new Succession(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
+
 }

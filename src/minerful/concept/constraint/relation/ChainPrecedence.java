@@ -66,9 +66,9 @@ public class ChainPrecedence extends AlternatePrecedence {
 		return new ChainPrecedence(taskChars[0], taskChars[1]);
 	}
 
+	
 	@Override
-	public Constraint copy(TaskCharSet... taskCharSets) {
-		super.checkParams(taskCharSets);
-		return new ChainPrecedence(taskCharSets[0], taskCharSets[1]);
+	public Constraint getSymbolic() {
+		return new ChainPrecedence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
 	}
 }

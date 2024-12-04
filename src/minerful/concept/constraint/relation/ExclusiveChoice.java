@@ -65,4 +65,10 @@ public class ExclusiveChoice extends MutualRelationConstraint {
 		super.checkParams(taskCharSets);
 		return new ExclusiveChoice(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new ExclusiveChoice(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

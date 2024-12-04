@@ -82,4 +82,9 @@ public class AlternateSuccession extends Succession {
 		super.checkParams(taskCharSets);
 		return new AlternateSuccession(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new AlternateSuccession(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

@@ -60,4 +60,9 @@ public class AtMost1 extends AtMost2 {
 		super.checkParams(taskCharSets);
 		return new AtMost1(taskCharSets[0]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new AtMost1(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 }
