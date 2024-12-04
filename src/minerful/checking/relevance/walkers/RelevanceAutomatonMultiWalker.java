@@ -82,7 +82,7 @@ public class RelevanceAutomatonMultiWalker {
 		for (List<Collection<Character>> charParametersList : charParametersListOfLists) {
 			walkers.add(
 					new RelevanceAutomatonWalker(
-							this.name + "/" + charParametersList,
+							this.name,
 							charParametersList,
 							automAlphabetNoWildcard,
 							logTranslationMap, 

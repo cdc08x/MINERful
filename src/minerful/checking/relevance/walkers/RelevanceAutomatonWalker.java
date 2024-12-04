@@ -25,10 +25,30 @@ public class RelevanceAutomatonWalker {
 	private TraceEvaluation traceEvaluation;
 	private boolean relevantTransitionTraversed;
 	private boolean noNeedToCheckFurther;
-	public final String name;
+	public String name;
 
 	public RelevanceAutomatonWalker(String name, List<Collection<Character>> actualCharParams, List<Character> symbolicCharParams, Map<Character, AbstractTaskClass> logTranslationMap, ActivationStatusWildcardAwareState initialState) {
-		this.name = name;
+		this.name = name + '(';
+		int j = 0;
+		for (Collection<Character> actualCharParam : actualCharParams) {
+			if (j++ > 0) {
+				this.name += ", ";
+			}
+			if (actualCharParam.size() > 1) {
+				this.name += '{';
+			}
+			for (int i = 0; i < actualCharParam.size(); i++) {
+				Iterator<Character> charIter = actualCharParam.iterator();
+				if (i > 0) {
+					this.name += ", ";
+				}
+				this.name += logTranslationMap.get(charIter.next());
+			}
+			if (actualCharParam.size() > 1) {
+				this.name += '}';
+			}
+		}
+		this.name = this.name + ')';
 		this.alteredInverseLogTranslationMap = new HashMap<AbstractTaskClass, Character>(actualCharParams.size(), (float)1.0);
 
 		Iterator<Character> charIter = null;

@@ -166,7 +166,7 @@ public class ConstraintsFitnessEvaluator {
 			// Instantiate a RelevanceAutomatonMultiWalker for every template
 			texasMultiRangers[templateIndex++] =
 					new RelevanceAutomatonMultiWalker(
-							template.type, // The template type will become the name of the RelevanceAutomatonMultiWalker
+							template.type, // The template type will become part of the name of the RelevanceAutomatonMultiWalker
 							vacuAwAutos.get(template),
 							// The translation map associates every Character to a specific AbstractTaskClass of the event log
 							taChaEncoDeco.getTranslationMap(),
