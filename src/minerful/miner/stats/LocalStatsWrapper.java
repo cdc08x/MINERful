@@ -581,6 +581,7 @@ public class LocalStatsWrapper {
 		this.occurencesAsFirst += other.occurencesAsFirst;
 		this.occurrencesAsLast += other.occurrencesAsLast;
 		this.totalAmountOfOccurrences += other.totalAmountOfOccurrences;
+		this.totalAmountOfTracesWithOccurrence += other.totalAmountOfTracesWithOccurrence;
 		
 		for (Integer numOfReps : this.repetitions.keySet()) {
 			if (other.repetitions.containsKey(numOfReps)) {
@@ -623,7 +624,8 @@ public class LocalStatsWrapper {
 		this.occurencesAsFirst -= other.occurencesAsFirst;
 		this.occurrencesAsLast -= other.occurrencesAsLast;
 		this.totalAmountOfOccurrences -= other.totalAmountOfOccurrences;
-		
+		this.totalAmountOfTracesWithOccurrence -= other.totalAmountOfTracesWithOccurrence;
+
 		for (Integer numOfReps : this.repetitions.keySet()) {
 			if (other.repetitions.containsKey(numOfReps)) {
 				this.repetitions.put(numOfReps, this.repetitions.get(numOfReps) - other.repetitions.get(numOfReps));

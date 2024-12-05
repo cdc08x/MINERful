@@ -136,4 +136,9 @@ public class SequenceResponse22 extends Constraint {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new SequenceResponse22(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1], TaskChar.SYMBOLIC_TASKCHARS[2], TaskChar.SYMBOLIC_TASKCHARS[3]);
+	}
 }

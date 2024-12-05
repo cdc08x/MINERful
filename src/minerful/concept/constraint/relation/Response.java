@@ -79,4 +79,9 @@ public class Response extends RespondedExistence {
 		super.checkParams(taskCharSets);
 		return new Response(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new Response(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

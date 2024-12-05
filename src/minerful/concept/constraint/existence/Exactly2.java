@@ -61,4 +61,9 @@ public class Exactly2 extends AtLeast2 { // Multiple inheritance is not allowed 
 		super.checkParams(taskCharSets);
 		return new Exactly2(taskCharSets[0]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new Exactly2(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 }

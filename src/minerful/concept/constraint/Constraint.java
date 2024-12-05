@@ -414,6 +414,7 @@ public abstract class Constraint implements Comparable<Constraint> {
 		return this.isMarkedForExclusion() || this.isForbidden();
 	}
 	
+	public abstract Constraint getSymbolic();
 	public abstract Constraint copy(TaskChar... taskChars);
 	public abstract Constraint copy(TaskCharSet... taskCharSets);
 	public abstract boolean checkParams(TaskChar... taskChars) throws IllegalArgumentException;
@@ -422,7 +423,8 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public VacuityAwareWildcardAutomaton getCheckAutomaton() {
 		VacuityAwareWildcardAutomaton autom = new VacuityAwareWildcardAutomaton(
 				this.toString(),
-				this.getRegularExpression(), TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
+				this.getRegularExpression(), 
+				TaskCharEncoderDecoder.getTranslationMap(this.getInvolvedTaskChars()));
 		return autom;
 	}
 	

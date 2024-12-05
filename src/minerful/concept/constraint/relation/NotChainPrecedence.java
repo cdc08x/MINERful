@@ -86,4 +86,9 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
 		super.checkParams(taskCharSets);
 		return new NotChainPrecedence(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new NotChainPrecedence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

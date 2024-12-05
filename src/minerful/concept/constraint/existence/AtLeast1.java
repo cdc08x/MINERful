@@ -59,6 +59,11 @@ public class AtLeast1 extends ExistenceConstraint {
 		super.checkParams(taskCharSets);	// check that parameters are OK
 		return new AtLeast1(taskCharSets[0]);
 	}
+
+	@Override
+	public Constraint getSymbolic() {
+		return new AtLeast1(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 	
 	
 }

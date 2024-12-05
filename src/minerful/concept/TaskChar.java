@@ -15,6 +15,14 @@ import minerful.logparser.CharTaskClass;
  */
 
 public class TaskChar implements Comparable<TaskChar> {
+	/* Generic symbolic TaskChar's. */
+	public static final TaskChar[] SYMBOLIC_TASKCHARS = new TaskChar[]{ 
+			new TaskChar('0'), 
+			new TaskChar('1'), 
+			new TaskChar('2'), 
+			new TaskChar('3'), 
+			new TaskChar('4')
+	};
 	/**
 	 * Used in {{@link #getNumericId getNumericId()}.
 	 */

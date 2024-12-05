@@ -17,13 +17,15 @@ public class ConstraintMeasuresManager {
 	public static final double DEFAULT_CONFIDENCE = MAX_CONFIDENCE;
     public static final double MIN_FITNESS = 0;
     public static final double MAX_FITNESS = 1.0;
-	public static final double DEFAULT_FITNESS = MIN_FITNESS;
+    public static final double UNKNOWN_FITNESS = Double.MIN_VALUE;
+    /** The default value for a constraint's fitness is {@link #UNKNOWN_FITNESS UNKNOWN_FITNESS} */
+	public static final double DEFAULT_FITNESS = UNKNOWN_FITNESS;
     public static final double RANGE_FOR_SUPPORT = (MAX_SUPPORT - MIN_SUPPORT);
 
 	public double support = DEFAULT_SUPPORT;
 	public double confidence = DEFAULT_CONFIDENCE;
 	public double coverage = DEFAULT_COVERAGE;
-	public Double fitness = null;
+	public double fitness = DEFAULT_FITNESS;
 	public boolean evaluatedOnLog = false;
 	public boolean belowSupportThreshold = false;
 	public boolean belowConfidenceThreshold = false;
@@ -202,12 +204,15 @@ public class ConstraintMeasuresManager {
 		return fitness;
 	}
 	public void setFitness(double fitness) {
-		if (this.fitness == null || this.fitness != fitness) {
+		if (this.fitness != fitness) {
 			this.checkFitness(fitness);
 			double oldFitness = this.fitness;
 			this.fitness = fitness;
 			this.pcs.firePropertyChange(ConstraintChange.ChangedProperty.FITNESS.toString(), oldFitness, fitness);
 		}
+	}
+	public boolean isFitnessComputed() {
+		return fitness != UNKNOWN_FITNESS;
 	}
 
 
@@ -243,7 +248,7 @@ public class ConstraintMeasuresManager {
 		this.confidence = MIN_CONFIDENCE;
 		this.support = MIN_SUPPORT;
 		this.coverage = MIN_COVERAGE;
-		this.fitness = MIN_FITNESS;
+		this.fitness = UNKNOWN_FITNESS;
 	}
 
 }

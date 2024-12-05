@@ -78,4 +78,10 @@ public class NotPrecedence extends NotChainPrecedence {
 		super.checkParams(taskCharSets);
 		return new NotPrecedence(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new NotPrecedence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
+
 }

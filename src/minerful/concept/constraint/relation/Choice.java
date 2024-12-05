@@ -8,6 +8,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharSet;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.existence.Absence;
+import minerful.concept.constraint.existence.AtMost2;
 
 public class Choice extends MutualRelationConstraint {
 	@Override
@@ -65,5 +66,10 @@ public class Choice extends MutualRelationConstraint {
 	public Constraint copy(TaskCharSet... taskCharSets) {
 		super.checkParams(taskCharSets);
 		return new Choice(taskCharSets[0], taskCharSets[1]);
+	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new Choice(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
 	}
 }

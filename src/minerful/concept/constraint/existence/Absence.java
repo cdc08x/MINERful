@@ -54,4 +54,10 @@ public class Absence extends AtMost1 {
 		super.checkParams(taskCharSets);
 		return new Absence(taskCharSets[0]);
 	}
+	
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new Absence(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
 }

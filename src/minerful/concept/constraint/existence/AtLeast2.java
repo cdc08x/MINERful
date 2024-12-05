@@ -61,5 +61,10 @@ public class AtLeast2 extends AtLeast1 {
 		return new AtLeast2(taskCharSets[0]);
 	}
 	
+	@Override
+	public Constraint getSymbolic() {
+		return new AtLeast2(TaskChar.SYMBOLIC_TASKCHARS[0]);
+	}
+
 	
 }

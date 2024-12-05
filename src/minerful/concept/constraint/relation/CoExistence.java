@@ -74,4 +74,9 @@ public class CoExistence extends MutualRelationConstraint {
 		super.checkParams(taskCharSets);
 		return new CoExistence(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new CoExistence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

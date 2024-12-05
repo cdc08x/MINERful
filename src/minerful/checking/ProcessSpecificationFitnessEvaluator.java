@@ -14,7 +14,7 @@ public class ProcessSpecificationFitnessEvaluator extends ConstraintsFitnessEval
 	/**
 	 * Constructor of this class.
 	 * @param taskCharEncoderDecoder Encoder of tasks stemming from the event log
-	 * @param constraints Constraints to be evaluated
+	 * @param specification Specification to be evaluated
 	 */
 	public ProcessSpecificationFitnessEvaluator(TaskCharEncoderDecoder taskCharEncoderDecoder, ProcessSpecification specification) {
 		super(taskCharEncoderDecoder, specification.getAllUnmarkedConstraints().toArray(new Constraint[0]));

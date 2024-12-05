@@ -64,8 +64,8 @@ public class StatsCell implements Cloneable {
         this.tracesWithPredecessorCooccurrences = 0;
 
         this.tracesWithSuccession = 0;
-        this.tracesWithAdjacentSuccession=0;
-        this.tracesWithAlternateSuccession=0;
+        this.tracesWithAdjacentSuccession = 0;
+        this.tracesWithAlternateSuccession = 0;
 
         this.newDistancesInTrace = new TreeSet<Integer>();
     }
@@ -102,18 +102,18 @@ public class StatsCell implements Cloneable {
     }
 
     public void setAsSuccession() {
-            this.tracesWithSuccession += 1; 
+        this.tracesWithSuccession += 1; 
     }
 
     public void setAsAdjacentSuccession(boolean onwards) {
         if (onwards){
-        this.tracesWithAdjacentSuccession += 1;
+        	this.tracesWithAdjacentSuccession += 1;
         } 
     }
 
     public void setAsAlternateSuccession(boolean onwards) {
         if (onwards){
-        this.tracesWithAlternateSuccession += 1;
+        	this.tracesWithAlternateSuccession += 1;
         } 
     }
 
@@ -223,13 +223,6 @@ public class StatsCell implements Cloneable {
             return this.distancesPerTrace.get(NEVER_ONWARDS);
         return 0;
     }
-
-    public double inHowManyTracesItNeverOccurredOnwards2() {
-        if (this.distancesPerTrace.containsKey(NEVER_ONWARDS) && (this.distancesPerTrace.containsKey(NEVER_BACKWARDS))){
-            return Math.min(this.distances.get(NEVER_ONWARDS),this.distances.get(NEVER_BACKWARDS));
-        }
-        return 0;
-    }
     
     public double inHowManyTracesItNeverOccurredAtAll() {
         if (this.distancesPerTrace.containsKey(NEVER_EVER))
@@ -248,9 +241,8 @@ public class StatsCell implements Cloneable {
 		this.tracesWithPredecessorCooccurrences += other.tracesWithPredecessorCooccurrences;
         this.tracesWithSuccession += other.tracesWithSuccession;
         this.tracesWithAdjacentSuccession += other.tracesWithAdjacentSuccession;
+        this.tracesWithAlternateSuccession += other.tracesWithAlternateSuccession;
 
-
-		
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {
 				this.distances.put(distance, this.distances.get(distance) + other.distances.get(distance));
@@ -287,6 +279,8 @@ public class StatsCell implements Cloneable {
 		this.tracesWithPredecessorCooccurrences -= other.tracesWithPredecessorCooccurrences;
 		this.tracesWithSuccession -= other.tracesWithSuccession;
         this.tracesWithAdjacentSuccession -= other.tracesWithAdjacentSuccession;
+        this.tracesWithAlternateSuccession -= other.tracesWithAlternateSuccession;
+      
 
 		for (Integer distance : this.distances.keySet()) {
 			if (other.distances.containsKey(distance)) {

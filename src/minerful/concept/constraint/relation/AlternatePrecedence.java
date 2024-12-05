@@ -70,4 +70,9 @@ public class AlternatePrecedence extends Precedence {
 		super.checkParams(taskCharSets);
 		return new AlternatePrecedence(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new AlternatePrecedence(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }

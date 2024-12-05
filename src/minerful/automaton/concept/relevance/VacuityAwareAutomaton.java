@@ -127,6 +127,11 @@ public class VacuityAwareAutomaton extends Automaton {
 		}
 	}
 
+	/**
+	 * Decides on the activation status of a constraint on this vacuity-aware automaton.
+	 * @param currentState
+	 * @param currentStAwaState
+	 */
 	private void decideActivationStatus(State currentState, ActivationStatusAwareState currentStAwaState) {
 		boolean loop = true;
 		int outgoingAllowedTransitions = 0;

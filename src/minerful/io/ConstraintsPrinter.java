@@ -20,6 +20,7 @@ import minerful.concept.AbstractTaskClass;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
+import minerful.concept.constraint.ConstraintMeasuresManager;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
@@ -28,6 +29,7 @@ import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
 import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
 import minerful.io.encdec.nusmv.NuSMVEncoder;
 import minerful.logparser.LogParser;
+import minerful.miner.ProbabilisticRelationConstraintsMiner.ConstraintMeasures;
 import dk.brics.automaton.Automaton;
 
 public class ConstraintsPrinter {
@@ -250,14 +252,14 @@ public class ConstraintsPrinter {
 //        for (; barsCounter <= halfNumberOfBars; barsCounter++) {
 //        	sBld.append(' ');
 //        }
-        sBld.append(String.format(Locale.ENGLISH, "conf.: %4.3f; ", constraint.getEventBasedMeasures().getConfidence()));
-        sBld.append(String.format(Locale.ENGLISH, " covr.: %4.3f; ", constraint.getEventBasedMeasures().getCoverage()));
-        sBld.append(String.format(Locale.ENGLISH, " supp.: %4.3f; ", constraint.getEventBasedMeasures().getSupport()));
+        sBld.append(String.format(Locale.ENGLISH, "ev.conf.: %4.3f; ", constraint.getEventBasedMeasures().getConfidence()));
+        sBld.append(String.format(Locale.ENGLISH, " ev.covr.: %4.3f; ", constraint.getEventBasedMeasures().getCoverage()));
+        sBld.append(String.format(Locale.ENGLISH, " ev.supp.: %4.3f; ", constraint.getEventBasedMeasures().getSupport()));
         sBld.append(String.format(Locale.ENGLISH, " tr.conf.: %4.3f; ", constraint.getTraceBasedMeasures().getConfidence()));
         sBld.append(String.format(Locale.ENGLISH, " tr.covr.: %4.3f; ", constraint.getTraceBasedMeasures().getCoverage()));
         sBld.append(String.format(Locale.ENGLISH, " tr.supp.: %4.3f; ", constraint.getTraceBasedMeasures().getSupport()));
-        if (constraint.getEventBasedMeasures().getFitness() != null) {
-        	sBld.append(String.format(Locale.ENGLISH, " fit: %7.3f; ", constraint.getEventBasedMeasures().getFitness()));
+        if (constraint.getTraceBasedMeasures().getFitness() != ConstraintMeasuresManager.UNKNOWN_FITNESS) {
+        	sBld.append(String.format(Locale.ENGLISH, " fit: %4.3f; ", constraint.getTraceBasedMeasures().getFitness()));
         }
         
        	if (additionalInfo != null)

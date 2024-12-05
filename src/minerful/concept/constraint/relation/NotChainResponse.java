@@ -80,4 +80,10 @@ public class NotChainResponse extends NegativeRelationConstraint {
 		super.checkParams(taskCharSets);
 		return new NotChainResponse(taskCharSets[0], taskCharSets[1]);
 	}
+	
+
+	@Override
+	public Constraint getSymbolic() {
+		return new NotChainResponse(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }
