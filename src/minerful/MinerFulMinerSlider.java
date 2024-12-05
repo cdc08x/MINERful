@@ -194,7 +194,6 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				// wipe out existing constraints
 				proSpec.bag.wipeOutConstraints();
 
-				System.err.println("DEBUGGO" + statsTable);
 				// query the altered knowledge base!
 				qCore.discover();
 				
