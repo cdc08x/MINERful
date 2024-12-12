@@ -98,7 +98,7 @@ public class CsvEncoder {
 							sottoSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getTraceBasedMeasures().getCoverage()));
 							break;
 						case TRACE_FITNESS:
-							sottoSbuf.append(String.format(Locale.ENGLISH, "%.3f", c.getTraceBasedMeasures().isFitnessComputed() ? c.getTraceBasedMeasures().getFitness() : ""));
+							sottoSbuf.append(c.getTraceBasedMeasures().isFitnessComputed() ? String.format(Locale.ENGLISH, "%.3f", c.getTraceBasedMeasures().getFitness()) : "");
 							break;
 						case MARKED_FOR_EXCLUSION:
 							sottoSbuf.append(c.isMarkedForExclusion() ? "TRUE" : "FALSE");
