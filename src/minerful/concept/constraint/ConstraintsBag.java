@@ -238,6 +238,13 @@ public class ConstraintsBag implements Cloneable, PropertyChangeListener {
 		return this.bag.get(taskChar);
 	}
 
+	/**
+	 * Get a constraint indexed by a given {@link TaskChar TaskChar}.
+	 * 
+	 * @param taskChar character that may have indexed the constraint
+	 * @param constraint constraint to be retrieved
+	 * @return the found constraint, or null
+	 */
 	public Constraint get(TaskChar character, Constraint searched) {
 		if (!this.bag.containsKey(character)) {
 			return null;
@@ -254,12 +261,41 @@ public class ConstraintsBag implements Cloneable, PropertyChangeListener {
 		}
 		return srCnss.last();
 	}
+	
+	/**
+	 * Get a constraint indexed by one (or more) of a given {@link TaskCharSet TaskCharSet}.
+	 * 
+	 * @param taskCharSet Set of task characters that may have indexed the constraint
+	 * @param constraint  constraint to be retrieved
+	 * @return the found constraint, or null
+	 */
+	public Constraint get(TaskCharSet taskCharSet, Constraint constraint) {
+		Constraint found = null;
+		for (TaskChar tCh : taskCharSet.getTaskCharsArray()) {
+			found = this.get(tCh, constraint);
+			if (found != null) {
+				return found;
+			}
+		}
+		return found;
+	}
 
-	public Constraint getOrAdd(TaskChar character, Constraint searched) {
-		Constraint con = this.get(character, searched);
+	
+	/**
+	 * Get a constraint from the bag.
+	 * 
+	 * @param constraint  constraint to be retrieved
+	 * @return the found constraint, or null
+	 */
+	public Constraint get(Constraint constraint) {
+		return this.get(constraint.base, constraint);
+	}
+
+	public Constraint getOrAdd(Constraint constraint) {
+		Constraint con = this.get(constraint);
 		if (con == null) {
-			this.add(character, searched);
-			con = this.get(character, searched);
+			this.add(constraint);
+			con = constraint;
 		}
 		return con;
 	}

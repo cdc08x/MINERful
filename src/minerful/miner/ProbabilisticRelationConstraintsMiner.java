@@ -4,6 +4,7 @@
  */
 package minerful.miner;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -123,29 +124,31 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 interplayStats = pivotLocalStats.interplayStatsTable.get(searchedTask);
                 reversedInterplayStats = searchedLocalStats.interplayStatsTable.get(pivotTask);
 
+                logger.info(String.format("DEBUG OUTPUT constraintsBag: %s", constraintsBag));
+                
                 // TODO Make this customisable
                 nuCons = new Constraint[]{
-                		constraintsBag.getOrAdd(pivotTask, new RespondedExistence(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new Response(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new AlternateResponse(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new ChainResponse(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new Precedence(searchedTask, pivotTask)),
-                		constraintsBag.getOrAdd(pivotTask, new AlternatePrecedence(searchedTask, pivotTask)),
-                		constraintsBag.getOrAdd(pivotTask, new ChainPrecedence(searchedTask, pivotTask)),
-                		constraintsBag.getOrAdd(pivotTask, new NotRespondedExistence(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new NotResponse(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new NotChainResponse(pivotTask, searchedTask)),
-                		constraintsBag.getOrAdd(pivotTask, new NotPrecedence(searchedTask, pivotTask)),
-                		constraintsBag.getOrAdd(pivotTask, new NotChainPrecedence(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new Succession(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new NotSuccession(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new ChainSuccession(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new AlternateSuccession(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new NotChainSuccession(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new CoExistence(searchedTask, pivotTask)),
-						constraintsBag.getOrAdd(pivotTask, new NotCoExistence(searchedTask, pivotTask)),
-
+                		constraintsBag.getOrAdd(new RespondedExistence(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new Response(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new AlternateResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new ChainResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new Precedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(new AlternatePrecedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(new ChainPrecedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(new NotRespondedExistence(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new NotResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new NotChainResponse(pivotTask, searchedTask)),
+                		constraintsBag.getOrAdd(new NotPrecedence(searchedTask, pivotTask)),
+                		constraintsBag.getOrAdd(new NotChainPrecedence(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new Succession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new NotSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new ChainSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new AlternateSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new NotChainSuccession(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new CoExistence(searchedTask, pivotTask)),
+						constraintsBag.getOrAdd(new NotCoExistence(searchedTask, pivotTask)),
                 };
+                
                 
                 for (Constraint nuCon : nuCons) {
                 	nuRelaCons.add(
