@@ -425,6 +425,7 @@ public class MetaConstraintUtils {
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
 				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
+				newCon.getTraceBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardRelationConstraintTemplates()) {
@@ -432,6 +433,7 @@ public class MetaConstraintUtils {
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(implied, base);
 				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
+				newCon.getTraceBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableForwardNegativeRelationConstraintTemplates()) {
@@ -439,6 +441,7 @@ public class MetaConstraintUtils {
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
 				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
+				newCon.getTraceBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableBackwardNegativeRelationConstraintTemplates()) {
@@ -446,6 +449,7 @@ public class MetaConstraintUtils {
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(implied, base);
 				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
+				newCon.getTraceBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualRelationConstraintTemplates()) {
@@ -453,6 +457,7 @@ public class MetaConstraintUtils {
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
 				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
+				newCon.getTraceBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);				
 			}
 			for (Class<? extends Constraint> relationConstraintTypeClass : getAllDiscoverableMutualNegativeRelationConstraintTemplates()) {
@@ -460,6 +465,7 @@ public class MetaConstraintUtils {
 						TaskChar.class, TaskChar.class);
 				newCon = tmpConstructor.newInstance(base, implied);
 				newCon.getEventBasedMeasures().setAllMeasuresToMinimum();
+				newCon.getTraceBasedMeasures().setAllMeasuresToMinimum();
 				relCons.add(newCon);				
 			}
 		} catch (Exception e) {
