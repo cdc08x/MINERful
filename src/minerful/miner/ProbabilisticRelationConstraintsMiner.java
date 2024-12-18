@@ -144,7 +144,6 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 						constraintsBag.getOrAdd(pivotTask, new NotChainSuccession(searchedTask, pivotTask)),
 						constraintsBag.getOrAdd(pivotTask, new CoExistence(searchedTask, pivotTask)),
 						constraintsBag.getOrAdd(pivotTask, new NotCoExistence(searchedTask, pivotTask)),
-
                 };
                 
                 for (Constraint nuCon : nuCons) {
