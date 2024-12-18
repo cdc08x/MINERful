@@ -69,7 +69,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     
 	protected Constraint updateConstraintInBag(ConstraintsBag constraintsBag,
 			TaskChar indexingParam, Constraint discoveredCon) {
-		Constraint con = constraintsBag.getOrAdd(indexingParam, discoveredCon);       
+		Constraint con = constraintsBag.getOrAdd(discoveredCon);       
         con.getEventBasedMeasures().setConfidence(discoveredCon.getEventBasedMeasures().getConfidence());
         con.getEventBasedMeasures().setSupport(discoveredCon.getEventBasedMeasures().getSupport());
         con.getEventBasedMeasures().setCoverage(discoveredCon.getEventBasedMeasures().getCoverage());
