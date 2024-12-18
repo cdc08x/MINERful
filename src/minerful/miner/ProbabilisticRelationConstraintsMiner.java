@@ -259,29 +259,29 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
 			}
 		}
 		else if (conClass.equals(Succession.class)){ 
-			satEvtNum = pivotOccurrences + searchedOccurrences - interplayStats.howManyTimesItNeverOccurredOnwards() - reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
+			satEvtNum = pivotOccurrences + searchedOccurrences - reversedInterplayStats.howManyTimesItNeverOccurredOnwards() - interplayStats.howManyTimesItNeverOccurredBackwards();
 			satTrcNum = reversedInterplayStats.tracesWithSuccession;
 		}
 		else if (conClass.equals(NotSuccession.class)){ 
-			satEvtNum = interplayStats.howManyTimesItNeverOccurredOnwards() + reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
+			satEvtNum = reversedInterplayStats.howManyTimesItNeverOccurredOnwards() + interplayStats.howManyTimesItNeverOccurredBackwards();
 			satTrcNum = tracesWithPivot - reversedInterplayStats.tracesWithSuccession;
 		}
 		else if (conClass.equals(ChainSuccession.class)){
-			if (interplayStats.distances.get(1) != null && reversedInterplayStats.distances.get(-1) != null) {
-				satEvtNum = interplayStats.distances.get(1) + reversedInterplayStats.distances.get(-1);
+			if (interplayStats.distances.get(-1) != null && reversedInterplayStats.distances.get(1) != null) {
+				satEvtNum = interplayStats.distances.get(-1) + reversedInterplayStats.distances.get(1);
 			}
 			satTrcNum = interplayStats.tracesWithAdjacentSuccession;
 		}
 		else if(conClass.equals(AlternateSuccession.class)){
 			satEvtNum = pivotOccurrences + searchedOccurrences;
-			satEvtNum -= interplayStats.howManyTimesItNeverOccurredOnwards() + reversedInterplayStats.inBetweenRepsBackwards + reversedInterplayStats.howManyTimesItNeverOccurredBackwards();
+			satEvtNum -= reversedInterplayStats.howManyTimesItNeverOccurredOnwards() + interplayStats.inBetweenRepsBackwards + interplayStats.howManyTimesItNeverOccurredBackwards();
 			satTrcNum = interplayStats.tracesWithAlternateSuccession;
 		}
 		else if (conClass.equals(NotChainSuccession.class)){
 			satEvtNum = pivotOccurrences + searchedOccurrences;
 			
-			if (interplayStats.distances.get(1) != null && reversedInterplayStats.distances.get(-1) != null) {
-				satEvtNum -= interplayStats.distances.get(1) + reversedInterplayStats.distances.get(-1);
+			if (interplayStats.distances.get(-1) != null && reversedInterplayStats.distances.get(1) != null) {
+				satEvtNum -= interplayStats.distances.get(-1) + reversedInterplayStats.distances.get(1);
 			}
 			satTrcNum = tracesWithPivot - interplayStats.tracesWithAdjacentSuccession;
 		}
