@@ -48,5 +48,4 @@ Please read the [LICENSE](https://github.com/cdc08x/MINERful/edit/master/LICENSE
 
 # Contact
 
-Please contact the developer, [Claudio Di Ciccio](https://diciccio.net), for any information, comment or bug reporting:
-[claudio@diciccio.net](mailto:claudio@diciccio.net).
+Please contact the developers, [Claudio Di Ciccio](https://diciccio.net) and [Cecilia Iacometta](https://www.linkedin.com/in/cecilia-iacometta-980b82234/), for any information, comment or bug reporting.
