@@ -11,28 +11,24 @@ import minerful.concept.constraint.Constraint;
 public class Succession extends CoExistence {
 	@Override
 	public String getRegularExpressionTemplate() {
-		//return "[^%1$s%2$s]*([%1$s].*[%2$s])*[^%1$s%2$s]*";
-		return "[^%2$s%1$s]*([%2$s].*[%1$s])*[^%2$s%1$s]*";
+		return "[^%1$s%2$s]*([%1$s].*[%2$s])*[^%1$s%2$s]*";
 	}
     
     @Override
     public String getLTLpfExpressionTemplate() {
-    	//return "G((%1$s -> X(F(%2$s))) & (%2$s -> Y(O(%1$s))))"; // G((a -> X(F(b))) & (b -> Y(O(a))))
-		return "G((%2$s -> X(F(%1$s))) & (%1$s -> Y(O(%2$s))))";
+    	return "G((%1$s -> X(F(%2$s))) & (%2$s -> Y(O(%1$s))))"; // G((a -> X(F(b))) & (b -> Y(O(a))))
     }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+    // FIXME To be verified
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
-//		return "[^%1$s%2$s]*([%1$s][^%2$s]*){1,}[^%1$s%2$s]*";
-		return "[^%2$s%1$s]*([%2$s][^%1$s]*){1,}[^%2$s%1$s]*";
+		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([^%1$s*][%2$s])){1,}[^%1$s%2$s]*";
 	}
 
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-//		return "G((%1$s -> X(G(!%2$s))) & (%2$s -> Z(H(!%1$s))))"; // G((a -> X(G(!b))) & (b -> Z(H(!a))))
-		return "G((%2$s -> X(G(!%1$s))) & (%1$s -> Z(H(!%2$s))))"; // G((a -> X(G(!b))) & (b -> Z(H(!a))))
+		return "F((%1$s & X(G(!%2$s))) | (%2$s & Z(H(!%1$s))))"; // F((a & X(G(!b))) | (b & Z(H(!a))))
 	}
   
   

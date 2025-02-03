@@ -11,7 +11,7 @@ import minerful.concept.constraint.Constraint;
 public class CoExistence extends MutualRelationConstraint {
     @Override
 	public String getRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*(([%1$s].*[%2$s].*)|([%2$s].*[%1$s].*))*[^%1$s%2$s]*";
+		return "[^%1$s^%2$s]*(([%1$s].*[%2$s].*)|([%2$s].*[%1$s].*))*[^%1$s^%2$s]*";
     }
     
     @Override
@@ -20,15 +20,16 @@ public class CoExistence extends MutualRelationConstraint {
     }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+    // FIXME To be verified
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?";
+		//return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?"; // Probably wrong
+		return "[^%1$s^%2$s]*((([^%2$s]*[%1$s][^%2$s]*){1,})|(([^%1$s]*[%2$s][^%1$s]*){1,}))[^%1$s^%2$s]*"; // TODO Test this one
 	}
 
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G((%1$s -> !(X(F(%2$s)) | Y(O(%2$s)))) & (%2$s -> !(X(F(%1$s)) | Y(O(%1$s)))))"; // G((a -> !(X(F(b)) | Y(O(b)))) & (b -> !(X(F(a)) | Y(O(a)))))
+		return "F((%1$s & (X(G(!%2$s)) & Y(H(!%2$s)))) | (%2$s & (X(G(!%1$s)) & Y(H(!%1$s)))))"; // F((a & (X(G(!b)) & Y(H(!b)))) | (b & (X(G(!a)) & Y(H(!a)))))
 	}
     
     protected CoExistence() {

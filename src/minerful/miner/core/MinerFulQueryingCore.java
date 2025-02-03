@@ -142,8 +142,6 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         numOfConstraintsAboveThresholds += numOfExistenceConstraintsAboveThresholds;
         logger.info("Discovering relation constraints...");
         
-        logger.info(String.format("DEBUG OUTPUT bag (before): %s", bag.toString()));
-
         before = System.currentTimeMillis();
         // search for relation constraints
         
@@ -161,8 +159,6 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
 
 //        updatedBag = relaConMiner.discoverConstraints(updatedBag);
         relaConMiner.discoverConstraints(this.bag);
-        
-        logger.info(String.format("DEBUG OUTPUT bag (after): %s", bag.toString()));
         
         after = System.currentTimeMillis();
 
