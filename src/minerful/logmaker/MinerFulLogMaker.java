@@ -47,8 +47,13 @@ import dk.brics.automaton.Automaton;
 /**
  * Generates a log out of a MINERful declarative process specification.
  * @author Claudio Di Ciccio
+ * @author Cecilia Iacometta
  */
 public class MinerFulLogMaker {
+	public static final String SEQUENCE_EVENT_SEPARATOR_CHAR = ";";
+	public static final String CHAR_TASKNAME_SEPARATOR_CHAR = "=";
+	public static final String START_OF_SEQUENCE_CHAR = "<";
+	public static final String END_OF_SEQUENCE_CHAR = ">";
 	/**
 	 * Log generation parameters
 	 */
@@ -58,15 +63,18 @@ public class MinerFulLogMaker {
 	 */
 	private XLog log;
 	/**
-	 * Event log as strings
+	 * Event log as a list of sequences of <i>character</i><code>=</code><i>taskname</i> mappings, e.g., <code><C=Send docs;B=Receive positive answer;A=Receive grant></code>
 	 */
-	private String[] stringsLog;
+	private String[] charMapSeqLog;
 
-	private String[] strLog;
+	/**
+	 * Event log as a list of character strings, e.g., <code>CBA</code>
+	 */
+	private String[] stringLog;
 
 	private String legend;
 	/**
-	 * Maximum amount of traces we want to save as strings
+	 * Maximum amount of traces we want to save as strings 
 	 */
 	public static int MAX_SIZE_OF_STRINGS_LOG = Integer.MAX_VALUE;
 
@@ -88,11 +96,11 @@ public class MinerFulLogMaker {
 
 		this.parameters = parameters;
 
-		this.stringsLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
+		this.charMapSeqLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
 				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
 					MAX_SIZE_OF_STRINGS_LOG)];
 
-		this.strLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
+		this.stringLog = new String[(parameters.tracesInLog < MAX_SIZE_OF_STRINGS_LOG ?
 				Integer.parseInt(String.valueOf(parameters.tracesInLog)) :
 					MAX_SIZE_OF_STRINGS_LOG)];
 	}
@@ -128,7 +136,7 @@ public class MinerFulLogMaker {
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		 String ncf = "";
+		String ncf = "";
 
 
 		if (negProcessSpecification != null){
@@ -160,18 +168,21 @@ public class MinerFulLogMaker {
 
 		TaskChar firedTransition = null;
 		Character pickedTransitionChar = 0;
+		boolean atLeastOneNonEmptyTrace = false;
 
 		Date currentDate = null;
 		int padder = (int)(Math.ceil(Math.log10(this.parameters.tracesInLog)));
 		String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
-		StringBuffer sBuf = new StringBuffer();
+		// Writes down the trace as a sequence of character=taskname mappings, e.g., <C=Send docs;B=Receive positive answer;A=Receive grant>
+		StringBuffer charMappedSequenceBuf = new StringBuffer();
+		// Writes down the trace as a string of characters, e.g., CBA
 		StringBuffer stringBuf = new StringBuffer();
 
 		legend = "# Legend:" + "\n" + "# " + processSpecification.getTaskCharArchive().getTranslationMapById().toString() + "\n";
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
 		for (int traceNum = 0; traceNum < this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1)); traceNum++) {
-			sBuf.append("<");
+			charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
 			walkerPositive.goToStart();
 			xTrace = xFactory.createTrace();
 			concExtino.assignName(
@@ -184,7 +195,7 @@ public class MinerFulLogMaker {
 				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 				if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
 					stringBuf.append(pickedTransitionChar);
-					sBuf.append(pickedTransitionChar + "=" + firedTransition + ";");
+					charMappedSequenceBuf.append(pickedTransitionChar + CHAR_TASKNAME_SEPARATOR_CHAR + firedTransition + SEQUENCE_EVENT_SEPARATOR_CHAR);
 				}
 
 				currentDate = generateRandomDateTimeForLogEvent(currentDate);
@@ -194,14 +205,14 @@ public class MinerFulLogMaker {
 			}
 			this.log.add(xTrace);
 			if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
-				this.stringsLog[traceNum] = sBuf.substring(0, Math.max(1, sBuf.length() -1)) + ">";
-				this.strLog[traceNum] = stringBuf.substring(0, Math.max(1, stringBuf.length() -1));
-				sBuf = new StringBuffer();
+				this.charMapSeqLog[traceNum] = charMappedSequenceBuf.substring(0, Math.max(1, charMappedSequenceBuf.length() -1)) + END_OF_SEQUENCE_CHAR;
+				this.stringLog[traceNum] = stringBuf.substring(0, Math.max(0, stringBuf.length()));
+				charMappedSequenceBuf = new StringBuffer();
 				stringBuf = new StringBuffer();
 			}
 		}
 		for (int traceNum = (int) (this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1))); traceNum < this.parameters.tracesInLog; traceNum++) {
-			sBuf.append("<");
+			charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
 			walker.goToStart();
 			xTrace = xFactory.createTrace();
 			concExtino.assignName(
@@ -214,7 +225,7 @@ public class MinerFulLogMaker {
 				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 				if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
 					stringBuf.append(pickedTransitionChar);
-					sBuf.append(pickedTransitionChar + "=" + firedTransition + ";");
+					charMappedSequenceBuf.append(pickedTransitionChar + CHAR_TASKNAME_SEPARATOR_CHAR + firedTransition + SEQUENCE_EVENT_SEPARATOR_CHAR);
 				}
 
 				currentDate = generateRandomDateTimeForLogEvent(currentDate);
@@ -224,9 +235,9 @@ public class MinerFulLogMaker {
 			}
 			this.log.add(xTrace);
 			if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
-				this.stringsLog[traceNum] = sBuf.substring(0, Math.max(1, sBuf.length() -1)) + ">";
-				this.strLog[traceNum] = stringBuf.substring(0, Math.max(1, stringBuf.length() -1));
-				sBuf = new StringBuffer();
+				this.charMapSeqLog[traceNum] = charMappedSequenceBuf.substring(0, Math.max(1, charMappedSequenceBuf.length() -1)) + END_OF_SEQUENCE_CHAR;
+				this.stringLog[traceNum] = stringBuf.substring(0, Math.max(1, stringBuf.length() -1));
+				charMappedSequenceBuf = new StringBuffer();
 				stringBuf = new StringBuffer();
 			}
 		}
@@ -288,11 +299,11 @@ public class MinerFulLogMaker {
 			OutputStream legendStream = new FileOutputStream(legendFile);
 			PrintWriter priLegend = new PrintWriter(legendStream);
 			PrintWriter priWri = new PrintWriter(outStream);
-			for (String stringTrace : this.strLog) {
+			for (String stringTrace : this.stringLog) {
 				priWri.println(stringTrace);
 			}
 			priLegend.println(this.legend);
-			for (String legendTrace : this.stringsLog) {
+			for (String legendTrace : this.charMapSeqLog) {
 				priLegend.println(legendTrace);
 			}
 			MessagePrinter.printlnOut("log in file '"+this.parameters.outputLogFile+"' created successfully with legend in '"+legendname+"'");

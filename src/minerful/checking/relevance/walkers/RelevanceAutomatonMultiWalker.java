@@ -57,7 +57,6 @@ public class RelevanceAutomatonMultiWalker {
 			Character[] formalParameters) {
 		this.name = name;
 		this.init(vAwaWildAuto, logTranslationMap);
-		logger.debug("DEBUG PRINTOUT name " + name);
 		this.walkers = setupAllWalkers(charParametersList, formalParameters);
 	}
 	

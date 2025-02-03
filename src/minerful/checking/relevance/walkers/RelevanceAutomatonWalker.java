@@ -37,8 +37,9 @@ public class RelevanceAutomatonWalker {
 			if (actualCharParam.size() > 1) {
 				this.name += '{';
 			}
+			Iterator<Character> charIter = actualCharParam.iterator();
 			for (int i = 0; i < actualCharParam.size(); i++) {
-				Iterator<Character> charIter = actualCharParam.iterator();
+
 				if (i > 0) {
 					this.name += ", ";
 				}
@@ -48,7 +49,7 @@ public class RelevanceAutomatonWalker {
 				this.name += '}';
 			}
 		}
-		this.name = this.name + ')';
+
 		this.alteredInverseLogTranslationMap = new HashMap<AbstractTaskClass, Character>(actualCharParams.size(), (float)1.0);
 
 		Iterator<Character> charIter = null;
@@ -67,9 +68,6 @@ public class RelevanceAutomatonWalker {
 		}
 
 		this.initialState = initialState;
-		logger.debug("DEBUG PRINTOUT: symbolicCharParams " + symbolicCharParams.toString());
-		logger.debug("DEBUG PRINTOUT: actualCharParams " + actualCharParams.toString());
-		logger.debug("DEBUG PRINTOUT: alteredInverseLogTranslationMap " + alteredInverseLogTranslationMap.toString());
 		reset();
 	}
 

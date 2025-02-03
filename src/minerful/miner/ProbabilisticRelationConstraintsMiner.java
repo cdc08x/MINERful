@@ -123,8 +123,6 @@ public class ProbabilisticRelationConstraintsMiner extends RelationConstraintsMi
                 searchedLocalStats = globalStats.statsTable.get(searchedTask);
                 interplayStats = pivotLocalStats.interplayStatsTable.get(searchedTask);
                 reversedInterplayStats = searchedLocalStats.interplayStatsTable.get(pivotTask);
-
-                logger.info(String.format("DEBUG OUTPUT constraintsBag: %s", constraintsBag));
                 
                 // TODO Make this customisable
                 nuCons = new Constraint[]{
