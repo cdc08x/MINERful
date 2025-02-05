@@ -86,7 +86,7 @@ public class AllLTLfRegExpAndAutomataPrinter {
 			
 			negDisCoREs.put(neg_constraName, neg_rex);
 
-			neg_fileName = String.format("%1$s/%2$s.dot", AUTOMA_DIR, constraName.replaceAll("\\W", "_"));
+			neg_fileName = String.format("%1$s/neg_%2$s.dot", AUTOMA_DIR, constraName.replaceAll("\\W", "_"));
 			System.out.printf("Writing the automaton DOT diagram of %s on %s\n", neg_constraName, neg_fileName);
 //			System.out.println(String.format("(%1$s)&([%2$s%3$s%4$s]*)",
 //									rex,
@@ -97,7 +97,7 @@ public class AllLTLfRegExpAndAutomataPrinter {
 			outWriter.print(
 					new RegExp(
 							String.format("(%1$s)&([%2$s%3$s%4$s]*)",
-									rex,
+									neg_rex,
 									BASE.toString(),
 									IMPLIED.toString(),
 									TERTIUM_NON_DATUR.toString())).toAutomaton().toDot());
