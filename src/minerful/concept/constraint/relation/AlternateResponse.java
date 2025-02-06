@@ -23,7 +23,9 @@ public class AlternateResponse extends Response {
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
-		return "[^%1$s]*([%1$s][^%2$s]*[%1$s][^%1$s]*){1,}[^%1$s]*";
+//      [^a]*(a[^b]*a|a[^b]*){1,}[^a]*
+		return "[^%1$s]*(([%1$s][^%2$s]*)|([%1$s][^%2$s]*[%1$s][^%2$s]*[%2$s][^%1$s]*)){1,}";
+		//return "[^%1$s]*([%1$s][^%2$s]*[%1$s][^%1$s]*){1,}[^%1$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

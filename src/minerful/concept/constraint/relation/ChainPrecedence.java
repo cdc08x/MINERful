@@ -27,7 +27,7 @@ public class ChainPrecedence extends AlternatePrecedence {
 	public String getNegativeRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
 //		return "[^%1$s]*(([^%1$s]|[%1$s][%2$s])*[%2$s]){1,}([^%2$s]*|[%2$s]*)";
-		return "[^%2$s]*(([^%2$s]|[%2$s][%1$s])*[%1$s]){1,}([^%1$s]*|[%1$s]*)";
+		return "(([^%2$s]*[%1$s]){1,}[^%1$s]*)|([^%2$s][%1$s][^%1$s]*){1,}";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
