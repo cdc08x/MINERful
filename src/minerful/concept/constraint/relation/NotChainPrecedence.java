@@ -27,7 +27,8 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
 	public String getNegativeRegularExpressionTemplate() {
 //		return "[^%2$s]*(%1$s%2$s[^%2$s]*)*[^%2$s]*";
 //		return "[^%2$s]*([%1$s][%2$s][^%2$s]*){1,}[^%2$s]*";
-		return "[^%1$s]*([%2$s][%1$s][^%1$s]*){1,}[^%1$s]*";
+		return "[^%2$s]*([%1$s][%2$s][^%2$s]*){1,}[^%2$s%1$s]*";
+		// ^a*(ba^a){1,}[^ab]*
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

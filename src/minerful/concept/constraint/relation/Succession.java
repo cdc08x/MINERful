@@ -23,7 +23,8 @@ public class Succession extends CoExistence {
     // FIXME To be verified
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([^%1$s*][%2$s])){1,}[^%1$s%2$s]*";
+		//return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([^%1$s*][%2$s])){1,}[^%1$s%2$s]*";
+		return "([^%1$s]*([%1$s][^%2$s]*){1,}[^%1$s%2$s]*)|(([^%1$s]*[%2$s]){1,}[^%2$s]*)";
 	}
 
 	@Override

@@ -25,7 +25,8 @@ public class ChainSuccession extends AlternateSuccession {
 	public String getNegativeRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
 //		return "[^%1$s%2$s]*(([%1$s][^%2$s]*){1,})|(([^%1$s]*[%2$s]){1,})([^%1$s%2$s]*|([%1$s]|[%2$s])*)";
-		return "[^%1$s^%2$s]*(([%1$s^%2$s])|([^%1$s%2$s])){1,}[^%1$s^%2$s]"; // TODO test this one
+		//return "[^%1$s^%2$s]*(([%1$s^%2$s])|([^%1$s%2$s])){1,}[^%1$s^%2$s]"; // TODO test this one
+		return "([^%1$s]*(([%1$s][^%2$s]*)|([%1$s][^%2$s][^%1$s]*)){1,})|((([^%1$s]*[%2$s]){1,}[^%2$s]*)|([^%1$s][%2$s][^%2$s]*){1,})";
 	}
 
 	@Override
