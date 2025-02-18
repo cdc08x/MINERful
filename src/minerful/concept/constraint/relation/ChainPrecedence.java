@@ -34,7 +34,8 @@ public class ChainPrecedence extends AlternatePrecedence {
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
 //		return "G(%2$s -> !Y(%1$s))"; // G(b -> !Y(a))
-		return "G(%1$s -> !Y(%2$s))"; // G(b -> !Y(a))
+		//return "G(%1$s -> !Y(%2$s))"; // G(b -> !Y(a))
+		return "F(%1$s & !Y(%2$s))"; //F(b & !Y(a))
 	}
 
 

@@ -28,7 +28,8 @@ public class NotRespondedExistence extends NotResponse { // TODO This kind of in
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G(%1$s -> (X(F(%2$s)) | Y(O(%2$s)))"; // G(a -> (X(F(b)) | Y(O(b)))
+		//return "G(%1$s -> (X(F(%2$s)) | Y(O(%2$s)))"; // G(a -> (X(F(b)) | Y(O(b)))
+		return "F(%1$s & (X(F(%2$s) | Y(O(%2$s)))))"; //F(a & (X(F(b) | Y(O(b)))))
 	}
   	
 	protected NotRespondedExistence() {

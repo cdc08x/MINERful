@@ -31,7 +31,8 @@ public class ChainSuccession extends AlternateSuccession {
 
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "F((%1$s & !X(%2$s)) | (%2$s & !Y(%1$s)))"; // G((a & !X(b)) | (b & !Y(a)))
+		//return "F((%1$s & !X(%2$s)) | (%2$s & !Y(%1$s)))"; // G((a & !X(b)) | (b & !Y(a)))
+		return "F(%1$s & !X(%2$s)) | F(%2$s & !Y(%1$s))"; //F(a & !X(b)) | F(b & !Y(a))
 	}
 	
 	

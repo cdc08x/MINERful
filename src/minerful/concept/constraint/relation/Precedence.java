@@ -34,7 +34,8 @@ public class Precedence extends RespondedExistence {
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
 		// return "G(%1$s -> !Y(H(%2$s)))"; // G(b -> !Y(H(a)))
-		return "G(%2$s -> !Y(H(%1$s)))"; // G(b -> !Y(H(a)))
+		//return "G(%2$s -> !Y(H(%1$s)))"; // G(b -> !Y(H(a)))
+		return "F(%1$s & Y(H(!%2$s)))"; //F(b & Y(H(!a)))
 	}
 
  

@@ -25,7 +25,8 @@ public class Response extends RespondedExistence {
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeRegularExpressionTemplate() {
-		return "[^%1$s]*([%1$s][^%2$s]*){1,}[^%1$s%2$s]*";
+		//return "[^%1$s]*([%1$s][^%2$s]*){1,}[^%1$s%2$s]*";
+		return "F(%1$s & X(G(!%2$s)))"; //F(a & X(G(!b)))
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////

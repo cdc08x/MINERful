@@ -29,7 +29,8 @@ public class Succession extends CoExistence {
 
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "F((%1$s & X(G(!%2$s))) | (%2$s & Z(H(!%1$s))))"; // F((a & X(G(!b))) | (b & Z(H(!a))))
+		//return "F((%1$s & X(G(!%2$s))) | (%2$s & Z(H(!%1$s))))"; // F((a & X(G(!b))) | (b & Z(H(!a))))
+		return "F(%1$s & X(G(!%2$s))) | F(%2$s & Y(H(!%1$s)))"; //F(a & X(G(!b))) | F(b & Y(H(!a)))
 	}
   
   

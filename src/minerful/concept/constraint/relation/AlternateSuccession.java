@@ -29,7 +29,8 @@ public class AlternateSuccession extends Succession {
 	@Override
     // FIXME Wrong
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+		//return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+		return "F(%1$s & X(G(!%2$s | (%1$s & !%2$s)))) | F(%2$s & Y(H(!%1$s | (%2$s $ !%1$s))))"; //F(a & X(G(!b | (a & !b)))) | F(b & Y(H(!a | (b & !a))))
 	}
 
 	

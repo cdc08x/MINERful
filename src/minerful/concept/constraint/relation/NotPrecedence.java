@@ -25,14 +25,15 @@ public class NotPrecedence extends NotChainPrecedence {
 	public String getNegativeRegularExpressionTemplate() {
 //		return "[^%2$s]*([%1$s].*[%2$s]){1,}[^%2$s]*"; // [^b]*([a].*[b])*[^b]*
 		// ^a*(b[^a]*a[^a]*){1,}[^ab]*
-		return "[^%2$s]*([%1$s][^%2$s]*[%2$s][^%2$s]*){1,}[^%2$s%1$s]*"; // 
+		return "[^%1$s]*([%2$s][^%1$s]*[%1$s][^%1$s]*){1,}[^%1$s]*"; // [^a]*([b][^a]*[a][^a]*){1,}[^a]*
 
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G(%1$s -> Y(O(%2$s)))"; // G(b -> Y(O(a)))
+		//return "G(%1$s -> Y(O(%2$s)))"; // G(b -> Y(O(a)))
+		return "F(%1$s & Y(H(%2$s)))"; //F(b & Y(H(a)))
 	}
 	
 	

@@ -32,7 +32,8 @@ public class ChainResponse extends AlternateResponse {
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
 	public String getNegativeLTLpfExpressionTemplate() {
-		return "G(%1$s -> !X(%2$s))"; // G(a -> !X(b))
+		//return "G(%1$s -> !X(%2$s))"; // G(a -> !X(b))
+		return "F(%1$s & !X(%2$s))"; //F(a & !X(b))
 	}
  	
  	
