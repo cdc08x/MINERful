@@ -24,7 +24,7 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 //		return "[^%2$s]*(%1$s%2$s[^%2$s]*)*[^%2$s]*";
 //		return "[^%2$s]*([%1$s][%2$s][^%2$s]*){1,}[^%2$s]*";
 		return "[^%1$s]*([%2$s][%1$s][^%1$s]*){1,}[^%1$s%2$s]*";
@@ -33,7 +33,7 @@ public class NotChainPrecedence extends NegativeRelationConstraint {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 //		return "G(%2$s -> Y(%1$s))"; // G(b -> Y(a))
 		//return "G(%1$s -> Y(%2$s))"; // G(b -> Y(a))
 		return "F(%1$s & Y(%2$s))"; //F(b & Y(a))

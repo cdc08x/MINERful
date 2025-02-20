@@ -22,11 +22,11 @@ public class End extends AtLeast1 {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() { return ".*[^%1$s]"; }
+	public String getViolatingRegularExpressionTemplate() { return ".*[^%1$s]"; }
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		return "G(F(!%1$s)"; // "G(F(a))"
 	}
 

@@ -27,12 +27,12 @@ public class RespondedExistence extends RelationConstraint {
     }
 
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([%2$s][^%1$s]*))?";
 	}
 
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		//return "G(%1$s -> !(X(F(%2$s)) | Y(O(%2$s))))"; // G(a -> !(X(F(b)) | Y(O(b))))
 		return "F(%1$s & (X(G(!%2$s)) & Y(H(!%2$s))))"; //F(a & (X(G(!b)) & Y(H(!b))))
 	}

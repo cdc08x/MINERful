@@ -17,13 +17,13 @@ public class Absence extends AtMost1 {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "[^%1$s]*([%1$s][^%1$s]*){1,}[^%1$s]*";
 	}
 	
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		return "F(%1$s)"; // F(a)
 	}
     

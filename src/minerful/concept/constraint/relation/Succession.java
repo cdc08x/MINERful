@@ -22,13 +22,13 @@ public class Succession extends CoExistence {
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
     // FIXME To be verified
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		//return "[^%1$s%2$s]*(([%1$s][^%2$s]*)|([^%1$s*][%2$s])){1,}[^%1$s%2$s]*";
 		return "([^%1$s]*([%1$s][^%2$s]*){1,}[^%1$s%2$s]*)|(([^%1$s]*[%2$s]){1,}[^%2$s]*)";
 	}
 
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		//return "F((%1$s & X(G(!%2$s))) | (%2$s & Z(H(!%1$s))))"; // F((a & X(G(!b))) | (b & Z(H(!a))))
 		return "F(%1$s & X(G(!%2$s))) | F(%2$s & Y(H(!%1$s)))"; //F(a & X(G(!b))) | F(b & Y(H(!a)))
 	}

@@ -248,12 +248,12 @@ public abstract class Constraint implements Comparable<Constraint> {
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public String getNegativeRegularExpression() {
-		return String.format(this.getNegativeRegularExpressionTemplate(), this.base.toPatternString(true));
+	public String getViolatingRegularExpression() {
+		return String.format(this.getViolatingRegularExpressionTemplate(), this.base.toPatternString(true));
 	}//
 
-	public String getNegativeLTLpfExpression() {
-		return String.format(this.getNegativeLTLpfExpressionTemplate(), this.base.toLTLpfString());
+	public String getViolatingLTLpfExpression() {
+		return String.format(this.getViolatingLTLpfExpressionTemplate(), this.base.toLTLpfString());
 	}//
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -272,9 +272,9 @@ public abstract class Constraint implements Comparable<Constraint> {
 	public abstract String getLTLpfExpressionTemplate();
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public abstract String getNegativeRegularExpressionTemplate();
+	public abstract String getViolatingRegularExpressionTemplate();
 
-	public abstract String getNegativeLTLpfExpressionTemplate();
+	public abstract String getViolatingLTLpfExpressionTemplate();
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
 	public boolean isBranched() {

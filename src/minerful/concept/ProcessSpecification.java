@@ -142,7 +142,7 @@ public class ProcessSpecification implements PropertyChangeListener {
 		List<String> ncList = Arrays.asList(ncobj);
 		for (Constraint con : constraints) {
 			if (ncList.contains(con.toString())){
-				regularExpressions.add(con.getNegativeRegularExpression());
+				regularExpressions.add(con.getViolatingRegularExpression());
 			}
 			else {
 				regularExpressions.add(con.getRegularExpression());
@@ -156,7 +156,7 @@ public class ProcessSpecification implements PropertyChangeListener {
 		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
 		regularExpressions = new ArrayList<String>(constraints.size());
 		for (Constraint con : constraints) {
-			regularExpressions.add(con.getNegativeRegularExpression());
+			regularExpressions.add(con.getViolatingRegularExpression());
 		}
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
 	}

@@ -22,7 +22,7 @@ public class ChainSuccession extends AlternateSuccession {
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
     // FIXME To be verified
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
 //		return "[^%1$s%2$s]*(([%1$s][^%2$s]*){1,})|(([^%1$s]*[%2$s]){1,})([^%1$s%2$s]*|([%1$s]|[%2$s])*)";
 		//return "[^%1$s^%2$s]*(([%1$s^%2$s])|([^%1$s%2$s])){1,}[^%1$s^%2$s]"; // TODO test this one
@@ -30,7 +30,7 @@ public class ChainSuccession extends AlternateSuccession {
 	}
 
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		//return "F((%1$s & !X(%2$s)) | (%2$s & !Y(%1$s)))"; // G((a & !X(b)) | (b & !Y(a)))
 		return "F(%1$s & !X(%2$s)) | F(%2$s & !Y(%1$s))"; //F(a & !X(b)) | F(b & !Y(a))
 	}

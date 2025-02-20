@@ -40,8 +40,8 @@ public class SequenceResponse21 extends Constraint {
 	}
 
 	@Override
-	public String getNegativeRegularExpression() {
-		return String.format(this.getNegativeRegularExpressionTemplate(),
+	public String getViolatingRegularExpression() {
+		return String.format(this.getViolatingRegularExpressionTemplate(),
 				this.parameters.get(0).toPatternString(),
 				this.parameters.get(1).toPatternString(),
 				this.parameters.get(2).toPatternString()
@@ -135,12 +135,12 @@ public class SequenceResponse21 extends Constraint {
 		return null;
 	}
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -80,13 +80,13 @@ public class AllLTLfRegExpAndAutomataPrinter {
 			outWriter.flush();
 			outWriter.close();		
 			
-			neg_rex = disCon.getNegativeRegularExpression();
+			neg_rex = disCon.getViolatingRegularExpression();
 			neg_constraName = disCon.toString();
-			negDisCoLTLfEs.put(neg_constraName, disCon.getNegativeLTLpfExpression());
+			negDisCoLTLfEs.put(neg_constraName, disCon.getViolatingLTLpfExpression());
 			
 			negDisCoREs.put(neg_constraName, neg_rex);
 
-			neg_fileName = String.format("%1$s/neg_%2$s.dot", AUTOMA_DIR, constraName.replaceAll("\\W", "_"));
+			neg_fileName = String.format("%1$s/violated_%2$s.dot", AUTOMA_DIR, constraName.replaceAll("\\W", "_"));
 			System.out.printf("Writing the automaton DOT diagram of %s on %s\n", neg_constraName, neg_fileName);
 //			System.out.println(String.format("(%1$s)&([%2$s%3$s%4$s]*)",
 //									rex,

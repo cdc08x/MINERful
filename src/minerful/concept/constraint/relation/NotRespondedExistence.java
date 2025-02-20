@@ -21,13 +21,13 @@ public class NotRespondedExistence extends NotResponse { // TODO This kind of in
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "[^%1$s]*(([%1$s].*[%2$s].*)|([%2$s].*[%1$s].*)){1,}[^%1$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		//return "G(%1$s -> (X(F(%2$s)) | Y(O(%2$s)))"; // G(a -> (X(F(b)) | Y(O(b)))
 		return "F(%1$s & (X(F(%2$s) | Y(O(%2$s)))))"; //F(a & (X(F(b) | Y(O(b)))))
 	}

@@ -23,13 +23,13 @@ public class Choice extends MutualRelationConstraint {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "[^%1$s%2$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		// return "F( a | b )"; // F( a | b )
 		return "G(!([%1$s | %2$s]))"; // G(!(a | b))
 	}

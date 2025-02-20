@@ -24,15 +24,15 @@ public class AlternatePrecedence extends Precedence {
 	
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 //		return "[^%1$s]*([%1$s][%1$s]*[^%1$s%2$s][^%1$s]*)*([^%1$s]*|[%1$s])";
 		//return "[^%1$s]*([^%2$s]*[%2$s][^%1$s]*[%2$s]){1,}[^%1$s]*";
-		return "(" + super.getNegativeRegularExpressionTemplate() + ")|" + "([^%1$s]*[%2$s][^%1$s]*[%1$s][^%2$s]*[%1$s][^%1$s]*){1,}";
+		return "(" + super.getViolatingRegularExpressionTemplate() + ")|" + "([^%1$s]*[%2$s][^%1$s]*[%1$s][^%2$s]*[%1$s][^%1$s]*){1,}";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		//return "G(%2$s -> !Y(%1$s))"; // G(b -> !Y(a))
 		//return "G(%1$s -> !Y(%2$s))"; // G(b -> !Y(a))
 		return "F(%1$s & Y(H(!%2$s | (%1$s & !%2$s))))"; //F(b&Y(H(!a|(b&!a))))

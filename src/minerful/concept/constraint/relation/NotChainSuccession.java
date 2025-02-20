@@ -25,14 +25,14 @@ public class NotChainSuccession extends NegativeMutualRelationConstraint {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 //		return "[^%1$s%2$s]*([%1$s][%2$s][^%1$s%2$s]*){1,}[^%1$s%2$s]*";
-		return "([^%1$s]*([%1$s][%2$s][^%2$s]*){1,}[^%2$s%1$s]*)|([^%2$s]*([%1$s][%2$s][^%2$s]*){1,}[^%2$s%1$s]*)";
+		return "([^%1$s]*([%1$s][%2$s][^%1$s]*){1,}[^%1$s%2$s]*)|([^%2$s]*([%1$s][%2$s][^%2$s]*){1,}[^%2$s%1$s]*)";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 //		return "G((%1$s -> X(%2$s)) & (%2$s -> Y(%1$s)))"; // G((a -> X(b)) & (b -> Y(a)))
 		//return "G((%2$s -> X(%1$s)) & (%1$s -> Y(%2$s)))"; // G((a -> X(b)) & (b -> Y(a)))
 		return "F(%1$s & X(%2$s)) | F(%2$s & Y(%1$s))"; //F(a & X(b)) | F(b & Y(a))

@@ -68,7 +68,7 @@ public abstract class ExistenceConstraint extends Constraint {
 	}
 
     @Override
-    public String getNegativeRegularExpressionTemplate() {
+    public String getViolatingRegularExpressionTemplate() {
         // TODO Auto-generated method stub
         return null;
     }
