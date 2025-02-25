@@ -116,7 +116,7 @@ public class MinerFulLogMaker {
 	 * @param processSpecification The process specification that the generated event log complies to
 	 * @return The generated event log
 	 */
-	public XLog createLog(ProcessSpecification processSpecification, ProcessSpecification negProcessSpecification) {
+	public XLog createLog(ProcessSpecification processSpecification, ProcessSpecification violProcessSpecification) {
 		XFactory xFactory = new XFactoryNaiveImpl();
 		this.log = xFactory.createLog();
 
@@ -136,12 +136,12 @@ public class MinerFulLogMaker {
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		String ncf = "";
+		String vcf = "";
 
 
-		if (negProcessSpecification != null){
-				for (Constraint con : negProcessSpecification.getAllConstraints()){
-					ncf += con + ",";
+		if (violProcessSpecification != null){
+				for (Constraint con : violProcessSpecification.getAllConstraints()){
+					vcf += con + ",";
 				}
 			}
 		
@@ -154,7 +154,7 @@ public class MinerFulLogMaker {
 		// AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		Automaton automaton = processSpecification.buildAutomaton(ncf);//this.parameters.negativeConstraints
+		Automaton automaton = processSpecification.buildAutomaton(vcf);//this.parameters.negativeConstraints
 		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 		///////////////////////////////////////////////////////////////////////////////////////////////

@@ -76,8 +76,8 @@ public class ProcessSpecification implements PropertyChangeListener {
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public Automaton buildAutomaton(String nc) {
-		return buildAutomatonByBondHeuristic(nc);
+	public Automaton buildAutomaton(String vc) {
+		return buildAutomatonByBondHeuristic(vc);
 	}
 	public Automaton buildNegativeAutomaton() {
 		return buildNegativeAutomatonByBondHeuristic();
@@ -134,14 +134,14 @@ public class ProcessSpecification implements PropertyChangeListener {
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	protected Automaton buildAutomatonByBondHeuristic(String nc) {
+	protected Automaton buildAutomatonByBondHeuristic(String vc) {
 		Collection<String> regularExpressions = null;
 		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
 		regularExpressions = new ArrayList<String>(constraints.size());
-		String[] ncobj = Arrays.stream(nc.split(",")).map(String::trim).toArray(String[]::new);
-		List<String> ncList = Arrays.asList(ncobj);
+		String[] vcobj = Arrays.stream(vc.split(",")).map(String::trim).toArray(String[]::new);
+		List<String> vcList = Arrays.asList(vcobj);
 		for (Constraint con : constraints) {
-			if (ncList.contains(con.toString())){
+			if (vcList.contains(con.toString())){
 				regularExpressions.add(con.getViolatingRegularExpression());
 			}
 			else {
