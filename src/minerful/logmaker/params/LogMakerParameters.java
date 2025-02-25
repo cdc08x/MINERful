@@ -39,12 +39,12 @@ public class LogMakerParameters extends ParamsManager {
 	public static final String MAX_LEN_PARAM_NAME = "oLM";
 	public static final String MIN_LEN_PARAM_NAME = "oLm";
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public static final String SIZE_NEGATIVE_PARAM_NAME = "oLN";
-	public static final String INPUT_NEGATIVE_CONSTRAINTS_FILE = "iNC";
+	public static final String SIZE_VIOLATING_PARAM_NAME = "oLV";
+	public static final String INPUT_VIOLATING_CONSTRAINTS_FILE = "iVC";
 	////////////////////////////////////////////////////////////////////////////////////////////
     public static final Long DEFAULT_SIZE = 100L;
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public static final Long DEFAULT_NEGATIVE_SIZE = 0L;
+	public static final Long DEFAULT_VIOLATING_SIZE = 0L;
 	// added
 	////////////////////////////////////////////////////////////////////////////////////////////
     public static final Integer DEFAULT_MIN_TRACE_LENGTH = 0;
@@ -69,7 +69,7 @@ public class LogMakerParameters extends ParamsManager {
 	public File outputLogFile;
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	public Long negativesInLog;
-	public File negativeConstraintsFile;
+	public File violatingConstraintsFile;
 	////////////////////////////////////////////////////////////////////////////////////////////
 
     
@@ -80,7 +80,7 @@ public class LogMakerParameters extends ParamsManager {
 
 	///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
     public LogMakerParameters () {
-    	this(DEFAULT_MIN_TRACE_LENGTH, DEFAULT_MAX_TRACE_LENGTH, DEFAULT_SIZE, DEFAULT_NEGATIVE_SIZE,null, DEFAULT_OUTPUT_ENCODING);
+    	this(DEFAULT_MIN_TRACE_LENGTH, DEFAULT_MAX_TRACE_LENGTH, DEFAULT_SIZE, DEFAULT_VIOLATING_SIZE,null, DEFAULT_OUTPUT_ENCODING);
     }
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +125,7 @@ public class LogMakerParameters extends ParamsManager {
 		this.outputLogFile = outputLogFile;
 		this.outputEncoding = outputEncoding;
 		this.negativesInLog = negativesInLog;
-		this.negativeConstraintsFile = negativesConstraintsFile;
+		this.violatingConstraintsFile = negativesConstraintsFile;
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
@@ -138,7 +138,7 @@ public class LogMakerParameters extends ParamsManager {
 		this.tracesInLog = tracesInLog;
 		this.outputLogFile = outputLogFile;
 		this.outputEncoding = outputEncoding;
-		this.negativeConstraintsFile = negativesConstraintsFile;
+		this.violatingConstraintsFile = negativesConstraintsFile;
 	}
 
 
@@ -192,10 +192,10 @@ public class LogMakerParameters extends ParamsManager {
         		Long.valueOf(line.getOptionValue(SIZE_PARAM_NAME, this.tracesInLog.toString()));
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 		this.negativesInLog =
-				Long.valueOf(line.getOptionValue(SIZE_NEGATIVE_PARAM_NAME, this.negativesInLog.toString()));
+				Long.valueOf(line.getOptionValue(SIZE_VIOLATING_PARAM_NAME, this.negativesInLog.toString()));
 
 	
-		this.negativeConstraintsFile = openInputFile(line, INPUT_NEGATIVE_CONSTRAINTS_FILE);
+		this.violatingConstraintsFile = openInputFile(line, INPUT_VIOLATING_CONSTRAINTS_FILE);
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
         this.outputEncoding = Encoding.valueOf(
@@ -248,20 +248,20 @@ public class LogMakerParameters extends ParamsManager {
         );
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 		options.addOption(
-				Option.builder(SIZE_NEGATIVE_PARAM_NAME)
-						.hasArg().argName("number of negative traces")
-						.longOpt("sizeneg")
-						.desc("number of negative traces to simulate"
-						+ printDefault(DEFAULT_NEGATIVE_SIZE))
+				Option.builder(SIZE_VIOLATING_PARAM_NAME)
+						.hasArg().argName("number of violating traces")
+						.longOpt("sizeviol")
+						.desc("number of violating traces to simulate"
+						+ printDefault(DEFAULT_VIOLATING_SIZE))
 						.type(Long.class)
 						.build()
 		);
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 		options.addOption(
-				Option.builder(INPUT_NEGATIVE_CONSTRAINTS_FILE)
-						.hasArg().argName("negative constraints file path")
-						.longOpt("neg-const-file")
-						.desc("path of the file in which the negative constraints are taken from")
+				Option.builder(INPUT_VIOLATING_CONSTRAINTS_FILE)
+						.hasArg().argName("violating constraints file path")
+						.longOpt("viol-const-file")
+						.desc("path of the file in which the violating constraints are taken from")
 						.type(String.class)
 						.build()
 		);
@@ -325,7 +325,7 @@ public class LogMakerParameters extends ParamsManager {
 		}
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		if (negativeConstraintsFile != null && negativeConstraintsFile.isDirectory()) {
+		if (violatingConstraintsFile != null && violatingConstraintsFile.isDirectory()) {
 			checkFailures.append("Directory specified in place of a file to save the log\n");
 		}
 		// for every constraints in the string check if it's valid.

@@ -51,8 +51,8 @@ public class MinerFulLogMakerLauncher {
 			System.exit(1);
 		}
 		
-		if (logMakParams.negativeConstraintsFile != null){
-			this.negProcessSpecification = new ProcessSpecificationLoader().loadNegatedProcessSpecification(logMakParams.negativeConstraintsFile);		
+		if (logMakParams.violatingConstraintsFile != null){
+			this.negProcessSpecification = new ProcessSpecificationLoader().loadNegatedProcessSpecification(logMakParams.violatingConstraintsFile);		
 		}else{
 			this.negProcessSpecification = null;
 		}
