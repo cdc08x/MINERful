@@ -68,7 +68,7 @@ public class LogMakerParameters extends ParamsManager {
      */
 	public File outputLogFile;
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public Long negativesInLog;
+	public Long violatingInLog;
 	public File violatingConstraintsFile;
 	////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,7 +110,7 @@ public class LogMakerParameters extends ParamsManager {
 		this.tracesInLog = tracesInLog;
 		this.outputLogFile = outputLogFile;
 		this.outputEncoding = outputEncoding;
-		this.negativesInLog = negativesInLog;
+		this.violatingInLog = negativesInLog;
 	}
 
 
@@ -124,7 +124,7 @@ public class LogMakerParameters extends ParamsManager {
 		this.tracesInLog = tracesInLog;
 		this.outputLogFile = outputLogFile;
 		this.outputEncoding = outputEncoding;
-		this.negativesInLog = negativesInLog;
+		this.violatingInLog = negativesInLog;
 		this.violatingConstraintsFile = negativesConstraintsFile;
 	}
 
@@ -191,8 +191,8 @@ public class LogMakerParameters extends ParamsManager {
         this.tracesInLog =
         		Long.valueOf(line.getOptionValue(SIZE_PARAM_NAME, this.tracesInLog.toString()));
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		this.negativesInLog =
-				Long.valueOf(line.getOptionValue(SIZE_VIOLATING_PARAM_NAME, this.negativesInLog.toString()));
+		this.violatingInLog =
+				Long.valueOf(line.getOptionValue(SIZE_VIOLATING_PARAM_NAME, this.violatingInLog.toString()));
 
 	
 		this.violatingConstraintsFile = openInputFile(line, INPUT_VIOLATING_CONSTRAINTS_FILE);
@@ -317,7 +317,7 @@ public class LogMakerParameters extends ParamsManager {
 		if (tracesInLog < 0)
 			checkFailures.append("Negative number of traces specified\n");
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		if (tracesInLog < negativesInLog)
+		if (tracesInLog < violatingInLog)
 			checkFailures.append("Trying to negate more traces than there actually are\n");
 
 		if (outputLogFile != null && outputLogFile.isDirectory()) {
