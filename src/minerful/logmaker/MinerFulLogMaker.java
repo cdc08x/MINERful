@@ -136,14 +136,14 @@ public class MinerFulLogMaker {
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		String vcf = "";
+		// String vcf = "";
 
 
-		if (violProcessSpecification != null){
-				for (Constraint con : violProcessSpecification.getAllConstraints()){
-					vcf += con + ",";
-				}
-			}
+		// if (violProcessSpecification != null){
+		// 		for (Constraint con : violProcessSpecification.getAllConstraints()){
+		// 			vcf += con + ",";
+		// 		}
+		// 	}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,17 +154,22 @@ public class MinerFulLogMaker {
 		// AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		Automaton automaton = processSpecification.buildAutomaton(vcf);//this.parameters.negativeConstraints
+		Automaton automaton;
+		if (violProcessSpecification != null){
+			automaton = processSpecification.buildViolatingAutomaton(violProcessSpecification);//this.parameters.negativeConstraints
+		}
+		else{
+			automaton = processSpecification.buildAutomaton();
+		}
+			
 		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
-		///////////////////////////////////////////////////////////////////////////////////////////////
-
-		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+		
+		
 		Automaton automatonPositive = processSpecification.buildAutomaton();
 		automatonPositive = AutomatonUtils.limitRunLength(automatonPositive, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
-		/////////////////////////////////////////////////////////////////////////////////////////////
-
+		
 
 		TaskChar firedTransition = null;
 		Character pickedTransitionChar = 0;
