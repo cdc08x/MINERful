@@ -23,7 +23,7 @@ public class MinerFulLogMakerLauncher {
 			
 	private ProcessSpecification inputProcess;
 	private LogMakerParameters logMakParams;
-	private ProcessSpecification negProcessSpecification;
+	private ProcessSpecification violProcessSpecification;
 	
 	private MinerFulLogMakerLauncher(LogMakerParameters logMakParams) {
 		this.logMakParams = logMakParams;
@@ -51,10 +51,10 @@ public class MinerFulLogMakerLauncher {
 			System.exit(1);
 		}
 		
-		if (logMakParams.negativeConstraintsFile != null){
-			this.negProcessSpecification = new ProcessSpecificationLoader().loadNegatedProcessSpecification(logMakParams.negativeConstraintsFile);		
+		if (logMakParams.violatingConstraintsFile != null){
+			this.violProcessSpecification = new ProcessSpecificationLoader().loadViolatingProcessSpecification(logMakParams.violatingConstraintsFile);		
 		}else{
-			this.negProcessSpecification = null;
+			this.violProcessSpecification = null;
 		}
 
 		
@@ -70,7 +70,7 @@ public class MinerFulLogMakerLauncher {
 		 * Creates the log.
 		 */
 		MinerFulLogMaker logMak = new MinerFulLogMaker(logMakParams);
-		logMak.createLog(this.inputProcess, this.negProcessSpecification);
+		logMak.createLog(this.inputProcess, this.violProcessSpecification);
 		
 		try {
 			logMak.storeLog();

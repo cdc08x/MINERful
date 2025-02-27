@@ -23,16 +23,18 @@ public class NotSuccession extends NotChainSuccession {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 //		return "[^%1$s%2$s]*([%1$s].*[%2$s]){1,}[^%1$s%2$s]*";
-		return "[^%2$s%1$s]*([%2$s].*[%1$s]){1,}[^%2$s%1$s]*";
+		//return "[^%2$s%1$s]*([%2$s].*[%1$s]){1,}[^%2$s%1$s]*";
+		return "([^%1$s]*([%1$s][^%2$s]*[%2$s][^%1$s%2$s]*){1,}[^%1$s%2$s]*)|([^%2$s]*([%1$s][^%2$s]*[%2$s][^%2$s]*){1,}[^%2$s]*)";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 //		return "G((%1$s -> X(F(%2$s))) & (%2$s -> Y(O(%1$s))))"; // G((a -> X(F(b))) & (b -> Y(O(a))))
-		return "G((%2$s -> X(F(%1$s))) & (%1$s -> Y(O(%2$s))))"; // G((a -> X(F(b))) & (b -> Y(O(a))))
+		//return "G((%2$s -> X(F(%1$s))) & (%1$s -> Y(O(%2$s))))"; // G((a -> X(F(b))) & (b -> Y(O(a))))
+		return "F(%1$s & X(G(!%2$s))) | F(%2$s & Z(H(!%1$s)))"; //F(a & X(G(!b))) | F(b & Z(H(!a)))
 	}
 	
 	

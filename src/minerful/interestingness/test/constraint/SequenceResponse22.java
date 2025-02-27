@@ -127,12 +127,12 @@ public class SequenceResponse22 extends Constraint {
 		return null;
 	}
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		// TODO Auto-generated method stub
 		return null;
 	}

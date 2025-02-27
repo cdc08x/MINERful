@@ -17,13 +17,13 @@ public class AtMost1 extends AtMost2 {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "[^%1$s]*([%1$s][^%1$s]*){2,}[^%1$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		return "F(%1$s & X(F(%1$s)))"; // F(a & X(F(a)))
 	}
 

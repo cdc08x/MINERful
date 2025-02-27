@@ -133,13 +133,13 @@ public abstract class RelationConstraint extends Constraint {
 	}
 	
 	@Override
-	public String getNegativeRegularExpression() {
-		return String.format(this.getNegativeRegularExpressionTemplate(), base.toPatternString(), implied.toPatternString());
+	public String getViolatingRegularExpression() {
+		return String.format(this.getViolatingRegularExpressionTemplate(), base.toPatternString(), implied.toPatternString());
 	}
 
 	@Override
-	public String getNegativeLTLpfExpression() {
-		return String.format(this.getNegativeLTLpfExpressionTemplate(), base.toLTLpfString(), implied.toLTLpfString());
+	public String getViolatingLTLpfExpression() {
+		return String.format(this.getViolatingLTLpfExpressionTemplate(), base.toLTLpfString(), implied.toLTLpfString());
 	}
 	
 	public abstract ConstraintImplicationVerse getImplicationVerse();
@@ -213,7 +213,7 @@ public abstract class RelationConstraint extends Constraint {
 	}
 
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		// TODO Auto-generated method stub
 		return null;
 	}

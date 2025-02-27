@@ -24,6 +24,7 @@ import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.concept.constraint.MetaConstraintUtils;
 import minerful.index.LinearConstraintsIndexFactory;
+import minerful.io.encdec.ProcessSpecificationEncoderDecoder;
 
 
 public class ProcessSpecification implements PropertyChangeListener {
@@ -76,11 +77,11 @@ public class ProcessSpecification implements PropertyChangeListener {
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	public Automaton buildAutomaton(String nc) {
-		return buildAutomatonByBondHeuristic(nc);
-	}
-	public Automaton buildNegativeAutomaton() {
-		return buildNegativeAutomatonByBondHeuristic();
+	// public Automaton buildAutomaton(String vc) {
+	// 	return buildAutomatonByBondHeuristic(vc);
+	// }
+	public Automaton buildViolatingAutomaton(ProcessSpecification violProcessSpecification) {
+		return buildViolatingAutomatonByBondHeuristic(violProcessSpecification);
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -133,30 +134,41 @@ public class ProcessSpecification implements PropertyChangeListener {
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
 	}
 
-	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-	protected Automaton buildAutomatonByBondHeuristic(String nc) {
+	// ///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+	// protected Automaton buildAutomatonByBondHeuristic(String vc) {
+	// 	Collection<String> regularExpressions = null;
+	// 	Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
+	// 	regularExpressions = new ArrayList<String>(constraints.size());
+	// 	String[] vcobj = Arrays.stream(vc.split(",")).map(String::trim).toArray(String[]::new);
+	// 	List<String> vcList = Arrays.asList(vcobj);
+	// 	for (Constraint con : constraints) {
+	// 		if (vcList.contains(con.toString())){
+	// 			regularExpressions.add(con.getViolatingRegularExpression());
+	// 		}
+	// 		else {
+	// 			regularExpressions.add(con.getRegularExpression());
+	// 		}
+	// 	}
+	// 	return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
+	// }
+
+	protected Automaton buildViolatingAutomatonByBondHeuristic(ProcessSpecification violProcessSpecification) {
+		ArrayList<Constraint> violconstraints = new ArrayList<Constraint>(violProcessSpecification.getAllConstraints());
 		Collection<String> regularExpressions = null;
 		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
 		regularExpressions = new ArrayList<String>(constraints.size());
-		String[] ncobj = Arrays.stream(nc.split(",")).map(String::trim).toArray(String[]::new);
-		List<String> ncList = Arrays.asList(ncobj);
 		for (Constraint con : constraints) {
-			if (ncList.contains(con.toString())){
-				regularExpressions.add(con.getNegativeRegularExpression());
+			if (violconstraints.contains(con)){
+				regularExpressions.add(con.getViolatingRegularExpression());
 			}
-			else {
-				regularExpressions.add(con.getRegularExpression());
+			else{
+			regularExpressions.add(con.getRegularExpression());
 			}
 		}
-		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
-	}
-
-	protected Automaton buildNegativeAutomatonByBondHeuristic() {
-		Collection<String> regularExpressions = null;
-		Collection<Constraint> constraints = LinearConstraintsIndexFactory.getAllUnmarkedConstraintsSortedByBondsSupportFamilyConfidenceCoverageHierarchyLevel(this.bag);
-		regularExpressions = new ArrayList<String>(constraints.size());
-		for (Constraint con : constraints) {
-			regularExpressions.add(con.getNegativeRegularExpression());
+		for (Constraint con : violconstraints){
+			if (!constraints.contains(con)){
+				regularExpressions.add(con.getViolatingRegularExpression());
+			}
 		}
 		return AutomatonFactory.fromRegularExpressions(regularExpressions, this.taskCharArchive.getIdentifiersAlphabet());
 	}

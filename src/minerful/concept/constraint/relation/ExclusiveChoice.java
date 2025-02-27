@@ -21,13 +21,13 @@ public class ExclusiveChoice extends MutualRelationConstraint {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "([^%2$s]*[%1$s][^%2$s]*)|([^%1$s]*[%2$s][^%1$s]*)";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 		// return "F( a | b )"; // F( a | b )
 		return "G( (F(%1$s) | O(%1$s)) <-> (F(%2$s) | O(%2$s)) )"; // G( (F(a) | O(a)) <-> (F(b) | O(b)) )
 	}

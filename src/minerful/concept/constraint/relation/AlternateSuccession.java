@@ -22,14 +22,15 @@ public class AlternateSuccession extends Succession {
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
     // FIXME To be verified
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
-		return "[^%1$s%2$s]*([%1$s][^%1$s%2$s]*([%1$s]|[%2$s])*[^%1$s%2$s]*[%2$s]){1,}[^%1$s%2$s]*";
+	public String getViolatingRegularExpressionTemplate() {
+		return "([^%1$s]*(([%1$s][^%2$s]*)|([%1$s][^%2$s]*[%1$s][^%2$s]*[%2$s][^%1$s]*)){1,})|((([^%1$s]*[%2$s]){1,}[^%2$s]*)|([^%2$s]*[%1$s][^%2$s]*[%2$s][^%1$s]*[%2$s][^%2$s]*){1,})";
 	}
 
 	@Override
     // FIXME Wrong
-	public String getNegativeLTLpfExpressionTemplate() {
-		return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+	public String getViolatingLTLpfExpressionTemplate() {
+		//return "G((%1$s -> !X(%2$s)) & (%2$s -> !Y(%1$s)))"; // G((a -> !X(b)) & (b -> !Y(a)))
+		return "F(%1$s & X(G(!%2$s | (%1$s & !%2$s)))) | F(%2$s & Y(H(!%1$s | (%2$s $ !%1$s))))"; //F(a & X(G(!b | (a & !b)))) | F(b & Y(H(!a | (b & !a))))
 	}
 
 	

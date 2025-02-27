@@ -116,7 +116,7 @@ public class MinerFulLogMaker {
 	 * @param processSpecification The process specification that the generated event log complies to
 	 * @return The generated event log
 	 */
-	public XLog createLog(ProcessSpecification processSpecification, ProcessSpecification negProcessSpecification) {
+	public XLog createLog(ProcessSpecification processSpecification, ProcessSpecification violProcessSpecification) {
 		XFactory xFactory = new XFactoryNaiveImpl();
 		this.log = xFactory.createLog();
 
@@ -136,14 +136,14 @@ public class MinerFulLogMaker {
 		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
 		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		String ncf = "";
+		// String vcf = "";
 
 
-		if (negProcessSpecification != null){
-				for (Constraint con : negProcessSpecification.getAllConstraints()){
-					ncf += con + ",";
-				}
-			}
+		// if (violProcessSpecification != null){
+		// 		for (Constraint con : violProcessSpecification.getAllConstraints()){
+		// 			vcf += con + ",";
+		// 		}
+		// 	}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,17 +154,22 @@ public class MinerFulLogMaker {
 		// AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		Automaton automaton = processSpecification.buildAutomaton(ncf);//this.parameters.negativeConstraints
+		Automaton automaton;
+		if (violProcessSpecification != null){
+			automaton = processSpecification.buildViolatingAutomaton(violProcessSpecification);//this.parameters.negativeConstraints
+		}
+		else{
+			automaton = processSpecification.buildAutomaton();
+		}
+			
 		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
-		///////////////////////////////////////////////////////////////////////////////////////////////
-
-		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
+		
+		
 		Automaton automatonPositive = processSpecification.buildAutomaton();
 		automatonPositive = AutomatonUtils.limitRunLength(automatonPositive, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
 		AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
-		/////////////////////////////////////////////////////////////////////////////////////////////
-
+		
 
 		TaskChar firedTransition = null;
 		Character pickedTransitionChar = 0;
@@ -181,7 +186,7 @@ public class MinerFulLogMaker {
 		legend = "# Legend:" + "\n" + "# " + processSpecification.getTaskCharArchive().getTranslationMapById().toString() + "\n";
 
 		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		for (int traceNum = 0; traceNum < this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1)); traceNum++) {
+		for (int traceNum = 0; traceNum < this.parameters.tracesInLog - (int) (this.parameters.violatingInLog * (1)); traceNum++) {
 			charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
 			walkerPositive.goToStart();
 			xTrace = xFactory.createTrace();
@@ -193,7 +198,7 @@ public class MinerFulLogMaker {
 			pickedTransitionChar = walkerPositive.walkOn();
 			while (pickedTransitionChar != null) {
 				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
-				if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
+				if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.violatingInLog * (1))) {
 					stringBuf.append(pickedTransitionChar);
 					charMappedSequenceBuf.append(pickedTransitionChar + CHAR_TASKNAME_SEPARATOR_CHAR + firedTransition + SEQUENCE_EVENT_SEPARATOR_CHAR);
 				}
@@ -204,14 +209,14 @@ public class MinerFulLogMaker {
 				pickedTransitionChar = walkerPositive.walkOn();
 			}
 			this.log.add(xTrace);
-			if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.negativesInLog * (1))) {
+			if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.violatingInLog * (1))) {
 				this.charMapSeqLog[traceNum] = charMappedSequenceBuf.substring(0, Math.max(1, charMappedSequenceBuf.length() -1)) + END_OF_SEQUENCE_CHAR;
 				this.stringLog[traceNum] = stringBuf.substring(0, Math.max(0, stringBuf.length()));
 				charMappedSequenceBuf = new StringBuffer();
 				stringBuf = new StringBuffer();
 			}
 		}
-		for (int traceNum = (int) (this.parameters.tracesInLog - (int) (this.parameters.negativesInLog * (1))); traceNum < this.parameters.tracesInLog; traceNum++) {
+		for (int traceNum = (int) (this.parameters.tracesInLog - (int) (this.parameters.violatingInLog * (1))); traceNum < this.parameters.tracesInLog; traceNum++) {
 			charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
 			walker.goToStart();
 			xTrace = xFactory.createTrace();

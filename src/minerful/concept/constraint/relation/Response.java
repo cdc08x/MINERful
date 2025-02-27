@@ -24,14 +24,15 @@ public class Response extends RespondedExistence {
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "[^%1$s]*([%1$s][^%2$s]*){1,}[^%1$s%2$s]*";
 	}
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
-		return "G(%1$s -> !X(F(%2$s)))"; // G(a -> !X(F(b)))
+	public String getViolatingLTLpfExpressionTemplate() {
+		//return "G(%1$s -> !X(F(%2$s)))"; // G(a -> !X(F(b)))
+		return "F(%1$s & X(G(!%2$s)))"; //F(a & X(G(!b)))
 	}
     
     

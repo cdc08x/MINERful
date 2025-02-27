@@ -82,19 +82,19 @@ public class ProcessSpecificationLoader {
 
 /**
  * 
- * @param negativeFile
+ * @param violatingFile
  * @return
  */
-public ProcessSpecification loadNegatedProcessSpecification(File negativeFile) {
-	ProcessSpecification negProcessSpecification = null;
+public ProcessSpecification loadViolatingProcessSpecification(File violatingFile) {
+	ProcessSpecification violProcessSpecification = null;
 	
 	try {
-		negProcessSpecification = new ProcessSpecificationEncoderDecoder().readFromJsonFile(negativeFile);
+		violProcessSpecification = new ProcessSpecificationEncoderDecoder().readFromJsonFile(violatingFile);
 	} catch (Exception e) {
-		MessagePrinter.getInstance(this).error("Unreadable process specification from file: " + negativeFile.getAbsolutePath()
+		MessagePrinter.getInstance(this).error("Unreadable process specification from file: " + violatingFile.getAbsolutePath()
 				+ ". Check the file path or the specified encoding.", e);
 	}
 
-	return negProcessSpecification;
+	return violProcessSpecification;
 }
 }

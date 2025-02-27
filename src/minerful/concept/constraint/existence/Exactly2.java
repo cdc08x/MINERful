@@ -19,12 +19,12 @@ public class Exactly2 extends AtLeast2 { // Multiple inheritance is not allowed 
 
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeRegularExpressionTemplate() {
+	public String getViolatingRegularExpressionTemplate() {
 		return "([^%1$s]*([%1$s][^%1$s]*){3,}[^%1$s]*)|([^%1$s]*([%1$s][^%1$s]*){0,1}[^%1$s]*)";
 	}
 	///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
 	@Override
-	public String getNegativeLTLpfExpressionTemplate() {
+	public String getViolatingLTLpfExpressionTemplate() {
 //    	return "G( ( F(%1$s & X(F(%1$s))) | O(%1$s & Y(O(%1$s))) ) & ( %1$s -> X(G( %1$s -> X(G(!%1$s)) )) ) )";
 		return "%1$s U (!%1$s & X(%1$s U (!%1$s & X(G(%1$s))))"; // !a U (a & X(!a U (a & X(G(!a)))))
 	}
