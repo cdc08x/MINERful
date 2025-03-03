@@ -149,8 +149,7 @@ public class ConstraintsFitnessEvaluator {
 				charParameters.add(param.getListOfIdentifiers());
 			}
 			actualParametersPerTemplate.get(constraint).add(charParameters);
-
-			logger.debug("parametersPerTemplate.get(constraint): " + actualParametersPerTemplate.get(constraint));
+			
 		}
 		int templateIndex = 0;
 		int templateParamsNum = 0;

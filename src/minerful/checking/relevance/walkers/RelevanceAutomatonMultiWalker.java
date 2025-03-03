@@ -71,8 +71,8 @@ public class RelevanceAutomatonMultiWalker {
 	 * @return
 	 */
 	private List<RelevanceAutomatonWalker> setupAllWalkers(List<List<Collection<Character>>> charParametersListOfLists, Character[] formalParameters) {
-		if (charParametersListOfLists.size() == 0 || charParametersListOfLists.get(0).size() == 0) {
-			throw new IllegalArgumentException("The passed list cannot be empty, nor can the inner lists or collections!");
+		if (charParametersListOfLists == null || charParametersListOfLists.size() == 0 || charParametersListOfLists.get(0).size() == 0) {
+			throw new IllegalArgumentException("The passed list of actual parameters in the form of characters cannot be empty, nor can the inner lists or collections!");
 		}
 		ArrayList<RelevanceAutomatonWalker> walkers =
 				new ArrayList<RelevanceAutomatonWalker>(charParametersListOfLists.size());
