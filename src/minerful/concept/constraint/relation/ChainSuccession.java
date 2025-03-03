@@ -81,4 +81,9 @@ public class ChainSuccession extends AlternateSuccession {
 		super.checkParams(taskCharSets);
 		return new ChainSuccession(taskCharSets[0], taskCharSets[1]);
 	}
+	
+	@Override
+	public Constraint getSymbolic() {
+		return new ChainSuccession(TaskChar.SYMBOLIC_TASKCHARS[0], TaskChar.SYMBOLIC_TASKCHARS[1]);
+	}
 }
