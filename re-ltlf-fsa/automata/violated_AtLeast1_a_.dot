@@ -4,8 +4,5 @@ digraph Automaton {
   initial [shape=plaintext,label=""];
   initial -> 0
   0 -> 0 [label="x"]
-  0 -> 1 [label="b"]
-  1 [shape=doublecircle,label=""];
-  1 -> 1 [label="a-b"]
-  1 -> 1 [label="x"]
+  0 -> 0 [label="b"]
 }
