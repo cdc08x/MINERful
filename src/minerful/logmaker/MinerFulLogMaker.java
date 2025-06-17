@@ -7,14 +7,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-import java.util.Scanner;
 
 import minerful.automaton.AutomatonRandomWalker;
 import minerful.automaton.utils.AutomatonUtils;
@@ -117,140 +114,83 @@ public class MinerFulLogMaker {
 	 * @return The generated event log
 	 */
 	public XLog createLog(ProcessSpecification processSpecification, ProcessSpecification violProcessSpecification) {
-		XFactory xFactory = new XFactoryNaiveImpl();
-		this.log = xFactory.createLog();
+    XFactory xFactory = new XFactoryNaiveImpl();
+    this.log = xFactory.createLog();
 
-		XTrace xTrace = null;
-		XEvent xEvent = null;
-		XConceptExtension concExtino = XConceptExtension.instance();
-		XLifecycleExtension lifeExtension = XLifecycleExtension.instance();
-		XTimeExtension timeExtension = XTimeExtension.instance();
-		this.log.getExtensions().add(concExtino);
-		this.log.getExtensions().add(lifeExtension);
-		this.log.getExtensions().add(timeExtension);
-		this.log.getClassifiers().add(new XEventNameClassifier());
+    XConceptExtension concExtino = XConceptExtension.instance();
+    XLifecycleExtension lifeExtension = XLifecycleExtension.instance();
+    XTimeExtension timeExtension = XTimeExtension.instance();
 
-		concExtino.assignName(this.log,
-				"Synthetic log for process: " + processSpecification.getName()
-		);
-		lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
+    this.log.getExtensions().add(concExtino);
+    this.log.getExtensions().add(lifeExtension);
+    this.log.getExtensions().add(timeExtension);
+    this.log.getClassifiers().add(new XEventNameClassifier());
 
-		///////////////////////////// added by Ralph Angelo Almoneda ///////////////////////////////
-		// String vcf = "";
+    concExtino.assignName(this.log, "Synthetic log for process: " + processSpecification.getName());
+    lifeExtension.assignModel(this.log, XLifecycleExtension.VALUE_MODEL_STANDARD);
 
+    Automaton automaton = (violProcessSpecification != null)
+        ? processSpecification.buildViolatingAutomaton(violProcessSpecification)
+        : processSpecification.buildAutomaton();
+    automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
+    AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
 
-		// if (violProcessSpecification != null){
-		// 		for (Constraint con : violProcessSpecification.getAllConstraints()){
-		// 			vcf += con + ",";
-		// 		}
-		// 	}
-		
-		/////////////////////////////////////////////////////////////////////////////////////////////
+    Automaton automatonPositive = processSpecification.buildAutomaton();
+    automatonPositive = AutomatonUtils.limitRunLength(automatonPositive, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
+    AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
 
+    Date currentDate = null;
+    int padder = (int)(Math.ceil(Math.log10(this.parameters.tracesInLog)));
+    String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
 
-		// Automaton automaton = processSpecification.buildAutomaton();
-		// automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
+    legend = "# Legend:\n# " + processSpecification.getTaskCharArchive().getTranslationMapById().toString() + "\n";
+	System.out.println(legend);
 
-		// AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
+    for (int traceNum = 0; traceNum < this.parameters.tracesInLog; traceNum++) {
+        boolean isPositive = traceNum < this.parameters.tracesInLog - this.parameters.violatingInLog;
+	
+        AutomatonRandomWalker currentWalker = isPositive ? walkerPositive : walker;
+        currentWalker.goToStart();
+        XTrace xTrace = xFactory.createTrace();
+        concExtino.assignName(xTrace, String.format(traceNameTemplate, traceNum));
 
-		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		Automaton automaton;
-		if (violProcessSpecification != null){
-			automaton = processSpecification.buildViolatingAutomaton(violProcessSpecification);//this.parameters.negativeConstraints
-		}
-		else{
-			automaton = processSpecification.buildAutomaton();
-		}
-			
-		automaton = AutomatonUtils.limitRunLength(automaton, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
-		AutomatonRandomWalker walker = new AutomatonRandomWalker(automaton);
-		
-		
-		Automaton automatonPositive = processSpecification.buildAutomaton();
-		automatonPositive = AutomatonUtils.limitRunLength(automatonPositive, this.parameters.minEventsPerTrace, this.parameters.maxEventsPerTrace);
-		AutomatonRandomWalker walkerPositive = new AutomatonRandomWalker(automatonPositive);
-		
+        StringBuffer charMappedSequenceBuf = new StringBuffer();
+        StringBuffer stringBuf = new StringBuffer();
+        charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
 
-		TaskChar firedTransition = null;
-		Character pickedTransitionChar = 0;
-		boolean atLeastOneNonEmptyTrace = false;
+        Character pickedTransitionChar = currentWalker.walkOn();
+        while (pickedTransitionChar != null) {
+            TaskChar firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
 
-		Date currentDate = null;
-		int padder = (int)(Math.ceil(Math.log10(this.parameters.tracesInLog)));
-		String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
-		// Writes down the trace as a sequence of character=taskname mappings, e.g., <C=Send docs;B=Receive positive answer;A=Receive grant>
-		StringBuffer charMappedSequenceBuf = new StringBuffer();
-		// Writes down the trace as a string of characters, e.g., CBA
-		StringBuffer stringBuf = new StringBuffer();
+            stringBuf.append(pickedTransitionChar);
+            charMappedSequenceBuf
+                .append(pickedTransitionChar)
+                .append(CHAR_TASKNAME_SEPARATOR_CHAR)
+                .append(firedTransition)
+                .append(SEQUENCE_EVENT_SEPARATOR_CHAR);
 
-		legend = "# Legend:" + "\n" + "# " + processSpecification.getTaskCharArchive().getTranslationMapById().toString() + "\n";
+            currentDate = generateRandomDateTimeForLogEvent(currentDate);
+            XEvent xEvent = makeXEvent(xFactory, concExtino, lifeExtension, timeExtension, firedTransition, currentDate);
+            xTrace.add(xEvent);
 
-		///////////////////////////// modified by Ralph Angelo Almoneda ///////////////////////////////
-		for (int traceNum = 0; traceNum < this.parameters.tracesInLog - (int) (this.parameters.violatingInLog * (1)); traceNum++) {
-			charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
-			walkerPositive.goToStart();
-			xTrace = xFactory.createTrace();
-			concExtino.assignName(
-					xTrace,
-					String.format(traceNameTemplate, (traceNum))
-			);
+            pickedTransitionChar = currentWalker.walkOn();
+        }
+        this.log.add(xTrace);
 
-			pickedTransitionChar = walkerPositive.walkOn();
-			while (pickedTransitionChar != null) {
-				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
-				if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.violatingInLog * (1))) {
-					stringBuf.append(pickedTransitionChar);
-					charMappedSequenceBuf.append(pickedTransitionChar + CHAR_TASKNAME_SEPARATOR_CHAR + firedTransition + SEQUENCE_EVENT_SEPARATOR_CHAR);
-				}
+        if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
+            this.charMapSeqLog[traceNum] = charMappedSequenceBuf.length() > 1
+                ? charMappedSequenceBuf.substring(0, charMappedSequenceBuf.length() - 1) + END_OF_SEQUENCE_CHAR
+                : "" + END_OF_SEQUENCE_CHAR;
 
-				currentDate = generateRandomDateTimeForLogEvent(currentDate);
-				xEvent = makeXEvent(xFactory, concExtino, lifeExtension, timeExtension, firedTransition, currentDate);
-				xTrace.add(xEvent);
-				pickedTransitionChar = walkerPositive.walkOn();
-			}
-			this.log.add(xTrace);
-			if (traceNum < this.parameters.tracesInLog-(int) (this.parameters.violatingInLog * (1))) {
-				this.charMapSeqLog[traceNum] = charMappedSequenceBuf.substring(0, Math.max(1, charMappedSequenceBuf.length() -1)) + END_OF_SEQUENCE_CHAR;
-				this.stringLog[traceNum] = stringBuf.substring(0, Math.max(0, stringBuf.length()));
-				charMappedSequenceBuf = new StringBuffer();
-				stringBuf = new StringBuffer();
-			}
-		}
-		for (int traceNum = (int) (this.parameters.tracesInLog - (int) (this.parameters.violatingInLog * (1))); traceNum < this.parameters.tracesInLog; traceNum++) {
-			charMappedSequenceBuf.append(START_OF_SEQUENCE_CHAR);
-			walker.goToStart();
-			xTrace = xFactory.createTrace();
-			concExtino.assignName(
-					xTrace,
-					String.format(traceNameTemplate, (traceNum))
-				);
+            this.stringLog[traceNum] = stringBuf.length() > 0
+                ? stringBuf.substring(0, stringBuf.length())
+                : "";
+        }
+    }
 
-			pickedTransitionChar = walker.walkOn();
-			while (pickedTransitionChar != null) {
-				firedTransition = processSpecification.getTaskCharArchive().getTaskChar(pickedTransitionChar);
-				if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
-					stringBuf.append(pickedTransitionChar);
-					charMappedSequenceBuf.append(pickedTransitionChar + CHAR_TASKNAME_SEPARATOR_CHAR + firedTransition + SEQUENCE_EVENT_SEPARATOR_CHAR);
-				}
+    return this.log;
+}
 
-				currentDate = generateRandomDateTimeForLogEvent(currentDate);
-				xEvent = makeXEvent(xFactory, concExtino, lifeExtension, timeExtension, firedTransition, currentDate);
-				xTrace.add(xEvent);
-				pickedTransitionChar = walker.walkOn();
-			}
-			this.log.add(xTrace);
-			if (traceNum < MAX_SIZE_OF_STRINGS_LOG) {
-				this.charMapSeqLog[traceNum] = charMappedSequenceBuf.substring(0, Math.max(1, charMappedSequenceBuf.length() -1)) + END_OF_SEQUENCE_CHAR;
-				this.stringLog[traceNum] = stringBuf.substring(0, Math.max(1, stringBuf.length() -1));
-				charMappedSequenceBuf = new StringBuffer();
-				stringBuf = new StringBuffer();
-			}
-		}
-
-
-		return this.log;
-		///////////////////////////////////////////////////////////////////////////////////////////////
-	}
 
 
 	/**

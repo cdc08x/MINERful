@@ -85,7 +85,7 @@ public class ProcessSpecificationLoader {
  * @param violatingFile
  * @return
  */
-public ProcessSpecification loadViolatingProcessSpecification(File violatingFile) {
+public ProcessSpecification loadViolatingProcessSpecification(File violatingFile, TaskCharArchive alphabet) {
 	ProcessSpecification violProcessSpecification = null;
 	
 	try {

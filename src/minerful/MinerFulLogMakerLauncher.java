@@ -52,7 +52,7 @@ public class MinerFulLogMakerLauncher {
 		}
 		
 		if (logMakParams.violatingConstraintsFile != null){
-			this.violProcessSpecification = new ProcessSpecificationLoader().loadViolatingProcessSpecification(logMakParams.violatingConstraintsFile);		
+			this.violProcessSpecification = new ProcessSpecificationLoader().loadViolatingProcessSpecification(logMakParams.violatingConstraintsFile, this.inputProcess.getTaskCharArchive());		
 		}else{
 			this.violProcessSpecification = null;
 		}
