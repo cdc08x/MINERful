@@ -81,17 +81,18 @@ public class ProcessSpecificationLoader {
 	}
 
 /**
- * 
- * @param violatingFile
- * @return
+ * Loads the constraints to be violated in the specification
+ * @param violatedConstraintsSpecificationFile The file in which the constraints to be violated are stored
+ * @param alphabet A pre-existing encoding for tasks
+ * @return A process specification made of violated constraints
  */
-public ProcessSpecification loadViolatingProcessSpecification(File violatingFile, TaskCharArchive alphabet) {
+public ProcessSpecification loadViolatingProcessSpecification(File violatedConstraintsSpecificationFile, TaskCharArchive alphabet) {
 	ProcessSpecification violProcessSpecification = null;
 	
 	try {
-		violProcessSpecification = new ProcessSpecificationEncoderDecoder().readFromJsonFile(violatingFile);
+		violProcessSpecification = new ProcessSpecificationEncoderDecoder().readFromJsonFile(violatedConstraintsSpecificationFile, alphabet);
 	} catch (Exception e) {
-		MessagePrinter.getInstance(this).error("Unreadable process specification from file: " + violatingFile.getAbsolutePath()
+		MessagePrinter.getInstance(this).error("Unreadable process specification from file: " + violatedConstraintsSpecificationFile.getAbsolutePath()
 				+ ". Check the file path or the specified encoding.", e);
 	}
 
