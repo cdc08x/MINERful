@@ -144,7 +144,6 @@ public class MinerFulLogMaker {
     String traceNameTemplate = "Synthetic trace no. " + (padder < 1 ? "" : "%0" + padder) + "d";
 
     legend = "# Legend:\n# " + processSpecification.getTaskCharArchive().getTranslationMapById().toString() + "\n";
-	System.out.println(legend);
 
     for (int traceNum = 0; traceNum < this.parameters.tracesInLog; traceNum++) {
         boolean isPositive = traceNum < this.parameters.tracesInLog - this.parameters.violatingInLog;
