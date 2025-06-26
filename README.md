@@ -5,6 +5,8 @@ MINERful is a fast process mining tool for discovering declarative process speci
 
 For updated info on the installation, usage, etc., please refer to the [**Wiki**](https://github.com/cdc08x/MINERful/wiki)!
 
+For a tutorial on how to run the main functionalities of MINERful on a real event log, please refer to the [**MINERful_tutorial_SepsisEventLog**](MINERful_tutorial_SepsisEventLog.pdf).
+
 Publications and further material
 ------------
 Selected publications about MINERful and presentation slides:
