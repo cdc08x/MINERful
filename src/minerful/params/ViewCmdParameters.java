@@ -92,23 +92,29 @@ public class ViewCmdParameters extends ParamsManager {
         		);
         options.addOption(
         		Option.builder(CONSTRAINTS_NO_FOLDING_PARAM_NAME)
+						.hasArg().argName("true|false")
 						.longOpt("no-folding")
 						.desc("avoid the discovered constraints to be folded under activation tasks" +
 						printDefault(DEFAULT_DO_CONSTRAINTS_NO_FOLDING))
+						.type(Boolean.class)
 						.build()
         		);
         options.addOption(
         		Option.builder(MACHINE_READABLE_RESULTS_PARAM_NAME)
+        				.hasArg().argName("true|false")
 						.longOpt("machine-readable")
 						.desc("print a machine-readable list of supports, for each constraint template and constrained activities in the print-out" +
 						printDefault(DEFAULT_DO_MACHINE_READABLE_RESULTS))
+						.type(Boolean.class)
 						.build()
         		);
         options.addOption(
         		Option.builder(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME)
+        				.hasArg().argName("true|false")
 						.longOpt("no-screen-print-out")
 						.desc("suppresses the print-out of constraints on screen" +
 						printDefault(DEFAULT_DO_SUPPRESS_SCREEN_PRINT_OUT))
+						.type(Boolean.class)
 						.build()
         		);
        return options;

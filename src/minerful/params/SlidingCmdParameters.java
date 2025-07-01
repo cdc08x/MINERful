@@ -49,7 +49,7 @@ public class SlidingCmdParameters extends ParamsManager {
         	throw new IllegalArgumentException("The sliding window step should be an integer higher than, or equal to, 0");
         }
 
-        this.stickTail = line.hasOption(STICK_TAIL_PARAM_NAME) && 
+        this.stickTail = 
         		Boolean.valueOf(line.getOptionValue(
         				STICK_TAIL_PARAM_NAME,
 						this.stickTail.toString())
@@ -69,8 +69,10 @@ public class SlidingCmdParameters extends ParamsManager {
         		);
         options.addOption(
         		Option.builder(STICK_TAIL_PARAM_NAME)
+        				.hasArg().argName("true|false")
 						.longOpt("stick-tail")
 						.desc("block the tail and slide only the head (increasing the window length at every step)" + printDefault(DEFAULT_STICKY_TAIL_POLICY))
+						.type(Boolean.class)
 						.build()
         		);
        return options;
