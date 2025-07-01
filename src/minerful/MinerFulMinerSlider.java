@@ -91,6 +91,8 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
 		MinerFulOutputManagementLauncher minerFulOutputMgr = new MinerFulOutputManagementLauncher();
+
+		System.err.println("BUGSPOT: Am I really here? slideParams.stickTail " + slideParams.stickTail);
 		
 		ProcessSpecification processSpecification = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
 	}
@@ -168,6 +170,8 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
     		addiStartGap = (step < inputParams.subLogLength ? inputParams.subLogLength : step),
     		addiLen = Math.min(step, inputParams.subLogLength);
 
+    		System.err.println("BUGSPOT: Am I really here? slideParams.stickTail " + slideParams.stickTail);
+    		
     		for (int i = 0; inputParams.startFromTrace + i + addiStartGap + addiLen <= logParser.wholeLength(); i += step) {
 				if (!slideParams.stickTail) {
 					slicedLogParser = logParser.takeASlice(
@@ -178,6 +182,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 	
 					slicedStatsTable = kbCore.discover();
 					// subtract the tail
+					
 					statsTable.mergeSubtractively(slicedStatsTable);
 				}
 				slicedLogParser = logParser.takeASlice(inputParams.startFromTrace + i + addiStartGap, addiLen);

@@ -61,9 +61,21 @@ public class ViewCmdParameters extends ParamsManager {
         						this.constraintsSorting.toString()
         						)
         				);
-        this.machineReadableResults = line.hasOption(MACHINE_READABLE_RESULTS_PARAM_NAME);
-        this.noFoldingRequired = line.hasOption(CONSTRAINTS_NO_FOLDING_PARAM_NAME);
-        this.suppressScreenPrintOut = line.hasOption(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME);
+        this.machineReadableResults = line.hasOption(MACHINE_READABLE_RESULTS_PARAM_NAME) && 
+        		Boolean.valueOf(line.getOptionValue(
+        				MACHINE_READABLE_RESULTS_PARAM_NAME,
+						this.machineReadableResults.toString())
+				);
+        this.noFoldingRequired = line.hasOption(CONSTRAINTS_NO_FOLDING_PARAM_NAME) && 
+        		Boolean.valueOf(line.getOptionValue(
+        				CONSTRAINTS_NO_FOLDING_PARAM_NAME,
+						this.noFoldingRequired.toString())
+				);
+        this.suppressScreenPrintOut = line.hasOption(SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME) && 
+        		Boolean.valueOf(line.getOptionValue(
+        				SUPPRESS_SCREEN_PRINT_OUT_PARAM_NAME,
+						this.suppressScreenPrintOut.toString())
+				);
 	}
 	
 	@SuppressWarnings("static-access")

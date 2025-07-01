@@ -49,7 +49,11 @@ public class SlidingCmdParameters extends ParamsManager {
         	throw new IllegalArgumentException("The sliding window step should be an integer higher than, or equal to, 0");
         }
 
-        this.stickTail = line.hasOption(STICK_TAIL_PARAM_NAME);
+        this.stickTail = line.hasOption(STICK_TAIL_PARAM_NAME) && 
+        		Boolean.valueOf(line.getOptionValue(
+        				STICK_TAIL_PARAM_NAME,
+						this.stickTail.toString())
+				);
 	}
 	
 	@SuppressWarnings("static-access")
