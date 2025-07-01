@@ -92,8 +92,6 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		MinerFulOutputManagementLauncher minerFulOutputMgr = new MinerFulOutputManagementLauncher();
 
-		System.err.println("BUGSPOT: Am I really here? slideParams.stickTail " + slideParams.stickTail);
-		
 		ProcessSpecification processSpecification = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
 	}
 
@@ -107,9 +105,9 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		
 		GlobalStatsTable
 			statsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit),
-			globalStatsTable = null;
+			fullLogStatsTable = null;
 		if (!slideParams.stickTail) {
-			globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
+			fullLogStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
 		}
 		
 		LogParser slicedLogParser = logParser.takeASlice(inputParams.startFromTrace, inputParams.subLogLength);
@@ -117,7 +115,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		statsTable = computeKB(slicedLogParser, minerFulParams,
 				taskCharArchive, statsTable);
 		if (!slideParams.stickTail) {
-			globalStatsTable.mergeAdditively(statsTable);
+			fullLogStatsTable.mergeAdditively(statsTable);
 		}
 
 		proSpec.bag = queryForConstraints(slicedLogParser, minerFulParams,
@@ -170,8 +168,6 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
     		addiStartGap = (step < inputParams.subLogLength ? inputParams.subLogLength : step),
     		addiLen = Math.min(step, inputParams.subLogLength);
 
-    		System.err.println("BUGSPOT: Am I really here? slideParams.stickTail " + slideParams.stickTail);
-    		
     		for (int i = 0; inputParams.startFromTrace + i + addiStartGap + addiLen <= logParser.wholeLength(); i += step) {
 				if (!slideParams.stickTail) {
 					slicedLogParser = logParser.takeASlice(
@@ -181,9 +177,10 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 					kbCore.setLogParser(slicedLogParser);
 	
 					slicedStatsTable = kbCore.discover();
-					// subtract the tail
 					
+					// subtract the tail
 					statsTable.mergeSubtractively(slicedStatsTable);
+
 				}
 				slicedLogParser = logParser.takeASlice(inputParams.startFromTrace + i + addiStartGap, addiLen);
 				kbCore.setLogParser(slicedLogParser);
@@ -193,7 +190,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				// add the head
 				statsTable.mergeAdditively(slicedStatsTable);
 				if (!slideParams.stickTail) {
-					globalStatsTable.mergeAdditively(slicedStatsTable);
+					fullLogStatsTable.mergeAdditively(slicedStatsTable);
 				}
 				
 				// wipe out existing constraints
@@ -217,7 +214,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 			
 			if (!slideParams.stickTail) {
 				proSpec.bag.wipeOutConstraints();
-				qCore.setStatsTable(globalStatsTable);
+				qCore.setStatsTable(fullLogStatsTable);
 				qCore.discover();
 			}
     	}

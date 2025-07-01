@@ -39,8 +39,8 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 
         for (TaskChar pivot: tasksToQueryFor) {
         	localStats = this.globalStats.statsTable.get(pivot);
-
-        	if (localStats.getTotalAmountOfOccurrences() > 0) {
+        	
+//			if (localStats.getTotalAmountOfOccurrences() > 0) {
 	        	minMultiCns = this.discoverMinMultiplicityConstraints(pivot, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
 
 	        	for (Constraint minMultiCn : minMultiCns) {
@@ -62,7 +62,7 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
 	            end = this.discoverEndConstraint(pivot, localStats, this.globalStats.logSize, this.globalStats.numOfEvents);
 	        	this.updateConstraintInBag(constraintsBag, pivot, end);
 	            if (hasValuesAboveThresholds(end)) this.computedConstraintsAboveThresholds++;
-        	}
+//        	}
         }
         return constraintsBag;
     }
@@ -170,15 +170,16 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     protected Constraint discoverInitConstraint(TaskChar base,
             LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 //    	if (!(localStats.repetitions.containsKey(0) && (localStats.repetitions.get(0) > 0))) {
-    		if (localStats.getOccurrencesAsFirst() >= testbedSize) {
-                return new Init(base);
-            } else {
-            	Constraint init = new Init(base);
-            	init.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsFirst() / (double) testbedSize);
-            	init.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
-                init.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
-            	return init;
-            }
+		if (localStats.getOccurrencesAsFirst() >= testbedSize) {
+            return new Init(base);
+        } else {
+        	Constraint init = new Init(base);
+        	init.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsFirst() / (double) testbedSize);
+        	init.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsFirst() / (double) numOfEventsInLog);
+            init.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
+
+            return init;
+        }
 //        }
 //        return new Init(base, 0);
     }
@@ -187,15 +188,16 @@ public class ProbabilisticExistenceConstraintsMiner extends ExistenceConstraints
     protected Constraint discoverEndConstraint(TaskChar base,
             LocalStatsWrapper localStats, long testbedSize, long numOfEventsInLog) {
 //        if (!(localStats.repetitions.containsKey(0) && localStats.repetitions.get(0) > 0)) {
-            if (localStats.getOccurrencesAsLast() >= testbedSize) {
-                return new End(base);
-            } else {
-            	Constraint end = new End(base);
-            	end.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsLast() / (double) testbedSize);
-            	end.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsLast() / (double) numOfEventsInLog);
-                end.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
-            	return end;
-            }
+        if (localStats.getOccurrencesAsLast() >= testbedSize) {
+            return new End(base);
+        } else {
+        	Constraint end = new End(base);
+        	end.getEventBasedMeasures().setConfidence((double) localStats.getOccurrencesAsLast() / (double) testbedSize);
+        	end.getEventBasedMeasures().setSupport((double) localStats.getOccurrencesAsLast() / (double) numOfEventsInLog);
+            end.getEventBasedMeasures().setCoverage((double)testbedSize / (double)numOfEventsInLog);
+           
+            return end;
+        }
 //        }
 //        return new End(base, 0);
     }
