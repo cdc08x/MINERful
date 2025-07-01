@@ -50,8 +50,8 @@ public class MinerFulOutputManagementLauncher {
 		);
 	}
 
-	public void manageOutput(ProcessSpecification processSpecification, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputSpecificationParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser) {
-		ConstraintsPrinter printer = new ConstraintsPrinter(processSpecification, additionalCnsIndexedInfo);
+	public void manageOutput(ProcessSpecification processSpecification, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputSpecificationParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser, String globalStatsJSON) {
+		ConstraintsPrinter printer = new ConstraintsPrinter(processSpecification, additionalCnsIndexedInfo, globalStatsJSON);
 		PrintWriter outWriter = null;
 		File outputFile = null;
 
@@ -138,6 +138,21 @@ public class MinerFulOutputManagementLauncher {
         	try {
 				outWriter = new PrintWriter(outputFile);
 	        	outWriter.print(printer.printDotAutomaton());
+	        	outWriter.flush();
+	        	outWriter.close();
+	        	MessagePrinter.printlnOut("Discovered process automaton written in DOT format on " + outputFile);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+
+
+		if (outParams.fileToSaveDotFileForDFG != null) {
+			outputFile = this.retrieveFile(outParams.fileToSaveDotFileForDFG);
+        	try {
+				outWriter = new PrintWriter(outputFile);
+	        	outWriter.print(printer.printDotDFG());
 	        	outWriter.flush();
 	        	outWriter.close();
 	        	MessagePrinter.printlnOut("Discovered process automaton written in DOT format on " + outputFile);
@@ -279,19 +294,29 @@ public class MinerFulOutputManagementLauncher {
 	public void manageOutput(ProcessSpecification processSpecification,
 			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams,
 			LogParser logParser) {
-		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, logParser);
+		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, logParser, null);
 	}
 
 	public void manageOutput(ProcessSpecification processSpecification,
 			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams) {
-		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, null);
+		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, null, null);
 	}
 	
 	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams) {
-		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null);
+		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null, null);
 	}
 	
 	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams, LogParser logParser) {
-		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser);
+		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser, null);
 	}
+
+	public void manageOutput(ProcessSpecification processSpecification,
+                         ViewCmdParameters viewParams,
+                         OutputSpecificationParameters outParams,
+                         SystemCmdParameters systemParams,
+                         LogParser logParser,
+                         String globalStatsJSON) {
+    this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, logParser, globalStatsJSON);
+}
+
 }

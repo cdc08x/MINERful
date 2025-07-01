@@ -17,6 +17,7 @@ import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.io.encdec.GlobalStatsTableEncoderDecoder;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.miner.core.MinerFulKBCore;
@@ -121,9 +122,31 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		ProcessSpecification processSpecification = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
-
-		new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams, logParser);
+		if (outParams.fileToSaveDotFileForDFG != null) {
+			//Global stats are needed if DFG DOT output is requested
+			GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
+			globalStatsTable = minerMinaStarter.computeKB(logParser, minerFulParams, taskCharArchive, globalStatsTable);
+		
+			String globalStatsJSON = minerMinaStarter.setGlobalStatsTableJSON(globalStatsTable);
+		
+			ProcessSpecification processSpecification = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
+			processSpecification.setName(makeDiscoveredProcessName(inputParams));
+		
+			processSpecification.bag = minerMinaStarter.queryForConstraints(logParser, minerFulParams, postParams,
+					taskCharArchive, globalStatsTable, processSpecification.bag);
+		
+			System.gc();
+		
+			minerMinaStarter.pruneConstraints(processSpecification, minerFulParams, postParams);
+			//manageOutput with globalStatsJSON
+			new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams, logParser, globalStatsJSON);
+		
+		} else {
+			// Standard mining path
+			ProcessSpecification processSpecification = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
+		
+			new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams, logParser);
+		}
 	}
 
 	public static boolean isEventLogGiven(Options cmdLineOptions, InputLogCmdParameters inputParams,
@@ -231,8 +254,18 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 			after = System.currentTimeMillis();
 		}
 		logger.info("Total KB construction time: " + (after - before));
+
 		return globalStatsTable;
 	}
+
+	protected String setGlobalStatsTableJSON(GlobalStatsTable globalStatsTable){
+		//encoder initialisation for GlobalStatsTable
+		GlobalStatsTableEncoderDecoder encoderDecoder = new GlobalStatsTableEncoderDecoder();
+		//encoded string containing GlobalStatsTable
+        String jsonString = encoderDecoder.toJsonStringFromGlobalStatsTable(globalStatsTable);
+		
+		return jsonString;
+	} 
 
 	protected ConstraintsBag queryForConstraints(
 			LogParser logParser, MinerFulCmdParameters minerFulParams,

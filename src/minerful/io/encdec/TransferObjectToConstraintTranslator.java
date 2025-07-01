@@ -30,6 +30,15 @@ public class TransferObjectToConstraintTranslator {
 			if (conTO.coverage != null) {
 				minerFulConstraint.getEventBasedMeasures().setCoverage(conTO.coverage);
 			}
+			if (conTO.tr_support != null) {
+				minerFulConstraint.getTraceBasedMeasures().setSupport(conTO.tr_support);
+			}
+			if (conTO.tr_confidence != null) {
+				minerFulConstraint.getTraceBasedMeasures().setConfidence(conTO.tr_confidence);
+			}
+			if (conTO.tr_coverage != null) {
+				minerFulConstraint.getTraceBasedMeasures().setCoverage(conTO.tr_coverage);
+			}
 			return minerFulConstraint;
 		}
 		return null;

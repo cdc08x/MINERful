@@ -22,6 +22,9 @@ import minerful.concept.TaskChar;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintMeasuresManager;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.dfg.DirectlyFollowsGraph;
+import minerful.dfg.DirectlyFollowsGraphBuilder;
+import minerful.dfg.encdec.DirectlyFollowsGraphDotPrinter;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.io.encdec.csv.CsvEncoder;
@@ -30,7 +33,9 @@ import minerful.io.encdec.declaremap.DeclareMapReaderWriter;
 import minerful.io.encdec.nusmv.NuSMVEncoder;
 import minerful.logparser.LogParser;
 import minerful.miner.ProbabilisticRelationConstraintsMiner.ConstraintMeasures;
+import minerful.miner.stats.GlobalStatsTable;
 import dk.brics.automaton.Automaton;
+import minerful.io.encdec.GlobalStatsTableEncoderDecoder;
 
 public class ConstraintsPrinter {
 	private static final String MACHINE_READABLE_RESULTS_SUPPORT_TEXT_SIGNAL = "Measures: ";
@@ -45,6 +50,9 @@ public class ConstraintsPrinter {
 	private static final boolean PRINT_ONLY_IF_ADDITIONAL_INFO_IS_GIVEN = false;
 	private ProcessSpecification processSpecification;
 	private Automaton processAutomaton;
+	private GlobalStatsTable globalStatsTable;
+	private DirectlyFollowsGraph processDFG;
+	private DirectlyFollowsGraphBuilder dfGraphBuilder;
 	private NavigableMap<Constraint, String> additionalCnsIndexedInfo;
 
 	public ConstraintsPrinter(ProcessSpecification processSpecification) {
@@ -55,6 +63,14 @@ public class ConstraintsPrinter {
 			NavigableMap<Constraint, String> additionalCnsIndexedInfo) {
 		this.processSpecification = processSpecification;
 		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
+	}
+
+	public ConstraintsPrinter(ProcessSpecification processSpecification,
+			NavigableMap<Constraint, String> additionalCnsIndexedInfo, String globalStatsJSON) {
+		this.processSpecification = processSpecification;
+		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
+		GlobalStatsTableEncoderDecoder encoderDecoder = new GlobalStatsTableEncoderDecoder();
+		this.globalStatsTable = encoderDecoder.fromJsonStringToGlobalStatsTable(globalStatsJSON);
 	}
 
 	public String printBag() {
@@ -349,6 +365,14 @@ public class ConstraintsPrinter {
 		return new AutomatonDotPrinter(stringMap).printDot(processAutomaton);
 	}
 	
+	public String printDotDFG() {
+		if (this.processDFG == null)
+		dfGraphBuilder = new DirectlyFollowsGraphBuilder(globalStatsTable, this.processSpecification.bag.getTaskChars());
+		processDFG = dfGraphBuilder.build();
+
+		return new DirectlyFollowsGraphDotPrinter().getDotRepresentation(processDFG);
+	}
+
 	public String printTSMLAutomaton() {
 		if (this.processAutomaton == null)
 			processAutomaton = this.processSpecification.buildAutomaton();

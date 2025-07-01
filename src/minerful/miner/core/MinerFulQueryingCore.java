@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -16,6 +17,8 @@ import java.util.regex.Pattern;
 import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
+import minerful.footprint.FootprintMatrix;
+import minerful.footprint.FootprintMatrixBuilder;
 import minerful.logparser.LogParser;
 import minerful.miner.ConstraintsMiner;
 import minerful.miner.ProbabilisticExistenceConstraintsMiner;
@@ -156,6 +159,20 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         relaConMiner.setSupportThreshold(postPrarams.evtSupportThreshold);
         relaConMiner.setConfidenceThreshold(postPrarams.evtConfidenceThreshold);
         relaConMiner.setCoverageThreshold(postPrarams.evtCoverageThreshold);
+
+        // FootprintMatrixBuilder builder = new FootprintMatrixBuilder(statsTable, tasksToQueryFor);
+        // FootprintMatrix matrix = builder.build();
+        // matrix.printMatrix();
+
+        FootprintMatrixBuilder builder = new FootprintMatrixBuilder(statsTable, tasksToQueryFor, 10);
+
+        Map<Integer, FootprintMatrix> matrices = builder.buildAll();
+
+        for (int d = 1; d <= 10; d++) {
+                System.out.println("Matrix up to ±" + d + ":");
+                matrices.get(d).printMatrix();
+        }
+
 
 //        updatedBag = relaConMiner.discoverConstraints(updatedBag);
         relaConMiner.discoverConstraints(this.bag);

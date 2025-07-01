@@ -22,7 +22,7 @@ import minerful.logparser.LogParser;
 import minerful.logparser.XesLogParser;
 
 public class AllLTLfRegExpAndAutomataPrinter {
-	public static final File OUTPUT_DIR = new File("/Users/ceciliaiacometta/Desktop/examples/re-ltlf-fsa");
+	public static final File OUTPUT_DIR = new File("/Users/ceciliaiacometta/Desktop/re-ltlf-fsa");
 	public static final File AUTOMA_DIR = new File(OUTPUT_DIR.getPath().concat("/automata"));
 	public static final File RES_FILE = new File(OUTPUT_DIR.getPath().concat("/MINERful-discoverable-constraints--regular-expressions.json"));
 	public static final File LTLFES_FILE = new File(OUTPUT_DIR.getPath().concat("/MINERful-discoverable-constraints--LTLf-expressions.json"));
