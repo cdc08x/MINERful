@@ -1,9 +1,14 @@
 MINERful
 =========================
 
-MINERful is a fast process mining tool for discovering declarative process specifications out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/), [MXML](http://www.processmining.org/logs/mxml), or text files (a collection of strings, in which every character is considered as an event, and every line as a trace). Among other things, MINERful can also create synthetic logs and export them as [XES](http://www.xes-standard.org/) or [MXML](http://www.processmining.org/logs/mxml) files, simplify existing Declare specifications, and import/export specifications written in [JSON](http://www.json.org/) or in the ConDec native language. Simply play around with it!
+MINERful is a fast process mining tool for discovering declarative process specifications out of event logs. Event logs can be either real or synthetic, stored as [XES](http://www.xes-standard.org/), legacy MXML, or text files (a collection of strings, in which every character is considered as an event, and every line as a trace). Among other things, MINERful can also create synthetic logs, simplify existing Declare specifications, and import/export specifications written in [JSON](http://www.json.org/). Simply play around with it!
 
 For updated info on the installation, usage, etc., please refer to the [**Wiki**](https://github.com/cdc08x/MINERful/wiki)!
+
+For a tutorial on how to run the main functionalities of MINERful on a real event log, please refer to the [tutorial](MINERful_tutorial_SepsisEventLog.pdf) with a [real-life event log](https://doi.org/10.4121/uuid:915d2bfb-7e84-49ad-a286-dc35f063a460).
+For a tutorial on how to run the main functionalities of MINERful on a synthetic event log, please refer to the [tutorial](MINERful_tutorial_syntheticlog.pdf) with a sytnhetic event log.
+
+A video demonstration of MINERful can be watched at [youtu.be/a6jEWdgS_yY](https://youtu.be/a6jEWdgS_yY).
 
 Publications and further material
 ------------
@@ -48,5 +53,4 @@ Please read the [LICENSE](https://github.com/cdc08x/MINERful/edit/master/LICENSE
 
 # Contact
 
-Please contact the developer, [Claudio Di Ciccio](https://diciccio.net), for any information, comment or bug reporting:
-[claudio@diciccio.net](mailto:claudio@diciccio.net).
+Please contact the developers, [Claudio Di Ciccio](https://diciccio.net) and [Cecilia Iacometta](https://www.linkedin.com/in/cecilia-iacometta-980b82234/), for any information, comment or bug reporting.

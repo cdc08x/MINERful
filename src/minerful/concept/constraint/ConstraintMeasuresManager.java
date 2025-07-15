@@ -240,6 +240,10 @@ public class ConstraintMeasuresManager {
         }
         return true;
     }
+    
+    public String toString() {
+    	return "Confidence: " + this.confidence + "; coverage: " + this.coverage + "; support: " + this.support;
+    }
 
     /**
      * Sets all measures to the respective minima.
