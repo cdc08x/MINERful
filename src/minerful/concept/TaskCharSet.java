@@ -215,7 +215,7 @@ public class TaskCharSet implements Comparable<TaskCharSet> {
 	}
 
 	public String toLTLpfString() {
-		return this.toLTLpfString(false);	
+		return this.toLTLpfString(true);	
 	}
 
 	public String toLTLpfString(boolean idenfifyTaskByNumber) {

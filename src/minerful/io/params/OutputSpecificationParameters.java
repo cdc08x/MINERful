@@ -165,7 +165,7 @@ public class OutputSpecificationParameters extends ParamsManager {
   options.addOption(
         Option.builder(SAVE_AS_NUSMV_PARAM_NAME)
         .hasArg().argName("path")
-            .longOpt("print-replay-autom")
+            .longOpt("save-as-nusmv")
             .desc("print the discovered process as an input script for NuSMV into the specified file")
         		.type(String.class)
         		.build()
