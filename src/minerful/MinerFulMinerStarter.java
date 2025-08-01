@@ -18,6 +18,7 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 import minerful.concept.constraint.ConstraintsBag;
 import minerful.io.encdec.GlobalStatsTableEncoderDecoder;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.miner.core.MinerFulKBCore;
@@ -45,6 +46,7 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				systemOptions = SystemCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				outputOptions = OutputSpecificationParameters.parseableOptions(),
+				imperativeOutputOptions = ImperativeOutputParameters.parseableOptions(),
 				postProptions = PostProcessingCmdParameters.parseableOptions();
 		
     	for (Object opt: postProptions.getOptions()) {
@@ -60,6 +62,9 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: outputOptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
+		for (Object opt: imperativeOutputOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: systemOptions.getOptions()) {
@@ -95,6 +100,10 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters(
+						cmdLineOptions,
+						args);
 		SystemCmdParameters systemParams =
 				new SystemCmdParameters(
 						cmdLineOptions,
@@ -122,12 +131,12 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 
 		TaskCharArchive taskCharArchive = logParser.getTaskCharArchive();
 
-		if (outParams.fileToSaveDotFileForDFG != null) {
+		if (impOutParams.fileToSaveDotFileForDFG != null) {
 			//Global stats are needed if DFG DOT output is requested
 			GlobalStatsTable globalStatsTable = new GlobalStatsTable(taskCharArchive, minerFulParams.branchingLimit);
 			globalStatsTable = minerMinaStarter.computeKB(logParser, minerFulParams, taskCharArchive, globalStatsTable);
 		
-			String globalStatsJSON = minerMinaStarter.setGlobalStatsTableJSON(globalStatsTable);
+			String globalStatsBinary = minerMinaStarter.setGlobalStatsTableBinary(globalStatsTable);
 		
 			ProcessSpecification processSpecification = ProcessSpecification.generateNonEvaluatedDiscoverableSpecification(taskCharArchive);
 			processSpecification.setName(makeDiscoveredProcessName(inputParams));
@@ -139,13 +148,13 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		
 			minerMinaStarter.pruneConstraints(processSpecification, minerFulParams, postParams);
 			//manageOutput with globalStatsJSON
-			new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams, logParser, globalStatsJSON);
+			new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, impOutParams, systemParams, logParser, globalStatsBinary);
 		
 		} else {
 			// Standard mining path
 			ProcessSpecification processSpecification = minerMinaStarter.mine(logParser, inputParams, minerFulParams, postParams, taskCharArchive);
 		
-			new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams, logParser);
+			new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, impOutParams, systemParams, logParser);
 		}
 	}
 
@@ -258,13 +267,13 @@ public class MinerFulMinerStarter extends AbstractMinerFulStarter {
 		return globalStatsTable;
 	}
 
-	protected String setGlobalStatsTableJSON(GlobalStatsTable globalStatsTable){
+	protected String setGlobalStatsTableBinary(GlobalStatsTable globalStatsTable){
 		//encoder initialisation for GlobalStatsTable
 		GlobalStatsTableEncoderDecoder encoderDecoder = new GlobalStatsTableEncoderDecoder();
 		//encoded string containing GlobalStatsTable
-        String jsonString = encoderDecoder.toJsonStringFromGlobalStatsTable(globalStatsTable);
+        String binaryString = encoderDecoder.toBinaryStringFromGlobalStatsTable(globalStatsTable);
 		
-		return jsonString;
+		return binaryString;
 	} 
 
 	protected ConstraintsBag queryForConstraints(

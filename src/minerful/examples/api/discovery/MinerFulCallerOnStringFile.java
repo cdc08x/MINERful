@@ -5,6 +5,7 @@ import java.io.File;
 import minerful.MinerFulMinerLauncher;
 import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessSpecification;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputLogCmdParameters;
@@ -28,6 +29,8 @@ public class MinerFulCallerOnStringFile {
 				new ViewCmdParameters();
 		OutputSpecificationParameters outParams =
 				new OutputSpecificationParameters();
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters();
 		SystemCmdParameters systemParams =
 				new SystemCmdParameters();
 		PostProcessingCmdParameters postParams =
@@ -43,7 +46,7 @@ public class MinerFulCallerOnStringFile {
 		//outParams.fileToSaveAsXML = new File("/home/claudio/Desktop/Temp-MINERful/model.xml");
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, impOutParams, systemParams);
 		
 		System.out.println(processSpecification);
 		

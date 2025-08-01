@@ -164,14 +164,14 @@ public class MinerFulQueryingCore implements Callable<ConstraintsBag> {
         // FootprintMatrix matrix = builder.build();
         // matrix.printMatrix();
 
-        FootprintMatrixBuilder builder = new FootprintMatrixBuilder(statsTable, tasksToQueryFor, 10);
+        // FootprintMatrixBuilder builder = new FootprintMatrixBuilder(statsTable, tasksToQueryFor, 10);
 
-        Map<Integer, FootprintMatrix> matrices = builder.buildAll();
+        // Map<Integer, FootprintMatrix> matrices = builder.buildAll();
 
-        for (int d = 1; d <= 10; d++) {
-                System.out.println("Matrix up to ±" + d + ":");
-                matrices.get(d).printMatrix();
-        }
+        // for (int d = 1; d <= 10; d++) {
+        //         System.out.println("Matrix up to ±" + d + ":");
+        //         matrices.get(d).printMatrix();
+        // }
 
 
 //        updatedBag = relaConMiner.discoverConstraints(updatedBag);

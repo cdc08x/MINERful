@@ -9,6 +9,7 @@ import org.apache.commons.cli.Options;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.TaskCharArchive;
 import minerful.io.ConstraintsPrinter;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.miner.core.MinerFulKBCore;
@@ -62,6 +63,10 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters(
+						cmdLineOptions,
+						args);
 		SystemCmdParameters systemParams =
 				new SystemCmdParameters(
 						cmdLineOptions,
@@ -92,10 +97,10 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 
 		MinerFulOutputManagementLauncher minerFulOutputMgr = new MinerFulOutputManagementLauncher();
 		
-		ProcessSpecification processSpecification = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, systemParams);
+		ProcessSpecification processSpecification = minerMinaSlider.slideAndMine(logParser, slideParams, inputParams, minerFulParams, postParams, taskCharArchive, minerFulOutputMgr, viewParams, outParams, impOutParams, systemParams);
 	}
 
-	public ProcessSpecification slideAndMine(LogParser logParser, SlidingMiningCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams) {
+	public ProcessSpecification slideAndMine(LogParser logParser, SlidingMiningCmdParameters slideParams, InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams, PostProcessingCmdParameters postParams, TaskCharArchive taskCharArchive, MinerFulOutputManagementLauncher minerFulOutputMgr, ViewCmdParameters viewParams, OutputSpecificationParameters outParams, ImperativeOutputParameters impOutParams, SystemCmdParameters systemParams) {
 		PostProcessingCmdParameters noPostProcParams = PostProcessingCmdParameters.makeParametersForNoPostProcessing();
 		ProcessSpecification proSpec = null;
 		int from = 0, to = 0;
@@ -146,7 +151,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
     							from + ";" + to + ";'",";;'"));
     					// The last one is to avoid, e.g., “0;297;'Support';'Confidence'” in the header
 		minerFulOutputMgr.setAdditionalFileSuffix(String.format("-%06d-%06d", from, to));
-		minerFulOutputMgr.manageOutput(proSpec, viewParams, outParams, systemParams, logParser);
+		minerFulOutputMgr.manageOutput(proSpec, viewParams, outParams, impOutParams, systemParams, logParser);
 
 		if (slideParams.slidingStep > 0) {   		
     		//
@@ -207,7 +212,7 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 				);
 				
 				minerFulOutputMgr.setAdditionalFileSuffix(String.format("-%06d-%06d", from, to));
-				minerFulOutputMgr.manageOutput(proSpec, viewParams, outParams, systemParams, logParser);
+				minerFulOutputMgr.manageOutput(proSpec, viewParams, outParams, impOutParams, systemParams, logParser);
 			}
 			
 			if (!slideParams.stickTail) {

@@ -1,5 +1,6 @@
 package minerful.miner.stats;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +15,9 @@ import minerful.concept.TaskChar;
 import minerful.concept.TaskCharArchive;
 
 
-public class LocalStatsWrapper {
+public class LocalStatsWrapper implements Serializable{
+	private static final long serialVersionUID = 1L;
+
 	public static final int FIRST_POSITION_IN_TRACE = 1;
 	
 	protected static Logger logger = Logger.getLogger(LocalStatsWrapper.class);
@@ -29,7 +32,9 @@ public class LocalStatsWrapper {
 	 */
 	public static final boolean EVENT_CENTRIC_DISTANCE = false;
 
-	protected class AlternatingCounterSwitcher {
+	protected class AlternatingCounterSwitcher implements Serializable{
+		private static final long serialVersionUID = 1L;
+
 		public boolean alternating = false;
 		public boolean repetitionInBetweenObserved = false;
 		public Integer inBetweenRepetitionsCounter = 0;

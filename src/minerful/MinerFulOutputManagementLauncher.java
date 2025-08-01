@@ -13,6 +13,7 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.ProcessSpecificationEncoderDecoder;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.params.SystemCmdParameters;
@@ -50,7 +51,7 @@ public class MinerFulOutputManagementLauncher {
 		);
 	}
 
-	public void manageOutput(ProcessSpecification processSpecification, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputSpecificationParameters outParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser, String globalStatsJSON) {
+	public void manageOutput(ProcessSpecification processSpecification, NavigableMap<Constraint, String> additionalCnsIndexedInfo, OutputSpecificationParameters outParams, ImperativeOutputParameters impOutParams, ViewCmdParameters viewParams, SystemCmdParameters systemParams, LogParser logParser, String globalStatsJSON) {
 		ConstraintsPrinter printer = new ConstraintsPrinter(processSpecification, additionalCnsIndexedInfo, globalStatsJSON);
 		PrintWriter outWriter = null;
 		File outputFile = null;
@@ -133,8 +134,8 @@ public class MinerFulOutputManagementLauncher {
 	        }
         }
 
-		if (outParams.fileToSaveDotFileForAutomaton != null) {
-			outputFile = this.retrieveFile(outParams.fileToSaveDotFileForAutomaton);
+		if (impOutParams.fileToSaveDotFileForAutomaton != null) {
+			outputFile = this.retrieveFile(impOutParams.fileToSaveDotFileForAutomaton);
         	try {
 				outWriter = new PrintWriter(outputFile);
 	        	outWriter.print(printer.printDotAutomaton());
@@ -148,14 +149,28 @@ public class MinerFulOutputManagementLauncher {
         }
 
 
-		if (outParams.fileToSaveDotFileForDFG != null) {
-			outputFile = this.retrieveFile(outParams.fileToSaveDotFileForDFG);
+		if (impOutParams.fileToSaveDotFileForDFG != null) {
+			outputFile = this.retrieveFile(impOutParams.fileToSaveDotFileForDFG);
         	try {
 				outWriter = new PrintWriter(outputFile);
 	        	outWriter.print(printer.printDotDFG());
 	        	outWriter.flush();
 	        	outWriter.close();
-	        	MessagePrinter.printlnOut("Discovered process automaton written in DOT format on " + outputFile);
+	        	MessagePrinter.printlnOut("Discovered process DFG written in DOT format on " + outputFile);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+
+		if (impOutParams.fileToSaveTxtFileForFootprintMatrices != null) {
+			outputFile = this.retrieveFile(impOutParams.fileToSaveTxtFileForFootprintMatrices);
+        	try {
+				outWriter = new PrintWriter(outputFile);
+	        	outWriter.print(printer.printFootprintMatrixes(impOutParams.kMaxMatrixSteps));
+	        	outWriter.flush();
+	        	outWriter.close();
+	        	MessagePrinter.printlnOut("Discovered process footprint written in txt format on " + outputFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -198,8 +213,8 @@ public class MinerFulOutputManagementLauncher {
         }
         */
 
-		if (outParams.fileToSaveTsmlFileForAutomaton != null) {
-			outputFile = this.retrieveFile(outParams.fileToSaveTsmlFileForAutomaton);
+		if (impOutParams.fileToSaveTsmlFileForAutomaton != null) {
+			outputFile = this.retrieveFile(impOutParams.fileToSaveTsmlFileForAutomaton);
         	try {
         		outWriter = new PrintWriter(new File(outputFile.getAbsolutePath()));
 	        	outWriter.print(printer.printTSMLAutomaton());
@@ -243,16 +258,16 @@ public class MinerFulOutputManagementLauncher {
 	
 		
 
-		if (outParams.folderToSaveDotFilesForPartialAutomata != null) {
+		if (impOutParams.folderToSaveDotFilesForPartialAutomata != null) {
 			NavigableMap<String, String> partialAutoMap = printer.printDotPartialAutomata();
 			StringBuilder subAutomataPathsBuilder = new StringBuilder();
 			String subAutomatonPath = null;
 			
-			logger.info("Saving activation-related automata DOT files in folder " + outParams.folderToSaveDotFilesForPartialAutomata + "...");
+			logger.info("Saving activation-related automata DOT files in folder " + impOutParams.folderToSaveDotFilesForPartialAutomata + "...");
 
 			for (Map.Entry<String, String> partialAutomaton : partialAutoMap.entrySet()) {
 				try {
-					subAutomatonPath = outParams.folderToSaveDotFilesForPartialAutomata
+					subAutomatonPath = impOutParams.folderToSaveDotFilesForPartialAutomata
 							+ "/"
 							+ partialAutomaton.getKey().replaceAll("\\W", "_")
 							+ ".automaton.dot";
@@ -292,31 +307,32 @@ public class MinerFulOutputManagementLauncher {
 	}
 
 	public void manageOutput(ProcessSpecification processSpecification,
-			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams,
+			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, ImperativeOutputParameters impOutParams, SystemCmdParameters systemParams,
 			LogParser logParser) {
-		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, logParser, null);
+		this.manageOutput(processSpecification, null, outParams, impOutParams, viewParams, systemParams, logParser, null);
 	}
 
 	public void manageOutput(ProcessSpecification processSpecification,
-			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, SystemCmdParameters systemParams) {
-		this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, null, null);
+			ViewCmdParameters viewParams, OutputSpecificationParameters outParams, ImperativeOutputParameters impOutParams, SystemCmdParameters systemParams) {
+		this.manageOutput(processSpecification, null, outParams, impOutParams, viewParams, systemParams, null, null);
 	}
 	
-	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams) {
-		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), null, null);
+	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams, ImperativeOutputParameters impOutParams) {
+		this.manageOutput(processSpecification, null, outParams, impOutParams, new ViewCmdParameters(), new SystemCmdParameters(), null, null);
 	}
 	
-	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams, LogParser logParser) {
-		this.manageOutput(processSpecification, null, outParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser, null);
+	public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams, ImperativeOutputParameters impOutParams, LogParser logParser) {
+		this.manageOutput(processSpecification, null, outParams, impOutParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser, null);
 	}
 
 	public void manageOutput(ProcessSpecification processSpecification,
                          ViewCmdParameters viewParams,
                          OutputSpecificationParameters outParams,
+						 ImperativeOutputParameters impOutParams,
                          SystemCmdParameters systemParams,
                          LogParser logParser,
                          String globalStatsJSON) {
-    this.manageOutput(processSpecification, null, outParams, viewParams, systemParams, logParser, globalStatsJSON);
+    this.manageOutput(processSpecification, null, outParams, impOutParams, viewParams, systemParams, logParser, globalStatsJSON);
 }
 
 }

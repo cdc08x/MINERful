@@ -1,5 +1,6 @@
 package minerful.miner.stats;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,9 @@ import minerful.concept.TaskCharArchive;
  * The information includes, for all activities, the total amount of occurrences, and the interplay with other activities.
  * @author Claudio Di Ciccio <dc.claudio@gmail.com>
  */
-public class GlobalStatsTable {
+public class GlobalStatsTable implements Serializable{
+	private static final long serialVersionUID = 1L;
+
 	protected static Logger logger = Logger.getLogger(GlobalStatsTable.class);
 
     public Map<TaskChar, LocalStatsWrapper> statsTable;

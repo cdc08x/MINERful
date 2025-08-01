@@ -6,6 +6,7 @@ import minerful.MinerFulOutputManagementLauncher;
 import minerful.MinerFulSimplificationLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.index.comparator.modular.ConstraintSortingPolicy;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.InputSpecificationParameters;
 import minerful.io.params.InputSpecificationParameters.InputEncoding;
 import minerful.io.params.OutputSpecificationParameters;
@@ -27,6 +28,7 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		PostProcessingCmdParameters postParams = new PostProcessingCmdParameters();
 		ViewCmdParameters viewParams = new ViewCmdParameters();
 		OutputSpecificationParameters outParams = new OutputSpecificationParameters();
+		ImperativeOutputParameters impOutParams = new ImperativeOutputParameters();
 		SystemCmdParameters systemParams = new SystemCmdParameters();
 
 		// Specifies the type of post-processing analysis, through which getting rid of redundancies or conflicts in the process specification
@@ -59,7 +61,7 @@ public class MinerFulSimplificationInvokerOnDeclareMapFile {
 		//outParams.fileToSaveAsXML = new File(EXAMPLE_OUTPUT_PROCESS_SPECIFICATION_FILE);
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, impOutParams, systemParams);
 		
 		System.out.println("Simplified specification: " + processSpecification);
 		

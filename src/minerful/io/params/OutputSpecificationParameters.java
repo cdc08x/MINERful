@@ -18,25 +18,25 @@ public class OutputSpecificationParameters extends ParamsManager {
 	public static final String SAVE_AS_NUSMV_PARAM_NAME = "oNuSMV";
 	public static final String SAVE_AS_CSV_PARAM_NAME = "oCSV";
 	public static final String SAVE_AS_JSON_PARAM_NAME = "oJSON";
-	public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "autoDOT";
-	public static final String SAVE_PROCESS_DOT_DFG_PARAM_NAME = "dfgDOT";
-	public static final String SAVE_PROCESS_TXT_FOOTPRINT_PARAM_NAME = "footprintTXT";
+	//public static final String SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME = "autoDOT";
+	//public static final String SAVE_PROCESS_DOT_DFG_PARAM_NAME = "dfgDOT";
+	//public static final String SAVE_PROCESS_TXT_FOOTPRINT_PARAM_NAME = "footprintTXT";
 //	public static final String SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME = "dotCond"; // TODO To be done, one day
-	public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "autoTSML";
-	public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "subautosDOT";
+	//public static final String SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME = "autoTSML";
+	//public static final String FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME = "subautosDOT";
 
 	/** File in which discovered constraints are printed in CSV format. Keep it equal to <code>null</code> to disable this functionality. */
 	public File fileToSaveConstraintsAsCSV;
 	/** Directory in which the discovered constraints are printed as automata, in separate GraphViz DOT files. Keep it equal to <code>null</code> to disable this functionality. */
-	public File folderToSaveDotFilesForPartialAutomata;
-	/** File in which the discovered process specification is printed as a TSML representation of an automaton. Keep it equal to <code>null</code> for avto disable this functionality. */
-	public File fileToSaveTsmlFileForAutomaton;
-	/** File in which the discovered process specification is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> to disable this functionality. */
-	public File fileToSaveDotFileForAutomaton;
-	/** File in which the discovered process specification is printed as a GraphViz DOT of a dfg. Keep it equal to <code>null</code> to disable this functionality. */
-	public File fileToSaveDotFileForDFG;
-	/** File in which the discovered process specification is printed as a TXT containing footprint matrices. Keep it equal to <code>null</code> to disable this functionality. */
-	public File fileToSaveTxtFileForFootprintMatrices;
+	// public File folderToSaveDotFilesForPartialAutomata;
+	// /** File in which the discovered process specification is printed as a TSML representation of an automaton. Keep it equal to <code>null</code> for avto disable this functionality. */
+	// public File fileToSaveTsmlFileForAutomaton;
+	// /** File in which the discovered process specification is printed as a GraphViz DOT of an automaton. Keep it equal to <code>null</code> to disable this functionality. */
+	// public File fileToSaveDotFileForAutomaton;
+	// /** File in which the discovered process specification is printed as a GraphViz DOT of a dfg. Keep it equal to <code>null</code> to disable this functionality. */
+	// public File fileToSaveDotFileForDFG;
+	// /** File in which the discovered process specification is printed as a TXT containing footprint matrices. Keep it equal to <code>null</code> to disable this functionality. */
+	// public File fileToSaveTxtFileForFootprintMatrices;
 //	/** File in which the discovered process specification is printed as a GraphViz DOT of an automaton in which multiple transitions are collapsed into one with many labels, for readability reasons. Keep it equal to <code>null</code> to disable this functionality. */
 //	public File fileToSaveDotFileForCondensedAutomaton; // TODO One day
 	/** File in which the discovered process specification is saved as a Declare XML file. Keep it equal to <code>null</code> to disable this functionality. */
@@ -50,11 +50,11 @@ public class OutputSpecificationParameters extends ParamsManager {
 
     public OutputSpecificationParameters() {
     	this.fileToSaveConstraintsAsCSV = null;
-    	this.folderToSaveDotFilesForPartialAutomata = null;
-    	this.fileToSaveTsmlFileForAutomaton = null;
-    	this.fileToSaveDotFileForAutomaton = null;
-		this.fileToSaveDotFileForDFG = null;
-		this.fileToSaveTxtFileForFootprintMatrices = null;
+    	// this.folderToSaveDotFilesForPartialAutomata = null;
+    	// this.fileToSaveTsmlFileForAutomaton = null;
+    	// this.fileToSaveDotFileForAutomaton = null;
+		// this.fileToSaveDotFileForDFG = null;
+		// this.fileToSaveTxtFileForFootprintMatrices = null;
 //    	this.fileToSaveDotFileForCondensedAutomaton = null; // TODO One day
     	this.fileToSaveAsConDec = null;
     	this.fileToSaveAsNuSMV = null;
@@ -77,17 +77,17 @@ public class OutputSpecificationParameters extends ParamsManager {
 	protected void setup(CommandLine line) {        
     	this.fileToSaveAsJSON = openOutputFile(line, SAVE_AS_JSON_PARAM_NAME);
 
-        this.folderToSaveDotFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
+        // this.folderToSaveDotFilesForPartialAutomata = openOutputDir(line, FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME);
 
-        this.fileToSaveDotFileForAutomaton = openOutputFile(line, SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME);
+        // this.fileToSaveDotFileForAutomaton = openOutputFile(line, SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME);
         
-		this.fileToSaveDotFileForDFG = openOutputFile(line, SAVE_PROCESS_DOT_DFG_PARAM_NAME);
+		// this.fileToSaveDotFileForDFG = openOutputFile(line, SAVE_PROCESS_DOT_DFG_PARAM_NAME);
 
-		this.fileToSaveTxtFileForFootprintMatrices = openInputFile(line, SAVE_PROCESS_TXT_FOOTPRINT_PARAM_NAME);
+		// this.fileToSaveTxtFileForFootprintMatrices = openInputFile(line, SAVE_PROCESS_TXT_FOOTPRINT_PARAM_NAME);
 
 //        this.fileToSaveDotFileForCondensedAutomaton = openOutputFile(line, SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME); // TODO One day
         
-		this.fileToSaveTsmlFileForAutomaton = openOutputFile(line, SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
+		//this.fileToSaveTsmlFileForAutomaton = openOutputFile(line, SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME);
         
         this.fileToSaveConstraintsAsCSV = openOutputFile(line, SAVE_AS_CSV_PARAM_NAME);
 
@@ -120,36 +120,36 @@ public class OutputSpecificationParameters extends ParamsManager {
         		.type(String.class)
         		.build()
         		);
-        options.addOption(
-        		Option.builder(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
-        		.hasArg().argName("path")
-        		.longOpt("save-automaton-dot")
-        		.desc(
-        				"write a Graphviz DOT format of a finite state automaton representing the declarative process"
-        		)
-        		.type(String.class)
-        		.build()
-        		);
-		options.addOption(
-				Option.builder(SAVE_PROCESS_DOT_DFG_PARAM_NAME)
-				.hasArg().argName("path")
-				.longOpt("save-dfg-dot")
-				.desc(
-						"write a Graphviz DOT format of a directly follows graph representing the process"
-				)
-				.type(String.class)
-				.build()
-				);
-		options.addOption(
-				Option.builder(SAVE_PROCESS_TXT_FOOTPRINT_PARAM_NAME)
-				.hasArg().argName("path")
-				.longOpt("save-footprint-txt")
-				.desc(
-						"write a TXT format of footprint matrices representing the process"
-				)
-				.type(String.class)
-				.build()
-				);
+        // options.addOption(
+        // 		Option.builder(SAVE_PROCESS_DOT_AUTOMATON_PARAM_NAME)
+        // 		.hasArg().argName("path")
+        // 		.longOpt("save-automaton-dot")
+        // 		.desc(
+        // 				"write a Graphviz DOT format of a finite state automaton representing the declarative process"
+        // 		)
+        // 		.type(String.class)
+        // 		.build()
+        // 		);
+		// options.addOption(
+		// 		Option.builder(SAVE_PROCESS_DOT_DFG_PARAM_NAME)
+		// 		.hasArg().argName("path")
+		// 		.longOpt("save-dfg-dot")
+		// 		.desc(
+		// 				"write a Graphviz DOT format of a directly follows graph representing the process"
+		// 		)
+		// 		.type(String.class)
+		// 		.build()
+		// 		);
+		// options.addOption(
+		// 		Option.builder(SAVE_PROCESS_TXT_FOOTPRINT_PARAM_NAME)
+		// 		.hasArg().argName("path")
+		// 		.longOpt("save-footprint-txt")
+		// 		.desc(
+		// 				"write a TXT format of footprint matrices representing the process"
+		// 		)
+		// 		.type(String.class)
+		// 		.build()
+		// 		);
 //        options.addOption( // TODO One day
 //        		Option.builder(SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME)
 //        		.hasArg().argName("path")
@@ -160,24 +160,24 @@ public class OutputSpecificationParameters extends ParamsManager {
 //        		.type(String.class)
 //        		.create(SAVE_PROCESS_CONDENSED_DOT_AUTOMATON_PARAM_NAME)
 //        		);
-        options.addOption(
-        		Option.builder(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME)
-        		.hasArg().argName("path")
-        		.longOpt("save-automaton-tsml")
-        		.desc(
-        				"write a TSML format of a finite state automaton representing the mined process on the given file"
-        		)
-        		.type(String.class)
-        		.build()
-        		);
-        options.addOption(
-        		Option.builder(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME)
-        		.hasArg().argName("path")
-        		.longOpt("subautom-folder")
-        		.desc("write the Graphviz DOT format of activities' finite state sub-automata on separate files, within the given folder")
-        		.type(String.class)
-        		.build()
-        		);
+        // options.addOption(
+        // 		Option.builder(SAVE_PROCESS_TSML_AUTOMATON_PARAM_NAME)
+        // 		.hasArg().argName("path")
+        // 		.longOpt("save-automaton-tsml")
+        // 		.desc(
+        // 				"write a TSML format of a finite state automaton representing the mined process on the given file"
+        // 		)
+        // 		.type(String.class)
+        // 		.build()
+        // 		);
+        // options.addOption(
+        // 		Option.builder(FOLDER_FOR_SAVING_DOT_SUBAUTOMATA_PARAM_NAME)
+        // 		.hasArg().argName("path")
+        // 		.longOpt("subautom-folder")
+        // 		.desc("write the Graphviz DOT format of activities' finite state sub-automata on separate files, within the given folder")
+        // 		.type(String.class)
+        // 		.build()
+        // 		);
         options.addOption(
 				Option.builder(SAVE_AS_CSV_PARAM_NAME)
 				.hasArg().argName("path")

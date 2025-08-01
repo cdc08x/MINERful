@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -25,6 +26,8 @@ import minerful.concept.constraint.ConstraintsBag;
 import minerful.dfg.DirectlyFollowsGraph;
 import minerful.dfg.DirectlyFollowsGraphBuilder;
 import minerful.dfg.encdec.DirectlyFollowsGraphDotPrinter;
+import minerful.footprint.FootprintMatrix;
+import minerful.footprint.FootprintMatrixBuilder;
 import minerful.index.LinearConstraintsIndexFactory;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 import minerful.io.encdec.csv.CsvEncoder;
@@ -53,6 +56,8 @@ public class ConstraintsPrinter {
 	private GlobalStatsTable globalStatsTable;
 	private DirectlyFollowsGraph processDFG;
 	private DirectlyFollowsGraphBuilder dfGraphBuilder;
+	private FootprintMatrix processFootprintMatrix;
+	private FootprintMatrixBuilder footprintMatrixBuilder;
 	private NavigableMap<Constraint, String> additionalCnsIndexedInfo;
 
 	public ConstraintsPrinter(ProcessSpecification processSpecification) {
@@ -70,7 +75,7 @@ public class ConstraintsPrinter {
 		this.processSpecification = processSpecification;
 		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
 		GlobalStatsTableEncoderDecoder encoderDecoder = new GlobalStatsTableEncoderDecoder();
-		this.globalStatsTable = encoderDecoder.fromJsonStringToGlobalStatsTable(globalStatsJSON);
+		this.globalStatsTable = encoderDecoder.fromBinaryStringToGlobalStatsTable(globalStatsJSON);
 	}
 
 	public String printBag() {
@@ -372,6 +377,28 @@ public class ConstraintsPrinter {
 
 		return new DirectlyFollowsGraphDotPrinter().getDotRepresentation(processDFG);
 	}
+
+	public String printFootprintMatrixes(Integer k) {
+    if (this.processFootprintMatrix == null) {
+        footprintMatrixBuilder = new FootprintMatrixBuilder(globalStatsTable, this.processSpecification.bag.getTaskChars(), k);
+    }
+
+    Map<Integer, FootprintMatrix> matrices = footprintMatrixBuilder.buildAll();
+    StringBuilder allMatrices = new StringBuilder();
+
+    for (int d = 1; d <= k; d++) {
+        FootprintMatrix matrix = matrices.get(d);
+        if (matrix != null) {
+            allMatrices.append(matrix.getMatrixAsStringWithLabel("up to ±" + d)).append("\n");
+        } else {
+            allMatrices.append("No matrix found for ±").append(d).append("\n\n");
+        }
+    }
+
+    return allMatrices.toString();
+}
+
+	
 
 	public String printTSMLAutomaton() {
 		if (this.processAutomaton == null)

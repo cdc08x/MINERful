@@ -12,6 +12,7 @@ import minerful.MinerFulSimplificationLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.concept.constraint.Constraint;
 import minerful.concept.constraint.ConstraintChange;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.params.InputLogCmdParameters;
@@ -44,6 +45,8 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 				new ViewCmdParameters();
 		OutputSpecificationParameters outParams =
 				new OutputSpecificationParameters();
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters();
 		SystemCmdParameters systemParams =
 				new SystemCmdParameters();
 		PostProcessingCmdParameters postParams =
@@ -122,7 +125,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 		System.out.println("Saving...");
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, impOutParams, systemParams);
 	
 		System.out.println("...Done");		
 		
@@ -149,7 +152,7 @@ public class MinerFulObserverInvokerOnXesFile implements PropertyChangeListener 
 
 		System.out.println("Saving...");
 		
-		outputMgt.manageOutput(processSpecification, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(processSpecification, viewParams, outParams, impOutParams,systemParams);
 	
 		System.out.println("...Done");		
 		

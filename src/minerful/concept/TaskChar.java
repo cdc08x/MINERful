@@ -6,6 +6,8 @@ package minerful.concept;
 
 
 
+import java.io.Serializable;
+
 import minerful.logparser.CharTaskClass;
 
 /**
@@ -14,7 +16,9 @@ import minerful.logparser.CharTaskClass;
  *
  */
 
-public class TaskChar implements Comparable<TaskChar> {
+public class TaskChar implements Comparable<TaskChar>, Serializable {
+    private static final long serialVersionUID = 1L;
+
 	/* Generic symbolic TaskChar's. */
 	public static final TaskChar[] SYMBOLIC_TASKCHARS = new TaskChar[]{ 
 			new TaskChar('0'), 

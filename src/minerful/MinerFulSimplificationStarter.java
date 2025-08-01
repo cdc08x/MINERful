@@ -5,6 +5,7 @@
 package minerful;
 
 import minerful.concept.ProcessSpecification;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.InputSpecificationParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.SystemCmdParameters;
@@ -26,6 +27,7 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
 				postProptions = PostProcessingCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				outputOptions = OutputSpecificationParameters.parseableOptions(),
+				imperativeOutputOptions = ImperativeOutputParameters.parseableOptions(),
 				inputOptions = InputSpecificationParameters.parseableOptions();
 		
     	for (Object opt: postProptions.getOptions()) {
@@ -38,6 +40,9 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: outputOptions.getOptions()) {
+    		cmdLineOptions.addOption((Option)opt);
+    	}
+		for (Object opt: imperativeOutputOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
     	for (Object opt: inputOptions.getOptions()) {
@@ -61,6 +66,10 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
 						args);
 		OutputSpecificationParameters outParams =
 				new OutputSpecificationParameters(
+						cmdLineOptions,
+						args);
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters(
 						cmdLineOptions,
 						args);
 		InputSpecificationParameters inputParams =
@@ -88,6 +97,6 @@ public class MinerFulSimplificationStarter extends MinerFulMinerStarter {
         
         ProcessSpecification outputProcess = miFuSimpLa.simplify();
 
-        new MinerFulOutputManagementLauncher().manageOutput(outputProcess, viewParams, outParams, systemParams);
+        new MinerFulOutputManagementLauncher().manageOutput(outputProcess, viewParams, outParams, impOutParams, systemParams);
     }
  }

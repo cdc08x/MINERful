@@ -4,6 +4,7 @@
  */
 package minerful.miner.stats;
 
+import java.io.Serializable;
 import java.util.NavigableMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -19,7 +20,9 @@ import org.apache.log4j.Logger;
  * minimum. Updates and values to store are for the largest part computed in
  * {@link LocalStatsWrapper #LocalStatsWrapper}.
  */
-public class StatsCell implements Cloneable {
+public class StatsCell implements Cloneable, Serializable {
+	private static final long serialVersionUID = 1L;
+
     public static final int NEVER_ONWARDS = Integer.MAX_VALUE;
     public static final int NEVER_BACKWARDS = Integer.MIN_VALUE;
     public static final int NEVER_EVER = 0;

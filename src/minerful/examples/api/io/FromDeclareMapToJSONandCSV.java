@@ -6,6 +6,7 @@ import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.io.encdec.csv.CsvEncoder;
 import minerful.io.encdec.declaremap.DeclareMapEncoderDecoder;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
@@ -19,6 +20,8 @@ public class FromDeclareMapToJSONandCSV {
 	public static void main(String[] args) {
 		OutputSpecificationParameters outParams =
 				new OutputSpecificationParameters();
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters();
 		ViewCmdParameters viewParams =
 				new ViewCmdParameters();
 		SystemCmdParameters systemParams =
@@ -55,6 +58,6 @@ public class FromDeclareMapToJSONandCSV {
 		};
 		
 		MinerFulOutputManagementLauncher outputMgt = new MinerFulOutputManagementLauncher();
-		outputMgt.manageOutput(proSpec, viewParams, outParams, systemParams);
+		outputMgt.manageOutput(proSpec, viewParams, outParams, impOutParams, systemParams);
 	}
 }

@@ -1,10 +1,14 @@
 package minerful.logparser;
 
+import java.io.Serializable;
+
 import minerful.concept.AbstractTaskClass;
 import minerful.concept.TaskClass;
 import minerful.io.encdec.TaskCharEncoderDecoder;
 
-public class CharTaskClass extends AbstractTaskClass implements TaskClass {
+public class CharTaskClass extends AbstractTaskClass implements TaskClass, Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public final Character charClass;
 
 	public CharTaskClass(Character charClass) {

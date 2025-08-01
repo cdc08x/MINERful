@@ -7,6 +7,7 @@ import minerful.MinerFulOutputManagementLauncher;
 import minerful.concept.ProcessSpecification;
 import minerful.io.ConstraintsPrinter;
 import minerful.io.encdec.ProcessSpecificationEncoderDecoder;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.logparser.LogParser;
 import minerful.logparser.XesLogParser;
@@ -37,10 +38,11 @@ public class FromJsonProcessSpecificationToAutomaton {
 		 * Specifies the parameters used to create the automaton
 		 */		
 		OutputSpecificationParameters outParams = new OutputSpecificationParameters();
-		outParams.fileToSaveDotFileForAutomaton = OUTPUT_DOT_FILE;
+		ImperativeOutputParameters impOutParams = new ImperativeOutputParameters();
+		impOutParams.fileToSaveDotFileForAutomaton = OUTPUT_DOT_FILE;
 		
 		// With the following command, the DOT file is stored directly in the output file.
-		new MinerFulOutputManagementLauncher().manageOutput(proSpec, outParams);
+		new MinerFulOutputManagementLauncher().manageOutput(proSpec, outParams, impOutParams);
 		
 		// If you prefer to retain the DOT string in memory:
 		ConstraintsPrinter cPrin = new ConstraintsPrinter(proSpec);

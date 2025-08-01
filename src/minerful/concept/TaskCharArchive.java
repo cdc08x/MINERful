@@ -1,5 +1,6 @@
 package minerful.concept;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,7 +19,9 @@ import minerful.logparser.StringTaskClass;
  * An archive of the tasks of a process. For each task, an identifying character is given, as per {@link minerful.concept.TaskChar TaskChar}
  * @author Claudio Di Ciccio
  */
-public class TaskCharArchive {
+public class TaskCharArchive implements Serializable{
+    private static final long serialVersionUID = 1L;
+
 
 	private TreeSet<TaskChar> taskChars;
 	private HashMap<Character, TaskChar> taskCharsMapById;

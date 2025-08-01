@@ -10,6 +10,7 @@ import org.apache.commons.cli.Options;
 import minerful.checking.params.CheckingCmdParameters;
 import minerful.checking.relevance.dao.SpecificationFitnessEvaluation;
 import minerful.concept.ProcessSpecification;
+import minerful.io.params.ImperativeOutputParameters;
 import minerful.io.params.InputSpecificationParameters;
 import minerful.io.params.OutputSpecificationParameters;
 import minerful.params.InputLogCmdParameters;
@@ -28,6 +29,7 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
 		
 		Options systemOptions = SystemCmdParameters.parseableOptions(),
 				outputOptions = OutputSpecificationParameters.parseableOptions(),
+				imperativeOutouOptions = ImperativeOutputParameters.parseableOptions(),
 				postPrOptions = PostProcessingCmdParameters.parseableOptions(),
 				viewOptions = ViewCmdParameters.parseableOptions(),
 				chkOptions = CheckingCmdParameters.parseableOptions(),
@@ -40,6 +42,9 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
     	for (Object opt: outputOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
+		for (Object opt: imperativeOutouOptions.getOptions()){
+			cmdLineOptions.addOption((Option)opt);
+		}
     	for (Object opt: postPrOptions.getOptions()) {
     		cmdLineOptions.addOption((Option)opt);
     	}
@@ -71,6 +76,10 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
 				new OutputSpecificationParameters(
 						cmdLineOptions,
 						args);
+		ImperativeOutputParameters impOutParams =
+				new ImperativeOutputParameters(
+						cmdLineOptions,
+						args); 
 		PostProcessingCmdParameters preProcParams =
 				new PostProcessingCmdParameters(
 						cmdLineOptions,
@@ -103,6 +112,6 @@ public class MinerFulFitnessCheckStarter extends MinerFulMinerStarter {
         SpecificationFitnessEvaluation evaluationOutput = miFuCheLa.check();
         ProcessSpecification processSpecification = miFuCheLa.getProcessSpecification();
 
-        new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, systemParams);
+        new MinerFulOutputManagementLauncher().manageOutput(processSpecification, viewParams, outParams, impOutParams, systemParams);
     }
  }
