@@ -27,7 +27,15 @@ public class ImperativeOutputParameters extends ParamsManager{
     // Numerical parameter
     public int kMaxMatrixSteps = 1;
 
-    public ImperativeOutputParameters() {}
+    public ImperativeOutputParameters() {
+   
+    	this.fileToSaveDotFileForAutomaton = null;
+    	this.fileToSaveDotFileForDFG = null;
+    	this.fileToSaveTxtFileForFootprintMatrices = null;
+    	this.fileToSaveTsmlFileForAutomaton = null;
+        this.folderToSaveDotFilesForPartialAutomata = null;
+
+    }
 
     public ImperativeOutputParameters(String[] args) {
         this.parseAndSetup(parseableOptions(), args);

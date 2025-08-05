@@ -74,8 +74,12 @@ public class ConstraintsPrinter {
 			NavigableMap<Constraint, String> additionalCnsIndexedInfo, String globalStatsJSON) {
 		this.processSpecification = processSpecification;
 		this.additionalCnsIndexedInfo = (additionalCnsIndexedInfo == null) ? new TreeMap<Constraint, String>() : additionalCnsIndexedInfo;
-		GlobalStatsTableEncoderDecoder encoderDecoder = new GlobalStatsTableEncoderDecoder();
-		this.globalStatsTable = encoderDecoder.fromBinaryStringToGlobalStatsTable(globalStatsJSON);
+		
+		if(globalStatsJSON != null){
+			GlobalStatsTableEncoderDecoder encoderDecoder = new GlobalStatsTableEncoderDecoder();
+			this.globalStatsTable = encoderDecoder.fromBinaryStringToGlobalStatsTable(globalStatsJSON);
+		}
+		
 	}
 
 	public String printBag() {

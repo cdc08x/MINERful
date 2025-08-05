@@ -325,6 +325,10 @@ public class MinerFulOutputManagementLauncher {
 		this.manageOutput(processSpecification, null, outParams, impOutParams, new ViewCmdParameters(), new SystemCmdParameters(), logParser, null);
 	}
 
+	// public void manageOutput(ProcessSpecification processSpecification, OutputSpecificationParameters outParams, LogParser logParser) {
+	// 	this.manageOutput(processSpecification, null, outParams, null, new ViewCmdParameters(), new SystemCmdParameters(), logParser, null);
+	// }
+
 	public void manageOutput(ProcessSpecification processSpecification,
                          ViewCmdParameters viewParams,
                          OutputSpecificationParameters outParams,
