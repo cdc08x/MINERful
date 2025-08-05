@@ -63,7 +63,10 @@ public class SlidingCmdParameters extends ParamsManager {
         		Option.builder(SLIDING_STEP_PARAM_NAME)
 						.hasArg().argName("num")
 						.longOpt("slide-by")
-						.desc("sliding window step, in number of traces (must be higher than 0)" + printDefault(DEFAULT_SLIDING_STEP))
+						.desc("sliding window step, in number of traces (must be higher than 0). "
+								+ "Make sure to specify the number of traces to be analysed in the sub-log with the"
+								+ " -" + InputLogCmdParameters.SUB_LOG_SIZE_PARAM_NAME + " parameter" 
+								+ printDefault(DEFAULT_SLIDING_STEP))
 						.type(Integer.class)
 						.build()
         		);

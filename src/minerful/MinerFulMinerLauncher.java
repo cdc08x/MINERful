@@ -104,6 +104,7 @@ public class MinerFulMinerLauncher {
 	 */
 	public static LogParser deriveLogParserFromLogFile(InputLogCmdParameters inputParams, MinerFulCmdParameters minerFulParams) {
 		LogParser logParser = null;
+
 		boolean doAnalyseSubLog =
 				!inputParams.startFromTrace.equals(InputLogCmdParameters.FIRST_TRACE_NUM)
 				||

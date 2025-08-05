@@ -16,6 +16,7 @@ import minerful.miner.core.MinerFulQueryingCore;
 import minerful.miner.params.MinerFulCmdParameters;
 import minerful.miner.stats.GlobalStatsTable;
 import minerful.params.InputLogCmdParameters;
+import minerful.params.SlidingCmdParameters;
 import minerful.params.SlidingMiningCmdParameters;
 import minerful.params.SystemCmdParameters;
 import minerful.params.ViewCmdParameters;
@@ -78,6 +79,13 @@ public class MinerFulMinerSlider extends MinerFulMinerStarter {
 		if (inputParams.inputLogFile == null) {
 			systemParams.printHelpForWrongUsage("Input log file missing!",
 					cmdLineOptions);
+			System.exit(1);
+		}
+		// In case 
+		if (slideParams.slidingStep == SlidingCmdParameters.DEFAULT_SLIDING_STEP && inputParams.subLogLength == InputLogCmdParameters.WHOLE_LOG_LENGTH) {
+			MessagePrinter.printlnError("A sliding window step was provided (" + slideParams.slidingStep + 
+					") but the number of traces to be analysed in the sub-log was not given. "
+					+ "Please provide a value for both.");
 			System.exit(1);
 		}
 
