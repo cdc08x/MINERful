@@ -1,0 +1,5 @@
+'Constraint';'Template';'Activation';'Target';'Confidence';'Coverage';'Support';'Trace confidence';'Trace coverage';'Trace support';'Trace fitness';'Marked for exclusion';'Below thresholds';'Redudant';'Conflicting'
+'Init(A)';'Init';'';'[A]';1.000;1.000;1.000;1.000;1.000;1.000;0.000;FALSE;FALSE;FALSE;FALSE
+'ChainResponse(A, B)';'ChainResponse';'[A]';'[B]';1.000;1.000;1.000;1.000;1.000;1.000;0.970;FALSE;FALSE;FALSE;FALSE
+'ChainResponse(B, C)';'ChainResponse';'[B]';'[C]';1.000;1.000;1.000;1.000;1.000;1.000;0.970;FALSE;FALSE;FALSE;FALSE
+'End(C)';'End';'';'[C]';1.000;1.000;1.000;1.000;1.000;1.000;0.000;FALSE;FALSE;FALSE;FALSE

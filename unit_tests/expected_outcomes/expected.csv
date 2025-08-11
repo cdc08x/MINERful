@@ -1,0 +1,15 @@
+'Constraint';'Template';'Activation';'Target';'Confidence';'Coverage';'Support';'Trace confidence';'Trace coverage';'Trace support';'Trace fitness';'Marked for exclusion';'Below thresholds';'Redudant';'Conflicting'
+'AtMost1(A)';'AtMost1';'';'[A]';1.000;0.500;0.500;1.000;1.000;1.000;;FALSE;FALSE;FALSE;FALSE
+'ChainResponse(A, B)';'ChainResponse';'[A]';'[B]';1.000;0.333;0.333;1.000;0.667;0.667;;FALSE;FALSE;FALSE;FALSE
+'NotRespondedExistence(A, C)';'NotRespondedExistence';'[A]';'[C]';1.000;0.333;0.333;1.000;0.667;0.667;;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(B, A)';'NotPrecedence';'[A]';'[B]';1.000;0.333;0.333;1.000;0.667;0.667;;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(C, A)';'NotPrecedence';'[A]';'[C]';1.000;0.333;0.333;1.000;0.667;0.667;;FALSE;FALSE;FALSE;FALSE
+'AtMost2(B)';'AtMost2';'';'[B]';1.000;0.500;0.500;1.000;1.000;1.000;;FALSE;FALSE;FALSE;FALSE
+'NotResponse(B, A)';'NotResponse';'[B]';'[A]';1.000;0.500;0.500;1.000;0.833;0.833;;FALSE;FALSE;FALSE;FALSE
+'NotRespondedExistence(B, C)';'NotRespondedExistence';'[B]';'[C]';1.000;0.500;0.500;1.000;0.833;0.833;;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(C, B)';'NotPrecedence';'[B]';'[C]';1.000;0.500;0.500;1.000;0.833;0.833;;FALSE;FALSE;FALSE;FALSE
+'AtMost2(C)';'AtMost2';'';'[C]';1.000;0.500;0.500;1.000;1.000;1.000;;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(A, C)';'NotPrecedence';'[C]';'[A]';1.000;0.167;0.167;1.000;0.167;0.167;;FALSE;FALSE;FALSE;FALSE
+'NotPrecedence(B, C)';'NotPrecedence';'[C]';'[B]';1.000;0.167;0.167;1.000;0.167;0.167;;FALSE;FALSE;FALSE;FALSE
+'NotRespondedExistence(C, A)';'NotRespondedExistence';'[C]';'[A]';1.000;0.167;0.167;1.000;0.167;0.167;;FALSE;FALSE;FALSE;FALSE
+'NotRespondedExistence(C, B)';'NotRespondedExistence';'[C]';'[B]';1.000;0.167;0.167;1.000;0.167;0.167;;FALSE;FALSE;FALSE;FALSE
